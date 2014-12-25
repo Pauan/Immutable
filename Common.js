@@ -73,12 +73,10 @@ function concat(x, y) {
   // TODO what if the depths are the same?
   } else if (x.depth < y.depth) {
     var left = concat(x, y.left);
-    //@assert.isNot(left, y.left); // TODO get rid of this?
     return balanced_node(y, left, y.right);
 
   } else {
     var right = concat(x.right, y);
-    //@assert.isNot(right, x.right); // TODO get rid of this?
     return balanced_node(x, x.left, right);
   }
 }
