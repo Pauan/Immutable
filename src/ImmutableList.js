@@ -1,7 +1,8 @@
 // We use conses at the very end of the list for very fast O(1) push
-var Cons = require("./Cons");
-var AVL  = require("./AVL");
-var nil  = require("./nil");
+var Cons  = require("./Cons");
+var array = require("./array");
+var AVL   = require("./AVL");
+var nil   = require("./nil");
 
 var max = AVL.max;
 var balanced_node = AVL.balanced_node;
@@ -9,67 +10,15 @@ var concat = AVL.concat;
 var insert_min = AVL.insert_min;
 var insert_max = AVL.insert_max;
 
+var array_insert_at = array.insert_at;
+var array_modify_at = array.modify_at;
+var array_remove_at = array.remove_at;
+
 
 // It's faster to use arrays for small lists
 var array_limit = 125;
 
 var ceiling = Math.ceil;
-
-function array_insert_at(array, index, value) {
-  var len = array.length + 1;
-
-  var out = new Array(len);
-
-  var i = 0;
-  while (i < index) {
-    out[i] = array[i];
-    ++i;
-  }
-
-  out[i] = value;
-  ++i;
-
-  while (i < len) {
-    out[i] = array[i - 1];
-    ++i;
-  }
-
-  return out;
-}
-
-function array_modify_at(array, index, f) {
-  var old_value = array[index];
-  var new_value = f(old_value);
-
-  if (old_value === new_value) {
-    return array;
-
-  } else {
-    // It's fast enough to just use `array.slice`, rather than a custom function
-    var new_array = array.slice();
-    new_array[index] = new_value;
-    return new_array;
-  }
-}
-
-function array_remove_at(array, index) {
-  var len = array.length - 1;
-
-  var out = new Array(len);
-
-  var i = 0;
-  while (i < index) {
-    out[i] = array[i];
-    ++i;
-  }
-
-  while (i < len) {
-    out[i] = array[i + 1];
-    ++i;
-  }
-
-  return out;
-}
 
 // Converts a stack (reversed cons) into an array
 function stack_to_array(a, size) {
