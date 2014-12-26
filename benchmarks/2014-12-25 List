@@ -1,0 +1,286 @@
+Versions:
+  Node.js 0.10.22
+  Benchmark.js 1.0.0
+  Immutable-js 3.4.1
+  Mori 0.2.9
+  Immutable dde49be53878311a1497ec64962d44fa74752456
+----------------------------------------
+List with 1 values:
+  ----------------------------------------
+  Inserting at the end:
+    JavaScript Array    19,223,071 ops/sec ±0.34% (100 runs sampled)
+    Immutable-js List    1,466,042 ops/sec ±0.89% (91 runs sampled)
+    Mori Vector          2,008,016 ops/sec ±0.53% (101 runs sampled)
+    Immutable List      10,040,342 ops/sec ±0.52% (97 runs sampled)
+  ----------------------------------------
+  Inserting at the start:
+    JavaScript Array    15,494,630 ops/sec ±0.34% (100 runs sampled)
+    Immutable-js List      965,095 ops/sec ±0.70% (98 runs sampled)
+    Immutable List      10,818,323 ops/sec ±0.58% (99 runs sampled)
+  ----------------------------------------
+  Inserting at random:
+    JavaScript Array     9,218,859 ops/sec ±0.89% (96 runs sampled)
+    Immutable-js List      155,787 ops/sec ±2.08% (85 runs sampled)
+    Immutable List       9,432,078 ops/sec ±0.62% (96 runs sampled)
+  ----------------------------------------
+  Retrieving at the end:
+    JavaScript Array    89,050,945 ops/sec ±1.19% (92 runs sampled)
+    Immutable-js List   29,500,402 ops/sec ±0.29% (98 runs sampled)
+    Mori Vector         12,527,142 ops/sec ±0.69% (95 runs sampled)
+    Immutable List      14,077,320 ops/sec ±0.82% (98 runs sampled)
+  ----------------------------------------
+  Retrieving at the start:
+    JavaScript Array    96,895,952 ops/sec ±2.68% (88 runs sampled)
+    Immutable-js List   34,098,810 ops/sec ±0.36% (91 runs sampled)
+    Mori Vector         14,115,023 ops/sec ±0.44% (99 runs sampled)
+    Immutable List      14,008,590 ops/sec ±2.89% (93 runs sampled)
+  ----------------------------------------
+  Retrieving at random:
+    JavaScript Array    61,206,151 ops/sec ±1.14% (96 runs sampled)
+    Immutable-js List   30,186,030 ops/sec ±0.55% (100 runs sampled)
+    Mori Vector         11,348,399 ops/sec ±0.81% (96 runs sampled)
+    Immutable List      12,144,226 ops/sec ±1.02% (95 runs sampled)
+  ----------------------------------------
+  Removing at the end:
+    Immutable-js List   21,496,007 ops/sec ±1.01% (93 runs sampled)
+    Mori Vector         24,818,774 ops/sec ±0.97% (97 runs sampled)
+    Immutable List      14,074,459 ops/sec ±0.61% (93 runs sampled)
+  ----------------------------------------
+  Removing at the start:
+    Immutable-js List   21,364,012 ops/sec ±0.63% (99 runs sampled)
+    Immutable List      13,959,343 ops/sec ±0.32% (100 runs sampled)
+  ----------------------------------------
+  Removing at random:
+    Immutable-js List      266,570 ops/sec ±2.01% (84 runs sampled)
+    Immutable List      12,191,535 ops/sec ±0.38% (97 runs sampled)
+  ----------------------------------------
+  Modifying at the end:
+    Immutable-js List    1,988,659 ops/sec ±0.57% (99 runs sampled)
+    Mori Vector          7,977,168 ops/sec ±0.55% (96 runs sampled)
+    Immutable List      17,192,729 ops/sec ±0.61% (94 runs sampled)
+  ----------------------------------------
+  Modifying at the start:
+    Immutable-js List    1,907,380 ops/sec ±1.02% (95 runs sampled)
+    Mori Vector          8,435,850 ops/sec ±0.44% (97 runs sampled)
+    Immutable List      17,669,403 ops/sec ±0.52% (91 runs sampled)
+  ----------------------------------------
+  Modifying at random:
+    Immutable-js List    2,023,414 ops/sec ±0.66% (96 runs sampled)
+    Mori Vector          7,602,057 ops/sec ±0.56% (99 runs sampled)
+    Immutable List      14,459,729 ops/sec ±0.39% (92 runs sampled)
+  ----------------------------------------
+  Concatenating:
+    JavaScript Array    13,059,848 ops/sec ±1.04% (92 runs sampled)
+    Immutable-js List      102,061 ops/sec ±0.89% (93 runs sampled)
+    Mori Vector         11,284,035 ops/sec ±0.60% (94 runs sampled)
+    Immutable List       9,683,873 ops/sec ±0.53% (95 runs sampled)
+----------------------------------------
+List with 10 values:
+  ----------------------------------------
+  Inserting at the end:
+    JavaScript Array    11,572,057 ops/sec ±0.51% (95 runs sampled)
+    Immutable-js List       94,735 ops/sec ±0.40% (94 runs sampled)
+    Mori Vector            619,715 ops/sec ±0.58% (95 runs sampled)
+    Immutable List       1,374,544 ops/sec ±0.69% (95 runs sampled)
+  ----------------------------------------
+  Inserting at the start:
+    JavaScript Array     2,283,605 ops/sec ±0.51% (95 runs sampled)
+    Immutable-js List       95,790 ops/sec ±1.11% (97 runs sampled)
+    Immutable List         695,113 ops/sec ±0.81% (95 runs sampled)
+  ----------------------------------------
+  Inserting at random:
+    JavaScript Array     1,283,006 ops/sec ±0.83% (101 runs sampled)
+    Immutable-js List        6,897 ops/sec ±2.37% (86 runs sampled)
+    Immutable List         660,173 ops/sec ±0.45% (99 runs sampled)
+  ----------------------------------------
+  Retrieving at the end:
+    JavaScript Array    86,086,054 ops/sec ±2.47% (87 runs sampled)
+    Immutable-js List   27,868,572 ops/sec ±0.99% (95 runs sampled)
+    Mori Vector         12,530,771 ops/sec ±0.64% (96 runs sampled)
+    Immutable List      13,970,367 ops/sec ±0.72% (94 runs sampled)
+  ----------------------------------------
+  Retrieving at the start:
+    JavaScript Array    96,678,346 ops/sec ±2.78% (88 runs sampled)
+    Immutable-js List   33,660,914 ops/sec ±0.44% (95 runs sampled)
+    Mori Vector         13,634,974 ops/sec ±0.57% (100 runs sampled)
+    Immutable List      12,013,722 ops/sec ±0.56% (97 runs sampled)
+  ----------------------------------------
+  Retrieving at random:
+    JavaScript Array    60,075,265 ops/sec ±1.39% (89 runs sampled)
+    Immutable-js List   29,723,381 ops/sec ±0.20% (97 runs sampled)
+    Mori Vector         11,512,503 ops/sec ±0.55% (100 runs sampled)
+    Immutable List      10,682,347 ops/sec ±1.39% (96 runs sampled)
+  ----------------------------------------
+  Removing at the end:
+    Immutable-js List      223,634 ops/sec ±1.85% (98 runs sampled)
+    Mori Vector          1,235,304 ops/sec ±0.67% (99 runs sampled)
+    Immutable List       1,651,990 ops/sec ±0.95% (99 runs sampled)
+  ----------------------------------------
+  Removing at the start:
+    Immutable-js List      226,373 ops/sec ±1.58% (98 runs sampled)
+    Immutable List         705,161 ops/sec ±0.39% (101 runs sampled)
+  ----------------------------------------
+  Removing at random:
+    Immutable-js List        9,628 ops/sec ±1.93% (88 runs sampled)
+    Immutable List         636,764 ops/sec ±0.52% (99 runs sampled)
+  ----------------------------------------
+  Modifying at the end:
+    Immutable-js List    1,970,680 ops/sec ±0.54% (100 runs sampled)
+    Mori Vector          6,636,976 ops/sec ±1.25% (100 runs sampled)
+    Immutable List      17,130,841 ops/sec ±1.32% (95 runs sampled)
+  ----------------------------------------
+  Modifying at the start:
+    Immutable-js List    2,026,874 ops/sec ±1.33% (99 runs sampled)
+    Mori Vector          6,737,110 ops/sec ±0.55% (98 runs sampled)
+    Immutable List       4,471,472 ops/sec ±3.74% (96 runs sampled)
+  ----------------------------------------
+  Modifying at random:
+    Immutable-js List    1,954,009 ops/sec ±0.65% (97 runs sampled)
+    Mori Vector          6,371,696 ops/sec ±0.76% (98 runs sampled)
+    Immutable List       4,641,112 ops/sec ±0.46% (101 runs sampled)
+  ----------------------------------------
+  Concatenating:
+    JavaScript Array    11,306,665 ops/sec ±0.63% (94 runs sampled)
+    Immutable-js List       80,112 ops/sec ±3.04% (82 runs sampled)
+    Mori Vector         11,373,986 ops/sec ±1.49% (98 runs sampled)
+    Immutable List       6,673,646 ops/sec ±0.99% (89 runs sampled)
+----------------------------------------
+List with 100 values:
+  ----------------------------------------
+  Inserting at the end:
+    JavaScript Array     2,137,689 ops/sec ±0.42% (100 runs sampled)
+    Immutable-js List        8,699 ops/sec ±0.15% (102 runs sampled)
+    Mori Vector             52,031 ops/sec ±0.91% (101 runs sampled)
+    Immutable List         141,166 ops/sec ±0.97% (99 runs sampled)
+  ----------------------------------------
+  Inserting at the start:
+    JavaScript Array       210,558 ops/sec ±0.73% (101 runs sampled)
+    Immutable-js List        9,440 ops/sec ±1.54% (97 runs sampled)
+    Immutable List          36,672 ops/sec ±2.46% (94 runs sampled)
+  ----------------------------------------
+  Inserting at random:
+    JavaScript Array       113,734 ops/sec ±0.90% (100 runs sampled)
+    Immutable-js List          320 ops/sec ±2.34% (80 runs sampled)
+    Immutable List          35,378 ops/sec ±2.06% (98 runs sampled)
+  ----------------------------------------
+  Retrieving at the end:
+    JavaScript Array    92,630,284 ops/sec ±0.92% (95 runs sampled)
+    Immutable-js List   27,821,415 ops/sec ±0.77% (97 runs sampled)
+    Mori Vector         12,087,577 ops/sec ±0.74% (95 runs sampled)
+    Immutable List      14,000,079 ops/sec ±1.06% (97 runs sampled)
+  ----------------------------------------
+  Retrieving at the start:
+    JavaScript Array    98,413,208 ops/sec ±2.36% (90 runs sampled)
+    Immutable-js List   27,124,879 ops/sec ±0.39% (91 runs sampled)
+    Mori Vector         12,029,752 ops/sec ±0.97% (98 runs sampled)
+    Immutable List       4,286,939 ops/sec ±0.45% (102 runs sampled)
+  ----------------------------------------
+  Retrieving at random:
+    JavaScript Array    59,387,393 ops/sec ±1.30% (92 runs sampled)
+    Immutable-js List   25,721,618 ops/sec ±0.96% (99 runs sampled)
+    Mori Vector         10,654,426 ops/sec ±1.37% (101 runs sampled)
+    Immutable List       6,004,884 ops/sec ±1.19% (97 runs sampled)
+  ----------------------------------------
+  Removing at the end:
+    Immutable-js List       20,302 ops/sec ±1.59% (96 runs sampled)
+    Mori Vector            102,693 ops/sec ±1.70% (96 runs sampled)
+    Immutable List         178,226 ops/sec ±1.25% (97 runs sampled)
+  ----------------------------------------
+  Removing at the start:
+    Immutable-js List       13,977 ops/sec ±0.82% (101 runs sampled)
+    Immutable List          32,950 ops/sec ±0.60% (102 runs sampled)
+  ----------------------------------------
+  Removing at random:
+    Immutable-js List          348 ops/sec ±2.20% (80 runs sampled)
+    Immutable List          30,989 ops/sec ±0.75% (101 runs sampled)
+  ----------------------------------------
+  Modifying at the end:
+    Immutable-js List    2,278,115 ops/sec ±0.70% (99 runs sampled)
+    Mori Vector          7,315,869 ops/sec ±0.73% (97 runs sampled)
+    Immutable List      17,831,737 ops/sec ±0.18% (101 runs sampled)
+  ----------------------------------------
+  Modifying at the start:
+    Immutable-js List    1,729,738 ops/sec ±0.53% (98 runs sampled)
+    Mori Vector          2,822,199 ops/sec ±0.63% (98 runs sampled)
+    Immutable List       1,926,225 ops/sec ±0.48% (99 runs sampled)
+  ----------------------------------------
+  Modifying at random:
+    Immutable-js List    1,528,423 ops/sec ±0.55% (100 runs sampled)
+    Mori Vector          2,823,895 ops/sec ±0.17% (100 runs sampled)
+    Immutable List       1,904,358 ops/sec ±0.42% (97 runs sampled)
+  ----------------------------------------
+  Concatenating:
+    JavaScript Array     4,123,987 ops/sec ±0.36% (99 runs sampled)
+    Immutable-js List       17,034 ops/sec ±1.78% (92 runs sampled)
+    Mori Vector         11,806,431 ops/sec ±0.65% (97 runs sampled)
+    Immutable List       2,716,316 ops/sec ±0.40% (97 runs sampled)
+----------------------------------------
+List with 1000 values:
+  ----------------------------------------
+  Inserting at the end:
+    JavaScript Array       235,795 ops/sec ±0.53% (101 runs sampled)
+    Immutable-js List        1,000 ops/sec ±0.52% (100 runs sampled)
+    Mori Vector              5,230 ops/sec ±1.02% (99 runs sampled)
+    Immutable List          13,429 ops/sec ±0.80% (97 runs sampled)
+  ----------------------------------------
+  Inserting at the start:
+    JavaScript Array         8,552 ops/sec ±0.60% (100 runs sampled)
+    Immutable-js List          898 ops/sec ±3.50% (92 runs sampled)
+    Immutable List           2,199 ops/sec ±1.10% (99 runs sampled)
+  ----------------------------------------
+  Inserting at random:
+    JavaScript Array         8,167 ops/sec ±0.61% (101 runs sampled)
+    Immutable-js List            7 ops/sec ±2.33% (21 runs sampled)
+    Immutable List           2,234 ops/sec ±0.39% (100 runs sampled)
+  ----------------------------------------
+  Retrieving at the end:
+    JavaScript Array    88,216,040 ops/sec ±2.62% (89 runs sampled)
+    Immutable-js List   27,365,221 ops/sec ±0.45% (98 runs sampled)
+    Mori Vector         12,331,291 ops/sec ±1.11% (98 runs sampled)
+    Immutable List      14,058,837 ops/sec ±1.01% (96 runs sampled)
+  ----------------------------------------
+  Retrieving at the start:
+    JavaScript Array    99,170,369 ops/sec ±2.41% (91 runs sampled)
+    Immutable-js List   27,449,125 ops/sec ±0.69% (95 runs sampled)
+    Mori Vector         12,220,412 ops/sec ±0.81% (100 runs sampled)
+    Immutable List      13,574,528 ops/sec ±0.63% (97 runs sampled)
+  ----------------------------------------
+  Retrieving at random:
+    JavaScript Array    60,255,834 ops/sec ±1.07% (93 runs sampled)
+    Immutable-js List   23,064,704 ops/sec ±0.35% (101 runs sampled)
+    Mori Vector         10,718,269 ops/sec ±0.74% (98 runs sampled)
+    Immutable List       9,213,145 ops/sec ±0.45% (96 runs sampled)
+  ----------------------------------------
+  Removing at the end:
+    Immutable-js List        1,907 ops/sec ±0.57% (99 runs sampled)
+    Mori Vector             10,215 ops/sec ±0.60% (101 runs sampled)
+    Immutable List           2,968 ops/sec ±0.38% (100 runs sampled)
+  ----------------------------------------
+  Removing at the start:
+    Immutable-js List        1,259 ops/sec ±1.26% (93 runs sampled)
+    Immutable List           2,596 ops/sec ±1.41% (98 runs sampled)
+  ----------------------------------------
+  Removing at random:
+    Immutable-js List            7 ops/sec ±2.04% (22 runs sampled)
+    Immutable List           2,150 ops/sec ±1.19% (100 runs sampled)
+  ----------------------------------------
+  Modifying at the end:
+    Immutable-js List    2,208,821 ops/sec ±1.73% (95 runs sampled)
+    Mori Vector          6,702,411 ops/sec ±0.43% (98 runs sampled)
+    Immutable List      18,030,760 ops/sec ±0.47% (98 runs sampled)
+  ----------------------------------------
+  Modifying at the start:
+    Immutable-js List    1,563,746 ops/sec ±0.90% (97 runs sampled)
+    Mori Vector          2,840,710 ops/sec ±0.44% (100 runs sampled)
+    Immutable List       3,015,497 ops/sec ±0.51% (97 runs sampled)
+  ----------------------------------------
+  Modifying at random:
+    Immutable-js List    1,561,595 ops/sec ±0.70% (97 runs sampled)
+    Mori Vector          2,669,805 ops/sec ±0.48% (100 runs sampled)
+    Immutable List       2,495,602 ops/sec ±0.19% (102 runs sampled)
+  ----------------------------------------
+  Concatenating:
+    JavaScript Array       451,726 ops/sec ±0.39% (98 runs sampled)
+    Immutable-js List        1,968 ops/sec ±0.61% (99 runs sampled)
+    Mori Vector         11,876,048 ops/sec ±0.81% (97 runs sampled)
+    Immutable List       1,049,737 ops/sec ±0.45% (102 runs sampled)
