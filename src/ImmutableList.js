@@ -1,6 +1,6 @@
 // We use conses at the very end of the list for very fast O(1) push
 var Cons  = require("./Cons");
-var array = require("./array");
+var array = require("./Array");
 var AVL   = require("./AVL");
 var nil   = require("./nil");
 
