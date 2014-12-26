@@ -1,6 +1,13 @@
 // We use conses at the very end of the list for very fast O(1) push
 var Cons = require("./Cons");
-var avl  = require("./AVL");
+var AVL  = require("./AVL");
+
+var max = AVL.max;
+var nil = AVL.nil;
+var balanced_node = AVL.balanced_node;
+var concat = AVL.concat;
+var insert_min = AVL.insert_min;
+var insert_max = AVL.insert_max;
 
 
 // It's faster to use arrays for small lists
@@ -90,7 +97,7 @@ function ArrayNode(left, right, array) {
   this.right = right;
   this.array = array;
   this.size  = left.size + right.size + array.length;
-  this.depth = avl.max(left.depth, right.depth) + 1;
+  this.depth = max(left.depth, right.depth) + 1;
 }
 
 ArrayNode.prototype.copy = function (left, right) {
@@ -146,7 +153,7 @@ function nth_insert(node, index, value) {
 
     if (index < l_index) {
       var child = nth_insert(left, index, value);
-      return avl.balanced_node(node, child, right);
+      return balanced_node(node, child, right);
 
     } else {
       index -= l_index;
@@ -164,9 +171,9 @@ function nth_insert(node, index, value) {
           var aright = array.slice(pivot);
 
           if (left.depth < right.depth) {
-            return new ArrayNode(avl.insert_max(left, new ArrayNode(nil, nil, aleft)), right, aright);
+            return new ArrayNode(insert_max(left, new ArrayNode(nil, nil, aleft)), right, aright);
           } else {
-            return new ArrayNode(left, avl.insert_min(right, new ArrayNode(nil, nil, aright)), aleft);
+            return new ArrayNode(left, insert_min(right, new ArrayNode(nil, nil, aright)), aleft);
           }
 
         } else {
@@ -175,7 +182,7 @@ function nth_insert(node, index, value) {
 
       } else {
         var child = nth_insert(right, index - len, value);
-        return avl.balanced_node(node, left, child);
+        return balanced_node(node, left, child);
       }
     }
   }
@@ -226,7 +233,7 @@ function nth_remove(node, index) {
 
   if (index < l_index) {
     var child = nth_remove(left, index);
-    return avl.balanced_node(node, child, right);
+    return balanced_node(node, child, right);
 
   } else {
     index -= l_index;
@@ -239,14 +246,14 @@ function nth_remove(node, index) {
       array = array_remove_at(array, index);
 
       if (array.length === 0) {
-        return avl.concat(left, right);
+        return concat(left, right);
       } else {
         return new ArrayNode(left, right, array);
       }
 
     } else {
       var child = nth_remove(right, index - len);
-      return avl.balanced_node(node, left, child);
+      return balanced_node(node, left, child);
     }
   }
 }
@@ -267,7 +274,7 @@ ImmutableList.prototype.forEach = function (f) {
 };
 
 ImmutableList.prototype.isEmpty = function () {
-  return this.root === avl.nil && this.tail === avl.nil;
+  return this.root === nil && this.tail === nil;
 };
 
 ImmutableList.prototype.size = function () {
@@ -324,7 +331,7 @@ ImmutableList.prototype.insert = function (value, index) {
   var tail_size = this.tail_size;
   if (index === len) {
     if (tail_size === array_limit) {
-      var node = avl.insert_max(root, new ArrayNode(nil, nil, stack_to_array(tail, tail_size)));
+      var node = insert_max(root, new ArrayNode(nil, nil, stack_to_array(tail, tail_size)));
       return new ImmutableList(node, new Cons(value, nil), 1);
 
     } else {
@@ -338,7 +345,7 @@ ImmutableList.prototype.insert = function (value, index) {
 
     } else {
       var array = array_insert_at(stack_to_array(tail, tail_size), index - size, value);
-      var node  = avl.insert_max(root, new ArrayNode(nil, nil, array));
+      var node  = insert_max(root, new ArrayNode(nil, nil, array));
       return new ImmutableList(node, nil, 0);
     }
 
@@ -372,7 +379,7 @@ ImmutableList.prototype.remove = function (index) {
 
     } else {
       var array = array_remove_at(stack_to_array(tail, tail_size), index - size);
-      var node  = avl.insert_max(root, new ArrayNode(nil, nil, array));
+      var node  = insert_max(root, new ArrayNode(nil, nil, array));
       return new ImmutableList(node, nil, 0);
     }
 
@@ -416,7 +423,7 @@ ImmutableList.prototype.modify = function (index, f) {
       if (array === stack) {
         return this;
       } else {
-        var node = avl.insert_max(root, new ArrayNode(nil, nil, array));
+        var node = insert_max(root, new ArrayNode(nil, nil, array));
         return new ImmutableList(node, nil, 0);
       }
     }
@@ -442,10 +449,10 @@ ImmutableList.prototype.concat = function (right) {
 
     } else {
       if (ltail !== nil) {
-        lroot = avl.insert_max(lroot, new ArrayNode(nil, nil, stack_to_array(ltail, this.tail_size)));
+        lroot = insert_max(lroot, new ArrayNode(nil, nil, stack_to_array(ltail, this.tail_size)));
       }
 
-      var node = avl.concat(lroot, rroot);
+      var node = concat(lroot, rroot);
       return new ImmutableList(node, rtail, right.tail_size);
     }
 
