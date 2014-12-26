@@ -1,9 +1,9 @@
 // We use conses at the very end of the list for very fast O(1) push
 var Cons = require("./Cons");
 var AVL  = require("./AVL");
+var nil  = require("./nil");
 
 var max = AVL.max;
-var nil = AVL.nil;
 var balanced_node = AVL.balanced_node;
 var concat = AVL.concat;
 var insert_min = AVL.insert_min;
