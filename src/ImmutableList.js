@@ -433,6 +433,13 @@ ImmutableList.prototype.modify = function (index, f) {
   }
 };
 
+// TODO custom implementation for this ?
+ImmutableList.prototype.set = function (index, value) {
+  return this.modify(index, function () {
+    return value;
+  });
+};
+
 ImmutableList.prototype.concat = function (right) {
   if (right instanceof ImmutableList) {
     var lroot = this.root;
