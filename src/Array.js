@@ -1,4 +1,4 @@
-function array_insert_at(array, index, value) {
+function insert_at(array, index, value) {
   var len = array.length + 1;
 
   var out = new Array(len);
@@ -20,7 +20,7 @@ function array_insert_at(array, index, value) {
   return out;
 }
 
-function array_modify_at(array, index, f) {
+function modify_at(array, index, f) {
   var old_value = array[index];
   var new_value = f(old_value);
 
@@ -35,7 +35,7 @@ function array_modify_at(array, index, f) {
   }
 }
 
-function array_remove_at(array, index) {
+function remove_at(array, index) {
   var len = array.length - 1;
 
   var out = new Array(len);
