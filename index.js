@@ -117,6 +117,8 @@ function isList(x) {
      the last value, `-2` inserts `value` as the
      second-from-last value, etc.
 
+     If `index` is invalid, an error is thrown.
+
    @function List.remove
    @param {optional Integer} [index] The index to remove from the list. Defaults to `-1`.
    @return {List} A new list with the value at `index` removed
@@ -133,19 +135,7 @@ function isList(x) {
      the end of the list, so `-1` removes the last value,
      `-2` removes the second-from-last value, etc.
 
-   @function List.set
-   @param {Integer} [index] The index to set in the list
-   @param {Any} [value] The value which will be set at `index`
-   @return {List} A new list with the value at `index` set to `value`
-   @summary Returns a new list with the value at `index` set to `value`
-   @desc
-     This function runs in `O(log2(n / 125) + 125)` worst-case time.
-
-     This does not modify the list, it returns a new list.
-
-     If `index` is negative, it starts counting from
-     the end of the list, so `-1` modifies the last value,
-     `-2` modifies the second-from-last value, etc.
+     If `index` is not in the list, an error is thrown.
 
    @function List.modify
    @param {Integer} [index] The index to modify in the list
@@ -172,6 +162,8 @@ function isList(x) {
      If `index` is negative, it starts counting from
      the end of the list, so `-1` modifies the last value,
      `-2` modifies the second-from-last value, etc.
+
+     If `index` is not in the list, an error is thrown.
 
    @function List.concat
    @param {List | Array} [other] The sequence to append to this list
