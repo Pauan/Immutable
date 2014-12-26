@@ -1,6 +1,8 @@
 // http://arclanguage.org/item?id=14181
 // http://arclanguage.org/item?id=18936
 
+var nil = require("./nil");
+
 // Faster than using Math.max
 function max(x, y) {
   if (x > y) {
@@ -10,14 +12,6 @@ function max(x, y) {
   }
 }
 exports.max = max;
-
-
-var nil        = {};
-nil.depth      = 0;
-nil.size       = 0;
-nil.forEach    = function (f) {};
-nil.forEachRev = function (f) {};
-exports.nil = nil;
 
 
 function balanced_node(node, left, right) {
