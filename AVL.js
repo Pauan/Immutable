@@ -9,6 +9,7 @@ function max(x, y) {
     return y;
   }
 }
+exports.max = max;
 
 
 var nil        = {};
@@ -16,6 +17,7 @@ nil.depth      = 0;
 nil.size       = 0;
 nil.forEach    = function (f) {};
 nil.forEachRev = function (f) {};
+exports.nil = nil;
 
 
 function balanced_node(node, left, right) {
@@ -62,6 +64,7 @@ function balanced_node(node, left, right) {
     return node.copy(left, right);
   }
 }
+exports.balanced_node = balanced_node;
 
 function concat(x, y) {
   if (x === nil) {
@@ -80,6 +83,7 @@ function concat(x, y) {
     return balanced_node(x, x.left, right);
   }
 }
+exports.concat = concat;
 
 function insert_min(node, new_node) {
   if (node === nil) {
@@ -89,6 +93,7 @@ function insert_min(node, new_node) {
     return balanced_node(node, insert_min(node.left, new_node), node.right);
   }
 }
+exports.insert_min = insert_min;
 
 function insert_max(node, new_node) {
   if (node === nil) {
@@ -98,17 +103,4 @@ function insert_max(node, new_node) {
     return balanced_node(node, node.left, insert_max(node.right, new_node));
   }
 }
-
-
-/**
- * Converts a List into a JavaScript array.
- */
-function toJS(x) {
-  if (x instanceof ImmutableList) {
-    return x.toJS();
-  } else {
-    return x;
-  }
-}
-
-exports.toJS = toJS;
+exports.insert_max = insert_max;
