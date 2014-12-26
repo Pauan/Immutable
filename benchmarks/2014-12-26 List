@@ -1,0 +1,322 @@
+Versions:
+  Node.js 0.10.22
+  Benchmark.js 1.0.0
+  Immutable-js 3.4.1
+  Mori 0.2.9
+  Immutable 2a0ba8b9856f30e3e4b015babd2c8de0edcceb4a
+------------------------------------------------------------
+List with 1 values:
+  ----------------------------------------------------------
+  Inserting at the end:
+    JavaScript Array                      19,431,789 ops/sec
+    JavaScript Array Copying              35,998,316 ops/sec
+    Immutable-js List                      1,479,644 ops/sec
+    Mori Vector                            2,042,280 ops/sec
+    Immutable List                        10,137,484 ops/sec
+  ----------------------------------------------------------
+  Inserting at the start:
+    JavaScript Array                      15,243,120 ops/sec
+    JavaScript Array Copying              35,957,941 ops/sec
+    Immutable-js List                        984,073 ops/sec
+    Immutable List                        10,801,296 ops/sec
+  ----------------------------------------------------------
+  Inserting at random:
+    JavaScript Array                       9,521,570 ops/sec
+    JavaScript Array Copying              28,610,131 ops/sec
+    Immutable-js List                        160,353 ops/sec
+    Immutable List                         9,411,223 ops/sec
+  ----------------------------------------------------------
+  Retrieving at the end:
+    JavaScript Array                      79,405,305 ops/sec
+    Immutable-js List                     27,593,584 ops/sec
+    Mori Vector                           12,710,751 ops/sec
+    Immutable List                        13,856,632 ops/sec
+  ----------------------------------------------------------
+  Retrieving at the start:
+    JavaScript Array                      88,552,125 ops/sec
+    Immutable-js List                     32,695,717 ops/sec
+    Mori Vector                           12,813,369 ops/sec
+    Immutable List                        14,020,876 ops/sec
+  ----------------------------------------------------------
+  Retrieving at random:
+    JavaScript Array                      58,520,263 ops/sec
+    Immutable-js List                     28,442,605 ops/sec
+    Mori Vector                           11,486,681 ops/sec
+    Immutable List                        12,364,153 ops/sec
+  ----------------------------------------------------------
+  Removing at the end:
+    JavaScript Array Copying              37,489,374 ops/sec
+    Immutable-js List                     21,534,823 ops/sec
+    Mori Vector                           24,733,945 ops/sec
+    Immutable List                        14,389,781 ops/sec
+  ----------------------------------------------------------
+  Removing at the start:
+    JavaScript Array Copying              39,205,292 ops/sec
+    Immutable-js List                     21,740,137 ops/sec
+    Immutable List                        14,177,511 ops/sec
+  ----------------------------------------------------------
+  Removing at random:
+    JavaScript Array Copying              31,760,033 ops/sec
+    Immutable-js List                        271,673 ops/sec
+    Immutable List                        11,970,387 ops/sec
+  ----------------------------------------------------------
+  Modifying at the end:
+    JavaScript Array Copying              11,411,505 ops/sec
+    Immutable-js List                      2,102,772 ops/sec
+    Mori Vector                            7,752,560 ops/sec
+    Immutable List                        17,732,908 ops/sec
+  ----------------------------------------------------------
+  Modifying at the start:
+    JavaScript Array Copying              11,140,941 ops/sec
+    Immutable-js List                      2,156,348 ops/sec
+    Mori Vector                            8,648,004 ops/sec
+    Immutable List                        18,241,653 ops/sec
+  ----------------------------------------------------------
+  Modifying at random:
+    JavaScript Array Copying              10,739,194 ops/sec
+    Immutable-js List                      2,114,263 ops/sec
+    Mori Vector                            7,748,165 ops/sec
+    Immutable List                        15,139,638 ops/sec
+  ----------------------------------------------------------
+  Concatenating:
+    JavaScript Array                      14,176,678 ops/sec
+    Immutable-js List                        104,328 ops/sec
+    Mori Vector                           12,379,655 ops/sec
+    Immutable List                        10,070,151 ops/sec
+------------------------------------------------------------
+List with 10 values:
+  ----------------------------------------------------------
+  Inserting at the end:
+    JavaScript Array                      11,827,063 ops/sec
+    JavaScript Array Copying               3,098,592 ops/sec
+    Immutable-js List                         90,578 ops/sec
+    Mori Vector                              656,148 ops/sec
+    Immutable List                         1,354,615 ops/sec
+  ----------------------------------------------------------
+  Inserting at the start:
+    JavaScript Array                       2,409,355 ops/sec
+    JavaScript Array Copying               3,483,568 ops/sec
+    Immutable-js List                         88,566 ops/sec
+    Immutable List                           685,604 ops/sec
+  ----------------------------------------------------------
+  Inserting at random:
+    JavaScript Array                       1,354,345 ops/sec
+    JavaScript Array Copying               2,509,911 ops/sec
+    Immutable-js List                          6,855 ops/sec
+    Immutable List                           632,669 ops/sec
+  ----------------------------------------------------------
+  Retrieving at the end:
+    JavaScript Array                      81,252,178 ops/sec
+    Immutable-js List                     28,418,392 ops/sec
+    Mori Vector                           12,809,937 ops/sec
+    Immutable List                        13,640,796 ops/sec
+  ----------------------------------------------------------
+  Retrieving at the start:
+    JavaScript Array                      89,289,984 ops/sec
+    Immutable-js List                     32,722,236 ops/sec
+    Mori Vector                           14,139,171 ops/sec
+    Immutable List                        11,509,564 ops/sec
+  ----------------------------------------------------------
+  Retrieving at random:
+    JavaScript Array                      58,305,742 ops/sec
+    Immutable-js List                     29,870,736 ops/sec
+    Mori Vector                           11,406,162 ops/sec
+    Immutable List                        10,394,556 ops/sec
+  ----------------------------------------------------------
+  Removing at the end:
+    JavaScript Array Copying               3,299,161 ops/sec
+    Immutable-js List                        233,490 ops/sec
+    Mori Vector                            1,250,545 ops/sec
+    Immutable List                         1,707,041 ops/sec
+  ----------------------------------------------------------
+  Removing at the start:
+    JavaScript Array Copying               3,337,923 ops/sec
+    Immutable-js List                        225,558 ops/sec
+    Immutable List                           693,475 ops/sec
+  ----------------------------------------------------------
+  Removing at random:
+    JavaScript Array Copying               2,487,278 ops/sec
+    Immutable-js List                          9,558 ops/sec
+    Immutable List                           627,575 ops/sec
+  ----------------------------------------------------------
+  Modifying at the end:
+    JavaScript Array Copying              10,696,707 ops/sec
+    Immutable-js List                      2,054,134 ops/sec
+    Mori Vector                            6,666,108 ops/sec
+    Immutable List                        18,025,113 ops/sec
+  ----------------------------------------------------------
+  Modifying at the start:
+    JavaScript Array Copying              10,906,474 ops/sec
+    Immutable-js List                      2,061,015 ops/sec
+    Mori Vector                            7,081,485 ops/sec
+    Immutable List                         4,812,765 ops/sec
+  ----------------------------------------------------------
+  Modifying at random:
+    JavaScript Array Copying               9,776,737 ops/sec
+    Immutable-js List                      1,910,955 ops/sec
+    Mori Vector                            6,564,169 ops/sec
+    Immutable List                         4,842,503 ops/sec
+  ----------------------------------------------------------
+  Concatenating:
+    JavaScript Array                      12,053,901 ops/sec
+    Immutable-js List                         83,715 ops/sec
+    Mori Vector                           12,252,643 ops/sec
+    Immutable List                         7,977,801 ops/sec
+------------------------------------------------------------
+List with 100 values:
+  ----------------------------------------------------------
+  Inserting at the end:
+    JavaScript Array                       2,154,270 ops/sec
+    JavaScript Array Copying                  49,683 ops/sec
+    Immutable-js List                          9,696 ops/sec
+    Mori Vector                               52,639 ops/sec
+    Immutable List                           138,549 ops/sec
+  ----------------------------------------------------------
+  Inserting at the start:
+    JavaScript Array                         214,224 ops/sec
+    JavaScript Array Copying                  60,965 ops/sec
+    Immutable-js List                         10,066 ops/sec
+    Immutable List                            36,455 ops/sec
+  ----------------------------------------------------------
+  Inserting at random:
+    JavaScript Array                         119,660 ops/sec
+    JavaScript Array Copying                  50,863 ops/sec
+    Immutable-js List                            329 ops/sec
+    Immutable List                            31,989 ops/sec
+  ----------------------------------------------------------
+  Retrieving at the end:
+    JavaScript Array                      84,080,635 ops/sec
+    Immutable-js List                     28,035,524 ops/sec
+    Mori Vector                           12,624,499 ops/sec
+    Immutable List                        13,893,473 ops/sec
+  ----------------------------------------------------------
+  Retrieving at the start:
+    JavaScript Array                      91,782,659 ops/sec
+    Immutable-js List                     25,052,615 ops/sec
+    Mori Vector                           13,230,301 ops/sec
+    Immutable List                         4,339,474 ops/sec
+  ----------------------------------------------------------
+  Retrieving at random:
+    JavaScript Array                      58,678,685 ops/sec
+    Immutable-js List                     25,899,166 ops/sec
+    Mori Vector                           11,252,868 ops/sec
+    Immutable List                         6,008,190 ops/sec
+  ----------------------------------------------------------
+  Removing at the end:
+    JavaScript Array Copying                  49,832 ops/sec
+    Immutable-js List                         18,727 ops/sec
+    Mori Vector                              107,840 ops/sec
+    Immutable List                           180,914 ops/sec
+  ----------------------------------------------------------
+  Removing at the start:
+    JavaScript Array Copying                  51,445 ops/sec
+    Immutable-js List                         14,888 ops/sec
+    Immutable List                            28,176 ops/sec
+  ----------------------------------------------------------
+  Removing at random:
+    JavaScript Array Copying                  47,235 ops/sec
+    Immutable-js List                            355 ops/sec
+    Immutable List                            30,508 ops/sec
+  ----------------------------------------------------------
+  Modifying at the end:
+    JavaScript Array Copying               6,920,840 ops/sec
+    Immutable-js List                      1,853,002 ops/sec
+    Mori Vector                            7,496,999 ops/sec
+    Immutable List                        17,793,847 ops/sec
+  ----------------------------------------------------------
+  Modifying at the start:
+    JavaScript Array Copying               7,085,259 ops/sec
+    Immutable-js List                      1,651,214 ops/sec
+    Mori Vector                            2,830,763 ops/sec
+    Immutable List                         2,001,231 ops/sec
+  ----------------------------------------------------------
+  Modifying at random:
+    JavaScript Array Copying               6,654,430 ops/sec
+    Immutable-js List                      1,625,875 ops/sec
+    Mori Vector                            2,797,446 ops/sec
+    Immutable List                         1,820,536 ops/sec
+  ----------------------------------------------------------
+  Concatenating:
+    JavaScript Array                       4,433,072 ops/sec
+    Immutable-js List                         17,412 ops/sec
+    Mori Vector                           12,203,208 ops/sec
+    Immutable List                         2,658,008 ops/sec
+------------------------------------------------------------
+List with 1000 values:
+  ----------------------------------------------------------
+  Inserting at the end:
+    JavaScript Array                         237,844 ops/sec
+    JavaScript Array Copying                     515 ops/sec
+    Immutable-js List                            896 ops/sec
+    Mori Vector                                5,392 ops/sec
+    Immutable List                            13,621 ops/sec
+  ----------------------------------------------------------
+  Inserting at the start:
+    JavaScript Array                           8,646 ops/sec
+    JavaScript Array Copying                     641 ops/sec
+    Immutable-js List                            846 ops/sec
+    Immutable List                             2,137 ops/sec
+  ----------------------------------------------------------
+  Inserting at random:
+    JavaScript Array                           8,428 ops/sec
+    JavaScript Array Copying                     568 ops/sec
+    Immutable-js List                              7 ops/sec
+    Immutable List                             1,938 ops/sec
+  ----------------------------------------------------------
+  Retrieving at the end:
+    JavaScript Array                      81,580,622 ops/sec
+    Immutable-js List                     27,051,888 ops/sec
+    Mori Vector                           11,862,979 ops/sec
+    Immutable List                        13,105,515 ops/sec
+  ----------------------------------------------------------
+  Retrieving at the start:
+    JavaScript Array                      83,465,577 ops/sec
+    Immutable-js List                     26,794,081 ops/sec
+    Mori Vector                           12,339,495 ops/sec
+    Immutable List                        12,785,660 ops/sec
+  ----------------------------------------------------------
+  Retrieving at random:
+    JavaScript Array                      55,778,266 ops/sec
+    Immutable-js List                     25,120,618 ops/sec
+    Mori Vector                           10,512,099 ops/sec
+    Immutable List                         8,757,143 ops/sec
+  ----------------------------------------------------------
+  Removing at the end:
+    JavaScript Array Copying                     492 ops/sec
+    Immutable-js List                          1,880 ops/sec
+    Mori Vector                               10,050 ops/sec
+    Immutable List                             2,761 ops/sec
+  ----------------------------------------------------------
+  Removing at the start:
+    JavaScript Array Copying                     520 ops/sec
+    Immutable-js List                          1,205 ops/sec
+    Immutable List                             2,498 ops/sec
+  ----------------------------------------------------------
+  Removing at random:
+    JavaScript Array Copying                     503 ops/sec
+    Immutable-js List                              7 ops/sec
+    Immutable List                             2,080 ops/sec
+  ----------------------------------------------------------
+  Modifying at the end:
+    JavaScript Array Copying                 848,598 ops/sec
+    Immutable-js List                      1,785,687 ops/sec
+    Mori Vector                            6,508,833 ops/sec
+    Immutable List                        17,022,625 ops/sec
+  ----------------------------------------------------------
+  Modifying at the start:
+    JavaScript Array Copying                 806,322 ops/sec
+    Immutable-js List                      1,364,526 ops/sec
+    Mori Vector                            2,751,205 ops/sec
+    Immutable List                         2,919,621 ops/sec
+  ----------------------------------------------------------
+  Modifying at random:
+    JavaScript Array Copying                 808,811 ops/sec
+    Immutable-js List                      1,458,182 ops/sec
+    Mori Vector                            2,646,627 ops/sec
+    Immutable List                         2,215,207 ops/sec
+  ----------------------------------------------------------
+  Concatenating:
+    JavaScript Array                         423,636 ops/sec
+    Immutable-js List                          1,983 ops/sec
+    Mori Vector                           11,517,501 ops/sec
+    Immutable List                         1,002,322 ops/sec
