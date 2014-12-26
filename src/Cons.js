@@ -1,3 +1,5 @@
+var nil = require("./nil");
+
 function Cons(car, cdr) {
   this.car = car;
   this.cdr = cdr;
@@ -16,3 +18,5 @@ Cons.prototype.forEachRev = function (f) {
   this.cdr.forEachRev(f);
   f(this.car);
 };
+
+module.exports = Cons;
