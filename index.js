@@ -1,5 +1,5 @@
 var ImmutableList = require("./src/ImmutableList");
-var avl = require("./src/AVL");
+var nil = require("./src/nil");
 
 
 /**
@@ -189,7 +189,7 @@ function List(array) {
       return o;
     }
   } else {
-    return new ImmutableList(avl.nil, avl.nil, 0);
+    return new ImmutableList(nil, nil, 0);
   }
 }
 
