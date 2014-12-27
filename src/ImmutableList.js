@@ -477,15 +477,15 @@ ImmutableList.prototype.slice = function (from, to) {
   if (from === 0 && to === len) {
     return this;
 
-  } else if (from === to) {
-    return new ImmutableList(nil, nil, 0);
-
   } else if (from > to) {
     throw new Error("Index " + from + " is greater than index " + to);
 
   } else if (nth_has(from, len)) {
+    if (from === to) {
+      return new ImmutableList(nil, nil, 0);
+
     // TODO code duplication with nth_has ?
-    if (to > 0 && to <= len) {
+    } else if (to > 0 && to <= len) {
       var root = this.root;
       var size = root.size;
 
