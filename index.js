@@ -109,6 +109,8 @@ function isList(x) {
 
      This does not modify the list, it returns a new list.
 
+     ----
+
      `index` defaults to `-1`, which inserts `value` at
      the end of the list.
 
@@ -127,6 +129,8 @@ function isList(x) {
      This function runs in `O(log2(n / 125) + 125)` worst-case time.
 
      This does not modify the list, it returns a new list.
+
+     ----
 
      `index` defaults to `-1`, which removes the value
      at the end of the list.
@@ -147,6 +151,8 @@ function isList(x) {
 
      This does not modify the list, it returns a new list.
 
+     ----
+
      This function calls `fn` with the value at `index`, and
      whatever `fn` returns will be used as the new value at
      `index`:
@@ -164,6 +170,49 @@ function isList(x) {
      `-2` modifies the second-from-last value, etc.
 
      If `index` is not in the list, an error is thrown.
+
+   @function List.slice
+   @param {optional Integer} [from] The index to start at. Defaults to `0`
+   @param {optional Integer} [to] The index to end at. Defaults to `list.size()`
+   @return {List} A new list with all the values between indexes
+                  `from` (included) and `to` (excluded).
+   @summary Returns a new list with all the values between indexes
+            `from` (included) and `to` (excluded).
+   @desc
+     This function runs in `O(log2(n / 125) + 249 + (2 * (m / 125)))`
+     worst-case time.
+
+     This does not modify the list, it returns a new list.
+
+     ----
+
+     `from` defaults to `0`. `to` defaults to `list.size()`.
+     This means that `list.slice()` returns all the values
+     in `list`.
+
+     If `from` or `to` is negative, it starts counting from
+     the end of the list, so `-1` means the last value of
+     the list, `-2` means the second-from-last value, etc.
+
+     ----
+
+     If `from` is not in the list, an error is thrown.
+
+     If `to` is invalid, an error is thrown.
+
+     If `from` is greater than `to`, an error is thrown.
+
+     ----
+
+     Some examples:
+
+         var list = List([1, 2, 3, 4]);
+
+         list.slice()       // [1, 2, 3, 4]
+         list.slice(1)      // [2, 3, 4]
+         list.slice(1, 3)   // [2, 3]
+         list.slice(-1)     // [4]
+         list.slice(-2, -1) // [3]
 
    @function List.concat
    @param {List | Array} [other] The sequence to append to this list
