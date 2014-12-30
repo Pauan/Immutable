@@ -3,6 +3,7 @@
 
 var nil = require("./nil");
 
+
 // Faster than using Math.max
 function max(x, y) {
   if (x > y) {
@@ -11,8 +12,6 @@ function max(x, y) {
     return y;
   }
 }
-exports.max = max;
-
 
 function balanced_node(node, left, right) {
   var l_depth = left.depth;
@@ -46,7 +45,6 @@ function balanced_node(node, left, right) {
       return rleft.copy(node.copy(left, rleft.left),
                         right.copy(rleft.right, rright));
 
-
     // Right side is deeper
     } else {
       // Left rotate
@@ -58,7 +56,6 @@ function balanced_node(node, left, right) {
     return node.copy(left, right);
   }
 }
-exports.balanced_node = balanced_node;
 
 function concat(x, y) {
   if (x === nil) {
@@ -77,7 +74,6 @@ function concat(x, y) {
     return balanced_node(x, x.left, right);
   }
 }
-exports.concat = concat;
 
 function insert_min(node, new_node) {
   if (node === nil) {
@@ -87,7 +83,6 @@ function insert_min(node, new_node) {
     return balanced_node(node, insert_min(node.left, new_node), node.right);
   }
 }
-exports.insert_min = insert_min;
 
 function insert_max(node, new_node) {
   if (node === nil) {
@@ -97,4 +92,10 @@ function insert_max(node, new_node) {
     return balanced_node(node, node.left, insert_max(node.right, new_node));
   }
 }
+
+
+exports.max = max;
+exports.balanced_node = balanced_node;
+exports.concat = concat;
+exports.insert_min = insert_min;
 exports.insert_max = insert_max;

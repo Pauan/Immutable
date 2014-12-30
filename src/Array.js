@@ -64,7 +64,30 @@ function remove_at(array, index) {
   return out;
 }
 
+// TODO move this into a different module
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+// http://bost.ocks.org/mike/shuffle/
+// TODO test whether this algorithm has statistical bias or not
+// TODO this is only needed for "test/test.js"
+function shuffle(array) {
+  var i = array.length;
+
+  while (i) {
+    var j = randomInt(0, i);
+    --i;
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}
+
+
 exports.copy = copy;
 exports.insert_at = insert_at;
 exports.modify_at = modify_at;
 exports.remove_at = remove_at;
+exports.shuffle = shuffle;

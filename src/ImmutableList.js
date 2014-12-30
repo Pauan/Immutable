@@ -1,18 +1,31 @@
+var _Array    = require("./Array");
+var _AVL      = require("./AVL");
+var _hash     = require("./hash");
+var _util     = require("./util");
+var _toJS     = require("./toJS");
+
 // We use conses at the very end of the list for very fast O(1) push
-var Cons  = require("./Cons");
-var array = require("./Array");
-var AVL   = require("./AVL");
-var nil   = require("./nil");
+var Cons      = require("./Cons");
+var Immutable = require("./Immutable");
+var nil       = require("./nil");
 
-var max = AVL.max;
-var balanced_node = AVL.balanced_node;
-var concat = AVL.concat;
-var insert_min = AVL.insert_min;
-var insert_max = AVL.insert_max;
+var max = _AVL.max;
+var balanced_node = _AVL.balanced_node;
+var concat = _AVL.concat;
+var insert_min = _AVL.insert_min;
+var insert_max = _AVL.insert_max;
 
-var array_insert_at = array.insert_at;
-var array_modify_at = array.modify_at;
-var array_remove_at = array.remove_at;
+var array_insert_at = _Array.insert_at;
+var array_modify_at = _Array.modify_at;
+var array_remove_at = _Array.remove_at;
+
+var hash_interface = _hash.hash_interface;
+var hash = _hash.hash;
+
+var join_lines = _util.join_lines;
+
+var toJS_array = _toJS.toJS_array;
+var toJS_interface = _toJS.toJS_interface;
 
 
 // It's faster to use arrays for small lists
@@ -286,11 +299,28 @@ function ImmutableList(root, tail, tail_size) {
   this.root = root;
   this.tail = tail;
   this.tail_size = tail_size;
+  this.hash = null;
 }
 
-// TODO is this a good idea ?
-ImmutableList.prototype = Object.create(null);
+ImmutableList.prototype = Object.create(Immutable);
 
+ImmutableList.prototype[hash_interface] = function (x) {
+  if (x.hash === null) {
+    var a = [];
+
+    x.forEach(function (x) {
+      a.push(hash(x));
+    });
+
+    x.hash = "(List" + join_lines(a, "  ") + ")";
+  }
+
+  return x.hash;
+};
+
+ImmutableList.prototype[toJS_interface] = toJS_array;
+
+// TODO Symbol.iterator
 ImmutableList.prototype.forEach = function (f) {
   this.root.forEach(f);
   this.tail.forEachRev(f);
@@ -545,5 +575,19 @@ ImmutableList.prototype.concat = function (right) {
     return self;
   }
 };
+
+/*ImmutableList.prototype.push = function (value) {
+  var root      = this.root;
+  var tail      = this.tail;
+  var tail_size = this.tail_size;
+
+  if (tail_size === array_limit) {
+    var node = insert_max(root, new ArrayNode(nil, nil, stack_to_array(tail, tail_size)));
+    return new ImmutableList(node, new Cons(value, nil), 1);
+  } else {
+    return new ImmutableList(root, new Cons(value, tail), tail_size + 1);
+  }
+};*/
+
 
 module.exports = ImmutableList;
