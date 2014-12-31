@@ -1,0 +1,6 @@
+/**
+   @function isQueue
+   @param {Any} [x]
+   @return {Boolean} `true` if `x` is a [::Queue]
+   @summary Returns whether `x` is a [::Queue]
+ */

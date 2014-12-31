@@ -1,0 +1,22 @@
+/**
+   @function toJS
+   @param {Any} [x]
+   @return {Any}
+   @summary Converts a [::Dict], [::Set], [::List],
+            [::Queue], or [::Stack] to its JavaScript
+            equivalent
+   @desc
+     Most things are returned as-is, except:
+
+     * [::Dict] are converted to a JavaScript object. The keys must be strings.
+     * [::Set] are converted to a JavaScript array.
+     * [::List] are converted to a JavaScript array.
+     * [::Queue] are converted to a JavaScript array.
+     * [::Stack] are converted to a JavaScript array.
+
+     This conversion takes `O(n)` time.
+
+     This is useful if you like using [::Dict], [::Set],
+     [::List], [::Queue], or [::Stack] but you want to use a
+     library that requires ordinary JavaScript objects/arrays.
+ */

@@ -1,0 +1,6 @@
+/**
+   @function isSortedSet
+   @param {Any} [x]
+   @return {Boolean} `true` if `x` is a [::SortedSet]
+   @summary Returns whether `x` is a [::SortedSet]
+ */

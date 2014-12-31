@@ -1,0 +1,135 @@
+/**
+   @class Dict
+   @summary An immutable dictionary mapping keys to values
+
+   @function Dict
+   @param {optional sequence::Sequence|Object} [obj]
+   @desc
+     If `obj` is a [sequence::Sequence], the values must
+     be arrays of `[key, value]`, which will be added to
+     the dict.
+
+     If `obj` is a JavaScript literal like `{ foo: 1 }`,
+     then the keys/values will be added to the dict.
+
+     This takes `O(n * log2(n))` time, unless `obj` is already
+     a [::Dict], in which case it takes `O(1)` time.
+
+     ----
+
+     The keys are in unsorted order, so you cannot rely upon
+     the order. If you need to maintain key order, use a [::SortedDict].
+
+     Mutable objects can be used as keys, and they are treated as
+     equal only if they are exactly the same object:
+
+         var obj1 = { foo: 1 };
+         var obj2 = { foo: 1 };
+
+         var dict = Dict().set(obj1, "bar")
+                          .set(obj2, "qux");
+
+         // Returns "bar"
+         dict.get(obj1);
+
+         // Returns "qux"
+         dict.get(obj2);
+
+     You can also use a [::Dict], [::Set], or [::List] as keys, and
+     they are treated as equal if their keys/values are equal:
+
+         var obj1 = Dict({ foo: 1 });
+         var obj2 = Dict({ foo: 1 });
+
+         var dict = Dict().set(obj1, "bar")
+                          .set(obj2, "qux");
+
+         // Returns "qux"
+         dict.get(obj1);
+
+         // Returns "qux"
+         dict.get(obj2);
+
+     Because `obj1` and `obj2` have the same keys/values, they are
+     equal.
+
+   @function Dict.isEmpty
+   @return {Boolean} `true` if the dict is empty
+   @summary Returns whether the dict is empty or not
+   @desc
+     This function runs in `O(1)` time.
+
+     A dict is empty if it has no keys/values in it.
+
+   @function Dict.has
+   @param {Any} [key] The key to search for in the dict
+   @return {Boolean} `true` if `key` exists in the dict
+   @summary Returns whether `key` exists in the dict
+   @desc
+     This function runs in `O(log2(n))` worst-case time.
+
+   @function Dict.get
+   @param {Any} [key] The key to search for in the dict
+   @param {optional Any} [default] Value to return if `key` is not in the dict
+   @return {Any} The value for `key` in the dict, or `default` if not found
+   @summary Returns the value for `key` in the dict, or `default` if not found
+   @desc
+     This function runs in `O(log2(n))` worst-case time.
+
+     If `key` is not in the dict:
+
+     * If `default` is provided, it is returned.
+     * If `default` is not provided, an error is thrown.
+
+   @function Dict.set
+   @param {Any} [key] The key to set in the dict
+   @param {Any} [value] The value to use for `key`
+   @return {::Dict} A new dict with `key` set to `value`
+   @summary Returns a new dict with `key` set to `value`
+   @desc
+     This function runs in `O(log2(n))` worst-case time.
+
+     This does not modify the dict, it returns a new dict.
+
+     If `key` already exists, it is overwritten.
+
+     If `key` does not exist, it is created.
+
+   @function Dict.remove
+   @param {Any} [key] The key to remove from the dict
+   @return {::Dict} A new dict with `key` removed
+   @summary Returns a new dict with `key` removed
+   @desc
+     This function runs in `O(log2(n))` worst-case time.
+
+     This does not modify the dict, it returns a new dict.
+
+     If `key` is not in the dict, it will do nothing.
+
+   @function Dict.modify
+   @param {Any} [key] The key to modify in the dict
+   @param {Function} [fn] The function which will modify the value at `key`
+   @return {::Dict} A new dict with `key` modified by `fn`
+   @summary Returns a new dict with `key` modified by `fn`
+   @desc
+     This function runs in `O(log2(n))` worst-case time.
+
+     This does not modify the dict, it returns a new dict.
+
+     This function calls `fn` with the value for `key`, and
+     whatever `fn` returns will be used as the new value for
+     `key`:
+
+         var dict = Dict({
+           "foo": 1,
+           "bar": 2
+         });
+
+         // This returns the dict { "foo": 11, "bar": 2 }
+         dict.modify("foo", function (x) { return x + 10 });
+
+         // This returns the dict { "foo": 1, "bar": 12 }
+         dict.modify("bar", function (x) { return x + 10 });
+
+     If `key` is not in the dict, it will throw an error.
+ */

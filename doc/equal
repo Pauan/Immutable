@@ -1,0 +1,92 @@
+/**
+   @function equal
+   @param {Any} [x]
+   @param {Any} [y]
+   @return {Boolean} `true` if `x` and `y` are equal
+   @summary Returns whether `x` and `y` are equal
+   @desc
+     Simple things like numbers and strings are
+     treated as equal if they have the same value:
+
+         equal(1, 1); // true
+         equal("foo", "foo"); // true
+
+     This takes `O(1)` time.
+
+     ----
+
+     Mutable objects are treated as equal if they
+     are exactly the same object:
+
+         var obj = {};
+
+         equal(obj, obj); // true
+
+     This takes `O(1)` time.
+
+     ----
+
+     [::Dict] are treated as equal if they have
+     the same keys/values:
+
+         equal(Dict({ foo: 1 }),
+               Dict({ foo: 1 })); // true
+
+     This takes `O(n)` time, except the results
+     are cached so that afterwards it takes `O(1)`
+     time.
+
+     ----
+
+     [::Set] are treated as equal if they have
+     the same values:
+
+         equal(Set([1]),
+               Set([1])); // true
+
+     This takes `O(n)` time, except the results
+     are cached so that afterwards it takes `O(1)`
+     time.
+
+     ----
+
+     [::List] are treated as equal if they have
+     the same values in the same order:
+
+         equal(List([1]),
+               List([1])); // true
+
+     This takes `O(n)` time, except the results
+     are cached so that afterwards it takes `O(1)`
+     time.
+
+     ----
+
+     [::Queue] are treated as equal if they have
+     the same values in the same order:
+
+         equal(Queue([1]),
+               Queue([1])); // true
+
+     This takes `O(n)` time, except the results
+     are cached so that afterwards it takes `O(1)`
+     time.
+
+     ----
+
+     [::Stack] are treated as equal if they have
+     the same values in the same order:
+
+         equal(Stack([1]),
+               Stack([1])); // true
+
+     This takes `O(n)` time, except the results
+     are cached so that afterwards it takes `O(1)`
+     time.
+
+     ----
+
+     [::SortedDict] and [::SortedSet] are the
+     same as [::Dict] and [::Set] except that
+     the sort order must also be the same.
+ */

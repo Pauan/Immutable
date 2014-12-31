@@ -1,0 +1,6 @@
+/**
+   @function isList
+   @param {Any} [x]
+   @return {Boolean} `true` if `x` is a [::List]
+   @summary Returns whether `x` is a [::List]
+ */

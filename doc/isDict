@@ -1,0 +1,6 @@
+/**
+   @function isDict
+   @param {Any} [x]
+   @return {Boolean} `true` if `x` is a [::Dict] or [::SortedDict]
+   @summary Returns whether `x` is a [::Dict] or [::SortedDict]
+ */

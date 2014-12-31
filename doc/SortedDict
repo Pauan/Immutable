@@ -1,0 +1,32 @@
+/**
+   @function SortedDict
+   @param {Function} [sort] Function that determines the sort order
+   @param {optional sequence::Sequence|Object} [obj]
+   @return {::Dict} A dictionary where the keys are sorted by `sort`
+   @summary Returns a [::Dict] where the keys are sorted by `sort`
+   @desc
+     The sort order for the keys is determined by the `sort` function.
+
+     The `sort` function is given two keys:
+
+     * If it returns `0` the keys are treated as equal.
+     * If it returns `-1` the first key is lower than the second key.
+     * If it returns `1` the first key is greater than the second key.
+
+     The sort order must be consistent:
+
+     * If given the same keys, the function must return the same result.
+     * If it returns `0` for `foo` and `bar`, it must return `0` for `bar` and `foo`.
+     * If it returns `-1` for `foo` and `bar`, it must return `1` for `bar` and `foo`.
+     * If it returns `1` for `foo` and `bar`, it must return `-1` for `bar` and `foo`.
+
+     If the sort order is not consistent, the behavior of
+     [::SortedDict] will be unpredictable. This is not a
+     bug in [::SortedDict], it is a bug in your sort
+     function.
+
+     ----
+
+     The `obj` parameter is exactly the same as for [::Dict],
+     except that the keys are sorted.
+ */

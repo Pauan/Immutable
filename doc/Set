@@ -1,0 +1,165 @@
+/**
+   @class Set
+   @summary An immutable unordered sequence of values, without duplicates
+
+   @function Set
+   @param {optional sequence::Sequence} [seq]
+   @desc
+     The values from `seq` will be inserted into the set,
+     without duplicates.
+
+     This takes `O(n)` time, unless `seq` is already a
+     [::Set], in which case it takes `O(1)` time.
+
+     ----
+
+     The values are in unsorted order, so you cannot rely upon
+     the order. If you need to maintain order, use a [::SortedSet]
+     or [::List].
+
+     Mutable objects can be used as values, and they are treated
+     as equal only if they are exactly the same object:
+
+         var obj1 = { foo: 1 };
+         var obj2 = { foo: 1 };
+
+         var set = Set([obj1, obj2]);
+
+         // Returns true
+         set.has(obj1);
+
+         // Returns true
+         set.has(obj2);
+
+         // Removes obj1 from the set
+         set = set.remove(obj1);
+
+         // Returns true
+         set.has(obj2);
+
+     You can also use a [::Dict], [::Set], or [::List] as values,
+     and they are treated as equal if their keys/values are equal:
+
+         var obj1 = Dict({ foo: 1 });
+         var obj2 = Dict({ foo: 1 });
+
+         var set = Set([obj1, obj2]);
+
+         // Returns true
+         set.has(obj1);
+
+         // Returns true
+         set.has(obj2);
+
+         // Removes obj1 from the set
+         set = set.remove(obj1);
+
+         // Returns false
+         set.has(obj2);
+
+     Because `obj1` and `obj2` have the same keys/values, they are
+     equal, and so they are treated as duplicates.
+
+   @function Set.isEmpty
+   @return {Boolean} `true` if the set is empty
+   @summary Returns whether the set is empty or not
+   @desc
+     This function runs in `O(1)` time.
+
+     A set is empty if it has no values in it.
+
+   @function Set.has
+   @param {Any} [value] The value to search for in the set
+   @return {Boolean} `true` if `value` exists in the set
+   @summary Returns whether `value` exists in the set
+   @desc
+     This function runs in `O(log2(n))` worst-case time.
+
+   @function Set.add
+   @param {Any} [value] The value to add to the set
+   @return {::Set} A new set with `value` added to it
+   @summary Returns a new set with `value` added to it
+   @desc
+     This function runs in `O(log2(n))` worst-case time.
+
+     This does not modify the set, it returns a new set.
+
+     If `value` is already in the set, it will do nothing.
+
+   @function Set.remove
+   @param {Any} [value] The value to remove from the set
+   @return {::Set} A new set with `value` removed
+   @summary Returns a new set with `value` removed
+   @desc
+     This function runs in `O(log2(n))` worst-case time.
+
+     This does not modify the set, it returns a new set.
+
+     If `value` is not in the set, it will do nothing.
+
+   @function Set.union
+   @param {sequence::Sequence} [other] Sequence of values to union with this set
+   @return {::Set} A new set which is the union of this set and `other`
+   @summary Returns a new set which is the union of this set and `other`
+   @desc
+     This function runs in `O(n * log2(n))` worst-case time.
+
+     This does not modify the set, it returns a new set.
+
+     This function returns a set which contains all the values from
+     this set, and also all the values from `other`.
+
+     This is a standard [set union](http://en.wikipedia.org/wiki/Union_%28set_theory%29).
+
+     `other` can be any [sequence::Sequence] of values.
+
+   @function Set.intersect
+   @param {sequence::Sequence} [other] Sequence of values to intersect with this set
+   @return {::Set} A new set which is the intersection of this set and `other`
+   @summary Returns a new set which is the intersection of this set and `other`
+   @desc
+     This function runs in `O(n * 2 * log2(n))` worst-case time.
+
+     This does not modify the set, it returns a new set.
+
+     This function returns a set which contains all the values that
+     are in both this set *and* `other`.
+
+     This is a standard [set intersection](http://en.wikipedia.org/wiki/Intersection_%28set_theory%29).
+
+     `other` can be any [sequence::Sequence] of values.
+
+   @function Set.disjoint
+   @param {sequence::Sequence} [other] Sequence of values to disjoint with this set
+   @return {::Set} A new set which is disjoint with this set and `other`
+   @summary Returns a new set which is disjoint with this set and `other`
+   @desc
+     This function runs in `O(n * 2 * log2(n))` worst-case time.
+
+     This does not modify the set, it returns a new set.
+
+     This function returns a set which contains all the values in
+     this set, and all the values in `other`, but *not* the
+     values which are in both this set and `other`.
+
+     This is also called the [symmetric difference](http://en.wikipedia.org/wiki/Symmetric_difference)
+     of the two sets.
+
+     `other` can be any [sequence::Sequence] of values.
+
+   @function Set.subtract
+   @param {sequence::Sequence} [other] Sequence of values to subtract from this set
+   @return {::Set} A new set which is this set subtracted by `other`
+   @summary Returns a new set which is this set subtracted by `other`
+   @desc
+     This function runs in `O(n * log2(n))` worst-case time.
+
+     This does not modify the set, it returns a new set.
+
+     This function returns a set which contains all the values in
+     this set, but without the values from `other`.
+
+     This is also called the [relative complement](http://en.wikipedia.org/wiki/Complement_%28set_theory%29) of the two sets.
+
+     `other` can be any [sequence::Sequence] of values.
+ */
