@@ -1,15 +1,10 @@
 var _immutable = require("../index");
-var _Array     = require("../src/Array");
-var _Sorted    = require("../src/Sorted");
-
 var assert     = require("./assert");
-var nil        = require("../src/nil");
 
-var shuffle = _Array.shuffle;
-
-var defaultSort = _Sorted.defaultSort;
-var simpleSort = _Sorted.simpleSort;
-
+// TODO hacky
+var nil = _immutable._nil;
+var defaultSort = _immutable.defaultSort;
+var simpleSort = _immutable.simpleSort;
 var Dict = _immutable.Dict;
 var Set = _immutable.Set;
 var List = _immutable.List;
@@ -27,6 +22,28 @@ var isSortedSet = _immutable.isSortedSet;
 var isQueue = _immutable.isQueue;
 var isStack = _immutable.isStack;
 var isImmutable = _immutable.isImmutable;
+
+
+// TODO move this into a different module
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+// http://bost.ocks.org/mike/shuffle/
+// TODO test whether this algorithm has statistical bias or not
+// TODO this is only needed for "test/test.js"
+function shuffle(array) {
+  var i = array.length;
+
+  while (i) {
+    var j = randomInt(0, i);
+    --i;
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}
 
 
 var TESTS_SUCCEEDED = 0;
