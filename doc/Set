@@ -102,7 +102,7 @@
    @return {::Set} A new set which is the union of this set and `other`
    @summary Returns a new set which is the union of this set and `other`
    @desc
-     This function runs in `O(n * log2(n))` worst-case time.
+     This function runs in `O(log2(n) * m)` worst-case time.
 
      This does not modify the set, it returns a new set.
 
@@ -118,7 +118,7 @@
    @return {::Set} A new set which is the intersection of this set and `other`
    @summary Returns a new set which is the intersection of this set and `other`
    @desc
-     This function runs in `O(n * 2 * log2(n))` worst-case time.
+     This function runs in `O(2 * log2(n) * m)` worst-case time.
 
      This does not modify the set, it returns a new set.
 
@@ -134,7 +134,7 @@
    @return {::Set} A new set which is disjoint with this set and `other`
    @summary Returns a new set which is disjoint with this set and `other`
    @desc
-     This function runs in `O(n * 2 * log2(n))` worst-case time.
+     This function runs in `O(2 * log2(n) * m)` worst-case time.
 
      This does not modify the set, it returns a new set.
 
@@ -152,7 +152,7 @@
    @return {::Set} A new set which is this set subtracted by `other`
    @summary Returns a new set which is this set subtracted by `other`
    @desc
-     This function runs in `O(n * log2(n))` worst-case time.
+     This function runs in `O(log2(n) * m)` worst-case time.
 
      This does not modify the set, it returns a new set.
 
