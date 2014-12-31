@@ -1,30 +1,10 @@
-var _AVL      = require("./AVL");
-var _Sorted   = require("./Sorted");
-var _hash     = require("./hash");
-var _util     = require("./util");
-var _toJS     = require("./toJS");
-
-var nil       = require("./nil");
-var Immutable = require("./Immutable");
-
-var max = _AVL.max;
-
-var defaultSort = _Sorted.defaultSort;
-var key_get = _Sorted.key_get;
-var key_set = _Sorted.key_set;
-var key_modify = _Sorted.key_modify;
-var key_remove = _Sorted.key_remove;
-
-var pad_right = _util.pad_right;
-var repeat = _util.repeat;
-var join_lines = _util.join_lines;
-
-var hash = _hash.hash;
-var hash_interface = _hash.hash_interface;
-
-var toJS_object = _toJS.toJS_object;
-var toJS_interface = _toJS.toJS_interface;
-
+import { max } from "./AVL";
+import { defaultSort, key_get, key_set, key_modify, key_remove } from "./Sorted";
+import { hash, hash_interface } from "./hash";
+import { pad_right, repeat, join_lines } from "./util";
+import { toJS_object, toJS_interface } from "./toJS";
+import { nil } from "./nil";
+import { Immutable } from "./Immutable";
 
 function KeyNode(left, right, key, value) {
   this.left  = left;
@@ -56,7 +36,7 @@ KeyNode.prototype.forEach = function (f) {
 };
 
 
-function ImmutableDict(root, sort) {
+export function ImmutableDict(root, sort) {
   this.root = root;
   this.sort = sort;
   this.hash = null;
@@ -178,6 +158,3 @@ ImmutableDict.prototype.modify = function (key, f) {
     return new ImmutableDict(node, sort);
   }
 };
-
-
-module.exports = ImmutableDict;

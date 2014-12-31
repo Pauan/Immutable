@@ -1,11 +1,11 @@
-var toJS_interface = "__DEE5921D-20A6-40D0-9A74-40C5BAC8C663_toJS__";
+export var toJS_interface = "__DEE5921D-20A6-40D0-9A74-40C5BAC8C663_toJS__";
 
 // TODO move this into another module ?
 function isObject(x) {
   return Object(x) === x;
 }
 
-function toJS(x) {
+export function toJS(x) {
   if (isObject(x)) {
     var fn = x[toJS_interface];
     if (fn != null) {
@@ -18,7 +18,7 @@ function toJS(x) {
   }
 }
 
-function toJS_object(x) {
+export function toJS_object(x) {
   var o = {};
 
   x.forEach(function (_array) {
@@ -36,7 +36,7 @@ function toJS_object(x) {
   return o;
 }
 
-function toJS_array(x) {
+export function toJS_array(x) {
   var a = [];
 
   x.forEach(function (value) {
@@ -45,9 +45,3 @@ function toJS_array(x) {
 
   return a;
 }
-
-
-exports.toJS_interface = toJS_interface;
-exports.toJS = toJS;
-exports.toJS_object = toJS_object;
-exports.toJS_array = toJS_array;

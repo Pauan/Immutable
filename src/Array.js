@@ -1,4 +1,4 @@
-function copy(array) {
+export function copy(array) {
   var len = array.length;
   var out = new Array(len);
 
@@ -9,7 +9,7 @@ function copy(array) {
   return out;
 }
 
-function insert_at(array, index, value) {
+export function insert(array, index, value) {
   var len = array.length + 1;
 
   var out = new Array(len);
@@ -31,7 +31,7 @@ function insert_at(array, index, value) {
   return out;
 }
 
-function modify_at(array, index, f) {
+export function modify(array, index, f) {
   var old_value = array[index];
   var new_value = f(old_value);
 
@@ -45,7 +45,7 @@ function modify_at(array, index, f) {
   }
 }
 
-function remove_at(array, index) {
+export function remove(array, index) {
   var len = array.length - 1;
 
   var out = new Array(len);
@@ -63,9 +63,3 @@ function remove_at(array, index) {
 
   return out;
 }
-
-
-exports.copy = copy;
-exports.insert_at = insert_at;
-exports.modify_at = modify_at;
-exports.remove_at = remove_at;

@@ -1,31 +1,13 @@
-var _Array    = require("./Array");
-var _AVL      = require("./AVL");
-var _hash     = require("./hash");
-var _util     = require("./util");
-var _toJS     = require("./toJS");
+import { insert as array_insert, modify as array_modify, remove as array_remove } from "./Array";
+import { max, balanced_node, concat, insert_min, insert_max } from "./AVL";
+import { hash_interface, hash } from "./hash";
+import { join_lines } from "./util";
+import { toJS_array, toJS_interface } from "./toJS";
+import { Immutable } from "./Immutable";
+import { nil } from "./nil";
 
 // We use conses at the very end of the list for very fast O(1) push
-var Cons      = require("./Cons");
-var Immutable = require("./Immutable");
-var nil       = require("./nil");
-
-var max = _AVL.max;
-var balanced_node = _AVL.balanced_node;
-var concat = _AVL.concat;
-var insert_min = _AVL.insert_min;
-var insert_max = _AVL.insert_max;
-
-var array_insert_at = _Array.insert_at;
-var array_modify_at = _Array.modify_at;
-var array_remove_at = _Array.remove_at;
-
-var hash_interface = _hash.hash_interface;
-var hash = _hash.hash;
-
-var join_lines = _util.join_lines;
-
-var toJS_array = _toJS.toJS_array;
-var toJS_interface = _toJS.toJS_interface;
+import { Cons } from "./Cons";
 
 
 // It's faster to use arrays for small lists
@@ -173,7 +155,7 @@ function nth_insert(node, index, value) {
       var len   = array.length;
       // TODO test this
       if (index <= len) {
-        array = array_insert_at(array, index, value);
+        array = array_insert(array, index, value);
 
         // TODO this fails when array_limit is 1
         if (len === array_limit) {
@@ -219,7 +201,7 @@ function nth_modify(node, index, f) {
     var len   = array.length;
     // TODO test this
     if (index < len) {
-      var new_array = array_modify_at(array, index, f);
+      var new_array = array_modify(array, index, f);
       if (new_array === array) {
         return node;
       } else {
@@ -253,8 +235,8 @@ function nth_remove(node, index) {
     var len   = array.length;
     // TODO test this
     if (index < len) {
-      // TODO use `array.length === 1` so we can skip the call to `array_remove_at`
-      array = array_remove_at(array, index);
+      // TODO use `array.length === 1` so we can skip the call to `array_remove`
+      array = array_remove(array, index);
 
       if (array.length === 0) {
         return concat(left, right);
@@ -295,7 +277,7 @@ function nth_slice(slices, node, from, to) {
 }
 
 
-function ImmutableList(root, tail, tail_size) {
+export function ImmutableList(root, tail, tail_size) {
   this.root = root;
   this.tail = tail;
   this.tail_size = tail_size;
@@ -398,7 +380,7 @@ ImmutableList.prototype.insert = function (value, index) {
       return new ImmutableList(nth_insert(root, index, value), tail, tail_size);
 
     } else {
-      var array = array_insert_at(stack_to_array(tail, tail_size), index - size, value);
+      var array = array_insert(stack_to_array(tail, tail_size), index - size, value);
       var node  = insert_max(root, new ArrayNode(nil, nil, array));
       return new ImmutableList(node, nil, 0);
     }
@@ -432,7 +414,7 @@ ImmutableList.prototype.remove = function (index) {
       return new ImmutableList(nth_remove(root, index), tail, tail_size);
 
     } else {
-      var array = array_remove_at(stack_to_array(tail, tail_size), index - size);
+      var array = array_remove(stack_to_array(tail, tail_size), index - size);
       var node  = insert_max(root, new ArrayNode(nil, nil, array));
       return new ImmutableList(node, nil, 0);
     }
@@ -473,7 +455,7 @@ ImmutableList.prototype.modify = function (index, f) {
 
     } else {
       var stack = stack_to_array(tail, tail_size);
-      var array = array_modify_at(stack, index - size, f);
+      var array = array_modify(stack, index - size, f);
       if (array === stack) {
         return this;
       } else {
@@ -588,6 +570,3 @@ ImmutableList.prototype.concat = function (right) {
     return new ImmutableList(root, new Cons(value, tail), tail_size + 1);
   }
 };*/
-
-
-module.exports = ImmutableList;

@@ -1,21 +1,11 @@
-var _toJS     = require("./toJS");
-var _hash     = require("./hash");
-var _util     = require("./util");
+import { toJS_array, toJS_interface } from "./toJS";
+import { hash, hash_interface } from "./hash";
+import { join_lines } from "./util";
+import { Cons } from "./Cons";
+import { nil } from "./nil";
+import { Immutable } from "./Immutable";
 
-var Cons      = require("./Cons");
-var nil       = require("./nil");
-var Immutable = require("./Immutable");
-
-var hash = _hash.hash;
-var hash_interface = _hash.hash_interface;
-
-var toJS_array = _toJS.toJS_array;
-var toJS_interface = _toJS.toJS_interface;
-
-var join_lines = _util.join_lines;
-
-
-function ImmutableQueue(left, right, len) {
+export function ImmutableQueue(left, right, len) {
   this.left  = left;
   this.right = right;
   this.len   = len;
@@ -101,6 +91,3 @@ ImmutableQueue.prototype.concat = function (right) {
 
   return self;
 };
-
-
-module.exports = ImmutableQueue;

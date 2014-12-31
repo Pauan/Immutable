@@ -1,27 +1,10 @@
-var _AVL      = require("./AVL");
-var _Sorted   = require("./Sorted");
-var _hash     = require("./hash");
-var _util     = require("./util");
-var _toJS     = require("./toJS");
-
-var nil       = require("./nil");
-var Immutable = require("./Immutable");
-
-var max = _AVL.max;
-
-var defaultSort = _Sorted.defaultSort;
-var key_get = _Sorted.key_get;
-var key_set = _Sorted.key_set;
-var key_remove = _Sorted.key_remove;
-
-var hash_interface = _hash.hash_interface;
-var hash = _hash.hash;
-
-var join_lines = _util.join_lines;
-
-var toJS_array = _toJS.toJS_array;
-var toJS_interface = _toJS.toJS_interface;
-
+import { max } from "./AVL";
+import { defaultSort, key_get, key_set, key_remove } from "./Sorted";
+import { hash, hash_interface } from "./hash";
+import { join_lines } from "./util";
+import { toJS_array, toJS_interface } from "./toJS";
+import { nil } from "./nil";
+import { Immutable } from "./Immutable";
 
 function SetNode(left, right, key) {
   this.left  = left;
@@ -51,7 +34,7 @@ SetNode.prototype.forEach = function (f) {
 };
 
 
-function ImmutableSet(root, sort) {
+export function ImmutableSet(root, sort) {
   this.root = root;
   this.sort = sort;
   this.hash = null;
@@ -181,6 +164,3 @@ ImmutableSet.prototype.subtract = function (other) {
 
   return self;
 };
-
-
-module.exports = ImmutableSet;

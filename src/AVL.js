@@ -1,11 +1,10 @@
 // http://arclanguage.org/item?id=14181
 // http://arclanguage.org/item?id=18936
 
-var nil = require("./nil");
-
+import { nil } from "./nil";
 
 // Faster than using Math.max
-function max(x, y) {
+export function max(x, y) {
   if (x > y) {
     return x;
   } else {
@@ -13,7 +12,7 @@ function max(x, y) {
   }
 }
 
-function balanced_node(node, left, right) {
+export function balanced_node(node, left, right) {
   var l_depth = left.depth;
   var r_depth = right.depth;
 
@@ -57,7 +56,7 @@ function balanced_node(node, left, right) {
   }
 }
 
-function concat(x, y) {
+export function concat(x, y) {
   if (x === nil) {
     return y;
 
@@ -75,7 +74,7 @@ function concat(x, y) {
   }
 }
 
-function insert_min(node, new_node) {
+export function insert_min(node, new_node) {
   if (node === nil) {
     return new_node;
   } else {
@@ -84,7 +83,7 @@ function insert_min(node, new_node) {
   }
 }
 
-function insert_max(node, new_node) {
+export function insert_max(node, new_node) {
   if (node === nil) {
     return new_node;
   } else {
@@ -92,10 +91,3 @@ function insert_max(node, new_node) {
     return balanced_node(node, node.left, insert_max(node.right, new_node));
   }
 }
-
-
-exports.max = max;
-exports.balanced_node = balanced_node;
-exports.concat = concat;
-exports.insert_min = insert_min;
-exports.insert_max = insert_max;

@@ -1,15 +1,8 @@
-var _hash = require("./hash");
-var _AVL  = require("./AVL");
+import { hash } from "./hash";
+import { concat, balanced_node } from "./AVL";
+import { nil } from "./nil";
 
-var nil   = require("./nil");
-
-var concat = _AVL.concat;
-var balanced_node = _AVL.balanced_node;
-
-var hash = _hash.hash;
-
-
-function simpleSort(x, y) {
+export function simpleSort(x, y) {
   if (x === y) {
     return 0;
   } else if (x < y) {
@@ -20,14 +13,14 @@ function simpleSort(x, y) {
 }
 
 // TODO store the hash rather than the key for Dict and Set ?
-function defaultSort(x, y) {
+export function defaultSort(x, y) {
   x = hash(x);
   y = hash(y);
   return simpleSort(x, y);
 }
 
 // TODO what if `sort` suspends ?
-function key_get(node, sort, key) {
+export function key_get(node, sort, key) {
   while (node !== nil) {
     var order = sort(key, node.key);
     if (order === 0) {
@@ -45,7 +38,7 @@ function key_get(node, sort, key) {
 }
 
 // TODO what if `sort` suspends ?
-function key_set(node, sort, key, new_node) {
+export function key_set(node, sort, key, new_node) {
   if (node === nil) {
     return new_node;
 
@@ -78,7 +71,7 @@ function key_set(node, sort, key, new_node) {
 
 // TODO code duplication with key_set
 // TODO what if `sort` suspends ?
-function key_modify(node, sort, key, f) {
+export function key_modify(node, sort, key, f) {
   if (node === nil) {
     throw new Error("Key " + key + " not found");
 
@@ -111,7 +104,7 @@ function key_modify(node, sort, key, f) {
 }
 
 // TODO what if `sort` suspends ?
-function key_remove(node, sort, key) {
+export function key_remove(node, sort, key) {
   if (node === nil) {
     return node;
 
@@ -141,11 +134,3 @@ function key_remove(node, sort, key) {
     }
   }
 }
-
-
-exports.simpleSort = simpleSort;
-exports.defaultSort = defaultSort;
-exports.key_get = key_get;
-exports.key_set = key_set;
-exports.key_modify = key_modify;
-exports.key_remove = key_remove;

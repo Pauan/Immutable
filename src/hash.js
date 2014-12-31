@@ -1,8 +1,8 @@
-var hash_interface = "__CFB38D33-7CD8-419E-A1B6-61D1B8AC7C83_hash__";
+export var hash_interface = "__CFB38D33-7CD8-419E-A1B6-61D1B8AC7C83_hash__";
 
 var mutable_hash_id = 0;
 
-function hash(x) {
+export function hash(x) {
   var type = typeof x;
   // TODO this is probably pretty inefficient
   if (type === "string") {
@@ -35,7 +35,3 @@ function hash(x) {
     }
   }
 }
-
-
-exports.hash_interface = hash_interface;
-exports.hash = hash;

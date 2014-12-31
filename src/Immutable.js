@@ -1,15 +1,9 @@
-var _hash = require("./hash");
+import { hash } from "./hash";
 
-var hash = _hash.hash;
-
-
-var Immutable = {};
+export var Immutable = {};
 
 Immutable.toString = function () {
   return hash(this);
 };
 
 Immutable.inspect = Immutable.toString;
-
-
-module.exports = Immutable;

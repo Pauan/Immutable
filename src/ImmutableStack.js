@@ -1,21 +1,11 @@
-var _toJS     = require("./toJS");
-var _hash     = require("./hash");
-var _util     = require("./util");
+import { toJS_array, toJS_interface } from "./toJS";
+import { hash, hash_interface } from "./hash";
+import { join_lines } from "./util";
+import { Immutable } from "./Immutable";
+import { nil } from "./nil";
+import { Cons } from "./Cons";
 
-var Immutable = require("./Immutable");
-var nil       = require("./nil");
-var Cons      = require("./Cons");
-
-var toJS_array = _toJS.toJS_array;
-var toJS_interface = _toJS.toJS_interface;
-
-var hash = _hash.hash;
-var hash_interface = _hash.hash_interface;
-
-var join_lines = _util.join_lines;
-
-
-function ImmutableStack(root, len) {
+export function ImmutableStack(root, len) {
   this.root = root;
   this.len  = len;
   this.hash = null;
@@ -88,6 +78,3 @@ ImmutableStack.prototype.concat = function (right) {
 
   return self;
 };
-
-
-module.exports = ImmutableStack;
