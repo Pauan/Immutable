@@ -1,5 +1,6 @@
 import { hash } from "./hash";
 import { toJS } from "./toJS";
+import { isJSLiteral } from "./util";
 import { simpleSort, defaultSort } from "./Sorted";
 import { ImmutableDict } from "./ImmutableDict";
 import { ImmutableSet } from "./ImmutableSet";
@@ -45,12 +46,29 @@ export function isImmutable(x) {
   return isDict(x) || isSet(x) || isList(x) || isQueue(x) || isStack(x);
 }
 
+export function fromJS(x) {
+  if (Array.isArray(x)) {
+    var out = List();
 
-// TODO move into a different module
-function isJSLiteral(x) {
-  var proto = Object.getPrototypeOf(x);
-  // TODO this won't work cross-realm
-  return proto === null || proto === Object.prototype;
+    for (var i = 0, l = x.length; i < l; ++i) {
+      out = out.insert(fromJS(x[i]));
+    }
+
+    return out;
+
+  } else if (isJSLiteral(x)) {
+    var out = Dict();
+
+    // TODO should this only include own properties ...?
+    for (var s in x) {
+      out = out.set(s, fromJS(x[s]));
+    }
+
+    return out;
+
+  } else {
+    return x;
+  }
 }
 
 export function SortedDict(sort, obj) {
@@ -183,6 +201,7 @@ export function Stack(x) {
   }
 })(this, function (exports) {
   exports.equal = equal;
+  exports.fromJS = fromJS;
   exports.toJS = toJS;
   exports.isDict = isDict;
   exports.isSet = isSet;

@@ -1,0 +1,17 @@
+/**
+   @function fromJS
+   @param {Any} [x]
+   @return {Any}
+   @summary Converts a JavaScript object into its Immutable equivalent
+   @desc
+     Most things are returned as-is, except:
+
+     * JavaScript object literals are converted into a [::Dict].
+     * JavaScript arrays are converted into a [::List].
+
+     This conversion takes `O(n)` time.
+
+     This is useful if you like using [::Dict], [::Set],
+     [::List], [::Queue], or [::Stack] but you want to use a
+     library that gives you ordinary JavaScript objects/arrays.
+ */

@@ -1,9 +1,6 @@
-export var toJS_interface = "__DEE5921D-20A6-40D0-9A74-40C5BAC8C663_toJS__";
+import { isObject } from "./util";
 
-// TODO move this into another module ?
-function isObject(x) {
-  return Object(x) === x;
-}
+export var toJS_interface = "__DEE5921D-20A6-40D0-9A74-40C5BAC8C663_toJS__";
 
 export function toJS(x) {
   if (isObject(x)) {

@@ -22,6 +22,7 @@ var isSortedSet = _immutable.isSortedSet;
 var isQueue = _immutable.isQueue;
 var isStack = _immutable.isStack;
 var isImmutable = _immutable.isImmutable;
+var fromJS = _immutable.fromJS;
 
 
 // TODO move this into a different module
@@ -1431,6 +1432,26 @@ test("isImmutable", function () {
   assert(isImmutable(SortedDict(simpleSort)));
   assert(isImmutable(SortedSet(defaultSort)));
   assert(isImmutable(SortedSet(simpleSort)));
+});
+
+test("fromJS", function () {
+  verify_dict(fromJS({ foo: 1 }), { foo: 1 });
+  verify_list(fromJS([1, 2, 3]), [1, 2, 3]);
+
+  verify_dict(fromJS({ foo: { bar: 1 } }), { foo: { bar: 1 } });
+  verify_list(fromJS([1, [2], 3]), [1, [2], 3]);
+
+  verify_dict(fromJS({ foo: { bar: 1 } }).get("foo"), { bar: 1 });
+  verify_list(fromJS([1, [2], 3]).get(1), [2]);
+
+  var x = new Date();
+  assert(fromJS(x) === x);
+
+  var x = /foo/;
+  assert(fromJS(x) === x);
+
+  assert(fromJS("foo") === "foo");
+  assert(fromJS(5) === 5);
 });
 
 
