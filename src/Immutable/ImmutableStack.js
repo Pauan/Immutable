@@ -1,7 +1,7 @@
 import { toJS_array, toJS_interface } from "./toJS";
 import { hash, hash_interface } from "./hash";
 import { join_lines } from "./util";
-import { Immutable } from "./Immutable";
+import { ImmutableBase } from "./ImmutableBase";
 import { nil } from "./nil";
 import { Cons } from "./Cons";
 
@@ -11,7 +11,7 @@ export function ImmutableStack(root, len) {
   this.hash = null;
 }
 
-ImmutableStack.prototype = Object.create(Immutable);
+ImmutableStack.prototype = Object.create(ImmutableBase);
 
 ImmutableStack.prototype[toJS_interface] = toJS_array;
 

@@ -1,13 +1,15 @@
 import { hash } from "./hash";
 import { toJS } from "./toJS";
-import { isJSLiteral } from "./util";
 import { simpleSort, defaultSort } from "./Sorted";
+import { isJSLiteral } from "./util";
 import { ImmutableDict } from "./ImmutableDict";
 import { ImmutableSet } from "./ImmutableSet";
 import { ImmutableList } from "./ImmutableList";
 import { ImmutableQueue } from "./ImmutableQueue";
 import { ImmutableStack } from "./ImmutableStack";
 import { nil } from "./nil";
+
+export { toJS, simpleSort, defaultSort };
 
 
 // TODO support -0 and 0 ?
@@ -221,5 +223,4 @@ export function Stack(x) {
   exports.Stack = Stack;
   exports.simpleSort = simpleSort;
   exports.defaultSort = defaultSort;
-  exports._nil = nil; // TODO hacky
 });

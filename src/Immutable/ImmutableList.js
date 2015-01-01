@@ -3,7 +3,7 @@ import { max, balanced_node, concat, insert_min, insert_max } from "./AVL";
 import { hash_interface, hash } from "./hash";
 import { join_lines } from "./util";
 import { toJS_array, toJS_interface } from "./toJS";
-import { Immutable } from "./Immutable";
+import { ImmutableBase } from "./ImmutableBase";
 import { nil } from "./nil";
 
 // We use conses at the very end of the list for very fast O(1) push
@@ -284,7 +284,7 @@ export function ImmutableList(root, tail, tail_size) {
   this.hash = null;
 }
 
-ImmutableList.prototype = Object.create(Immutable);
+ImmutableList.prototype = Object.create(ImmutableBase);
 
 ImmutableList.prototype[hash_interface] = function (x) {
   if (x.hash === null) {

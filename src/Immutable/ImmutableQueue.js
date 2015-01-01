@@ -3,7 +3,7 @@ import { hash, hash_interface } from "./hash";
 import { join_lines } from "./util";
 import { Cons } from "./Cons";
 import { nil } from "./nil";
-import { Immutable } from "./Immutable";
+import { ImmutableBase } from "./ImmutableBase";
 
 export function ImmutableQueue(left, right, len) {
   this.left  = left;
@@ -12,7 +12,7 @@ export function ImmutableQueue(left, right, len) {
   this.hash  = null;
 }
 
-ImmutableQueue.prototype = Object.create(Immutable);
+ImmutableQueue.prototype = Object.create(ImmutableBase);
 
 ImmutableQueue.prototype[toJS_interface] = toJS_array;
 

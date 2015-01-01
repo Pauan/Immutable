@@ -1,28 +1,8 @@
-var _immutable = require("../immutable");
-var assert     = require("./assert");
-
-// TODO hacky
-var nil = _immutable._nil;
-var defaultSort = _immutable.defaultSort;
-var simpleSort = _immutable.simpleSort;
-var Dict = _immutable.Dict;
-var Set = _immutable.Set;
-var List = _immutable.List;
-var Queue = _immutable.Queue;
-var Stack = _immutable.Stack;
-var equal = _immutable.equal;
-var toJS = _immutable.toJS;
-var SortedSet = _immutable.SortedSet;
-var SortedDict = _immutable.SortedDict;
-var isDict = _immutable.isDict;
-var isSet = _immutable.isSet;
-var isList = _immutable.isList;
-var isSortedDict = _immutable.isSortedDict;
-var isSortedSet = _immutable.isSortedSet;
-var isQueue = _immutable.isQueue;
-var isStack = _immutable.isStack;
-var isImmutable = _immutable.isImmutable;
-var fromJS = _immutable.fromJS;
+import { defaultSort, simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
+         SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
+         isQueue, isStack, isImmutable, fromJS } from "../Immutable/Immutable";
+import { nil } from "../Immutable/nil";
+import { assert } from "./assert";
 
 
 // TODO move this into a different module

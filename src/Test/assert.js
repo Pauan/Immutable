@@ -1,4 +1,4 @@
-function assert(x) {
+export function assert(x) {
   if (arguments.length !== 1) {
     throw new Error("Invalid argument length");
   }
@@ -6,5 +6,3 @@ function assert(x) {
     throw new Error("Failed: " + x);
   }
 }
-
-module.exports = assert;

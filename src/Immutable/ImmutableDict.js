@@ -4,7 +4,7 @@ import { hash, hash_interface } from "./hash";
 import { pad_right, repeat, join_lines } from "./util";
 import { toJS_object, toJS_interface } from "./toJS";
 import { nil } from "./nil";
-import { Immutable } from "./Immutable";
+import { ImmutableBase } from "./ImmutableBase";
 
 function KeyNode(left, right, key, value) {
   this.left  = left;
@@ -42,7 +42,7 @@ export function ImmutableDict(root, sort) {
   this.hash = null;
 }
 
-ImmutableDict.prototype = Object.create(Immutable);
+ImmutableDict.prototype = Object.create(ImmutableBase);
 
 ImmutableDict.prototype[hash_interface] = function (x) {
   if (x.hash === null) {

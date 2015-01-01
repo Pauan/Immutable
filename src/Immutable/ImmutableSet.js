@@ -4,7 +4,7 @@ import { hash, hash_interface } from "./hash";
 import { join_lines } from "./util";
 import { toJS_array, toJS_interface } from "./toJS";
 import { nil } from "./nil";
-import { Immutable } from "./Immutable";
+import { ImmutableBase } from "./ImmutableBase";
 
 function SetNode(left, right, key) {
   this.left  = left;
@@ -40,7 +40,7 @@ export function ImmutableSet(root, sort) {
   this.hash = null;
 }
 
-ImmutableSet.prototype = Object.create(Immutable);
+ImmutableSet.prototype = Object.create(ImmutableBase);
 
 ImmutableSet.prototype[hash_interface] = function (x) {
   if (x.hash === null) {
