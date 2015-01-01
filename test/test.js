@@ -1,4 +1,4 @@
-var _immutable = require("../index");
+var _immutable = require("../immutable");
 var assert     = require("./assert");
 
 // TODO hacky

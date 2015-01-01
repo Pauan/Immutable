@@ -3,12 +3,12 @@
   "name": "Immutable",
   "version": "1.0.0",
   "repository": "https://github.com/Pauan/Immutable.git",
-  "main": "index.js",
+  "main": "immutable.js",
   "devDependencies": {
     "es6-module-transpiler": "^0.9.6",
     "uglify-js": "^2.4.16"
   },
   "scripts": {
-    "prepublish": "compile-modules convert --output index.js --format bundle src/main.js && uglifyjs --in-source-map index.js.map --source-map index.js.map --screw-ie8 --mangle --compress unsafe --output index.js"
+    "prepublish": "compile-modules convert --output immutable.js --format bundle src/main.js && uglifyjs --in-source-map immutable.js.map --source-map immutable.js.map --screw-ie8 --mangle --compress unsafe --output immutable.js"
   }
 }
