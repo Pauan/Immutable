@@ -11,29 +11,29 @@ You can find benchmarks in the `benchmarks` folder.
 Quick overview
 ==============
 
-* Dict, SortedDict
+* `Dict`, `SortedDict`
 
-  * has, get, set, remove, modify, merge
+  * `has`, `get`, `set`, `remove`, `modify`, `merge`
 
-* Set, SortedSet
+* `Set`, `SortedSet`
 
-  * has, add, remove, union, intersect, disjoint, subtract
+  * `has`, `add`, `remove`, `union`, `intersect`, `disjoint`, `subtract`
 
-* List
+* `List`
 
-  * size, has, get, insert, remove, modify, slice, concat
+  * `size`, `has`, `get`, `insert`, `remove`, `modify`, `slice`, `concat`
 
-* Queue
+* `Queue`
 
-  * size, peek, push, pop, concat
+  * `size`, `peek`, `push`, `pop`, `concat`
 
-* Stack
+* `Stack`
 
-  * size, peek, push, pop, concat
+  * `size`, `peek`, `push`, `pop`, `concat`
 
-* Record
+* `Record`
 
-  * get, set, modify, update
+  * `get`, `set`, `modify`, `update`
 
 `Dict` and `Set` can have anything as keys, including mutable objects and immutable objects (`Dict`, `Set`, `List`, etc.)
 
