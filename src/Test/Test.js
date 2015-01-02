@@ -1,6 +1,6 @@
 import { defaultSort, simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
-         isQueue, isStack, isImmutable, fromJS } from "../Immutable/Immutable";
+         isQueue, isStack, isImmutable, fromJS, isRecord, Record } from "../Immutable/Immutable";
 import { nil } from "../Immutable/nil";
 import { assert } from "./assert";
 
@@ -60,7 +60,7 @@ function assert_raises(f, message) {
     throw new Error("Expected an error, but it did not happen");
   } catch (e) {
     if (e.message !== message) {
-      throw new Error("Expected " + message + " but got " + e.message);
+      throw new Error("Expected \"" + message + "\" but got \"" + e.message + "\"");
     }
   }
 }
@@ -238,6 +238,20 @@ function verify_stack(stack, array) {
   assert(deepEqual(toJS(stack), array));
 
   return stack;
+}
+
+function verify_record(record, obj) {
+  var count = 0;
+
+  for (var s in record.keys) {
+    ++count;
+  }
+
+  assert(count === record.values.length);
+
+  assert(deepEqual(toJS(record), obj));
+
+  return record;
 }
 
 function random_int(max) {
@@ -1399,6 +1413,170 @@ context("Stack", function () {
 });
 
 
+context("Record", function () {
+  var Empty = Record({});
+  var Foo   = Record({ foo: 1 });
+
+  test("isRecord", function () {
+    assert(!isRecord(Dict()));
+    assert(isRecord(Empty));
+    assert(isRecord(Foo));
+  });
+
+  test("verify", function () {
+    verify_record(Empty, {});
+    verify_record(Foo, { foo: 1 });
+  });
+
+  test("toString", function () {
+    assert("" + Empty === "(Record)");
+    assert("" + Foo === "(Record\n  \"foo\" = 1)");
+    assert("" + Record({ foo: 2 }) === "(Record\n  \"foo\" = 2)");
+    assert("" + Record({ foo: 1 }) === "(Record\n  \"foo\" = 1)");
+    assert("" + Record({ foo: 1, bar: 2 }) === "(Record\n  \"foo\" = 1\n  \"bar\" = 2)");
+    assert("" + Record({ "foo\nbar\nqux": 1, bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = 1\n  \"bar\" = 2)");
+    assert("" + Record({ foo: Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
+    assert("" + Record({ "foo\nbar\nqux": Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
+
+    assert("" + Record({ foobarquxcorgenou: 1, bar: 2 }) === "(Record\n  \"foobarquxcorgenou\" = 1\n  \"bar\"               = 2)");
+    assert("" + Record({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Record\n  \"foobar\n   quxcorgenou\" = 1\n  \"bar\"         = 2)");
+    assert("" + Record({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Record\n  \"foo\n   bar\n   qux\"            = 1\n  \"barquxcorgenou\" = 2)");
+  });
+
+  test("init", function () {
+    var x = Record({ foo: 1 });
+    verify_record(x, { foo: 1 });
+    assert(equal(x, Foo));
+    assert(equal(Foo, x));
+
+    verify_record(Record({ foo: 2 }), { foo: 2 });
+
+    verify_record(Record(), {});
+  });
+
+  test("get", function () {
+    assert_raises(function () {
+      Empty.get("foo");
+    }, "Key foo not found");
+
+    assert(Foo.get("foo") === 1);
+  });
+
+  test("set", function () {
+    assert_raises(function () {
+      Empty.set("bar", 2);
+    }, "Key bar not found");
+
+    var x  = Foo;
+    var x2 = x.set("foo", 3);
+    assert(x.get("foo") === 1);
+    assert(x2.get("foo") === 3);
+  });
+
+  test("modify", function () {
+    var ran = false;
+
+    assert_raises(function () {
+      Empty.modify("foo", function (x) {
+        ran = true;
+        return x + 1;
+      });
+    }, "Key foo not found");
+
+    assert(ran === false);
+
+
+    var ran = false;
+
+    var x  = Foo;
+    var x2 = x.modify("foo", function (x) {
+      ran = true;
+      assert(x === 1);
+      return x + 5;
+    });
+
+    assert(ran === true);
+
+    assert(x.get("foo") === 1);
+    assert(x2.get("foo") === 6);
+  });
+
+  test("complex keys", function () {
+    var o = Dict().set({}, 1);
+
+    assert_raises(function () {
+      Record(o);
+    }, "Expected string key but got [object Object]");
+
+    assert_raises(function () {
+      Foo.get({});
+    }, "Expected string key but got [object Object]");
+
+    assert_raises(function () {
+      Foo.set({}, 5);
+    }, "Expected string key but got [object Object]");
+
+    assert_raises(function () {
+      Foo.modify({}, function () { throw new Error("FAIL") });
+    }, "Expected string key but got [object Object]");
+  });
+
+  test("=== when not modified", function () {
+    var x = Foo;
+
+    assert(x.set("foo", 1) === x);
+    assert(x.set("foo", 2) !== x);
+
+    assert(x.modify("foo", function () {
+      return 1;
+    }) === x);
+
+    assert(x.modify("foo", function () {
+      return 2;
+    }) !== x);
+
+    var x = Record({ foo: 1 });
+    assert(Record(x) === x);
+    assert(Record({ foo: 1 }) !== x);
+  });
+
+  test("equal", function () {
+    assert(!equal(Empty, Foo));
+    assert(equal(Empty, Empty));
+    assert(equal(Foo, Foo));
+
+    assert(equal(Record({}), Record({})));
+    assert(equal(Record({ foo: 1 }), Record({ foo: 1 })));
+
+    assert(!equal(Foo, Record({ foo: 2 })));
+    assert(equal(Foo, Record({ foo: 1 })));
+    assert(equal(Record({ foo: 2 }), Record({ foo: 2 })));
+    assert(!equal(Record({ foo: 2 }), Record({ foo: 3 })));
+  });
+
+  test("toJS", function () {
+    assert(deepEqual(toJS(Empty), {}));
+    assert(deepEqual(toJS(Foo), { foo: 1 }));
+    assert(deepEqual(toJS(Record({ foo: Record({ bar: 2 }) })),
+                     { foo: { bar: 2 } }));
+  });
+
+  test("forEach", function () {
+    test_forEach(Record, []);
+    test_forEach(Record, [["foo", 2]]);
+    test_forEach(Record, [["foo", 2], ["bar", 3]]);
+    test_forEach(Record, [["bar", 3], ["foo", 2]]);
+  });
+
+  // TODO
+  /*test("zip", function () {
+    var a = [["a", 1], ["b", 2], ["c", 3], ["d", 4],
+             ["e", 5], ["f", 6], ["g", 7], ["h", 8]];
+    assert.equal(toArray(zip(Dict(a))), toArray(zip(a)));
+  });*/
+});
+
+
 test("isImmutable", function () {
   assert(!isImmutable(5));
   assert(!isImmutable({}));
@@ -1412,6 +1590,9 @@ test("isImmutable", function () {
   assert(isImmutable(SortedDict(simpleSort)));
   assert(isImmutable(SortedSet(defaultSort)));
   assert(isImmutable(SortedSet(simpleSort)));
+
+  var Foo = Record({});
+  assert(isImmutable(Foo));
 });
 
 test("fromJS", function () {

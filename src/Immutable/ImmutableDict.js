@@ -1,7 +1,6 @@
 import { max } from "./AVL";
 import { defaultSort, key_get, key_set, key_modify, key_remove } from "./Sorted";
-import { hash, hash_interface } from "./hash";
-import { pad_right, repeat, join_lines } from "./util";
+import { hash, hash_interface, hash_dict } from "./hash";
 import { toJS_object, toJS_interface } from "./toJS";
 import { nil } from "./nil";
 import { ImmutableBase } from "./ImmutableBase";
@@ -46,44 +45,11 @@ ImmutableDict.prototype = Object.create(ImmutableBase);
 
 ImmutableDict.prototype[hash_interface] = function (x) {
   if (x.hash === null) {
-    var a = [];
-
-    var max_key = 0;
-
-    x.forEach(function (_array) {
-      var key   = hash(_array[0]);
-      var value = hash(_array[1]);
-
-      key = key.split(/\n/);
-
-      key.forEach(function (key) {
-        max_key = Math.max(max_key, key.length);
-      });
-
-      a.push({
-        key: key,
-        value: value
-      });
-    });
-
-    var spaces = "  ";
-
-    a = a.map(function (x) {
-      var last = x.key.length - 1;
-      x.key[last] = pad_right(x.key[last], max_key, " ");
-
-      var key = x.key.join("\n");
-
-      var value = x.value.replace(/\n/g, "\n" + repeat(" ", max_key + 3));
-
-      return key + " = " + value;
-    });
-
     // We don't use equal, for increased speed
     if (x.sort === defaultSort) {
-      x.hash = "(Dict" + join_lines(a, spaces) + ")";
+      x.hash = "(Dict" + hash_dict(x, "  ") + ")";
     } else {
-      x.hash = "(SortedDict " + hash(x.sort) + join_lines(a, spaces) + ")";
+      x.hash = "(SortedDict " + hash(x.sort) + hash_dict(x, "  ") + ")";
     }
   }
 

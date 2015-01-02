@@ -1,5 +1,38 @@
 (function() {
     "use strict";
+    function $$util$$isObject(x) {
+      return Object(x) === x;
+    }
+
+    function $$util$$isJSLiteral(x) {
+      if ($$util$$isObject(x)) {
+        var proto = Object.getPrototypeOf(x);
+        // TODO this won't work cross-realm
+        return proto === null || proto === Object.prototype;
+      } else {
+        return false;
+      }
+    }
+
+    function $$util$$repeat(s, i) {
+      return new Array(i + 1).join(s);
+    }
+
+    function $$util$$pad_right(input, i, s) {
+      var right = Math.max(0, i - input.length);
+      return input + $$util$$repeat(s, right);
+    }
+
+    function $$util$$join_lines(a, spaces) {
+      if (a.length) {
+        var separator = "\n" + spaces;
+        return separator + a.map(function (x) {
+          return x.replace(/\n/g, separator);
+        }).join(separator);
+      } else {
+        return "";
+      }
+    }
     var $$hash$$hash_interface = "__CFB38D33-7CD8-419E-A1B6-61D1B8AC7C83_hash__";
 
     var $$hash$$mutable_hash_id = 0;
@@ -37,38 +70,42 @@
         }
       }
     }
-    function $$util$$isObject(x) {
-      return Object(x) === x;
-    }
 
-    function $$util$$isJSLiteral(x) {
-      if ($$util$$isObject(x)) {
-        var proto = Object.getPrototypeOf(x);
-        // TODO this won't work cross-realm
-        return proto === null || proto === Object.prototype;
-      } else {
-        return false;
-      }
-    }
+    function $$hash$$hash_dict(x, spaces) {
+      var a = [];
 
-    function $$util$$repeat(s, i) {
-      return new Array(i + 1).join(s);
-    }
+      var max_key = 0;
 
-    function $$util$$pad_right(input, i, s) {
-      var right = Math.max(0, i - input.length);
-      return input + $$util$$repeat(s, right);
-    }
+      x.forEach(function (_array) {
+        var key   = $$hash$$hash(_array[0]);
+        var value = $$hash$$hash(_array[1]);
 
-    function $$util$$join_lines(a, spaces) {
-      if (a.length) {
-        var separator = "\n" + spaces;
-        return separator + a.map(function (x) {
-          return x.replace(/\n/g, separator);
-        }).join(separator);
-      } else {
-        return "";
-      }
+        key = key.split(/\n/);
+
+        key.forEach(function (key) {
+          max_key = Math.max(max_key, key.length);
+        });
+
+        a.push({
+          key: key,
+          value: value
+        });
+      });
+
+      var spaces = "  ";
+
+      a = a.map(function (x) {
+        var last = x.key.length - 1;
+        x.key[last] = $$util$$pad_right(x.key[last], max_key, " ");
+
+        var key = x.key.join("\n");
+
+        var value = x.value.replace(/\n/g, "\n" + $$util$$repeat(" ", max_key + 3));
+
+        return key + " = " + value;
+      });
+
+      return $$util$$join_lines(a, spaces);
     }
     var $$toJS$$toJS_interface = "__DEE5921D-20A6-40D0-9A74-40C5BAC8C663_toJS__";
 
@@ -378,44 +415,11 @@
 
     $$ImmutableDict$$ImmutableDict.prototype[$$hash$$hash_interface] = function (x) {
       if (x.hash === null) {
-        var a = [];
-
-        var max_key = 0;
-
-        x.forEach(function (_array) {
-          var key   = $$hash$$hash(_array[0]);
-          var value = $$hash$$hash(_array[1]);
-
-          key = key.split(/\n/);
-
-          key.forEach(function (key) {
-            max_key = Math.max(max_key, key.length);
-          });
-
-          a.push({
-            key: key,
-            value: value
-          });
-        });
-
-        var spaces = "  ";
-
-        a = a.map(function (x) {
-          var last = x.key.length - 1;
-          x.key[last] = $$util$$pad_right(x.key[last], max_key, " ");
-
-          var key = x.key.join("\n");
-
-          var value = x.value.replace(/\n/g, "\n" + $$util$$repeat(" ", max_key + 3));
-
-          return key + " = " + value;
-        });
-
         // We don't use equal, for increased speed
         if (x.sort === $$Sorted$$defaultSort) {
-          x.hash = "(Dict" + $$util$$join_lines(a, spaces) + ")";
+          x.hash = "(Dict" + $$hash$$hash_dict(x, "  ") + ")";
         } else {
-          x.hash = "(SortedDict " + $$hash$$hash(x.sort) + $$util$$join_lines(a, spaces) + ")";
+          x.hash = "(SortedDict " + $$hash$$hash(x.sort) + $$hash$$hash_dict(x, "  ") + ")";
         }
       }
 
@@ -1453,6 +1457,75 @@
 
       return self;
     };
+    function $$ImmutableRecord$$ImmutableRecord(keys, values) {
+      this.keys   = keys;
+      this.values = values;
+      this.hash   = null;
+    }
+
+    $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
+
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$hash$$hash_interface] = function (x) {
+      if (x.hash === null) {
+        x.hash = "(Record" + $$hash$$hash_dict(x, "  ") + ")";
+      }
+
+      return x.hash;
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.forEach = function (f) {
+      var keys   = this.keys;
+      var values = this.values;
+      for (var s in keys) {
+        var index = keys[s];
+        f([s, values[index]]);
+      }
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
+      // TODO code duplication
+      if (typeof key !== "string") {
+        throw new Error("Expected string key but got " + key);
+      }
+
+      var index = this.keys[key];
+      if (index == null) {
+        throw new Error("Key " + key + " not found");
+
+      } else {
+        return this.values[index];
+      }
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.set = function (key, value) {
+      return this.modify(key, function () {
+        return value;
+      });
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.modify = function (key, f) {
+      // TODO code duplication
+      if (typeof key !== "string") {
+        throw new Error("Expected string key but got " + key);
+      }
+
+      var keys  = this.keys;
+      var index = keys[key];
+      if (index == null) {
+        throw new Error("Key " + key + " not found");
+
+      } else {
+        var values = this.values;
+        var array  = $$Array$$modify(values, index, f);
+        if (array === values) {
+          return this;
+        } else {
+          return new $$ImmutableRecord$$ImmutableRecord(keys, array);
+        }
+      }
+    };
     function $$$Immutable$Immutable$$equal(x, y) {
       return x === y || $$hash$$hash(x) === $$hash$$hash(y);
     }
@@ -1485,8 +1558,12 @@
       return x instanceof $$ImmutableStack$$ImmutableStack;
     }
 
+    function $$$Immutable$Immutable$$isRecord(x) {
+      return x instanceof $$ImmutableRecord$$ImmutableRecord;
+    }
+
     function $$$Immutable$Immutable$$isImmutable(x) {
-      return $$$Immutable$Immutable$$isDict(x) || $$$Immutable$Immutable$$isSet(x) || $$$Immutable$Immutable$$isList(x) || $$$Immutable$Immutable$$isQueue(x) || $$$Immutable$Immutable$$isStack(x);
+      return $$$Immutable$Immutable$$isDict(x) || $$$Immutable$Immutable$$isSet(x) || $$$Immutable$Immutable$$isList(x) || $$$Immutable$Immutable$$isQueue(x) || $$$Immutable$Immutable$$isStack(x) || $$$Immutable$Immutable$$isRecord(x);
     }
 
     function $$$Immutable$Immutable$$fromJS(x) {
@@ -1512,6 +1589,42 @@
       } else {
         return x;
       }
+    }
+
+    function $$$Immutable$Immutable$$Record(obj) {
+      var keys   = {};
+      var values = [];
+
+      if (obj != null) {
+        if (obj instanceof $$ImmutableRecord$$ImmutableRecord) {
+          return obj;
+
+        } else if ($$util$$isJSLiteral(obj)) {
+          Object.keys(obj).forEach(function (key) {
+            // TODO code duplication
+            if (typeof key !== "string") {
+              throw new Error("Expected string key but got " + key);
+            }
+
+            keys[key] = values.push(obj[key]) - 1;
+          });
+
+        } else {
+          obj.forEach(function (_array) {
+            var key   = _array[0];
+            var value = _array[1];
+
+            // TODO code duplication
+            if (typeof key !== "string") {
+              throw new Error("Expected string key but got " + key);
+            }
+
+            keys[key] = values.push(value) - 1;
+          });
+        }
+      }
+
+      return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
 
     function $$$Immutable$Immutable$$SortedDict(sort, obj) {
@@ -1662,6 +1775,8 @@
       exports.Stack = $$$Immutable$Immutable$$Stack;
       exports.simpleSort = $$Sorted$$simpleSort;
       exports.defaultSort = $$Sorted$$defaultSort;
+      exports.isRecord = $$$Immutable$Immutable$$isRecord;
+      exports.Record = $$$Immutable$Immutable$$Record;
     });
     function $$assert$$assert(x) {
       if (arguments.length !== 1) {
@@ -1728,7 +1843,7 @@
         throw new Error("Expected an error, but it did not happen");
       } catch (e) {
         if (e.message !== message) {
-          throw new Error("Expected " + message + " but got " + e.message);
+          throw new Error("Expected \"" + message + "\" but got \"" + e.message + "\"");
         }
       }
     }
@@ -1906,6 +2021,20 @@
       $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(stack), array));
 
       return stack;
+    }
+
+    function src$Test$Test$$verify_record(record, obj) {
+      var count = 0;
+
+      for (var s in record.keys) {
+        ++count;
+      }
+
+      $$assert$$assert(count === record.values.length);
+
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(record), obj));
+
+      return record;
     }
 
     function src$Test$Test$$random_int(max) {
@@ -3067,6 +3196,170 @@
     });
 
 
+    src$Test$Test$$context("Record", function () {
+      var Empty = $$$Immutable$Immutable$$Record({});
+      var Foo   = $$$Immutable$Immutable$$Record({ foo: 1 });
+
+      src$Test$Test$$test("isRecord", function () {
+        $$assert$$assert(!$$$Immutable$Immutable$$isRecord($$$Immutable$Immutable$$Dict()));
+        $$assert$$assert($$$Immutable$Immutable$$isRecord(Empty));
+        $$assert$$assert($$$Immutable$Immutable$$isRecord(Foo));
+      });
+
+      src$Test$Test$$test("verify", function () {
+        src$Test$Test$$verify_record(Empty, {});
+        src$Test$Test$$verify_record(Foo, { foo: 1 });
+      });
+
+      src$Test$Test$$test("toString", function () {
+        $$assert$$assert("" + Empty === "(Record)");
+        $$assert$$assert("" + Foo === "(Record\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foo: 2 }) === "(Record\n  \"foo\" = 2)");
+        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foo: 1 }) === "(Record\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foo: 1, bar: 2 }) === "(Record\n  \"foo\" = 1\n  \"bar\" = 2)");
+        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ "foo\nbar\nqux": 1, bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = 1\n  \"bar\" = 2)");
+        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foo: $$$Immutable$Immutable$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
+        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ "foo\nbar\nqux": $$$Immutable$Immutable$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
+
+        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foobarquxcorgenou: 1, bar: 2 }) === "(Record\n  \"foobarquxcorgenou\" = 1\n  \"bar\"               = 2)");
+        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Record\n  \"foobar\n   quxcorgenou\" = 1\n  \"bar\"         = 2)");
+        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Record\n  \"foo\n   bar\n   qux\"            = 1\n  \"barquxcorgenou\" = 2)");
+      });
+
+      src$Test$Test$$test("init", function () {
+        var x = $$$Immutable$Immutable$$Record({ foo: 1 });
+        src$Test$Test$$verify_record(x, { foo: 1 });
+        $$assert$$assert($$$Immutable$Immutable$$equal(x, Foo));
+        $$assert$$assert($$$Immutable$Immutable$$equal(Foo, x));
+
+        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record({ foo: 2 }), { foo: 2 });
+
+        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record(), {});
+      });
+
+      src$Test$Test$$test("get", function () {
+        src$Test$Test$$assert_raises(function () {
+          Empty.get("foo");
+        }, "Key foo not found");
+
+        $$assert$$assert(Foo.get("foo") === 1);
+      });
+
+      src$Test$Test$$test("set", function () {
+        src$Test$Test$$assert_raises(function () {
+          Empty.set("bar", 2);
+        }, "Key bar not found");
+
+        var x  = Foo;
+        var x2 = x.set("foo", 3);
+        $$assert$$assert(x.get("foo") === 1);
+        $$assert$$assert(x2.get("foo") === 3);
+      });
+
+      src$Test$Test$$test("modify", function () {
+        var ran = false;
+
+        src$Test$Test$$assert_raises(function () {
+          Empty.modify("foo", function (x) {
+            ran = true;
+            return x + 1;
+          });
+        }, "Key foo not found");
+
+        $$assert$$assert(ran === false);
+
+
+        var ran = false;
+
+        var x  = Foo;
+        var x2 = x.modify("foo", function (x) {
+          ran = true;
+          $$assert$$assert(x === 1);
+          return x + 5;
+        });
+
+        $$assert$$assert(ran === true);
+
+        $$assert$$assert(x.get("foo") === 1);
+        $$assert$$assert(x2.get("foo") === 6);
+      });
+
+      src$Test$Test$$test("complex keys", function () {
+        var o = $$$Immutable$Immutable$$Dict().set({}, 1);
+
+        src$Test$Test$$assert_raises(function () {
+          $$$Immutable$Immutable$$Record(o);
+        }, "Expected string key but got [object Object]");
+
+        src$Test$Test$$assert_raises(function () {
+          Foo.get({});
+        }, "Expected string key but got [object Object]");
+
+        src$Test$Test$$assert_raises(function () {
+          Foo.set({}, 5);
+        }, "Expected string key but got [object Object]");
+
+        src$Test$Test$$assert_raises(function () {
+          Foo.modify({}, function () { throw new Error("FAIL") });
+        }, "Expected string key but got [object Object]");
+      });
+
+      src$Test$Test$$test("=== when not modified", function () {
+        var x = Foo;
+
+        $$assert$$assert(x.set("foo", 1) === x);
+        $$assert$$assert(x.set("foo", 2) !== x);
+
+        $$assert$$assert(x.modify("foo", function () {
+          return 1;
+        }) === x);
+
+        $$assert$$assert(x.modify("foo", function () {
+          return 2;
+        }) !== x);
+
+        var x = $$$Immutable$Immutable$$Record({ foo: 1 });
+        $$assert$$assert($$$Immutable$Immutable$$Record(x) === x);
+        $$assert$$assert($$$Immutable$Immutable$$Record({ foo: 1 }) !== x);
+      });
+
+      src$Test$Test$$test("equal", function () {
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(Empty, Foo));
+        $$assert$$assert($$$Immutable$Immutable$$equal(Empty, Empty));
+        $$assert$$assert($$$Immutable$Immutable$$equal(Foo, Foo));
+
+        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Record({}), $$$Immutable$Immutable$$Record({})));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Record({ foo: 1 }), $$$Immutable$Immutable$$Record({ foo: 1 })));
+
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(Foo, $$$Immutable$Immutable$$Record({ foo: 2 })));
+        $$assert$$assert($$$Immutable$Immutable$$equal(Foo, $$$Immutable$Immutable$$Record({ foo: 1 })));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Record({ foo: 2 }), $$$Immutable$Immutable$$Record({ foo: 2 })));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Record({ foo: 2 }), $$$Immutable$Immutable$$Record({ foo: 3 })));
+      });
+
+      src$Test$Test$$test("toJS", function () {
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(Empty), {}));
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(Foo), { foo: 1 }));
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$$Immutable$Immutable$$Record({ foo: $$$Immutable$Immutable$$Record({ bar: 2 }) })),
+                         { foo: { bar: 2 } }));
+      });
+
+      src$Test$Test$$test("forEach", function () {
+        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Record, []);
+        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Record, [["foo", 2]]);
+        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Record, [["foo", 2], ["bar", 3]]);
+        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Record, [["bar", 3], ["foo", 2]]);
+      });
+
+      // TODO
+      /*test("zip", function () {
+        var a = [["a", 1], ["b", 2], ["c", 3], ["d", 4],
+                 ["e", 5], ["f", 6], ["g", 7], ["h", 8]];
+        assert.equal(toArray(zip(Dict(a))), toArray(zip(a)));
+      });*/
+    });
+
+
     src$Test$Test$$test("isImmutable", function () {
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable(5));
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable({}));
@@ -3080,6 +3373,9 @@
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$SortedDict($$Sorted$$simpleSort)));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$SortedSet($$Sorted$$defaultSort)));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$SortedSet($$Sorted$$simpleSort)));
+
+      var Foo = $$$Immutable$Immutable$$Record({});
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable(Foo));
     });
 
     src$Test$Test$$test("fromJS", function () {

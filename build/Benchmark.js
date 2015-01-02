@@ -63,12 +63,20 @@
                 return $$$Immutable$Immutable$$isStack;
             },
 
+            get isRecord() {
+                return $$$Immutable$Immutable$$isRecord;
+            },
+
             get isImmutable() {
                 return $$$Immutable$Immutable$$isImmutable;
             },
 
             get fromJS() {
                 return $$$Immutable$Immutable$$fromJS;
+            },
+
+            get Record() {
+                return $$$Immutable$Immutable$$Record;
             },
 
             get SortedDict() {
@@ -200,6 +208,39 @@
       $$Benchmark$$add_timers();
       $$Benchmark$$suite.run();
     }
+    function $$util$$isObject(x) {
+      return Object(x) === x;
+    }
+
+    function $$util$$isJSLiteral(x) {
+      if ($$util$$isObject(x)) {
+        var proto = Object.getPrototypeOf(x);
+        // TODO this won't work cross-realm
+        return proto === null || proto === Object.prototype;
+      } else {
+        return false;
+      }
+    }
+
+    function $$util$$repeat(s, i) {
+      return new Array(i + 1).join(s);
+    }
+
+    function $$util$$pad_right(input, i, s) {
+      var right = Math.max(0, i - input.length);
+      return input + $$util$$repeat(s, right);
+    }
+
+    function $$util$$join_lines(a, spaces) {
+      if (a.length) {
+        var separator = "\n" + spaces;
+        return separator + a.map(function (x) {
+          return x.replace(/\n/g, separator);
+        }).join(separator);
+      } else {
+        return "";
+      }
+    }
     var $$hash$$hash_interface = "__CFB38D33-7CD8-419E-A1B6-61D1B8AC7C83_hash__";
 
     var $$hash$$mutable_hash_id = 0;
@@ -237,38 +278,42 @@
         }
       }
     }
-    function $$util$$isObject(x) {
-      return Object(x) === x;
-    }
 
-    function $$util$$isJSLiteral(x) {
-      if ($$util$$isObject(x)) {
-        var proto = Object.getPrototypeOf(x);
-        // TODO this won't work cross-realm
-        return proto === null || proto === Object.prototype;
-      } else {
-        return false;
-      }
-    }
+    function $$hash$$hash_dict(x, spaces) {
+      var a = [];
 
-    function $$util$$repeat(s, i) {
-      return new Array(i + 1).join(s);
-    }
+      var max_key = 0;
 
-    function $$util$$pad_right(input, i, s) {
-      var right = Math.max(0, i - input.length);
-      return input + $$util$$repeat(s, right);
-    }
+      x.forEach(function (_array) {
+        var key   = $$hash$$hash(_array[0]);
+        var value = $$hash$$hash(_array[1]);
 
-    function $$util$$join_lines(a, spaces) {
-      if (a.length) {
-        var separator = "\n" + spaces;
-        return separator + a.map(function (x) {
-          return x.replace(/\n/g, separator);
-        }).join(separator);
-      } else {
-        return "";
-      }
+        key = key.split(/\n/);
+
+        key.forEach(function (key) {
+          max_key = Math.max(max_key, key.length);
+        });
+
+        a.push({
+          key: key,
+          value: value
+        });
+      });
+
+      var spaces = "  ";
+
+      a = a.map(function (x) {
+        var last = x.key.length - 1;
+        x.key[last] = $$util$$pad_right(x.key[last], max_key, " ");
+
+        var key = x.key.join("\n");
+
+        var value = x.value.replace(/\n/g, "\n" + $$util$$repeat(" ", max_key + 3));
+
+        return key + " = " + value;
+      });
+
+      return $$util$$join_lines(a, spaces);
     }
     var $$toJS$$toJS_interface = "__DEE5921D-20A6-40D0-9A74-40C5BAC8C663_toJS__";
 
@@ -578,44 +623,11 @@
 
     $$ImmutableDict$$ImmutableDict.prototype[$$hash$$hash_interface] = function (x) {
       if (x.hash === null) {
-        var a = [];
-
-        var max_key = 0;
-
-        x.forEach(function (_array) {
-          var key   = $$hash$$hash(_array[0]);
-          var value = $$hash$$hash(_array[1]);
-
-          key = key.split(/\n/);
-
-          key.forEach(function (key) {
-            max_key = Math.max(max_key, key.length);
-          });
-
-          a.push({
-            key: key,
-            value: value
-          });
-        });
-
-        var spaces = "  ";
-
-        a = a.map(function (x) {
-          var last = x.key.length - 1;
-          x.key[last] = $$util$$pad_right(x.key[last], max_key, " ");
-
-          var key = x.key.join("\n");
-
-          var value = x.value.replace(/\n/g, "\n" + $$util$$repeat(" ", max_key + 3));
-
-          return key + " = " + value;
-        });
-
         // We don't use equal, for increased speed
         if (x.sort === $$Sorted$$defaultSort) {
-          x.hash = "(Dict" + $$util$$join_lines(a, spaces) + ")";
+          x.hash = "(Dict" + $$hash$$hash_dict(x, "  ") + ")";
         } else {
-          x.hash = "(SortedDict " + $$hash$$hash(x.sort) + $$util$$join_lines(a, spaces) + ")";
+          x.hash = "(SortedDict " + $$hash$$hash(x.sort) + $$hash$$hash_dict(x, "  ") + ")";
         }
       }
 
@@ -1653,6 +1665,75 @@
 
       return self;
     };
+    function $$ImmutableRecord$$ImmutableRecord(keys, values) {
+      this.keys   = keys;
+      this.values = values;
+      this.hash   = null;
+    }
+
+    $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
+
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$hash$$hash_interface] = function (x) {
+      if (x.hash === null) {
+        x.hash = "(Record" + $$hash$$hash_dict(x, "  ") + ")";
+      }
+
+      return x.hash;
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.forEach = function (f) {
+      var keys   = this.keys;
+      var values = this.values;
+      for (var s in keys) {
+        var index = keys[s];
+        f([s, values[index]]);
+      }
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
+      // TODO code duplication
+      if (typeof key !== "string") {
+        throw new Error("Expected string key but got " + key);
+      }
+
+      var index = this.keys[key];
+      if (index == null) {
+        throw new Error("Key " + key + " not found");
+
+      } else {
+        return this.values[index];
+      }
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.set = function (key, value) {
+      return this.modify(key, function () {
+        return value;
+      });
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.modify = function (key, f) {
+      // TODO code duplication
+      if (typeof key !== "string") {
+        throw new Error("Expected string key but got " + key);
+      }
+
+      var keys  = this.keys;
+      var index = keys[key];
+      if (index == null) {
+        throw new Error("Key " + key + " not found");
+
+      } else {
+        var values = this.values;
+        var array  = $$$Immutable$Array$$modify(values, index, f);
+        if (array === values) {
+          return this;
+        } else {
+          return new $$ImmutableRecord$$ImmutableRecord(keys, array);
+        }
+      }
+    };
     function $$$Immutable$Immutable$$equal(x, y) {
       return x === y || $$hash$$hash(x) === $$hash$$hash(y);
     }
@@ -1685,8 +1766,12 @@
       return x instanceof $$ImmutableStack$$ImmutableStack;
     }
 
+    function $$$Immutable$Immutable$$isRecord(x) {
+      return x instanceof $$ImmutableRecord$$ImmutableRecord;
+    }
+
     function $$$Immutable$Immutable$$isImmutable(x) {
-      return $$$Immutable$Immutable$$isDict(x) || $$$Immutable$Immutable$$isSet(x) || $$$Immutable$Immutable$$isList(x) || $$$Immutable$Immutable$$isQueue(x) || $$$Immutable$Immutable$$isStack(x);
+      return $$$Immutable$Immutable$$isDict(x) || $$$Immutable$Immutable$$isSet(x) || $$$Immutable$Immutable$$isList(x) || $$$Immutable$Immutable$$isQueue(x) || $$$Immutable$Immutable$$isStack(x) || $$$Immutable$Immutable$$isRecord(x);
     }
 
     function $$$Immutable$Immutable$$fromJS(x) {
@@ -1712,6 +1797,42 @@
       } else {
         return x;
       }
+    }
+
+    function $$$Immutable$Immutable$$Record(obj) {
+      var keys   = {};
+      var values = [];
+
+      if (obj != null) {
+        if (obj instanceof $$ImmutableRecord$$ImmutableRecord) {
+          return obj;
+
+        } else if ($$util$$isJSLiteral(obj)) {
+          Object.keys(obj).forEach(function (key) {
+            // TODO code duplication
+            if (typeof key !== "string") {
+              throw new Error("Expected string key but got " + key);
+            }
+
+            keys[key] = values.push(obj[key]) - 1;
+          });
+
+        } else {
+          obj.forEach(function (_array) {
+            var key   = _array[0];
+            var value = _array[1];
+
+            // TODO code duplication
+            if (typeof key !== "string") {
+              throw new Error("Expected string key but got " + key);
+            }
+
+            keys[key] = values.push(value) - 1;
+          });
+        }
+      }
+
+      return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
 
     function $$$Immutable$Immutable$$SortedDict(sort, obj) {
@@ -1862,6 +1983,8 @@
       exports.Stack = $$$Immutable$Immutable$$Stack;
       exports.simpleSort = $$Sorted$$simpleSort;
       exports.defaultSort = $$Sorted$$defaultSort;
+      exports.isRecord = $$$Immutable$Immutable$$isRecord;
+      exports.Record = $$$Immutable$Immutable$$Record;
     });
     var src$Benchmark$List$$immutablejs = require("immutable");
     var src$Benchmark$List$$mori        = require("mori");

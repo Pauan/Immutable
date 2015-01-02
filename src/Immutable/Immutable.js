@@ -7,6 +7,7 @@ import { ImmutableSet } from "./ImmutableSet";
 import { ImmutableList } from "./ImmutableList";
 import { ImmutableQueue } from "./ImmutableQueue";
 import { ImmutableStack } from "./ImmutableStack";
+import { ImmutableRecord } from "./ImmutableRecord";
 import { nil } from "./nil";
 
 export { toJS, simpleSort, defaultSort };
@@ -45,8 +46,12 @@ export function isStack(x) {
   return x instanceof ImmutableStack;
 }
 
+export function isRecord(x) {
+  return x instanceof ImmutableRecord;
+}
+
 export function isImmutable(x) {
-  return isDict(x) || isSet(x) || isList(x) || isQueue(x) || isStack(x);
+  return isDict(x) || isSet(x) || isList(x) || isQueue(x) || isStack(x) || isRecord(x);
 }
 
 export function fromJS(x) {
@@ -72,6 +77,42 @@ export function fromJS(x) {
   } else {
     return x;
   }
+}
+
+export function Record(obj) {
+  var keys   = {};
+  var values = [];
+
+  if (obj != null) {
+    if (obj instanceof ImmutableRecord) {
+      return obj;
+
+    } else if (isJSLiteral(obj)) {
+      Object.keys(obj).forEach(function (key) {
+        // TODO code duplication
+        if (typeof key !== "string") {
+          throw new Error("Expected string key but got " + key);
+        }
+
+        keys[key] = values.push(obj[key]) - 1;
+      });
+
+    } else {
+      obj.forEach(function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
+
+        // TODO code duplication
+        if (typeof key !== "string") {
+          throw new Error("Expected string key but got " + key);
+        }
+
+        keys[key] = values.push(value) - 1;
+      });
+    }
+  }
+
+  return new ImmutableRecord(keys, values);
 }
 
 export function SortedDict(sort, obj) {
@@ -223,4 +264,6 @@ export function Stack(x) {
   exports.Stack = Stack;
   exports.simpleSort = simpleSort;
   exports.defaultSort = defaultSort;
+  exports.isRecord = isRecord;
+  exports.Record = Record;
 });
