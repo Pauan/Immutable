@@ -2167,33 +2167,6 @@
       exports.toJSON = $$toJSON$$toJSON;
       exports.fromJSON = $$toJSON$$fromJSON;
     });
-    var src$Benchmark$List$$immutablejs = require("immutable");
-    var src$Benchmark$List$$mori        = require("mori");
-
-    function src$Benchmark$List$$cons_push(x, i) {
-      return new $$$Immutable$Cons$$Cons(i, x);
-    }
-
-
-    /*var fs = require("fs");
-    var vm = require("vm");
-    var path = require("path");
-
-    var elm_path = path.join(__dirname, "../Elm-0.13/elm-runtime.js");
-    var elm_bench_path = path.join(__dirname, "./build/List.js");
-    vm.runInThisContext(fs.readFileSync(elm_path));
-    vm.runInThisContext(fs.readFileSync(elm_bench_path));
-
-    var worker = Elm.worker(Elm.Benchmark);
-
-    var elm = {
-      insert:     worker.ports.insert,
-      insertInit: worker.ports.insertInit
-    };*/
-
-
-    //var counter = +process.argv[2];
-
 
     $$Benchmark$$.group("Information", function () {
       $$Benchmark$$.group("Node.js", function () {
@@ -2221,6 +2194,32 @@
         benchmark.message("Version: 0.13");
       });*/
     });
+    var src$Benchmark$List$$immutablejs = require("immutable");
+    var src$Benchmark$List$$mori        = require("mori");
+
+    function src$Benchmark$List$$cons_push(x, i) {
+      return new $$$Immutable$Cons$$Cons(i, x);
+    }
+
+
+    /*var fs = require("fs");
+    var vm = require("vm");
+    var path = require("path");
+
+    var elm_path = path.join(__dirname, "../Elm-0.13/elm-runtime.js");
+    var elm_bench_path = path.join(__dirname, "./build/List.js");
+    vm.runInThisContext(fs.readFileSync(elm_path));
+    vm.runInThisContext(fs.readFileSync(elm_bench_path));
+
+    var worker = Elm.worker(Elm.Benchmark);
+
+    var elm = {
+      insert:     worker.ports.insert,
+      insertInit: worker.ports.insertInit
+    };*/
+
+
+    //var counter = +process.argv[2];
 
     function src$Benchmark$List$$array_has(i, len) {
       return i >= 0 && i < len;

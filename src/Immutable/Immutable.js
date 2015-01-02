@@ -1,8 +1,9 @@
 import { hash } from "./hash";
+import { isJSLiteral } from "./util";
+
 import { toJS } from "./toJS";
 import { toJSON, fromJSON } from "./toJSON";
 import { simpleSort, defaultSort } from "./Sorted";
-import { isJSLiteral } from "./util";
 import { SortedDict, Dict, isDict, isSortedDict } from "./ImmutableDict";
 import { SortedSet, Set, isSet, isSortedSet } from "./ImmutableSet";
 import { isList, List } from "./ImmutableList";
