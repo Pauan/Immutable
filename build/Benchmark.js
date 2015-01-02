@@ -703,6 +703,20 @@
       }
     };
 
+    // TODO code duplication with ImmutableRecord
+    $$ImmutableDict$$ImmutableDict.prototype.merge = function (other) {
+      var self = this;
+
+      other.forEach(function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
+
+        self = self.set(key, value);
+      });
+
+      return self;
+    };
+
     function $$ImmutableSet$$SetNode(left, right, key) {
       this.left  = left;
       this.right = right;
@@ -1733,6 +1747,20 @@
           return new $$ImmutableRecord$$ImmutableRecord(keys, array);
         }
       }
+    };
+
+    // TODO code duplication with ImmutableDict
+    $$ImmutableRecord$$ImmutableRecord.prototype.update = function (other) {
+      var self = this;
+
+      other.forEach(function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
+
+        self = self.set(key, value);
+      });
+
+      return self;
     };
     function $$$Immutable$Immutable$$equal(x, y) {
       return x === y || $$hash$$hash(x) === $$hash$$hash(y);

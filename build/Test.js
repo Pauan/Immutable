@@ -495,6 +495,20 @@
       }
     };
 
+    // TODO code duplication with ImmutableRecord
+    $$ImmutableDict$$ImmutableDict.prototype.merge = function (other) {
+      var self = this;
+
+      other.forEach(function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
+
+        self = self.set(key, value);
+      });
+
+      return self;
+    };
+
     function $$ImmutableSet$$SetNode(left, right, key) {
       this.left  = left;
       this.right = right;
@@ -1526,6 +1540,20 @@
         }
       }
     };
+
+    // TODO code duplication with ImmutableDict
+    $$ImmutableRecord$$ImmutableRecord.prototype.update = function (other) {
+      var self = this;
+
+      other.forEach(function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
+
+        self = self.set(key, value);
+      });
+
+      return self;
+    };
     function $$$Immutable$Immutable$$equal(x, y) {
       return x === y || $$hash$$hash(x) === $$hash$$hash(y);
     }
@@ -2151,6 +2179,15 @@
         $$assert$$assert(!dict_foo2.has("foo"));
       });
 
+      src$Test$Test$$test("merge", function () {
+        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }), { foo: 1 });
+        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge([]), { foo: 1 });
+        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge([["bar", 2]]), { foo: 1, bar: 2 });
+        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge($$$Immutable$Immutable$$Dict({ bar: 2 })), { foo: 1, bar: 2 });
+        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge($$$Immutable$Immutable$$Dict({ foo: 2 })), { foo: 2 });
+        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge($$$Immutable$Immutable$$Dict({ foo: 2, bar: 3 })), { foo: 2, bar: 3 });
+      });
+
       src$Test$Test$$test("complex keys", function () {
         var o = $$$Immutable$Immutable$$Dict();
 
@@ -2220,6 +2257,10 @@
         $$assert$$assert(dict_foo.modify("foo", function () {
           return 2;
         }) !== dict_foo);
+
+        $$assert$$assert(dict_foo.merge([]) === dict_foo);
+        $$assert$$assert(dict_foo.merge([["foo", 1]]) === dict_foo);
+        $$assert$$assert(dict_foo.merge([["foo", 2]]) !== dict_foo);
       });
 
       src$Test$Test$$test("equal", function () {
@@ -3284,6 +3325,16 @@
         $$assert$$assert(x2.get("foo") === 6);
       });
 
+      src$Test$Test$$test("update", function () {
+        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record({ foo: 1 }), { foo: 1 });
+        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record({ foo: 1 }).update($$$Immutable$Immutable$$Record({ foo: 2 })), { foo: 2 });
+        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record({ foo: 1 }).update([["foo", 3]]), { foo: 3 });
+
+        src$Test$Test$$assert_raises(function () {
+          $$$Immutable$Immutable$$Record({ foo: 1 }).update($$$Immutable$Immutable$$Record({ foo: 2, bar: 3 }));
+        }, "Key bar not found");
+      });
+
       src$Test$Test$$test("complex keys", function () {
         var o = $$$Immutable$Immutable$$Dict().set({}, 1);
 
@@ -3321,6 +3372,10 @@
         var x = $$$Immutable$Immutable$$Record({ foo: 1 });
         $$assert$$assert($$$Immutable$Immutable$$Record(x) === x);
         $$assert$$assert($$$Immutable$Immutable$$Record({ foo: 1 }) !== x);
+
+        $$assert$$assert(x.update([]) === x);
+        $$assert$$assert(x.update([["foo", 1]]) === x);
+        $$assert$$assert(x.update([["foo", 2]]) !== x);
       });
 
       src$Test$Test$$test("equal", function () {

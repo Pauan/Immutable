@@ -368,6 +368,15 @@ context("Dict", function () {
     assert(!dict_foo2.has("foo"));
   });
 
+  test("merge", function () {
+    verify_dict(Dict({ foo: 1 }), { foo: 1 });
+    verify_dict(Dict({ foo: 1 }).merge([]), { foo: 1 });
+    verify_dict(Dict({ foo: 1 }).merge([["bar", 2]]), { foo: 1, bar: 2 });
+    verify_dict(Dict({ foo: 1 }).merge(Dict({ bar: 2 })), { foo: 1, bar: 2 });
+    verify_dict(Dict({ foo: 1 }).merge(Dict({ foo: 2 })), { foo: 2 });
+    verify_dict(Dict({ foo: 1 }).merge(Dict({ foo: 2, bar: 3 })), { foo: 2, bar: 3 });
+  });
+
   test("complex keys", function () {
     var o = Dict();
 
@@ -437,6 +446,10 @@ context("Dict", function () {
     assert(dict_foo.modify("foo", function () {
       return 2;
     }) !== dict_foo);
+
+    assert(dict_foo.merge([]) === dict_foo);
+    assert(dict_foo.merge([["foo", 1]]) === dict_foo);
+    assert(dict_foo.merge([["foo", 2]]) !== dict_foo);
   });
 
   test("equal", function () {
@@ -1501,6 +1514,16 @@ context("Record", function () {
     assert(x2.get("foo") === 6);
   });
 
+  test("update", function () {
+    verify_record(Record({ foo: 1 }), { foo: 1 });
+    verify_record(Record({ foo: 1 }).update(Record({ foo: 2 })), { foo: 2 });
+    verify_record(Record({ foo: 1 }).update([["foo", 3]]), { foo: 3 });
+
+    assert_raises(function () {
+      Record({ foo: 1 }).update(Record({ foo: 2, bar: 3 }));
+    }, "Key bar not found");
+  });
+
   test("complex keys", function () {
     var o = Dict().set({}, 1);
 
@@ -1538,6 +1561,10 @@ context("Record", function () {
     var x = Record({ foo: 1 });
     assert(Record(x) === x);
     assert(Record({ foo: 1 }) !== x);
+
+    assert(x.update([]) === x);
+    assert(x.update([["foo", 1]]) === x);
+    assert(x.update([["foo", 2]]) !== x);
   });
 
   test("equal", function () {

@@ -72,3 +72,17 @@ ImmutableRecord.prototype.modify = function (key, f) {
     }
   }
 };
+
+// TODO code duplication with ImmutableDict
+ImmutableRecord.prototype.update = function (other) {
+  var self = this;
+
+  other.forEach(function (_array) {
+    var key   = _array[0];
+    var value = _array[1];
+
+    self = self.set(key, value);
+  });
+
+  return self;
+};

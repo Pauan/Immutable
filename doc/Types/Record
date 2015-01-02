@@ -69,4 +69,37 @@
          record.modify("bar", function (x) { return x + 10 });
 
      If `key` is not in the record, it will throw an error.
+
+   @function Record.update
+   @param {sequence::Sequence} [other] Sequence of keys/values to update in this record
+   @return {::Record} A new record with the keys/values of this record updated with `other`
+   @summary Returns a new record with the keys/values of this record updated with `other`
+   @desc
+     This function runs in `O(log2(n) * m)` worst-case time.
+
+     This does not modify the record, it returns a new record.
+
+     This function returns a [::Record] which contains all the keys/values
+     from this record, but updated with the values from `other`.
+
+     If a key from `other` already exists in this record, it is overwritten.
+
+     If a key from `other` does not exist in this record, an error is thrown.
+
+     `other` must be a [sequence::Sequence] where each value
+     is an array of `[key, value]`
+
+     You can use this to update a [::Record] with another [::Record]:
+
+         var defaults = Record({
+           "foo": 1,
+           "bar": 2
+         });
+
+         var other = Record({
+           "foo": 50
+         });
+
+         // { foo: 50, bar: 2 }
+         defaults.update(other);
  */

@@ -132,4 +132,34 @@
          dict.modify("bar", function (x) { return x + 10 });
 
      If `key` is not in the dict, it will throw an error.
+
+   @function Dict.merge
+   @param {sequence::Sequence} [other] Sequence of keys/values to add to this dict
+   @return {::Dict} A new dict with all the keys/values of `other` added to this dict
+   @summary Returns a new dict with all the keys/values of `other` added to this dict
+   @desc
+     This function runs in `O(log2(n) * m)` worst-case time.
+
+     This does not modify the dict, it returns a new dict.
+
+     This function returns a [::Dict] which contains all the keys/values
+     from this dict, and also all the keys/values from `other`.
+
+     If a key from `other` already exists in this dict, it is overwritten.
+
+     `other` must be a [sequence::Sequence] where each value
+     is an array of `[key, value]`
+
+     You can use this to merge two [::Dict]:
+
+         var foo = Dict({
+           foo: 1
+         });
+
+         var bar = Dict({
+           bar: 2
+         });
+
+         // { foo: 1, bar: 2 }
+         foo.merge(bar);
  */

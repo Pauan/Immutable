@@ -124,3 +124,17 @@ ImmutableDict.prototype.modify = function (key, f) {
     return new ImmutableDict(node, sort);
   }
 };
+
+// TODO code duplication with ImmutableRecord
+ImmutableDict.prototype.merge = function (other) {
+  var self = this;
+
+  other.forEach(function (_array) {
+    var key   = _array[0];
+    var value = _array[1];
+
+    self = self.set(key, value);
+  });
+
+  return self;
+};
