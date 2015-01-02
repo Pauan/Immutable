@@ -55,7 +55,7 @@ The two mutable objects are different, and so they are not equal.
     equal(Dict({ foo: 1 }),
           Dict({ foo: 1 }));
 
-The two immutable objects are different, but they have the same keys/values, so they are equal.
+The two immutable objects are different, but they have the same keys/values, and so they are equal.
 
 This is the only sane default behavior for equality.
 
