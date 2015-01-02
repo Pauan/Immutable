@@ -149,6 +149,101 @@
 
       return a;
     }
+    var $$toJSON$$fromJSON_registry = {};
+
+    var $$toJSON$$toJSON_type      = "__B81911B5-071E-431E-B82E-AA7ADFEA301F_type__";
+    var $$toJSON$$toJSON_interface = "__836134D4-35C1-46C4-971D-1522F0A1E75A_toJSON__";
+
+    function $$toJSON$$fromJSON(x) {
+      if ($$util$$isObject(x)) {
+        var type = x[$$toJSON$$toJSON_type];
+        if (type != null) {
+          var register = $$toJSON$$fromJSON_registry[type];
+          if (register != null) {
+            return register(x);
+          } else {
+            throw new Error("Cannot handle type " + type);
+          }
+        } else {
+          return x;
+        }
+      } else {
+        return x;
+      }
+    }
+
+    function $$toJSON$$toJSON(x) {
+      if ($$util$$isObject(x)) {
+        var fn = x[$$toJSON$$toJSON_interface];
+        if (fn != null) {
+          return fn(x);
+        } else {
+          return x;
+        }
+      } else {
+        return x;
+      }
+    }
+
+    function $$toJSON$$toJSON_object(type, x) {
+      var o = {};
+
+      o[$$toJSON$$toJSON_type] = type;
+
+      o.keys   = [];
+      o.values = [];
+
+      x.forEach(function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
+
+        o.keys.push($$toJSON$$toJSON(key));
+        o.values.push($$toJSON$$toJSON(value));
+      });
+
+      return o;
+    }
+
+    function $$toJSON$$toJSON_array(type, x) {
+      var o = {};
+
+      o[$$toJSON$$toJSON_type] = type;
+
+      o.values = [];
+
+      x.forEach(function (value) {
+        o.values.push($$toJSON$$toJSON(value));
+      });
+
+      return o;
+    }
+
+    function $$toJSON$$fromJSON_object(x) {
+      var keys   = x.keys;
+      var values = x.values;
+
+      var l = keys.length;
+      var out = new Array(l);
+
+      for (var i = 0; i < l; ++i) {
+        out[i] = [$$toJSON$$fromJSON(keys[i]), $$toJSON$$fromJSON(values[i])];
+      }
+
+      return out;
+    }
+
+    function $$toJSON$$fromJSON_array(x) {
+      var values = x.values;
+
+      var l = values.length;
+      var out = new Array(l);
+
+      for (var i = 0; i < l; ++i) {
+        out[i] = $$toJSON$$fromJSON(values[i]);
+      }
+
+      return out;
+    }
     var $$$Immutable$nil$$nil = {};
     $$$Immutable$nil$$nil.depth      = 0;
     $$$Immutable$nil$$nil.size       = 0;
@@ -426,6 +521,18 @@
       return x.hash;
     };
 
+    $$toJSON$$fromJSON_registry["Dict"] = function (x) {
+      return $$ImmutableDict$$Dict($$toJSON$$fromJSON_object(x));
+    };
+
+    $$ImmutableDict$$ImmutableDict.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      if (x.sort === $$Sorted$$defaultSort) {
+        return $$toJSON$$toJSON_object("Dict", x);
+      } else {
+        throw new Error("Cannot convert SortedDict to JSON");
+      }
+    };
+
     $$ImmutableDict$$ImmutableDict.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
 
     // TODO Symbol.iterator
@@ -509,6 +616,48 @@
       return self;
     };
 
+
+    function $$ImmutableDict$$isDict(x) {
+      return x instanceof $$ImmutableDict$$ImmutableDict;
+    }
+
+    function $$ImmutableDict$$isSortedDict(x) {
+      return $$ImmutableDict$$isDict(x) && x.sort !== $$Sorted$$defaultSort;
+    }
+
+    function $$ImmutableDict$$SortedDict(sort, obj) {
+      if (obj != null) {
+        // We don't use equal, for increased speed
+        if (obj instanceof $$ImmutableDict$$ImmutableDict && obj.sort === sort) {
+          return obj;
+
+        } else {
+          var o = new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
+
+          if ($$util$$isJSLiteral(obj)) {
+            Object.keys(obj).forEach(function (key) {
+              o = o.set(key, obj[key]);
+            });
+
+          } else {
+            obj.forEach(function (_array) {
+              var key   = _array[0];
+              var value = _array[1];
+              o = o.set(key, value);
+            });
+          }
+
+          return o;
+        }
+      } else {
+        return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
+      }
+    }
+
+    function $$ImmutableDict$$Dict(obj) {
+      return $$ImmutableDict$$SortedDict($$Sorted$$defaultSort, obj);
+    }
+
     function $$ImmutableSet$$SetNode(left, right, key) {
       this.left  = left;
       this.right = right;
@@ -544,6 +693,18 @@
     }
 
     $$ImmutableSet$$ImmutableSet.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$toJSON$$fromJSON_registry["Set"] = function (x) {
+      return $$ImmutableSet$$Set($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      if (x.sort === $$Sorted$$defaultSort) {
+        return $$toJSON$$toJSON_array("Set", x);
+      } else {
+        throw new Error("Cannot convert SortedSet to JSON");
+      }
+    };
 
     $$ImmutableSet$$ImmutableSet.prototype[$$hash$$hash_interface] = function (x) {
       if (x.hash === null) {
@@ -667,6 +828,40 @@
 
       return self;
     };
+
+
+    function $$ImmutableSet$$isSet(x) {
+      return x instanceof $$ImmutableSet$$ImmutableSet;
+    }
+
+    function $$ImmutableSet$$isSortedSet(x) {
+      return $$ImmutableSet$$isSet(x) && x.sort !== $$Sorted$$defaultSort;
+    }
+
+    function $$ImmutableSet$$SortedSet(sort, array) {
+      if (array != null) {
+        // We don't use equal, for increased speed
+        if (array instanceof $$ImmutableSet$$ImmutableSet && array.sort === sort) {
+          return array;
+
+        } else {
+          // TODO use concat ?
+          var o = new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
+
+          array.forEach(function (x) {
+            o = o.add(x);
+          });
+
+          return o;
+        }
+      } else {
+        return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
+      }
+    }
+
+    function $$ImmutableSet$$Set(array) {
+      return $$ImmutableSet$$SortedSet($$Sorted$$defaultSort, array);
+    }
     function $$Array$$copy(array) {
       var len = array.length;
       var out = new Array(len);
@@ -1028,6 +1223,14 @@
 
     $$ImmutableList$$ImmutableList.prototype = Object.create($$ImmutableBase$$ImmutableBase);
 
+    $$toJSON$$fromJSON_registry["List"] = function (x) {
+      return $$ImmutableList$$List($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableList$$ImmutableList.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      return $$toJSON$$toJSON_array("List", x);
+    };
+
     $$ImmutableList$$ImmutableList.prototype[$$hash$$hash_interface] = function (x) {
       if (x.hash === null) {
         var a = [];
@@ -1300,18 +1503,28 @@
       }
     };
 
-    /*ImmutableList.prototype.push = function (value) {
-      var root      = this.root;
-      var tail      = this.tail;
-      var tail_size = this.tail_size;
+    function $$ImmutableList$$isList(x) {
+      return x instanceof $$ImmutableList$$ImmutableList;
+    }
 
-      if (tail_size === array_limit) {
-        var node = insert_max(root, new ArrayNode(nil, nil, stack_to_array(tail, tail_size)));
-        return new ImmutableList(node, new Cons(value, nil), 1);
+    function $$ImmutableList$$List(array) {
+      if (array != null) {
+        if (array instanceof $$ImmutableList$$ImmutableList) {
+          return array;
+
+        } else {
+          var o = new $$ImmutableList$$ImmutableList($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
+
+          array.forEach(function (x) {
+            o = o.insert(x);
+          });
+
+          return o;
+        }
       } else {
-        return new ImmutableList(root, new Cons(value, tail), tail_size + 1);
+        return new $$ImmutableList$$ImmutableList($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
       }
-    };*/;
+    }
     function $$ImmutableQueue$$ImmutableQueue(left, right, len) {
       this.left  = left;
       this.right = right;
@@ -1320,6 +1533,14 @@
     }
 
     $$ImmutableQueue$$ImmutableQueue.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$toJSON$$fromJSON_registry["Queue"] = function (x) {
+      return $$ImmutableQueue$$Queue($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      return $$toJSON$$toJSON_array("Queue", x);
+    };
 
     $$ImmutableQueue$$ImmutableQueue.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
 
@@ -1398,6 +1619,31 @@
 
       return self;
     };
+
+
+    function $$ImmutableQueue$$isQueue(x) {
+      return x instanceof $$ImmutableQueue$$ImmutableQueue;
+    }
+
+    function $$ImmutableQueue$$Queue(x) {
+      if (x != null) {
+        if (x instanceof $$ImmutableQueue$$ImmutableQueue) {
+          return x;
+
+        } else {
+          // TODO use concat ?
+          var o = new $$ImmutableQueue$$ImmutableQueue($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
+
+          x.forEach(function (x) {
+            o = o.push(x);
+          });
+
+          return o;
+        }
+      } else {
+        return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
+      }
+    }
     function $$ImmutableStack$$ImmutableStack(root, len) {
       this.root = root;
       this.len  = len;
@@ -1405,6 +1651,14 @@
     }
 
     $$ImmutableStack$$ImmutableStack.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$toJSON$$fromJSON_registry["Stack"] = function (x) {
+      return $$ImmutableStack$$Stack($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      return $$toJSON$$toJSON_array("Stack", x);
+    };
 
     $$ImmutableStack$$ImmutableStack.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
 
@@ -1471,6 +1725,31 @@
 
       return self;
     };
+
+
+    function $$ImmutableStack$$isStack(x) {
+      return x instanceof $$ImmutableStack$$ImmutableStack;
+    }
+
+    function $$ImmutableStack$$Stack(x) {
+      if (x != null) {
+        if (x instanceof $$ImmutableStack$$ImmutableStack) {
+          return x;
+
+        } else {
+          // TODO use concat ?
+          var o = new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
+
+          x.forEach(function (x) {
+            o = o.push(x);
+          });
+
+          return o;
+        }
+      } else {
+        return new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
+      }
+    }
     function $$ImmutableRecord$$ImmutableRecord(keys, values) {
       this.keys   = keys;
       this.values = values;
@@ -1478,6 +1757,14 @@
     }
 
     $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$toJSON$$fromJSON_registry["Record"] = function (x) {
+      return $$ImmutableRecord$$Record($$toJSON$$fromJSON_object(x));
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      return $$toJSON$$toJSON_object("Record", x);
+    };
 
     $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
 
@@ -1554,72 +1841,13 @@
 
       return self;
     };
-    function $$$Immutable$Immutable$$equal(x, y) {
-      return x === y || $$hash$$hash(x) === $$hash$$hash(y);
-    }
 
-    function $$$Immutable$Immutable$$isDict(x) {
-      return x instanceof $$ImmutableDict$$ImmutableDict;
-    }
 
-    function $$$Immutable$Immutable$$isSet(x) {
-      return x instanceof $$ImmutableSet$$ImmutableSet;
-    }
-
-    function $$$Immutable$Immutable$$isSortedDict(x) {
-      return $$$Immutable$Immutable$$isDict(x) && x.sort !== $$Sorted$$defaultSort;
-    }
-
-    function $$$Immutable$Immutable$$isSortedSet(x) {
-      return $$$Immutable$Immutable$$isSet(x) && x.sort !== $$Sorted$$defaultSort;
-    }
-
-    function $$$Immutable$Immutable$$isList(x) {
-      return x instanceof $$ImmutableList$$ImmutableList;
-    }
-
-    function $$$Immutable$Immutable$$isQueue(x) {
-      return x instanceof $$ImmutableQueue$$ImmutableQueue;
-    }
-
-    function $$$Immutable$Immutable$$isStack(x) {
-      return x instanceof $$ImmutableStack$$ImmutableStack;
-    }
-
-    function $$$Immutable$Immutable$$isRecord(x) {
+    function $$ImmutableRecord$$isRecord(x) {
       return x instanceof $$ImmutableRecord$$ImmutableRecord;
     }
 
-    function $$$Immutable$Immutable$$isImmutable(x) {
-      return $$$Immutable$Immutable$$isDict(x) || $$$Immutable$Immutable$$isSet(x) || $$$Immutable$Immutable$$isList(x) || $$$Immutable$Immutable$$isQueue(x) || $$$Immutable$Immutable$$isStack(x) || $$$Immutable$Immutable$$isRecord(x);
-    }
-
-    function $$$Immutable$Immutable$$fromJS(x) {
-      if (Array.isArray(x)) {
-        var out = $$$Immutable$Immutable$$List();
-
-        for (var i = 0, l = x.length; i < l; ++i) {
-          out = out.insert($$$Immutable$Immutable$$fromJS(x[i]));
-        }
-
-        return out;
-
-      } else if ($$util$$isJSLiteral(x)) {
-        var out = $$$Immutable$Immutable$$Dict();
-
-        // TODO should this only include own properties ...?
-        for (var s in x) {
-          out = out.set(s, $$$Immutable$Immutable$$fromJS(x[s]));
-        }
-
-        return out;
-
-      } else {
-        return x;
-      }
-    }
-
-    function $$$Immutable$Immutable$$Record(obj) {
+    function $$ImmutableRecord$$Record(obj) {
       var keys   = {};
       var values = [];
 
@@ -1654,121 +1882,36 @@
 
       return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
+    function $$$Immutable$Immutable$$equal(x, y) {
+      return x === y || $$hash$$hash(x) === $$hash$$hash(y);
+    }
 
-    function $$$Immutable$Immutable$$SortedDict(sort, obj) {
-      if (obj != null) {
-        // We don't use equal, for increased speed
-        if (obj instanceof $$ImmutableDict$$ImmutableDict && obj.sort === sort) {
-          return obj;
+    function $$$Immutable$Immutable$$isImmutable(x) {
+      return $$ImmutableDict$$isDict(x) || $$ImmutableSet$$isSet(x) || $$ImmutableList$$isList(x) || $$ImmutableQueue$$isQueue(x) || $$ImmutableStack$$isStack(x) || $$ImmutableRecord$$isRecord(x);
+    }
 
-        } else {
-          var o = new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
+    function $$$Immutable$Immutable$$fromJS(x) {
+      if (Array.isArray(x)) {
+        var out = $$ImmutableList$$List();
 
-          if ($$util$$isJSLiteral(obj)) {
-            Object.keys(obj).forEach(function (key) {
-              o = o.set(key, obj[key]);
-            });
-
-          } else {
-            obj.forEach(function (_array) {
-              var key   = _array[0];
-              var value = _array[1];
-              o = o.set(key, value);
-            });
-          }
-
-          return o;
+        for (var i = 0, l = x.length; i < l; ++i) {
+          out = out.insert($$$Immutable$Immutable$$fromJS(x[i]));
         }
-      } else {
-        return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
-      }
-    }
 
-    function $$$Immutable$Immutable$$SortedSet(sort, array) {
-      if (array != null) {
-        // We don't use equal, for increased speed
-        if (array instanceof $$ImmutableSet$$ImmutableSet && array.sort === sort) {
-          return array;
+        return out;
 
-        } else {
-          // TODO use concat ?
-          var o = new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
+      } else if ($$util$$isJSLiteral(x)) {
+        var out = $$ImmutableDict$$Dict();
 
-          array.forEach(function (x) {
-            o = o.add(x);
-          });
-
-          return o;
+        // TODO should this only include own properties ...?
+        for (var s in x) {
+          out = out.set(s, $$$Immutable$Immutable$$fromJS(x[s]));
         }
+
+        return out;
+
       } else {
-        return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
-      }
-    }
-
-    function $$$Immutable$Immutable$$Dict(obj) {
-      return $$$Immutable$Immutable$$SortedDict($$Sorted$$defaultSort, obj);
-    }
-
-    function $$$Immutable$Immutable$$Set(array) {
-      return $$$Immutable$Immutable$$SortedSet($$Sorted$$defaultSort, array);
-    }
-
-    function $$$Immutable$Immutable$$List(array) {
-      if (array != null) {
-        if (array instanceof $$ImmutableList$$ImmutableList) {
-          return array;
-
-        } else {
-          var o = new $$ImmutableList$$ImmutableList($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
-
-          array.forEach(function (x) {
-            o = o.insert(x);
-          });
-
-          return o;
-        }
-      } else {
-        return new $$ImmutableList$$ImmutableList($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
-      }
-    }
-
-    function $$$Immutable$Immutable$$Queue(x) {
-      if (x != null) {
-        if (x instanceof $$ImmutableQueue$$ImmutableQueue) {
-          return x;
-
-        } else {
-          // TODO use concat ?
-          var o = new $$ImmutableQueue$$ImmutableQueue($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
-
-          x.forEach(function (x) {
-            o = o.push(x);
-          });
-
-          return o;
-        }
-      } else {
-        return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
-      }
-    }
-
-    function $$$Immutable$Immutable$$Stack(x) {
-      if (x != null) {
-        if (x instanceof $$ImmutableStack$$ImmutableStack) {
-          return x;
-
-        } else {
-          // TODO use concat ?
-          var o = new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
-
-          x.forEach(function (x) {
-            o = o.push(x);
-          });
-
-          return o;
-        }
-      } else {
-        return new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
+        return x;
       }
     }
 
@@ -1786,25 +1929,27 @@
       exports.equal = $$$Immutable$Immutable$$equal;
       exports.fromJS = $$$Immutable$Immutable$$fromJS;
       exports.toJS = $$toJS$$toJS;
-      exports.isDict = $$$Immutable$Immutable$$isDict;
-      exports.isSet = $$$Immutable$Immutable$$isSet;
-      exports.isSortedDict = $$$Immutable$Immutable$$isSortedDict;
-      exports.isSortedSet = $$$Immutable$Immutable$$isSortedSet;
-      exports.isList = $$$Immutable$Immutable$$isList;
-      exports.isQueue = $$$Immutable$Immutable$$isQueue;
-      exports.isStack = $$$Immutable$Immutable$$isStack;
+      exports.isDict = $$ImmutableDict$$isDict;
+      exports.isSet = $$ImmutableSet$$isSet;
+      exports.isSortedDict = $$ImmutableDict$$isSortedDict;
+      exports.isSortedSet = $$ImmutableSet$$isSortedSet;
+      exports.isList = $$ImmutableList$$isList;
+      exports.isQueue = $$ImmutableQueue$$isQueue;
+      exports.isStack = $$ImmutableStack$$isStack;
       exports.isImmutable = $$$Immutable$Immutable$$isImmutable;
-      exports.SortedDict = $$$Immutable$Immutable$$SortedDict;
-      exports.SortedSet = $$$Immutable$Immutable$$SortedSet;
-      exports.Dict = $$$Immutable$Immutable$$Dict;
-      exports.Set = $$$Immutable$Immutable$$Set;
-      exports.List = $$$Immutable$Immutable$$List;
-      exports.Queue = $$$Immutable$Immutable$$Queue;
-      exports.Stack = $$$Immutable$Immutable$$Stack;
+      exports.SortedDict = $$ImmutableDict$$SortedDict;
+      exports.SortedSet = $$ImmutableSet$$SortedSet;
+      exports.Dict = $$ImmutableDict$$Dict;
+      exports.Set = $$ImmutableSet$$Set;
+      exports.List = $$ImmutableList$$List;
+      exports.Queue = $$ImmutableQueue$$Queue;
+      exports.Stack = $$ImmutableStack$$Stack;
       exports.simpleSort = $$Sorted$$simpleSort;
       exports.defaultSort = $$Sorted$$defaultSort;
-      exports.isRecord = $$$Immutable$Immutable$$isRecord;
-      exports.Record = $$$Immutable$Immutable$$Record;
+      exports.isRecord = $$ImmutableRecord$$isRecord;
+      exports.Record = $$ImmutableRecord$$Record;
+      exports.toJSON = $$toJSON$$toJSON;
+      exports.fromJSON = $$toJSON$$fromJSON;
     });
     function $$assert$$assert(x) {
       if (arguments.length !== 1) {
@@ -1960,6 +2105,29 @@
     }
 
 
+    function src$Test$Test$$verify_json_equal(x) {
+      var y = $$toJSON$$toJSON(x);
+      $$assert$$assert(y !== x);
+
+      var z = $$toJSON$$fromJSON(y);
+      $$assert$$assert(z !== y);
+
+      $$assert$$assert($$$Immutable$Immutable$$equal(x, z));
+    }
+
+
+    function src$Test$Test$$verify_json(x, expected) {
+      var y = $$toJSON$$toJSON(x);
+      $$assert$$assert(y !== x);
+
+      var z = $$toJSON$$fromJSON(y);
+      $$assert$$assert(z !== y);
+
+      $$assert$$assert($$$Immutable$Immutable$$equal(x, z));
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(x), expected));
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(z), expected));
+    }
+
 
     // TODO test that this works correctly
     function src$Test$Test$$verify_dict(tree, obj) {
@@ -2080,18 +2248,18 @@
 
 
     src$Test$Test$$context("Dict", function () {
-      var dict_empty = $$$Immutable$Immutable$$Dict();
-      var dict_foo   = $$$Immutable$Immutable$$Dict().set("foo", 1);
+      var dict_empty = $$ImmutableDict$$Dict();
+      var dict_foo   = $$ImmutableDict$$Dict().set("foo", 1);
 
       src$Test$Test$$test("isDict", function () {
-        $$assert$$assert(!$$$Immutable$Immutable$$isDict($$$Immutable$Immutable$$Set()));
+        $$assert$$assert(!$$ImmutableDict$$isDict($$ImmutableSet$$Set()));
 
-        $$assert$$assert($$$Immutable$Immutable$$isDict($$$Immutable$Immutable$$Dict()));
-        $$assert$$assert($$$Immutable$Immutable$$isDict($$$Immutable$Immutable$$SortedDict($$Sorted$$defaultSort)));
+        $$assert$$assert($$ImmutableDict$$isDict($$ImmutableDict$$Dict()));
+        $$assert$$assert($$ImmutableDict$$isDict($$ImmutableDict$$SortedDict($$Sorted$$defaultSort)));
 
-        $$assert$$assert($$$Immutable$Immutable$$isSortedDict($$$Immutable$Immutable$$SortedDict($$Sorted$$simpleSort)));
-        $$assert$$assert(!$$$Immutable$Immutable$$isSortedDict($$$Immutable$Immutable$$SortedDict($$Sorted$$defaultSort)));
-        $$assert$$assert(!$$$Immutable$Immutable$$isSortedDict($$$Immutable$Immutable$$Dict()));
+        $$assert$$assert($$ImmutableDict$$isSortedDict($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
+        $$assert$$assert(!$$ImmutableDict$$isSortedDict($$ImmutableDict$$SortedDict($$Sorted$$defaultSort)));
+        $$assert$$assert(!$$ImmutableDict$$isSortedDict($$ImmutableDict$$Dict()));
       });
 
       src$Test$Test$$test("verify", function () {
@@ -2100,7 +2268,7 @@
       });
 
       src$Test$Test$$test("init", function () {
-        var x = $$$Immutable$Immutable$$Dict({ foo: 1 });
+        var x = $$ImmutableDict$$Dict({ foo: 1 });
         src$Test$Test$$verify_dict(x, { foo: 1 });
         $$assert$$assert($$$Immutable$Immutable$$equal(x, dict_foo));
         $$assert$$assert($$$Immutable$Immutable$$equal(dict_foo, x));
@@ -2180,23 +2348,23 @@
       });
 
       src$Test$Test$$test("merge", function () {
-        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }), { foo: 1 });
-        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge([]), { foo: 1 });
-        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge([["bar", 2]]), { foo: 1, bar: 2 });
-        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge($$$Immutable$Immutable$$Dict({ bar: 2 })), { foo: 1, bar: 2 });
-        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge($$$Immutable$Immutable$$Dict({ foo: 2 })), { foo: 2 });
-        src$Test$Test$$verify_dict($$$Immutable$Immutable$$Dict({ foo: 1 }).merge($$$Immutable$Immutable$$Dict({ foo: 2, bar: 3 })), { foo: 2, bar: 3 });
+        src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }), { foo: 1 });
+        src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }).merge([]), { foo: 1 });
+        src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }).merge([["bar", 2]]), { foo: 1, bar: 2 });
+        src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }).merge($$ImmutableDict$$Dict({ bar: 2 })), { foo: 1, bar: 2 });
+        src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }).merge($$ImmutableDict$$Dict({ foo: 2 })), { foo: 2 });
+        src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }).merge($$ImmutableDict$$Dict({ foo: 2, bar: 3 })), { foo: 2, bar: 3 });
       });
 
       src$Test$Test$$test("complex keys", function () {
-        var o = $$$Immutable$Immutable$$Dict();
+        var o = $$ImmutableDict$$Dict();
 
         var m1 = {};
         var m2 = {};
 
-        var i1 = $$$Immutable$Immutable$$Dict();
-        var i2 = $$$Immutable$Immutable$$Dict();
-        var i3 = $$$Immutable$Immutable$$Dict({ foo: 10 });
+        var i1 = $$ImmutableDict$$Dict();
+        var i2 = $$ImmutableDict$$Dict();
+        var i3 = $$ImmutableDict$$Dict({ foo: 10 });
 
         o = o.set(m1, 1);
         o = o.set(m2, 2);
@@ -2229,9 +2397,9 @@
       });
 
       src$Test$Test$$test("=== when not modified", function () {
-        $$assert$$assert($$$Immutable$Immutable$$Dict(dict_foo) === dict_foo);
-        $$assert$$assert($$$Immutable$Immutable$$SortedDict($$Sorted$$defaultSort, dict_foo) === dict_foo);
-        $$assert$$assert($$$Immutable$Immutable$$SortedDict($$Sorted$$simpleSort, dict_foo) !== dict_foo);
+        $$assert$$assert($$ImmutableDict$$Dict(dict_foo) === dict_foo);
+        $$assert$$assert($$ImmutableDict$$SortedDict($$Sorted$$defaultSort, dict_foo) === dict_foo);
+        $$assert$$assert($$ImmutableDict$$SortedDict($$Sorted$$simpleSort, dict_foo) !== dict_foo);
 
         $$assert$$assert(dict_empty.remove("foo") === dict_empty);
 
@@ -2240,14 +2408,14 @@
         $$assert$$assert(dict_foo.set("bar", 3) !== dict_foo);
         $$assert$$assert(dict_foo.remove("foo") !== dict_foo);
 
-        var dict1 = $$$Immutable$Immutable$$Dict().set($$$Immutable$Immutable$$Dict({ foo: 1 }), $$$Immutable$Immutable$$Dict({ bar: 2 }));
+        var dict1 = $$ImmutableDict$$Dict().set($$ImmutableDict$$Dict({ foo: 1 }), $$ImmutableDict$$Dict({ bar: 2 }));
 
-        $$assert$$assert(dict1.modify($$$Immutable$Immutable$$Dict({ foo: 1 }), function () {
-          return $$$Immutable$Immutable$$Dict({ bar: 2 });
+        $$assert$$assert(dict1.modify($$ImmutableDict$$Dict({ foo: 1 }), function () {
+          return $$ImmutableDict$$Dict({ bar: 2 });
         }) !== dict1);
 
-        $$assert$$assert(dict1.modify($$$Immutable$Immutable$$Dict({ foo: 1 }), function () {
-          return $$$Immutable$Immutable$$Dict({ bar: 3 });
+        $$assert$$assert(dict1.modify($$ImmutableDict$$Dict({ foo: 1 }), function () {
+          return $$ImmutableDict$$Dict({ bar: 3 });
         }) !== dict1);
 
         $$assert$$assert(dict_foo.modify("foo", function () {
@@ -2267,29 +2435,43 @@
         $$assert$$assert(!$$$Immutable$Immutable$$equal(dict_empty, dict_foo));
         $$assert$$assert($$$Immutable$Immutable$$equal(dict_empty, dict_empty));
         $$assert$$assert($$$Immutable$Immutable$$equal(dict_foo, dict_foo));
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Dict(), $$$Immutable$Immutable$$Dict()));
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Dict({ foo: 1 }), $$$Immutable$Immutable$$Dict({ foo: 1 })));
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Dict({ foo: $$$Immutable$Immutable$$Dict({ bar: 2 }) }),
-                     $$$Immutable$Immutable$$Dict({ foo: $$$Immutable$Immutable$$Dict({ bar: 2 }) })));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Dict({ foo: $$$Immutable$Immutable$$Dict({ bar: 2 }) }),
-                      $$$Immutable$Immutable$$Dict({ foo: $$$Immutable$Immutable$$Dict({ bar: 3 }) })));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableDict$$Dict(), $$ImmutableDict$$Dict()));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableDict$$Dict({ foo: 1 }), $$ImmutableDict$$Dict({ foo: 1 })));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 2 }) }),
+                     $$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 2 }) })));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 2 }) }),
+                      $$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 3 }) })));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$SortedDict($$Sorted$$defaultSort, { foo: 1 }),
-                     $$$Immutable$Immutable$$Dict({ foo: 1 })));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableDict$$SortedDict($$Sorted$$defaultSort, { foo: 1 }),
+                     $$ImmutableDict$$Dict({ foo: 1 })));
 
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$SortedDict($$Sorted$$simpleSort, { foo: 1 }),
-                      $$$Immutable$Immutable$$Dict({ foo: 1 })));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 }),
+                      $$ImmutableDict$$Dict({ foo: 1 })));
       });
 
       src$Test$Test$$test("toJS", function () {
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(dict_empty), {}));
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(dict_foo), { foo: 1 }));
-        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$$Immutable$Immutable$$Dict({ foo: $$$Immutable$Immutable$$Dict({ bar: 2 }) })),
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 2 }) })),
                          { foo: { bar: 2 } }));
       });
 
+      src$Test$Test$$test("toJSON", function () {
+        src$Test$Test$$verify_json(dict_empty, {});
+        src$Test$Test$$verify_json(dict_foo, { foo: 1 });
+        src$Test$Test$$verify_json($$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 2 }) }), { foo: { bar: 2 } });
+
+        src$Test$Test$$verify_json($$ImmutableDict$$SortedDict($$Sorted$$defaultSort, { foo: $$ImmutableDict$$SortedDict($$Sorted$$defaultSort, { bar: 2 }) }), { foo: { bar: 2 } });
+
+        src$Test$Test$$verify_json_equal($$ImmutableDict$$Dict([[$$ImmutableDict$$Dict({ foo: 1 }), $$ImmutableDict$$Dict({ bar: 2 })]]));
+
+        src$Test$Test$$assert_raises(function () {
+          $$toJSON$$toJSON($$ImmutableDict$$SortedDict($$Sorted$$simpleSort, {}));
+        }, "Cannot convert SortedDict to JSON");
+      });
+
       src$Test$Test$$test("random keys", function () {
-        var o = $$$Immutable$Immutable$$Dict();
+        var o = $$ImmutableDict$$Dict();
         var js = {};
         src$Test$Test$$verify_dict(o, js);
 
@@ -2315,30 +2497,30 @@
       });
 
       src$Test$Test$$test("forEach", function () {
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Dict, []);
+        src$Test$Test$$test_forEach($$ImmutableDict$$Dict, []);
 
-        var corge = $$$Immutable$Immutable$$Dict({ corge: 3 });
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Dict, [["bar", 2], ["foo", 1], ["qux", corge]]);
+        var corge = $$ImmutableDict$$Dict({ corge: 3 });
+        src$Test$Test$$test_forEach($$ImmutableDict$$Dict, [["bar", 2], ["foo", 1], ["qux", corge]]);
       });
 
       src$Test$Test$$test("toString", function () {
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict() === "(Dict)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$SortedDict($$Sorted$$defaultSort) === "(Dict)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$SortedDict($$Sorted$$simpleSort) === "(SortedDict (Mutable 3))");
-        $$assert$$assert("" + $$$Immutable$Immutable$$SortedDict($$Sorted$$simpleSort, { foo: 1 }) === "(SortedDict (Mutable 3)\n  \"foo\" = 1)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$SortedDict($$Sorted$$simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 3)\n  \"bar\" = 2\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict() === "(Dict)");
+        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$defaultSort) === "(Dict)");
+        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort) === "(SortedDict (Mutable 3))");
+        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 }) === "(SortedDict (Mutable 3)\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 3)\n  \"bar\" = 2\n  \"foo\" = 1)");
 
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict({ foo: 1 }) === "(Dict\n  \"foo\" = 1)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict({ foo: 1, bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\" = 1)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict({ "foo\nbar\nqux": 1, bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\n   bar\n   qux\" = 1)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict({ foo: $$$Immutable$Immutable$$Dict({ qux: 3 }), bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\" = (Dict\n            \"qux\" = 3))");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict({ "foo\nbar\nqux": $$$Immutable$Immutable$$Dict({ qux: 3 }), bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\n   bar\n   qux\" = (Dict\n            \"qux\" = 3))");
+        $$assert$$assert("" + $$ImmutableDict$$Dict({ foo: 1 }) === "(Dict\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict({ foo: 1, bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict({ "foo\nbar\nqux": 1, bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\n   bar\n   qux\" = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ qux: 3 }), bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\" = (Dict\n            \"qux\" = 3))");
+        $$assert$$assert("" + $$ImmutableDict$$Dict({ "foo\nbar\nqux": $$ImmutableDict$$Dict({ qux: 3 }), bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\n   bar\n   qux\" = (Dict\n            \"qux\" = 3))");
 
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict({ foobarquxcorgenou: 1, bar: 2 }) === "(Dict\n  \"bar\"               = 2\n  \"foobarquxcorgenou\" = 1)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Dict\n  \"bar\"         = 2\n  \"foobar\n   quxcorgenou\" = 1)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Dict\n  \"barquxcorgenou\" = 2\n  \"foo\n   bar\n   qux\"            = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict({ foobarquxcorgenou: 1, bar: 2 }) === "(Dict\n  \"bar\"               = 2\n  \"foobarquxcorgenou\" = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Dict\n  \"bar\"         = 2\n  \"foobar\n   quxcorgenou\" = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Dict\n  \"barquxcorgenou\" = 2\n  \"foo\n   bar\n   qux\"            = 1)");
 
-        $$assert$$assert("" + $$$Immutable$Immutable$$Dict([[$$$Immutable$Immutable$$Dict({ foo: 1 }), $$$Immutable$Immutable$$Dict({ bar: 2 })]]) === "(Dict\n  (Dict\n    \"foo\" = 1) = (Dict\n                   \"bar\" = 2))");
+        $$assert$$assert("" + $$ImmutableDict$$Dict([[$$ImmutableDict$$Dict({ foo: 1 }), $$ImmutableDict$$Dict({ bar: 2 })]]) === "(Dict\n  (Dict\n    \"foo\" = 1) = (Dict\n                   \"bar\" = 2))");
       });
 
       // TODO
@@ -2351,18 +2533,18 @@
 
 
     src$Test$Test$$context("Set", function () {
-      var empty_set = $$$Immutable$Immutable$$Set();
-      var five_set  = $$$Immutable$Immutable$$Set().add(1).add(2).add(3).add(4).add(5);
+      var empty_set = $$ImmutableSet$$Set();
+      var five_set  = $$ImmutableSet$$Set().add(1).add(2).add(3).add(4).add(5);
 
       src$Test$Test$$test("isSet", function () {
-        $$assert$$assert(!$$$Immutable$Immutable$$isSet($$$Immutable$Immutable$$Dict()));
+        $$assert$$assert(!$$ImmutableSet$$isSet($$ImmutableDict$$Dict()));
 
-        $$assert$$assert($$$Immutable$Immutable$$isSet($$$Immutable$Immutable$$Set()));
-        $$assert$$assert($$$Immutable$Immutable$$isSet($$$Immutable$Immutable$$SortedSet($$Sorted$$defaultSort)));
+        $$assert$$assert($$ImmutableSet$$isSet($$ImmutableSet$$Set()));
+        $$assert$$assert($$ImmutableSet$$isSet($$ImmutableSet$$SortedSet($$Sorted$$defaultSort)));
 
-        $$assert$$assert($$$Immutable$Immutable$$isSortedSet($$$Immutable$Immutable$$SortedSet($$Sorted$$simpleSort)));
-        $$assert$$assert(!$$$Immutable$Immutable$$isSortedSet($$$Immutable$Immutable$$SortedSet($$Sorted$$defaultSort)));
-        $$assert$$assert(!$$$Immutable$Immutable$$isSortedSet($$$Immutable$Immutable$$Set()));
+        $$assert$$assert($$ImmutableSet$$isSortedSet($$ImmutableSet$$SortedSet($$Sorted$$simpleSort)));
+        $$assert$$assert(!$$ImmutableSet$$isSortedSet($$ImmutableSet$$SortedSet($$Sorted$$defaultSort)));
+        $$assert$$assert(!$$ImmutableSet$$isSortedSet($$ImmutableSet$$Set()));
       });
 
       src$Test$Test$$test("verify", function () {
@@ -2371,7 +2553,7 @@
       });
 
       src$Test$Test$$test("init", function () {
-        src$Test$Test$$verify_set($$$Immutable$Immutable$$Set([1, 2, 3]), [1, 2, 3]);
+        src$Test$Test$$verify_set($$ImmutableSet$$Set([1, 2, 3]), [1, 2, 3]);
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -2409,9 +2591,9 @@
 
       src$Test$Test$$test("union", function () {
         src$Test$Test$$verify_set(five_set.union(five_set), [1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_set(five_set.union($$$Immutable$Immutable$$Set([1, 2, 6, 9])), [1, 2, 3, 4, 5, 6, 9]);
-        src$Test$Test$$verify_set($$$Immutable$Immutable$$Set([1, 2]).union(five_set), [1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_set($$$Immutable$Immutable$$Set([1, 2, 6]).union(five_set), [1, 2, 3, 4, 5, 6]);
+        src$Test$Test$$verify_set(five_set.union($$ImmutableSet$$Set([1, 2, 6, 9])), [1, 2, 3, 4, 5, 6, 9]);
+        src$Test$Test$$verify_set($$ImmutableSet$$Set([1, 2]).union(five_set), [1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_set($$ImmutableSet$$Set([1, 2, 6]).union(five_set), [1, 2, 3, 4, 5, 6]);
         src$Test$Test$$verify_set(five_set.union([1, 2, 6, 9]), [1, 2, 3, 4, 5, 6, 9]);
       });
 
@@ -2440,14 +2622,14 @@
       });
 
       src$Test$Test$$test("complex elements", function () {
-        var o = $$$Immutable$Immutable$$Set();
+        var o = $$ImmutableSet$$Set();
 
         var m1 = {};
         var m2 = {};
 
-        var i1 = $$$Immutable$Immutable$$Set();
-        var i2 = $$$Immutable$Immutable$$Set();
-        var i3 = $$$Immutable$Immutable$$Set([1, 2, 3]);
+        var i1 = $$ImmutableSet$$Set();
+        var i2 = $$ImmutableSet$$Set();
+        var i3 = $$ImmutableSet$$Set([1, 2, 3]);
 
         o = o.add(m1);
         o = o.add(m2);
@@ -2478,17 +2660,17 @@
         $$assert$$assert(empty_set.union(five_set) !== five_set);
         $$assert$$assert(five_set.union(empty_set) === five_set);
         $$assert$$assert(five_set.union(five_set) === five_set);
-        $$assert$$assert(five_set.union($$$Immutable$Immutable$$Set([1, 2, 3])) === five_set);
+        $$assert$$assert(five_set.union($$ImmutableSet$$Set([1, 2, 3])) === five_set);
 
-        $$assert$$assert($$$Immutable$Immutable$$Set(five_set) === five_set);
-        $$assert$$assert($$$Immutable$Immutable$$SortedSet($$Sorted$$defaultSort, five_set) === five_set);
-        $$assert$$assert($$$Immutable$Immutable$$SortedSet($$Sorted$$simpleSort, five_set) !== five_set);
+        $$assert$$assert($$ImmutableSet$$Set(five_set) === five_set);
+        $$assert$$assert($$ImmutableSet$$SortedSet($$Sorted$$defaultSort, five_set) === five_set);
+        $$assert$$assert($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, five_set) !== five_set);
 
         $$assert$$assert(empty_set.remove(1) === empty_set);
 
-        var set1 = $$$Immutable$Immutable$$Set([$$$Immutable$Immutable$$Set([])]);
+        var set1 = $$ImmutableSet$$Set([$$ImmutableSet$$Set([])]);
 
-        $$assert$$assert(set1.add($$$Immutable$Immutable$$Set([])) !== set1);
+        $$assert$$assert(set1.add($$ImmutableSet$$Set([])) !== set1);
 
         $$assert$$assert(five_set.add(5) === five_set);
         $$assert$$assert(five_set.add(6) !== five_set);
@@ -2499,26 +2681,38 @@
         $$assert$$assert(!$$$Immutable$Immutable$$equal(empty_set, five_set));
         $$assert$$assert($$$Immutable$Immutable$$equal(empty_set, empty_set));
         $$assert$$assert($$$Immutable$Immutable$$equal(five_set, five_set));
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Set(), $$$Immutable$Immutable$$Set()));
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Set([1]), $$$Immutable$Immutable$$Set([1])));
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Set([$$$Immutable$Immutable$$Set([1])]), $$$Immutable$Immutable$$Set([$$$Immutable$Immutable$$Set([1])])));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Set([$$$Immutable$Immutable$$Set([1])]), $$$Immutable$Immutable$$Set([$$$Immutable$Immutable$$Set([2])])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableSet$$Set(), $$ImmutableSet$$Set()));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableSet$$Set([1]), $$ImmutableSet$$Set([1])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableSet$$Set([$$ImmutableSet$$Set([1])]), $$ImmutableSet$$Set([$$ImmutableSet$$Set([1])])));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableSet$$Set([$$ImmutableSet$$Set([1])]), $$ImmutableSet$$Set([$$ImmutableSet$$Set([2])])));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$SortedSet($$Sorted$$defaultSort, [1, 2, 3]),
-                     $$$Immutable$Immutable$$Set([1, 2, 3])));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$SortedSet($$Sorted$$simpleSort, [1, 2, 3]),
-                      $$$Immutable$Immutable$$Set([1, 2, 3])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableSet$$SortedSet($$Sorted$$defaultSort, [1, 2, 3]),
+                     $$ImmutableSet$$Set([1, 2, 3])));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3]),
+                      $$ImmutableSet$$Set([1, 2, 3])));
       });
 
       src$Test$Test$$test("toJS", function () {
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(empty_set), []));
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(five_set), [1, 2, 3, 4, 5]));
-        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$$Immutable$Immutable$$Set([1, 2, $$$Immutable$Immutable$$Set([3])])),
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$ImmutableSet$$Set([1, 2, $$ImmutableSet$$Set([3])])),
                          [[3], 1, 2]));
       });
 
+      src$Test$Test$$test("toJSON", function () {
+        src$Test$Test$$verify_json(empty_set, []);
+        src$Test$Test$$verify_json(five_set, [1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_json($$ImmutableSet$$Set([4, 5, $$ImmutableSet$$Set([1, 2, 3])]), [[1, 2, 3], 4, 5]);
+
+        src$Test$Test$$verify_json($$ImmutableSet$$SortedSet($$Sorted$$defaultSort, [4, 5, $$ImmutableSet$$SortedSet($$Sorted$$defaultSort, [1, 2, 3])]), [[1, 2, 3], 4, 5]);
+
+        src$Test$Test$$assert_raises(function () {
+          $$toJSON$$toJSON($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, []));
+        }, "Cannot convert SortedSet to JSON");
+      });
+
       src$Test$Test$$test("random elements", function () {
-        var o = $$$Immutable$Immutable$$Set();
+        var o = $$ImmutableSet$$Set();
         var a = [];
 
         var sort = o.sort;
@@ -2558,19 +2752,19 @@
       });
 
       src$Test$Test$$test("forEach", function () {
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Set, []);
+        src$Test$Test$$test_forEach($$ImmutableSet$$Set, []);
 
-        var four = $$$Immutable$Immutable$$Set([4]);
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Set, [four, 1, 2, 3]);
+        var four = $$ImmutableSet$$Set([4]);
+        src$Test$Test$$test_forEach($$ImmutableSet$$Set, [four, 1, 2, 3]);
       });
 
       src$Test$Test$$test("toString", function () {
-        $$assert$$assert("" + $$$Immutable$Immutable$$Set() === "(Set)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$SortedSet($$Sorted$$defaultSort) === "(Set)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$SortedSet($$Sorted$$simpleSort) === "(SortedSet (Mutable 3))");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Set([1, 2, 3, 4, 5]) === "(Set\n  1\n  2\n  3\n  4\n  5)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$SortedSet($$Sorted$$simpleSort, [1, 2, 3, 4, 5]) === "(SortedSet (Mutable 3)\n  1\n  2\n  3\n  4\n  5)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Set([$$$Immutable$Immutable$$Set([1, 2, 3])]) === "(Set\n  (Set\n    1\n    2\n    3))");
+        $$assert$$assert("" + $$ImmutableSet$$Set() === "(Set)");
+        $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$defaultSort) === "(Set)");
+        $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$simpleSort) === "(SortedSet (Mutable 3))");
+        $$assert$$assert("" + $$ImmutableSet$$Set([1, 2, 3, 4, 5]) === "(Set\n  1\n  2\n  3\n  4\n  5)");
+        $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3, 4, 5]) === "(SortedSet (Mutable 3)\n  1\n  2\n  3\n  4\n  5)");
+        $$assert$$assert("" + $$ImmutableSet$$Set([$$ImmutableSet$$Set([1, 2, 3])]) === "(Set\n  (Set\n    1\n    2\n    3))");
       });
 
       // TODO
@@ -2582,12 +2776,12 @@
 
 
     src$Test$Test$$context("List", function () {
-      var empty_list = $$$Immutable$Immutable$$List();
-      var five_list  = $$$Immutable$Immutable$$List().insert(1).insert(2).insert(3).insert(4).insert(5);
+      var empty_list = $$ImmutableList$$List();
+      var five_list  = $$ImmutableList$$List().insert(1).insert(2).insert(3).insert(4).insert(5);
 
       src$Test$Test$$test("isList", function () {
-        $$assert$$assert(!$$$Immutable$Immutable$$isList($$$Immutable$Immutable$$Dict()));
-        $$assert$$assert($$$Immutable$Immutable$$isList($$$Immutable$Immutable$$List()));
+        $$assert$$assert(!$$ImmutableList$$isList($$ImmutableDict$$Dict()));
+        $$assert$$assert($$ImmutableList$$isList($$ImmutableList$$List()));
       });
 
       src$Test$Test$$test("verify", function () {
@@ -2596,7 +2790,7 @@
       });
 
       src$Test$Test$$test("init", function () {
-        src$Test$Test$$verify_list($$$Immutable$Immutable$$List([1, 2, 3]), [1, 2, 3]);
+        src$Test$Test$$verify_list($$ImmutableList$$List([1, 2, 3]), [1, 2, 3]);
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -2668,7 +2862,7 @@
         src$Test$Test$$verify_list(five_list.insert(10, -2), [1, 2, 3, 4, 10, 5]);
         src$Test$Test$$verify_list(five_list, [1, 2, 3, 4, 5]);
 
-        src$Test$Test$$verify_list($$$Immutable$Immutable$$List().insert(5, 0).insert(4, 0).insert(3, 0).insert(2, 0).insert(1, 0),
+        src$Test$Test$$verify_list($$ImmutableList$$List().insert(5, 0).insert(4, 0).insert(3, 0).insert(2, 0).insert(1, 0),
                     [1, 2, 3, 4, 5]);
       });
 
@@ -2765,7 +2959,7 @@
         src$Test$Test$$verify_list(five_list.slice(-4, 4), [2, 3, 4]);
 
 
-        var double_list  = $$$Immutable$Immutable$$List();
+        var double_list  = $$ImmutableList$$List();
         var double_array = [];
 
         var len = 125 * 2;
@@ -2788,7 +2982,7 @@
         src$Test$Test$$verify_list(double_list.slice(0, 250), double_array.slice(0, 250));
 
 
-        var big_list  = $$$Immutable$Immutable$$List();
+        var big_list  = $$ImmutableList$$List();
         var big_array = [];
 
         var len = 125 * 1000;
@@ -2819,13 +3013,13 @@
       src$Test$Test$$test("concat", function () {
         src$Test$Test$$verify_list(empty_list.concat(empty_list), []);
         src$Test$Test$$verify_list(five_list.concat(five_list), [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_list($$$Immutable$Immutable$$List([10, 20, 30]).concat(five_list), [10, 20, 30, 1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_list(five_list.concat($$$Immutable$Immutable$$List([10, 20, 30])), [1, 2, 3, 4, 5, 10, 20, 30]);
+        src$Test$Test$$verify_list($$ImmutableList$$List([10, 20, 30]).concat(five_list), [10, 20, 30, 1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_list(five_list.concat($$ImmutableList$$List([10, 20, 30])), [1, 2, 3, 4, 5, 10, 20, 30]);
         src$Test$Test$$verify_list(five_list.concat([10, 20, 30]), [1, 2, 3, 4, 5, 10, 20, 30]);
       });
 
       src$Test$Test$$test("=== when not modified", function () {
-        $$assert$$assert($$$Immutable$Immutable$$List(five_list) === five_list);
+        $$assert$$assert($$ImmutableList$$List(five_list) === five_list);
 
         $$assert$$assert(empty_list.concat(empty_list) === empty_list);
         $$assert$$assert(five_list.concat(empty_list) === five_list);
@@ -2837,10 +3031,10 @@
         $$assert$$assert(five_list.slice(1, 5) !== five_list);
         $$assert$$assert(five_list.slice(0, 4) !== five_list);
 
-        var list1 = $$$Immutable$Immutable$$List([$$$Immutable$Immutable$$List([])]);
+        var list1 = $$ImmutableList$$List([$$ImmutableList$$List([])]);
 
         $$assert$$assert(list1.modify(0, function () {
-          return $$$Immutable$Immutable$$List([]);
+          return $$ImmutableList$$List([]);
         }) !== list1);
 
         $$assert$$assert(five_list.modify(0, function () {
@@ -2872,24 +3066,30 @@
         $$assert$$assert($$$Immutable$Immutable$$equal(empty_list, empty_list));
         $$assert$$assert($$$Immutable$Immutable$$equal(five_list, five_list));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$List([1, 2, 3]), $$$Immutable$Immutable$$List([1, 2, 3])));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$List([1, 2, 3]), $$$Immutable$Immutable$$List([1, 2, 4])));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$List([1, 2, 3]), $$$Immutable$Immutable$$List([1, 3, 2])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableList$$List([1, 2, 3]), $$ImmutableList$$List([1, 2, 3])));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableList$$List([1, 2, 3]), $$ImmutableList$$List([1, 2, 4])));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableList$$List([1, 2, 3]), $$ImmutableList$$List([1, 3, 2])));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$List([1, 2, 3, 4, 5]), five_list));
-        $$assert$$assert($$$Immutable$Immutable$$equal(five_list, $$$Immutable$Immutable$$List([1, 2, 3, 4, 5])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableList$$List([1, 2, 3, 4, 5]), five_list));
+        $$assert$$assert($$$Immutable$Immutable$$equal(five_list, $$ImmutableList$$List([1, 2, 3, 4, 5])));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$List([$$$Immutable$Immutable$$List([1, 2, 3])]), $$$Immutable$Immutable$$List([$$$Immutable$Immutable$$List([1, 2, 3])])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableList$$List([$$ImmutableList$$List([1, 2, 3])]), $$ImmutableList$$List([$$ImmutableList$$List([1, 2, 3])])));
       });
 
       src$Test$Test$$test("toJS", function () {
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(empty_list), []));
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(five_list), [1, 2, 3, 4, 5]));
-        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$$Immutable$Immutable$$List([1, 2, $$$Immutable$Immutable$$List([3])])), [1, 2, [3]]));
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$ImmutableList$$List([1, 2, $$ImmutableList$$List([3])])), [1, 2, [3]]));
+      });
+
+      src$Test$Test$$test("toJSON", function () {
+        src$Test$Test$$verify_json(empty_list, []);
+        src$Test$Test$$verify_json(five_list, [1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_json($$ImmutableList$$List([4, 5, $$ImmutableList$$List([1, 2, 3])]), [4, 5, [1, 2, 3]]);
       });
 
       src$Test$Test$$test("random elements", function () {
-        var o = $$$Immutable$Immutable$$List();
+        var o = $$ImmutableList$$List();
         var a = [];
 
         src$Test$Test$$verify_list(o, a);
@@ -2931,8 +3131,8 @@
           var al = [];
           var ar = [];
 
-          var il = $$$Immutable$Immutable$$List();
-          var ir = $$$Immutable$Immutable$$List();
+          var il = $$ImmutableList$$List();
+          var ir = $$ImmutableList$$List();
 
           a.slice(0, pivot).forEach(function (x) {
             var index = src$Test$Test$$random_int(il.size());
@@ -2960,19 +3160,19 @@
       });
 
       src$Test$Test$$test("forEach", function () {
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$List, []);
+        src$Test$Test$$test_forEach($$ImmutableList$$List, []);
 
-        var list = $$$Immutable$Immutable$$List([4]);
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$List, [1, 2, 3, list]);
+        var list = $$ImmutableList$$List([4]);
+        src$Test$Test$$test_forEach($$ImmutableList$$List, [1, 2, 3, list]);
 
         var expected = src$Test$Test$$random_list(200);
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$List, expected);
+        src$Test$Test$$test_forEach($$ImmutableList$$List, expected);
       });
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + empty_list === "(List)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$List([1, 2, 3]) === "(List\n  1\n  2\n  3)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$List([1, $$$Immutable$Immutable$$List([2]), 3]) === "(List\n  1\n  (List\n    2)\n  3)");
+        $$assert$$assert("" + $$ImmutableList$$List([1, 2, 3]) === "(List\n  1\n  2\n  3)");
+        $$assert$$assert("" + $$ImmutableList$$List([1, $$ImmutableList$$List([2]), 3]) === "(List\n  1\n  (List\n    2)\n  3)");
       });
 
       // TODO
@@ -2988,12 +3188,12 @@
 
 
     src$Test$Test$$context("Queue", function () {
-      var empty_queue = $$$Immutable$Immutable$$Queue();
-      var five_queue  = $$$Immutable$Immutable$$Queue().push(1).push(2).push(3).push(4).push(5);
+      var empty_queue = $$ImmutableQueue$$Queue();
+      var five_queue  = $$ImmutableQueue$$Queue().push(1).push(2).push(3).push(4).push(5);
 
       src$Test$Test$$test("isQueue", function () {
-        $$assert$$assert(!$$$Immutable$Immutable$$isQueue($$$Immutable$Immutable$$List()));
-        $$assert$$assert($$$Immutable$Immutable$$isQueue($$$Immutable$Immutable$$Queue()));
+        $$assert$$assert(!$$ImmutableQueue$$isQueue($$ImmutableList$$List()));
+        $$assert$$assert($$ImmutableQueue$$isQueue($$ImmutableQueue$$Queue()));
       });
 
       src$Test$Test$$test("verify", function () {
@@ -3002,7 +3202,7 @@
       });
 
       src$Test$Test$$test("init", function () {
-        src$Test$Test$$verify_queue($$$Immutable$Immutable$$Queue([1, 2, 3]), [1, 2, 3]);
+        src$Test$Test$$verify_queue($$ImmutableQueue$$Queue([1, 2, 3]), [1, 2, 3]);
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -3040,7 +3240,7 @@
         src$Test$Test$$verify_queue(five_queue.push(10).push(20), [1, 2, 3, 4, 5, 10, 20]);
         src$Test$Test$$verify_queue(five_queue, [1, 2, 3, 4, 5]);
 
-        src$Test$Test$$verify_queue($$$Immutable$Immutable$$Queue().push(5).push(4).push(3).push(2).push(1),
+        src$Test$Test$$verify_queue($$ImmutableQueue$$Queue().push(5).push(4).push(3).push(2).push(1),
                      [5, 4, 3, 2, 1]);
       });
 
@@ -3052,21 +3252,21 @@
         src$Test$Test$$verify_queue(five_queue.pop(), [2, 3, 4, 5]);
         src$Test$Test$$verify_queue(five_queue.pop().pop(), [3, 4, 5]);
 
-        src$Test$Test$$verify_queue($$$Immutable$Immutable$$Queue(), []);
-        src$Test$Test$$verify_queue($$$Immutable$Immutable$$Queue().push(5).push(10).push(20).push(30), [5, 10, 20, 30]);
-        src$Test$Test$$verify_queue($$$Immutable$Immutable$$Queue().push(5).push(10).push(20).push(30).pop(), [10, 20, 30]);
+        src$Test$Test$$verify_queue($$ImmutableQueue$$Queue(), []);
+        src$Test$Test$$verify_queue($$ImmutableQueue$$Queue().push(5).push(10).push(20).push(30), [5, 10, 20, 30]);
+        src$Test$Test$$verify_queue($$ImmutableQueue$$Queue().push(5).push(10).push(20).push(30).pop(), [10, 20, 30]);
       });
 
       src$Test$Test$$test("concat", function () {
         src$Test$Test$$verify_queue(empty_queue.concat(empty_queue), []);
         src$Test$Test$$verify_queue(five_queue.concat(five_queue), [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_queue($$$Immutable$Immutable$$Queue([10, 20, 30]).concat(five_queue), [10, 20, 30, 1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_queue(five_queue.concat($$$Immutable$Immutable$$Queue([10, 20, 30])), [1, 2, 3, 4, 5, 10, 20, 30]);
+        src$Test$Test$$verify_queue($$ImmutableQueue$$Queue([10, 20, 30]).concat(five_queue), [10, 20, 30, 1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_queue(five_queue.concat($$ImmutableQueue$$Queue([10, 20, 30])), [1, 2, 3, 4, 5, 10, 20, 30]);
         src$Test$Test$$verify_queue(five_queue.concat([10, 20, 30]), [1, 2, 3, 4, 5, 10, 20, 30]);
       });
 
       src$Test$Test$$test("=== when not modified", function () {
-        $$assert$$assert($$$Immutable$Immutable$$Queue(five_queue) === five_queue);
+        $$assert$$assert($$ImmutableQueue$$Queue(five_queue) === five_queue);
 
         $$assert$$assert(empty_queue.concat(empty_queue) === empty_queue);
         $$assert$$assert(five_queue.concat(empty_queue) === five_queue);
@@ -3077,33 +3277,39 @@
         $$assert$$assert($$$Immutable$Immutable$$equal(empty_queue, empty_queue));
         $$assert$$assert($$$Immutable$Immutable$$equal(five_queue, five_queue));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Queue([1, 2, 3]), $$$Immutable$Immutable$$Queue([1, 2, 3])));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Queue([1, 2, 3]), $$$Immutable$Immutable$$Queue([1, 2, 4])));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Queue([1, 2, 3]), $$$Immutable$Immutable$$Queue([1, 3, 2])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableQueue$$Queue([1, 2, 3]), $$ImmutableQueue$$Queue([1, 2, 3])));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableQueue$$Queue([1, 2, 3]), $$ImmutableQueue$$Queue([1, 2, 4])));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableQueue$$Queue([1, 2, 3]), $$ImmutableQueue$$Queue([1, 3, 2])));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Queue([1, 2, 3, 4, 5]), five_queue));
-        $$assert$$assert($$$Immutable$Immutable$$equal(five_queue, $$$Immutable$Immutable$$Queue([1, 2, 3, 4, 5])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableQueue$$Queue([1, 2, 3, 4, 5]), five_queue));
+        $$assert$$assert($$$Immutable$Immutable$$equal(five_queue, $$ImmutableQueue$$Queue([1, 2, 3, 4, 5])));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Queue([$$$Immutable$Immutable$$Queue([1, 2, 3])]), $$$Immutable$Immutable$$Queue([$$$Immutable$Immutable$$Queue([1, 2, 3])])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableQueue$$Queue([$$ImmutableQueue$$Queue([1, 2, 3])]), $$ImmutableQueue$$Queue([$$ImmutableQueue$$Queue([1, 2, 3])])));
       });
 
       src$Test$Test$$test("toJS", function () {
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(empty_queue), []));
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(five_queue), [1, 2, 3, 4, 5]));
-        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$$Immutable$Immutable$$Queue([1, 2, $$$Immutable$Immutable$$Queue([3])])), [1, 2, [3]]));
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$ImmutableQueue$$Queue([1, 2, $$ImmutableQueue$$Queue([3])])), [1, 2, [3]]));
+      });
+
+      src$Test$Test$$test("toJSON", function () {
+        src$Test$Test$$verify_json(empty_queue, []);
+        src$Test$Test$$verify_json(five_queue, [1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_json($$ImmutableQueue$$Queue([4, 5, $$ImmutableQueue$$Queue([1, 2, 3])]), [4, 5, [1, 2, 3]]);
       });
 
       src$Test$Test$$test("forEach", function () {
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Queue, []);
+        src$Test$Test$$test_forEach($$ImmutableQueue$$Queue, []);
 
-        var x = $$$Immutable$Immutable$$Queue([3]);
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Queue, [1, 2, x, 4]);
+        var x = $$ImmutableQueue$$Queue([3]);
+        src$Test$Test$$test_forEach($$ImmutableQueue$$Queue, [1, 2, x, 4]);
       });
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + empty_queue === "(Queue)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Queue([1, 2, 3]) === "(Queue\n  1\n  2\n  3)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Queue([1, $$$Immutable$Immutable$$Queue([2]), 3]) === "(Queue\n  1\n  (Queue\n    2)\n  3)");
+        $$assert$$assert("" + $$ImmutableQueue$$Queue([1, 2, 3]) === "(Queue\n  1\n  2\n  3)");
+        $$assert$$assert("" + $$ImmutableQueue$$Queue([1, $$ImmutableQueue$$Queue([2]), 3]) === "(Queue\n  1\n  (Queue\n    2)\n  3)");
       });
 
       // TODO
@@ -3115,12 +3321,12 @@
 
 
     src$Test$Test$$context("Stack", function () {
-      var empty_stack = $$$Immutable$Immutable$$Stack();
-      var five_stack  = $$$Immutable$Immutable$$Stack().push(1).push(2).push(3).push(4).push(5);
+      var empty_stack = $$ImmutableStack$$Stack();
+      var five_stack  = $$ImmutableStack$$Stack().push(1).push(2).push(3).push(4).push(5);
 
       src$Test$Test$$test("isStack", function () {
-        $$assert$$assert(!$$$Immutable$Immutable$$isStack($$$Immutable$Immutable$$Queue()));
-        $$assert$$assert($$$Immutable$Immutable$$isStack($$$Immutable$Immutable$$Stack()));
+        $$assert$$assert(!$$ImmutableStack$$isStack($$ImmutableQueue$$Queue()));
+        $$assert$$assert($$ImmutableStack$$isStack($$ImmutableStack$$Stack()));
       });
 
       src$Test$Test$$test("verify", function () {
@@ -3129,7 +3335,7 @@
       });
 
       src$Test$Test$$test("init", function () {
-        src$Test$Test$$verify_stack($$$Immutable$Immutable$$Stack([1, 2, 3]), [1, 2, 3]);
+        src$Test$Test$$verify_stack($$ImmutableStack$$Stack([1, 2, 3]), [1, 2, 3]);
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -3167,7 +3373,7 @@
         src$Test$Test$$verify_stack(five_stack.push(10).push(20), [1, 2, 3, 4, 5, 10, 20]);
         src$Test$Test$$verify_stack(five_stack, [1, 2, 3, 4, 5]);
 
-        src$Test$Test$$verify_stack($$$Immutable$Immutable$$Stack().push(5).push(4).push(3).push(2).push(1),
+        src$Test$Test$$verify_stack($$ImmutableStack$$Stack().push(5).push(4).push(3).push(2).push(1),
                      [5, 4, 3, 2, 1]);
       });
 
@@ -3183,13 +3389,13 @@
       src$Test$Test$$test("concat", function () {
         src$Test$Test$$verify_stack(empty_stack.concat(empty_stack), []);
         src$Test$Test$$verify_stack(five_stack.concat(five_stack), [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_stack($$$Immutable$Immutable$$Stack([10, 20, 30]).concat(five_stack), [10, 20, 30, 1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_stack(five_stack.concat($$$Immutable$Immutable$$Stack([10, 20, 30])), [1, 2, 3, 4, 5, 10, 20, 30]);
+        src$Test$Test$$verify_stack($$ImmutableStack$$Stack([10, 20, 30]).concat(five_stack), [10, 20, 30, 1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_stack(five_stack.concat($$ImmutableStack$$Stack([10, 20, 30])), [1, 2, 3, 4, 5, 10, 20, 30]);
         src$Test$Test$$verify_stack(five_stack.concat([10, 20, 30]), [1, 2, 3, 4, 5, 10, 20, 30]);
       });
 
       src$Test$Test$$test("=== when not modified", function () {
-        $$assert$$assert($$$Immutable$Immutable$$Stack(five_stack) === five_stack);
+        $$assert$$assert($$ImmutableStack$$Stack(five_stack) === five_stack);
 
         $$assert$$assert(empty_stack.concat(empty_stack) === empty_stack);
         $$assert$$assert(five_stack.concat(empty_stack) === five_stack);
@@ -3200,33 +3406,39 @@
         $$assert$$assert($$$Immutable$Immutable$$equal(empty_stack, empty_stack));
         $$assert$$assert($$$Immutable$Immutable$$equal(five_stack, five_stack));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Stack([1, 2, 3]), $$$Immutable$Immutable$$Stack([1, 2, 3])));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Stack([1, 2, 3]), $$$Immutable$Immutable$$Stack([1, 2, 4])));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Stack([1, 2, 3]), $$$Immutable$Immutable$$Stack([1, 3, 2])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableStack$$Stack([1, 2, 3]), $$ImmutableStack$$Stack([1, 2, 3])));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableStack$$Stack([1, 2, 3]), $$ImmutableStack$$Stack([1, 2, 4])));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableStack$$Stack([1, 2, 3]), $$ImmutableStack$$Stack([1, 3, 2])));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Stack([1, 2, 3, 4, 5]), five_stack));
-        $$assert$$assert($$$Immutable$Immutable$$equal(five_stack, $$$Immutable$Immutable$$Stack([1, 2, 3, 4, 5])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableStack$$Stack([1, 2, 3, 4, 5]), five_stack));
+        $$assert$$assert($$$Immutable$Immutable$$equal(five_stack, $$ImmutableStack$$Stack([1, 2, 3, 4, 5])));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Stack([$$$Immutable$Immutable$$Stack([1, 2, 3])]), $$$Immutable$Immutable$$Stack([$$$Immutable$Immutable$$Stack([1, 2, 3])])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableStack$$Stack([$$ImmutableStack$$Stack([1, 2, 3])]), $$ImmutableStack$$Stack([$$ImmutableStack$$Stack([1, 2, 3])])));
       });
 
       src$Test$Test$$test("toJS", function () {
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(empty_stack), []));
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(five_stack), [1, 2, 3, 4, 5]));
-        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$$Immutable$Immutable$$Stack([1, 2, $$$Immutable$Immutable$$Stack([3])])), [1, 2, [3]]));
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$ImmutableStack$$Stack([1, 2, $$ImmutableStack$$Stack([3])])), [1, 2, [3]]));
+      });
+
+      src$Test$Test$$test("toJSON", function () {
+        src$Test$Test$$verify_json(empty_stack, []);
+        src$Test$Test$$verify_json(five_stack, [1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_json($$ImmutableStack$$Stack([4, 5, $$ImmutableStack$$Stack([1, 2, 3])]), [4, 5, [1, 2, 3]]);
       });
 
       src$Test$Test$$test("forEach", function () {
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Stack, []);
+        src$Test$Test$$test_forEach($$ImmutableStack$$Stack, []);
 
-        var x = $$$Immutable$Immutable$$Stack([3]);
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Stack, [1, 2, x, 4]);
+        var x = $$ImmutableStack$$Stack([3]);
+        src$Test$Test$$test_forEach($$ImmutableStack$$Stack, [1, 2, x, 4]);
       });
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + empty_stack === "(Stack)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Stack([1, 2, 3]) === "(Stack\n  1\n  2\n  3)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Stack([1, $$$Immutable$Immutable$$Stack([2]), 3]) === "(Stack\n  1\n  (Stack\n    2)\n  3)");
+        $$assert$$assert("" + $$ImmutableStack$$Stack([1, 2, 3]) === "(Stack\n  1\n  2\n  3)");
+        $$assert$$assert("" + $$ImmutableStack$$Stack([1, $$ImmutableStack$$Stack([2]), 3]) === "(Stack\n  1\n  (Stack\n    2)\n  3)");
       });
 
       // TODO
@@ -3238,13 +3450,13 @@
 
 
     src$Test$Test$$context("Record", function () {
-      var Empty = $$$Immutable$Immutable$$Record({});
-      var Foo   = $$$Immutable$Immutable$$Record({ foo: 1 });
+      var Empty = $$ImmutableRecord$$Record({});
+      var Foo   = $$ImmutableRecord$$Record({ foo: 1 });
 
       src$Test$Test$$test("isRecord", function () {
-        $$assert$$assert(!$$$Immutable$Immutable$$isRecord($$$Immutable$Immutable$$Dict()));
-        $$assert$$assert($$$Immutable$Immutable$$isRecord(Empty));
-        $$assert$$assert($$$Immutable$Immutable$$isRecord(Foo));
+        $$assert$$assert(!$$ImmutableRecord$$isRecord($$ImmutableDict$$Dict()));
+        $$assert$$assert($$ImmutableRecord$$isRecord(Empty));
+        $$assert$$assert($$ImmutableRecord$$isRecord(Foo));
       });
 
       src$Test$Test$$test("verify", function () {
@@ -3255,27 +3467,27 @@
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + Empty === "(Record)");
         $$assert$$assert("" + Foo === "(Record\n  \"foo\" = 1)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foo: 2 }) === "(Record\n  \"foo\" = 2)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foo: 1 }) === "(Record\n  \"foo\" = 1)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foo: 1, bar: 2 }) === "(Record\n  \"foo\" = 1\n  \"bar\" = 2)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ "foo\nbar\nqux": 1, bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = 1\n  \"bar\" = 2)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foo: $$$Immutable$Immutable$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ "foo\nbar\nqux": $$$Immutable$Immutable$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: 2 }) === "(Record\n  \"foo\" = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: 1 }) === "(Record\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: 1, bar: 2 }) === "(Record\n  \"foo\" = 1\n  \"bar\" = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foo\nbar\nqux": 1, bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = 1\n  \"bar\" = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: $$ImmutableRecord$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foo\nbar\nqux": $$ImmutableRecord$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
 
-        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ foobarquxcorgenou: 1, bar: 2 }) === "(Record\n  \"foobarquxcorgenou\" = 1\n  \"bar\"               = 2)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Record\n  \"foobar\n   quxcorgenou\" = 1\n  \"bar\"         = 2)");
-        $$assert$$assert("" + $$$Immutable$Immutable$$Record({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Record\n  \"foo\n   bar\n   qux\"            = 1\n  \"barquxcorgenou\" = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ foobarquxcorgenou: 1, bar: 2 }) === "(Record\n  \"foobarquxcorgenou\" = 1\n  \"bar\"               = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Record\n  \"foobar\n   quxcorgenou\" = 1\n  \"bar\"         = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Record\n  \"foo\n   bar\n   qux\"            = 1\n  \"barquxcorgenou\" = 2)");
       });
 
       src$Test$Test$$test("init", function () {
-        var x = $$$Immutable$Immutable$$Record({ foo: 1 });
+        var x = $$ImmutableRecord$$Record({ foo: 1 });
         src$Test$Test$$verify_record(x, { foo: 1 });
         $$assert$$assert($$$Immutable$Immutable$$equal(x, Foo));
         $$assert$$assert($$$Immutable$Immutable$$equal(Foo, x));
 
-        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record({ foo: 2 }), { foo: 2 });
+        src$Test$Test$$verify_record($$ImmutableRecord$$Record({ foo: 2 }), { foo: 2 });
 
-        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record(), {});
+        src$Test$Test$$verify_record($$ImmutableRecord$$Record(), {});
       });
 
       src$Test$Test$$test("get", function () {
@@ -3326,20 +3538,20 @@
       });
 
       src$Test$Test$$test("update", function () {
-        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record({ foo: 1 }), { foo: 1 });
-        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record({ foo: 1 }).update($$$Immutable$Immutable$$Record({ foo: 2 })), { foo: 2 });
-        src$Test$Test$$verify_record($$$Immutable$Immutable$$Record({ foo: 1 }).update([["foo", 3]]), { foo: 3 });
+        src$Test$Test$$verify_record($$ImmutableRecord$$Record({ foo: 1 }), { foo: 1 });
+        src$Test$Test$$verify_record($$ImmutableRecord$$Record({ foo: 1 }).update($$ImmutableRecord$$Record({ foo: 2 })), { foo: 2 });
+        src$Test$Test$$verify_record($$ImmutableRecord$$Record({ foo: 1 }).update([["foo", 3]]), { foo: 3 });
 
         src$Test$Test$$assert_raises(function () {
-          $$$Immutable$Immutable$$Record({ foo: 1 }).update($$$Immutable$Immutable$$Record({ foo: 2, bar: 3 }));
+          $$ImmutableRecord$$Record({ foo: 1 }).update($$ImmutableRecord$$Record({ foo: 2, bar: 3 }));
         }, "Key bar not found");
       });
 
       src$Test$Test$$test("complex keys", function () {
-        var o = $$$Immutable$Immutable$$Dict().set({}, 1);
+        var o = $$ImmutableDict$$Dict().set({}, 1);
 
         src$Test$Test$$assert_raises(function () {
-          $$$Immutable$Immutable$$Record(o);
+          $$ImmutableRecord$$Record(o);
         }, "Expected string key but got [object Object]");
 
         src$Test$Test$$assert_raises(function () {
@@ -3369,9 +3581,9 @@
           return 2;
         }) !== x);
 
-        var x = $$$Immutable$Immutable$$Record({ foo: 1 });
-        $$assert$$assert($$$Immutable$Immutable$$Record(x) === x);
-        $$assert$$assert($$$Immutable$Immutable$$Record({ foo: 1 }) !== x);
+        var x = $$ImmutableRecord$$Record({ foo: 1 });
+        $$assert$$assert($$ImmutableRecord$$Record(x) === x);
+        $$assert$$assert($$ImmutableRecord$$Record({ foo: 1 }) !== x);
 
         $$assert$$assert(x.update([]) === x);
         $$assert$$assert(x.update([["foo", 1]]) === x);
@@ -3383,27 +3595,33 @@
         $$assert$$assert($$$Immutable$Immutable$$equal(Empty, Empty));
         $$assert$$assert($$$Immutable$Immutable$$equal(Foo, Foo));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Record({}), $$$Immutable$Immutable$$Record({})));
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Record({ foo: 1 }), $$$Immutable$Immutable$$Record({ foo: 1 })));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableRecord$$Record({}), $$ImmutableRecord$$Record({})));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableRecord$$Record({ foo: 1 }), $$ImmutableRecord$$Record({ foo: 1 })));
 
-        $$assert$$assert(!$$$Immutable$Immutable$$equal(Foo, $$$Immutable$Immutable$$Record({ foo: 2 })));
-        $$assert$$assert($$$Immutable$Immutable$$equal(Foo, $$$Immutable$Immutable$$Record({ foo: 1 })));
-        $$assert$$assert($$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Record({ foo: 2 }), $$$Immutable$Immutable$$Record({ foo: 2 })));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Immutable$$Record({ foo: 2 }), $$$Immutable$Immutable$$Record({ foo: 3 })));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(Foo, $$ImmutableRecord$$Record({ foo: 2 })));
+        $$assert$$assert($$$Immutable$Immutable$$equal(Foo, $$ImmutableRecord$$Record({ foo: 1 })));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableRecord$$Record({ foo: 2 }), $$ImmutableRecord$$Record({ foo: 2 })));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableRecord$$Record({ foo: 2 }), $$ImmutableRecord$$Record({ foo: 3 })));
       });
 
       src$Test$Test$$test("toJS", function () {
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(Empty), {}));
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(Foo), { foo: 1 }));
-        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$$Immutable$Immutable$$Record({ foo: $$$Immutable$Immutable$$Record({ bar: 2 }) })),
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$ImmutableRecord$$Record({ foo: $$ImmutableRecord$$Record({ bar: 2 }) })),
                          { foo: { bar: 2 } }));
       });
 
+      src$Test$Test$$test("toJSON", function () {
+        src$Test$Test$$verify_json(Empty, {});
+        src$Test$Test$$verify_json(Foo, { foo: 1 });
+        src$Test$Test$$verify_json($$ImmutableRecord$$Record({ foo: $$ImmutableRecord$$Record({ bar: 2 }) }), { foo: { bar: 2 } });
+      });
+
       src$Test$Test$$test("forEach", function () {
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Record, []);
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Record, [["foo", 2]]);
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Record, [["foo", 2], ["bar", 3]]);
-        src$Test$Test$$test_forEach($$$Immutable$Immutable$$Record, [["bar", 3], ["foo", 2]]);
+        src$Test$Test$$test_forEach($$ImmutableRecord$$Record, []);
+        src$Test$Test$$test_forEach($$ImmutableRecord$$Record, [["foo", 2]]);
+        src$Test$Test$$test_forEach($$ImmutableRecord$$Record, [["foo", 2], ["bar", 3]]);
+        src$Test$Test$$test_forEach($$ImmutableRecord$$Record, [["bar", 3], ["foo", 2]]);
       });
 
       // TODO
@@ -3419,18 +3637,35 @@
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable(5));
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable({}));
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable([]));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$Dict()));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$Set()));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$List()));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$Queue()));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$Stack()));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$SortedDict($$Sorted$$defaultSort)));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$SortedDict($$Sorted$$simpleSort)));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$SortedSet($$Sorted$$defaultSort)));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Immutable$$SortedSet($$Sorted$$simpleSort)));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$Dict()));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$Set()));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableList$$List()));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableQueue$$Queue()));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableStack$$Stack()));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$SortedDict($$Sorted$$defaultSort)));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$SortedSet($$Sorted$$defaultSort)));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$SortedSet($$Sorted$$simpleSort)));
 
-      var Foo = $$$Immutable$Immutable$$Record({});
+      var Foo = $$ImmutableRecord$$Record({});
       $$assert$$assert($$$Immutable$Immutable$$isImmutable(Foo));
+    });
+
+    src$Test$Test$$test("toJS", function () {
+      var x = {};
+      $$assert$$assert($$toJS$$toJS(x) === x);
+
+      var x = [];
+      $$assert$$assert($$toJS$$toJS(x) === x);
+
+      var x = new Date();
+      $$assert$$assert($$toJS$$toJS(x) === x);
+
+      var x = /foo/;
+      $$assert$$assert($$toJS$$toJS(x) === x);
+
+      $$assert$$assert($$toJS$$toJS("foo") === "foo");
+      $$assert$$assert($$toJS$$toJS(5) === 5);
     });
 
     src$Test$Test$$test("fromJS", function () {
@@ -3451,6 +3686,40 @@
 
       $$assert$$assert($$$Immutable$Immutable$$fromJS("foo") === "foo");
       $$assert$$assert($$$Immutable$Immutable$$fromJS(5) === 5);
+    });
+
+    src$Test$Test$$test("toJSON", function () {
+      var x = {};
+      $$assert$$assert($$toJSON$$toJSON(x) === x);
+
+      var x = [];
+      $$assert$$assert($$toJSON$$toJSON(x) === x);
+
+      var x = new Date();
+      $$assert$$assert($$toJSON$$toJSON(x) === x);
+
+      var x = /foo/;
+      $$assert$$assert($$toJSON$$toJSON(x) === x);
+
+      $$assert$$assert($$toJSON$$toJSON("foo") === "foo");
+      $$assert$$assert($$toJSON$$toJSON(5) === 5);
+    });
+
+    src$Test$Test$$test("fromJSON", function () {
+      var x = {};
+      $$assert$$assert($$toJSON$$fromJSON(x) === x);
+
+      var x = [];
+      $$assert$$assert($$toJSON$$fromJSON(x) === x);
+
+      var x = new Date();
+      $$assert$$assert($$toJSON$$fromJSON(x) === x);
+
+      var x = /foo/;
+      $$assert$$assert($$toJSON$$fromJSON(x) === x);
+
+      $$assert$$assert($$toJSON$$fromJSON("foo") === "foo");
+      $$assert$$assert($$toJSON$$fromJSON(5) === 5);
     });
 
 

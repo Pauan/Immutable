@@ -1,3 +1,4 @@
+import { toJSON_array, fromJSON_array, toJSON_interface, fromJSON_registry } from "./toJSON";
 import { toJS_array, toJS_interface } from "./toJS";
 import { hash, hash_interface } from "./hash";
 import { join_lines } from "./util";
@@ -13,6 +14,14 @@ export function ImmutableQueue(left, right, len) {
 }
 
 ImmutableQueue.prototype = Object.create(ImmutableBase);
+
+fromJSON_registry["Queue"] = function (x) {
+  return Queue(fromJSON_array(x));
+};
+
+ImmutableQueue.prototype[toJSON_interface] = function (x) {
+  return toJSON_array("Queue", x);
+};
 
 ImmutableQueue.prototype[toJS_interface] = toJS_array;
 
@@ -91,3 +100,29 @@ ImmutableQueue.prototype.concat = function (right) {
 
   return self;
 };
+
+
+export function isQueue(x) {
+  return x instanceof ImmutableQueue;
+}
+
+// TODO code duplication with Stack
+export function Queue(x) {
+  if (x != null) {
+    if (x instanceof ImmutableQueue) {
+      return x;
+
+    } else {
+      // TODO use concat ?
+      var o = new ImmutableQueue(nil, nil, 0);
+
+      x.forEach(function (x) {
+        o = o.push(x);
+      });
+
+      return o;
+    }
+  } else {
+    return new ImmutableQueue(nil, nil, 0);
+  }
+}

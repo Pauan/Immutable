@@ -1,7 +1,9 @@
 import { modify as array_modify } from "./Array";
 import { hash, hash_interface, hash_dict } from "./hash";
+import { toJSON_object, fromJSON_object, toJSON_interface, fromJSON_registry } from "./toJSON";
 import { toJS_object, toJS_interface } from "./toJS";
 import { ImmutableBase } from "./ImmutableBase";
+import { isJSLiteral } from "./util";
 
 export function ImmutableRecord(keys, values) {
   this.keys   = keys;
@@ -10,6 +12,14 @@ export function ImmutableRecord(keys, values) {
 }
 
 ImmutableRecord.prototype = Object.create(ImmutableBase);
+
+fromJSON_registry["Record"] = function (x) {
+  return Record(fromJSON_object(x));
+};
+
+ImmutableRecord.prototype[toJSON_interface] = function (x) {
+  return toJSON_object("Record", x);
+};
 
 ImmutableRecord.prototype[toJS_interface] = toJS_object;
 
@@ -86,3 +96,44 @@ ImmutableRecord.prototype.update = function (other) {
 
   return self;
 };
+
+
+export function isRecord(x) {
+  return x instanceof ImmutableRecord;
+}
+
+export function Record(obj) {
+  var keys   = {};
+  var values = [];
+
+  if (obj != null) {
+    if (obj instanceof ImmutableRecord) {
+      return obj;
+
+    } else if (isJSLiteral(obj)) {
+      Object.keys(obj).forEach(function (key) {
+        // TODO code duplication
+        if (typeof key !== "string") {
+          throw new Error("Expected string key but got " + key);
+        }
+
+        keys[key] = values.push(obj[key]) - 1;
+      });
+
+    } else {
+      obj.forEach(function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
+
+        // TODO code duplication
+        if (typeof key !== "string") {
+          throw new Error("Expected string key but got " + key);
+        }
+
+        keys[key] = values.push(value) - 1;
+      });
+    }
+  }
+
+  return new ImmutableRecord(keys, values);
+}

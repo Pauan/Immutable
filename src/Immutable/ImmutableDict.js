@@ -2,8 +2,10 @@ import { max } from "./AVL";
 import { defaultSort, key_get, key_set, key_modify, key_remove } from "./Sorted";
 import { hash, hash_interface, hash_dict } from "./hash";
 import { toJS_object, toJS_interface } from "./toJS";
+import { toJSON_object, fromJSON_object, toJSON_interface, fromJSON_registry } from "./toJSON";
 import { nil } from "./nil";
 import { ImmutableBase } from "./ImmutableBase";
+import { isJSLiteral } from "./util";
 
 function KeyNode(left, right, key, value) {
   this.left  = left;
@@ -54,6 +56,18 @@ ImmutableDict.prototype[hash_interface] = function (x) {
   }
 
   return x.hash;
+};
+
+fromJSON_registry["Dict"] = function (x) {
+  return Dict(fromJSON_object(x));
+};
+
+ImmutableDict.prototype[toJSON_interface] = function (x) {
+  if (x.sort === defaultSort) {
+    return toJSON_object("Dict", x);
+  } else {
+    throw new Error("Cannot convert SortedDict to JSON");
+  }
 };
 
 ImmutableDict.prototype[toJS_interface] = toJS_object;
@@ -138,3 +152,45 @@ ImmutableDict.prototype.merge = function (other) {
 
   return self;
 };
+
+
+export function isDict(x) {
+  return x instanceof ImmutableDict;
+}
+
+export function isSortedDict(x) {
+  return isDict(x) && x.sort !== defaultSort;
+}
+
+export function SortedDict(sort, obj) {
+  if (obj != null) {
+    // We don't use equal, for increased speed
+    if (obj instanceof ImmutableDict && obj.sort === sort) {
+      return obj;
+
+    } else {
+      var o = new ImmutableDict(nil, sort);
+
+      if (isJSLiteral(obj)) {
+        Object.keys(obj).forEach(function (key) {
+          o = o.set(key, obj[key]);
+        });
+
+      } else {
+        obj.forEach(function (_array) {
+          var key   = _array[0];
+          var value = _array[1];
+          o = o.set(key, value);
+        });
+      }
+
+      return o;
+    }
+  } else {
+    return new ImmutableDict(nil, sort);
+  }
+}
+
+export function Dict(obj) {
+  return SortedDict(defaultSort, obj);
+}

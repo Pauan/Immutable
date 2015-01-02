@@ -51,7 +51,7 @@ benchmark.group("Information", function () {
   });
   benchmark.group("Immutable", function () {
     benchmark.message("URL: https://github.com/Pauan/Immutable");
-    benchmark.message("Version: 1.0.0");
+    benchmark.message("Version: 1.1.0");
   });
   /*benchmark.group("Elm", function () {
     benchmark.message("URL: http://elm-lang.org/");

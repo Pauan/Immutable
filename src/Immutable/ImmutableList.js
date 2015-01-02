@@ -2,6 +2,7 @@ import { insert as array_insert, modify as array_modify, remove as array_remove 
 import { max, balanced_node, concat, insert_min, insert_max } from "./AVL";
 import { hash_interface, hash } from "./hash";
 import { join_lines } from "./util";
+import { toJSON_array, fromJSON_array, toJSON_interface, fromJSON_registry } from "./toJSON";
 import { toJS_array, toJS_interface } from "./toJS";
 import { ImmutableBase } from "./ImmutableBase";
 import { nil } from "./nil";
@@ -285,6 +286,14 @@ export function ImmutableList(root, tail, tail_size) {
 }
 
 ImmutableList.prototype = Object.create(ImmutableBase);
+
+fromJSON_registry["List"] = function (x) {
+  return List(fromJSON_array(x));
+};
+
+ImmutableList.prototype[toJSON_interface] = function (x) {
+  return toJSON_array("List", x);
+};
 
 ImmutableList.prototype[hash_interface] = function (x) {
   if (x.hash === null) {
@@ -570,3 +579,27 @@ ImmutableList.prototype.concat = function (right) {
     return new ImmutableList(root, new Cons(value, tail), tail_size + 1);
   }
 };*/
+
+
+export function isList(x) {
+  return x instanceof ImmutableList;
+}
+
+export function List(array) {
+  if (array != null) {
+    if (array instanceof ImmutableList) {
+      return array;
+
+    } else {
+      var o = new ImmutableList(nil, nil, 0);
+
+      array.forEach(function (x) {
+        o = o.insert(x);
+      });
+
+      return o;
+    }
+  } else {
+    return new ImmutableList(nil, nil, 0);
+  }
+}

@@ -19,4 +19,8 @@
      This is useful if you like using [::Dict], [::Set],
      [::List], [::Queue], or [::Stack] but you want to use a
      library that requires ordinary JavaScript objects/arrays.
+
+     If you want to losslessly store an Immutable object on
+     disk, or send it over the network, you can use [::toJSON]
+     and [::fromJSON] instead.
  */

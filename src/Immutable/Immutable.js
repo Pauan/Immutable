@@ -1,53 +1,25 @@
 import { hash } from "./hash";
 import { toJS } from "./toJS";
+import { toJSON, fromJSON } from "./toJSON";
 import { simpleSort, defaultSort } from "./Sorted";
 import { isJSLiteral } from "./util";
-import { ImmutableDict } from "./ImmutableDict";
-import { ImmutableSet } from "./ImmutableSet";
-import { ImmutableList } from "./ImmutableList";
-import { ImmutableQueue } from "./ImmutableQueue";
-import { ImmutableStack } from "./ImmutableStack";
-import { ImmutableRecord } from "./ImmutableRecord";
-import { nil } from "./nil";
+import { SortedDict, Dict, isDict, isSortedDict } from "./ImmutableDict";
+import { SortedSet, Set, isSet, isSortedSet } from "./ImmutableSet";
+import { isList, List } from "./ImmutableList";
+import { isQueue, Queue } from "./ImmutableQueue";
+import { isStack, Stack } from "./ImmutableStack";
+import { isRecord, Record } from "./ImmutableRecord";
 
-export { toJS, simpleSort, defaultSort };
+export { toJS, simpleSort, defaultSort, toJSON, fromJSON,
+         SortedDict, Dict, isDict, isSortedDict,
+         SortedSet, Set, isSet, isSortedSet,
+         isList, List, isQueue, Queue,
+         isStack, Stack, isRecord, Record };
 
 
 // TODO support -0 and 0 ?
 export function equal(x, y) {
   return x === y || hash(x) === hash(y);
-}
-
-export function isDict(x) {
-  return x instanceof ImmutableDict;
-}
-
-export function isSet(x) {
-  return x instanceof ImmutableSet;
-}
-
-export function isSortedDict(x) {
-  return isDict(x) && x.sort !== defaultSort;
-}
-
-export function isSortedSet(x) {
-  return isSet(x) && x.sort !== defaultSort;
-}
-
-export function isList(x) {
-  return x instanceof ImmutableList;
-}
-
-export function isQueue(x) {
-  return x instanceof ImmutableQueue;
-}
-
-export function isStack(x) {
-  return x instanceof ImmutableStack;
-}
-
-export function isRecord(x) {
-  return x instanceof ImmutableRecord;
 }
 
 export function isImmutable(x) {
@@ -76,159 +48,6 @@ export function fromJS(x) {
 
   } else {
     return x;
-  }
-}
-
-export function Record(obj) {
-  var keys   = {};
-  var values = [];
-
-  if (obj != null) {
-    if (obj instanceof ImmutableRecord) {
-      return obj;
-
-    } else if (isJSLiteral(obj)) {
-      Object.keys(obj).forEach(function (key) {
-        // TODO code duplication
-        if (typeof key !== "string") {
-          throw new Error("Expected string key but got " + key);
-        }
-
-        keys[key] = values.push(obj[key]) - 1;
-      });
-
-    } else {
-      obj.forEach(function (_array) {
-        var key   = _array[0];
-        var value = _array[1];
-
-        // TODO code duplication
-        if (typeof key !== "string") {
-          throw new Error("Expected string key but got " + key);
-        }
-
-        keys[key] = values.push(value) - 1;
-      });
-    }
-  }
-
-  return new ImmutableRecord(keys, values);
-}
-
-export function SortedDict(sort, obj) {
-  if (obj != null) {
-    // We don't use equal, for increased speed
-    if (obj instanceof ImmutableDict && obj.sort === sort) {
-      return obj;
-
-    } else {
-      var o = new ImmutableDict(nil, sort);
-
-      if (isJSLiteral(obj)) {
-        Object.keys(obj).forEach(function (key) {
-          o = o.set(key, obj[key]);
-        });
-
-      } else {
-        obj.forEach(function (_array) {
-          var key   = _array[0];
-          var value = _array[1];
-          o = o.set(key, value);
-        });
-      }
-
-      return o;
-    }
-  } else {
-    return new ImmutableDict(nil, sort);
-  }
-}
-
-export function SortedSet(sort, array) {
-  if (array != null) {
-    // We don't use equal, for increased speed
-    if (array instanceof ImmutableSet && array.sort === sort) {
-      return array;
-
-    } else {
-      // TODO use concat ?
-      var o = new ImmutableSet(nil, sort);
-
-      array.forEach(function (x) {
-        o = o.add(x);
-      });
-
-      return o;
-    }
-  } else {
-    return new ImmutableSet(nil, sort);
-  }
-}
-
-export function Dict(obj) {
-  return SortedDict(defaultSort, obj);
-}
-
-export function Set(array) {
-  return SortedSet(defaultSort, array);
-}
-
-export function List(array) {
-  if (array != null) {
-    if (array instanceof ImmutableList) {
-      return array;
-
-    } else {
-      var o = new ImmutableList(nil, nil, 0);
-
-      array.forEach(function (x) {
-        o = o.insert(x);
-      });
-
-      return o;
-    }
-  } else {
-    return new ImmutableList(nil, nil, 0);
-  }
-}
-
-export function Queue(x) {
-  if (x != null) {
-    if (x instanceof ImmutableQueue) {
-      return x;
-
-    } else {
-      // TODO use concat ?
-      var o = new ImmutableQueue(nil, nil, 0);
-
-      x.forEach(function (x) {
-        o = o.push(x);
-      });
-
-      return o;
-    }
-  } else {
-    return new ImmutableQueue(nil, nil, 0);
-  }
-}
-
-export function Stack(x) {
-  if (x != null) {
-    if (x instanceof ImmutableStack) {
-      return x;
-
-    } else {
-      // TODO use concat ?
-      var o = new ImmutableStack(nil, 0);
-
-      x.forEach(function (x) {
-        o = o.push(x);
-      });
-
-      return o;
-    }
-  } else {
-    return new ImmutableStack(nil, 0);
   }
 }
 
@@ -266,4 +85,6 @@ export function Stack(x) {
   exports.defaultSort = defaultSort;
   exports.isRecord = isRecord;
   exports.Record = Record;
+  exports.toJSON = toJSON;
+  exports.fromJSON = fromJSON;
 });

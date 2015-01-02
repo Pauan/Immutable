@@ -2,6 +2,7 @@ import { max } from "./AVL";
 import { defaultSort, key_get, key_set, key_remove } from "./Sorted";
 import { hash, hash_interface } from "./hash";
 import { join_lines } from "./util";
+import { toJSON_array, fromJSON_array, toJSON_interface, fromJSON_registry } from "./toJSON";
 import { toJS_array, toJS_interface } from "./toJS";
 import { nil } from "./nil";
 import { ImmutableBase } from "./ImmutableBase";
@@ -41,6 +42,18 @@ export function ImmutableSet(root, sort) {
 }
 
 ImmutableSet.prototype = Object.create(ImmutableBase);
+
+fromJSON_registry["Set"] = function (x) {
+  return Set(fromJSON_array(x));
+};
+
+ImmutableSet.prototype[toJSON_interface] = function (x) {
+  if (x.sort === defaultSort) {
+    return toJSON_array("Set", x);
+  } else {
+    throw new Error("Cannot convert SortedSet to JSON");
+  }
+};
 
 ImmutableSet.prototype[hash_interface] = function (x) {
   if (x.hash === null) {
@@ -164,3 +177,37 @@ ImmutableSet.prototype.subtract = function (other) {
 
   return self;
 };
+
+
+export function isSet(x) {
+  return x instanceof ImmutableSet;
+}
+
+export function isSortedSet(x) {
+  return isSet(x) && x.sort !== defaultSort;
+}
+
+export function SortedSet(sort, array) {
+  if (array != null) {
+    // We don't use equal, for increased speed
+    if (array instanceof ImmutableSet && array.sort === sort) {
+      return array;
+
+    } else {
+      // TODO use concat ?
+      var o = new ImmutableSet(nil, sort);
+
+      array.forEach(function (x) {
+        o = o.add(x);
+      });
+
+      return o;
+    }
+  } else {
+    return new ImmutableSet(nil, sort);
+  }
+}
+
+export function Set(array) {
+  return SortedSet(defaultSort, array);
+}

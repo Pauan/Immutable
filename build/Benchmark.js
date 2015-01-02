@@ -31,20 +31,40 @@
                 return $$$Immutable$Immutable$$defaultSort;
             },
 
-            get equal() {
-                return $$$Immutable$Immutable$$equal;
+            get toJSON() {
+                return $$$Immutable$Immutable$$toJSON;
+            },
+
+            get fromJSON() {
+                return $$$Immutable$Immutable$$fromJSON;
+            },
+
+            get SortedDict() {
+                return $$$Immutable$Immutable$$SortedDict;
+            },
+
+            get Dict() {
+                return $$$Immutable$Immutable$$Dict;
             },
 
             get isDict() {
                 return $$$Immutable$Immutable$$isDict;
             },
 
-            get isSet() {
-                return $$$Immutable$Immutable$$isSet;
-            },
-
             get isSortedDict() {
                 return $$$Immutable$Immutable$$isSortedDict;
+            },
+
+            get SortedSet() {
+                return $$$Immutable$Immutable$$SortedSet;
+            },
+
+            get Set() {
+                return $$$Immutable$Immutable$$Set;
+            },
+
+            get isSet() {
+                return $$$Immutable$Immutable$$isSet;
             },
 
             get isSortedSet() {
@@ -55,16 +75,36 @@
                 return $$$Immutable$Immutable$$isList;
             },
 
+            get List() {
+                return $$$Immutable$Immutable$$List;
+            },
+
             get isQueue() {
                 return $$$Immutable$Immutable$$isQueue;
+            },
+
+            get Queue() {
+                return $$$Immutable$Immutable$$Queue;
             },
 
             get isStack() {
                 return $$$Immutable$Immutable$$isStack;
             },
 
+            get Stack() {
+                return $$$Immutable$Immutable$$Stack;
+            },
+
             get isRecord() {
                 return $$$Immutable$Immutable$$isRecord;
+            },
+
+            get Record() {
+                return $$$Immutable$Immutable$$Record;
+            },
+
+            get equal() {
+                return $$$Immutable$Immutable$$equal;
             },
 
             get isImmutable() {
@@ -73,38 +113,6 @@
 
             get fromJS() {
                 return $$$Immutable$Immutable$$fromJS;
-            },
-
-            get Record() {
-                return $$$Immutable$Immutable$$Record;
-            },
-
-            get SortedDict() {
-                return $$$Immutable$Immutable$$SortedDict;
-            },
-
-            get SortedSet() {
-                return $$$Immutable$Immutable$$SortedSet;
-            },
-
-            get Dict() {
-                return $$$Immutable$Immutable$$Dict;
-            },
-
-            get Set() {
-                return $$$Immutable$Immutable$$Set;
-            },
-
-            get List() {
-                return $$$Immutable$Immutable$$List;
-            },
-
-            get Queue() {
-                return $$$Immutable$Immutable$$Queue;
-            },
-
-            get Stack() {
-                return $$$Immutable$Immutable$$Stack;
             }
         };
 
@@ -356,6 +364,101 @@
       });
 
       return a;
+    }
+    var $$toJSON$$fromJSON_registry = {};
+
+    var $$toJSON$$toJSON_type      = "__B81911B5-071E-431E-B82E-AA7ADFEA301F_type__";
+    var $$toJSON$$toJSON_interface = "__836134D4-35C1-46C4-971D-1522F0A1E75A_toJSON__";
+
+    function $$toJSON$$fromJSON(x) {
+      if ($$util$$isObject(x)) {
+        var type = x[$$toJSON$$toJSON_type];
+        if (type != null) {
+          var register = $$toJSON$$fromJSON_registry[type];
+          if (register != null) {
+            return register(x);
+          } else {
+            throw new Error("Cannot handle type " + type);
+          }
+        } else {
+          return x;
+        }
+      } else {
+        return x;
+      }
+    }
+
+    function $$toJSON$$toJSON(x) {
+      if ($$util$$isObject(x)) {
+        var fn = x[$$toJSON$$toJSON_interface];
+        if (fn != null) {
+          return fn(x);
+        } else {
+          return x;
+        }
+      } else {
+        return x;
+      }
+    }
+
+    function $$toJSON$$toJSON_object(type, x) {
+      var o = {};
+
+      o[$$toJSON$$toJSON_type] = type;
+
+      o.keys   = [];
+      o.values = [];
+
+      x.forEach(function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
+
+        o.keys.push($$toJSON$$toJSON(key));
+        o.values.push($$toJSON$$toJSON(value));
+      });
+
+      return o;
+    }
+
+    function $$toJSON$$toJSON_array(type, x) {
+      var o = {};
+
+      o[$$toJSON$$toJSON_type] = type;
+
+      o.values = [];
+
+      x.forEach(function (value) {
+        o.values.push($$toJSON$$toJSON(value));
+      });
+
+      return o;
+    }
+
+    function $$toJSON$$fromJSON_object(x) {
+      var keys   = x.keys;
+      var values = x.values;
+
+      var l = keys.length;
+      var out = new Array(l);
+
+      for (var i = 0; i < l; ++i) {
+        out[i] = [$$toJSON$$fromJSON(keys[i]), $$toJSON$$fromJSON(values[i])];
+      }
+
+      return out;
+    }
+
+    function $$toJSON$$fromJSON_array(x) {
+      var values = x.values;
+
+      var l = values.length;
+      var out = new Array(l);
+
+      for (var i = 0; i < l; ++i) {
+        out[i] = $$toJSON$$fromJSON(values[i]);
+      }
+
+      return out;
     }
     var $$$Immutable$nil$$nil = {};
     $$$Immutable$nil$$nil.depth      = 0;
@@ -634,6 +737,18 @@
       return x.hash;
     };
 
+    $$toJSON$$fromJSON_registry["Dict"] = function (x) {
+      return $$ImmutableDict$$Dict($$toJSON$$fromJSON_object(x));
+    };
+
+    $$ImmutableDict$$ImmutableDict.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      if (x.sort === $$Sorted$$defaultSort) {
+        return $$toJSON$$toJSON_object("Dict", x);
+      } else {
+        throw new Error("Cannot convert SortedDict to JSON");
+      }
+    };
+
     $$ImmutableDict$$ImmutableDict.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
 
     // TODO Symbol.iterator
@@ -717,6 +832,48 @@
       return self;
     };
 
+
+    function $$ImmutableDict$$isDict(x) {
+      return x instanceof $$ImmutableDict$$ImmutableDict;
+    }
+
+    function $$ImmutableDict$$isSortedDict(x) {
+      return $$ImmutableDict$$isDict(x) && x.sort !== $$Sorted$$defaultSort;
+    }
+
+    function $$ImmutableDict$$SortedDict(sort, obj) {
+      if (obj != null) {
+        // We don't use equal, for increased speed
+        if (obj instanceof $$ImmutableDict$$ImmutableDict && obj.sort === sort) {
+          return obj;
+
+        } else {
+          var o = new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
+
+          if ($$util$$isJSLiteral(obj)) {
+            Object.keys(obj).forEach(function (key) {
+              o = o.set(key, obj[key]);
+            });
+
+          } else {
+            obj.forEach(function (_array) {
+              var key   = _array[0];
+              var value = _array[1];
+              o = o.set(key, value);
+            });
+          }
+
+          return o;
+        }
+      } else {
+        return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
+      }
+    }
+
+    function $$ImmutableDict$$Dict(obj) {
+      return $$ImmutableDict$$SortedDict($$Sorted$$defaultSort, obj);
+    }
+
     function $$ImmutableSet$$SetNode(left, right, key) {
       this.left  = left;
       this.right = right;
@@ -752,6 +909,18 @@
     }
 
     $$ImmutableSet$$ImmutableSet.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$toJSON$$fromJSON_registry["Set"] = function (x) {
+      return $$ImmutableSet$$Set($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      if (x.sort === $$Sorted$$defaultSort) {
+        return $$toJSON$$toJSON_array("Set", x);
+      } else {
+        throw new Error("Cannot convert SortedSet to JSON");
+      }
+    };
 
     $$ImmutableSet$$ImmutableSet.prototype[$$hash$$hash_interface] = function (x) {
       if (x.hash === null) {
@@ -875,6 +1044,40 @@
 
       return self;
     };
+
+
+    function $$ImmutableSet$$isSet(x) {
+      return x instanceof $$ImmutableSet$$ImmutableSet;
+    }
+
+    function $$ImmutableSet$$isSortedSet(x) {
+      return $$ImmutableSet$$isSet(x) && x.sort !== $$Sorted$$defaultSort;
+    }
+
+    function $$ImmutableSet$$SortedSet(sort, array) {
+      if (array != null) {
+        // We don't use equal, for increased speed
+        if (array instanceof $$ImmutableSet$$ImmutableSet && array.sort === sort) {
+          return array;
+
+        } else {
+          // TODO use concat ?
+          var o = new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
+
+          array.forEach(function (x) {
+            o = o.add(x);
+          });
+
+          return o;
+        }
+      } else {
+        return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
+      }
+    }
+
+    function $$ImmutableSet$$Set(array) {
+      return $$ImmutableSet$$SortedSet($$Sorted$$defaultSort, array);
+    }
     function $$$Immutable$Array$$copy(array) {
       var len = array.length;
       var out = new Array(len);
@@ -1236,6 +1439,14 @@
 
     $$ImmutableList$$ImmutableList.prototype = Object.create($$ImmutableBase$$ImmutableBase);
 
+    $$toJSON$$fromJSON_registry["List"] = function (x) {
+      return $$ImmutableList$$List($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableList$$ImmutableList.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      return $$toJSON$$toJSON_array("List", x);
+    };
+
     $$ImmutableList$$ImmutableList.prototype[$$hash$$hash_interface] = function (x) {
       if (x.hash === null) {
         var a = [];
@@ -1508,18 +1719,28 @@
       }
     };
 
-    /*ImmutableList.prototype.push = function (value) {
-      var root      = this.root;
-      var tail      = this.tail;
-      var tail_size = this.tail_size;
+    function $$ImmutableList$$isList(x) {
+      return x instanceof $$ImmutableList$$ImmutableList;
+    }
 
-      if (tail_size === array_limit) {
-        var node = insert_max(root, new ArrayNode(nil, nil, stack_to_array(tail, tail_size)));
-        return new ImmutableList(node, new Cons(value, nil), 1);
+    function $$ImmutableList$$List(array) {
+      if (array != null) {
+        if (array instanceof $$ImmutableList$$ImmutableList) {
+          return array;
+
+        } else {
+          var o = new $$ImmutableList$$ImmutableList($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
+
+          array.forEach(function (x) {
+            o = o.insert(x);
+          });
+
+          return o;
+        }
       } else {
-        return new ImmutableList(root, new Cons(value, tail), tail_size + 1);
+        return new $$ImmutableList$$ImmutableList($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
       }
-    };*/;
+    }
     function $$ImmutableQueue$$ImmutableQueue(left, right, len) {
       this.left  = left;
       this.right = right;
@@ -1528,6 +1749,14 @@
     }
 
     $$ImmutableQueue$$ImmutableQueue.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$toJSON$$fromJSON_registry["Queue"] = function (x) {
+      return $$ImmutableQueue$$Queue($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      return $$toJSON$$toJSON_array("Queue", x);
+    };
 
     $$ImmutableQueue$$ImmutableQueue.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
 
@@ -1606,6 +1835,31 @@
 
       return self;
     };
+
+
+    function $$ImmutableQueue$$isQueue(x) {
+      return x instanceof $$ImmutableQueue$$ImmutableQueue;
+    }
+
+    function $$ImmutableQueue$$Queue(x) {
+      if (x != null) {
+        if (x instanceof $$ImmutableQueue$$ImmutableQueue) {
+          return x;
+
+        } else {
+          // TODO use concat ?
+          var o = new $$ImmutableQueue$$ImmutableQueue($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
+
+          x.forEach(function (x) {
+            o = o.push(x);
+          });
+
+          return o;
+        }
+      } else {
+        return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
+      }
+    }
     function $$ImmutableStack$$ImmutableStack(root, len) {
       this.root = root;
       this.len  = len;
@@ -1613,6 +1867,14 @@
     }
 
     $$ImmutableStack$$ImmutableStack.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$toJSON$$fromJSON_registry["Stack"] = function (x) {
+      return $$ImmutableStack$$Stack($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      return $$toJSON$$toJSON_array("Stack", x);
+    };
 
     $$ImmutableStack$$ImmutableStack.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
 
@@ -1679,6 +1941,31 @@
 
       return self;
     };
+
+
+    function $$ImmutableStack$$isStack(x) {
+      return x instanceof $$ImmutableStack$$ImmutableStack;
+    }
+
+    function $$ImmutableStack$$Stack(x) {
+      if (x != null) {
+        if (x instanceof $$ImmutableStack$$ImmutableStack) {
+          return x;
+
+        } else {
+          // TODO use concat ?
+          var o = new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
+
+          x.forEach(function (x) {
+            o = o.push(x);
+          });
+
+          return o;
+        }
+      } else {
+        return new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
+      }
+    }
     function $$ImmutableRecord$$ImmutableRecord(keys, values) {
       this.keys   = keys;
       this.values = values;
@@ -1686,6 +1973,14 @@
     }
 
     $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$toJSON$$fromJSON_registry["Record"] = function (x) {
+      return $$ImmutableRecord$$Record($$toJSON$$fromJSON_object(x));
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJSON$$toJSON_interface] = function (x) {
+      return $$toJSON$$toJSON_object("Record", x);
+    };
 
     $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
 
@@ -1762,72 +2057,13 @@
 
       return self;
     };
-    function $$$Immutable$Immutable$$equal(x, y) {
-      return x === y || $$hash$$hash(x) === $$hash$$hash(y);
-    }
 
-    function $$$Immutable$Immutable$$isDict(x) {
-      return x instanceof $$ImmutableDict$$ImmutableDict;
-    }
 
-    function $$$Immutable$Immutable$$isSet(x) {
-      return x instanceof $$ImmutableSet$$ImmutableSet;
-    }
-
-    function $$$Immutable$Immutable$$isSortedDict(x) {
-      return $$$Immutable$Immutable$$isDict(x) && x.sort !== $$Sorted$$defaultSort;
-    }
-
-    function $$$Immutable$Immutable$$isSortedSet(x) {
-      return $$$Immutable$Immutable$$isSet(x) && x.sort !== $$Sorted$$defaultSort;
-    }
-
-    function $$$Immutable$Immutable$$isList(x) {
-      return x instanceof $$ImmutableList$$ImmutableList;
-    }
-
-    function $$$Immutable$Immutable$$isQueue(x) {
-      return x instanceof $$ImmutableQueue$$ImmutableQueue;
-    }
-
-    function $$$Immutable$Immutable$$isStack(x) {
-      return x instanceof $$ImmutableStack$$ImmutableStack;
-    }
-
-    function $$$Immutable$Immutable$$isRecord(x) {
+    function $$ImmutableRecord$$isRecord(x) {
       return x instanceof $$ImmutableRecord$$ImmutableRecord;
     }
 
-    function $$$Immutable$Immutable$$isImmutable(x) {
-      return $$$Immutable$Immutable$$isDict(x) || $$$Immutable$Immutable$$isSet(x) || $$$Immutable$Immutable$$isList(x) || $$$Immutable$Immutable$$isQueue(x) || $$$Immutable$Immutable$$isStack(x) || $$$Immutable$Immutable$$isRecord(x);
-    }
-
-    function $$$Immutable$Immutable$$fromJS(x) {
-      if (Array.isArray(x)) {
-        var out = $$$Immutable$Immutable$$List();
-
-        for (var i = 0, l = x.length; i < l; ++i) {
-          out = out.insert($$$Immutable$Immutable$$fromJS(x[i]));
-        }
-
-        return out;
-
-      } else if ($$util$$isJSLiteral(x)) {
-        var out = $$$Immutable$Immutable$$Dict();
-
-        // TODO should this only include own properties ...?
-        for (var s in x) {
-          out = out.set(s, $$$Immutable$Immutable$$fromJS(x[s]));
-        }
-
-        return out;
-
-      } else {
-        return x;
-      }
-    }
-
-    function $$$Immutable$Immutable$$Record(obj) {
+    function $$ImmutableRecord$$Record(obj) {
       var keys   = {};
       var values = [];
 
@@ -1862,121 +2098,36 @@
 
       return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
+    function $$$Immutable$Immutable$$equal(x, y) {
+      return x === y || $$hash$$hash(x) === $$hash$$hash(y);
+    }
 
-    function $$$Immutable$Immutable$$SortedDict(sort, obj) {
-      if (obj != null) {
-        // We don't use equal, for increased speed
-        if (obj instanceof $$ImmutableDict$$ImmutableDict && obj.sort === sort) {
-          return obj;
+    function $$$Immutable$Immutable$$isImmutable(x) {
+      return $$ImmutableDict$$isDict(x) || $$ImmutableSet$$isSet(x) || $$ImmutableList$$isList(x) || $$ImmutableQueue$$isQueue(x) || $$ImmutableStack$$isStack(x) || $$ImmutableRecord$$isRecord(x);
+    }
 
-        } else {
-          var o = new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
+    function $$$Immutable$Immutable$$fromJS(x) {
+      if (Array.isArray(x)) {
+        var out = $$ImmutableList$$List();
 
-          if ($$util$$isJSLiteral(obj)) {
-            Object.keys(obj).forEach(function (key) {
-              o = o.set(key, obj[key]);
-            });
-
-          } else {
-            obj.forEach(function (_array) {
-              var key   = _array[0];
-              var value = _array[1];
-              o = o.set(key, value);
-            });
-          }
-
-          return o;
+        for (var i = 0, l = x.length; i < l; ++i) {
+          out = out.insert($$$Immutable$Immutable$$fromJS(x[i]));
         }
-      } else {
-        return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
-      }
-    }
 
-    function $$$Immutable$Immutable$$SortedSet(sort, array) {
-      if (array != null) {
-        // We don't use equal, for increased speed
-        if (array instanceof $$ImmutableSet$$ImmutableSet && array.sort === sort) {
-          return array;
+        return out;
 
-        } else {
-          // TODO use concat ?
-          var o = new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
+      } else if ($$util$$isJSLiteral(x)) {
+        var out = $$ImmutableDict$$Dict();
 
-          array.forEach(function (x) {
-            o = o.add(x);
-          });
-
-          return o;
+        // TODO should this only include own properties ...?
+        for (var s in x) {
+          out = out.set(s, $$$Immutable$Immutable$$fromJS(x[s]));
         }
+
+        return out;
+
       } else {
-        return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
-      }
-    }
-
-    function $$$Immutable$Immutable$$Dict(obj) {
-      return $$$Immutable$Immutable$$SortedDict($$Sorted$$defaultSort, obj);
-    }
-
-    function $$$Immutable$Immutable$$Set(array) {
-      return $$$Immutable$Immutable$$SortedSet($$Sorted$$defaultSort, array);
-    }
-
-    function $$$Immutable$Immutable$$List(array) {
-      if (array != null) {
-        if (array instanceof $$ImmutableList$$ImmutableList) {
-          return array;
-
-        } else {
-          var o = new $$ImmutableList$$ImmutableList($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
-
-          array.forEach(function (x) {
-            o = o.insert(x);
-          });
-
-          return o;
-        }
-      } else {
-        return new $$ImmutableList$$ImmutableList($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
-      }
-    }
-
-    function $$$Immutable$Immutable$$Queue(x) {
-      if (x != null) {
-        if (x instanceof $$ImmutableQueue$$ImmutableQueue) {
-          return x;
-
-        } else {
-          // TODO use concat ?
-          var o = new $$ImmutableQueue$$ImmutableQueue($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
-
-          x.forEach(function (x) {
-            o = o.push(x);
-          });
-
-          return o;
-        }
-      } else {
-        return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
-      }
-    }
-
-    function $$$Immutable$Immutable$$Stack(x) {
-      if (x != null) {
-        if (x instanceof $$ImmutableStack$$ImmutableStack) {
-          return x;
-
-        } else {
-          // TODO use concat ?
-          var o = new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
-
-          x.forEach(function (x) {
-            o = o.push(x);
-          });
-
-          return o;
-        }
-      } else {
-        return new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
+        return x;
       }
     }
 
@@ -1994,25 +2145,27 @@
       exports.equal = $$$Immutable$Immutable$$equal;
       exports.fromJS = $$$Immutable$Immutable$$fromJS;
       exports.toJS = $$toJS$$toJS;
-      exports.isDict = $$$Immutable$Immutable$$isDict;
-      exports.isSet = $$$Immutable$Immutable$$isSet;
-      exports.isSortedDict = $$$Immutable$Immutable$$isSortedDict;
-      exports.isSortedSet = $$$Immutable$Immutable$$isSortedSet;
-      exports.isList = $$$Immutable$Immutable$$isList;
-      exports.isQueue = $$$Immutable$Immutable$$isQueue;
-      exports.isStack = $$$Immutable$Immutable$$isStack;
+      exports.isDict = $$ImmutableDict$$isDict;
+      exports.isSet = $$ImmutableSet$$isSet;
+      exports.isSortedDict = $$ImmutableDict$$isSortedDict;
+      exports.isSortedSet = $$ImmutableSet$$isSortedSet;
+      exports.isList = $$ImmutableList$$isList;
+      exports.isQueue = $$ImmutableQueue$$isQueue;
+      exports.isStack = $$ImmutableStack$$isStack;
       exports.isImmutable = $$$Immutable$Immutable$$isImmutable;
-      exports.SortedDict = $$$Immutable$Immutable$$SortedDict;
-      exports.SortedSet = $$$Immutable$Immutable$$SortedSet;
-      exports.Dict = $$$Immutable$Immutable$$Dict;
-      exports.Set = $$$Immutable$Immutable$$Set;
-      exports.List = $$$Immutable$Immutable$$List;
-      exports.Queue = $$$Immutable$Immutable$$Queue;
-      exports.Stack = $$$Immutable$Immutable$$Stack;
+      exports.SortedDict = $$ImmutableDict$$SortedDict;
+      exports.SortedSet = $$ImmutableSet$$SortedSet;
+      exports.Dict = $$ImmutableDict$$Dict;
+      exports.Set = $$ImmutableSet$$Set;
+      exports.List = $$ImmutableList$$List;
+      exports.Queue = $$ImmutableQueue$$Queue;
+      exports.Stack = $$ImmutableStack$$Stack;
       exports.simpleSort = $$Sorted$$simpleSort;
       exports.defaultSort = $$Sorted$$defaultSort;
-      exports.isRecord = $$$Immutable$Immutable$$isRecord;
-      exports.Record = $$$Immutable$Immutable$$Record;
+      exports.isRecord = $$ImmutableRecord$$isRecord;
+      exports.Record = $$ImmutableRecord$$Record;
+      exports.toJSON = $$toJSON$$toJSON;
+      exports.fromJSON = $$toJSON$$fromJSON;
     });
     var src$Benchmark$List$$immutablejs = require("immutable");
     var src$Benchmark$List$$mori        = require("mori");
@@ -2061,7 +2214,7 @@
       });
       $$Benchmark$$.group("Immutable", function () {
         $$Benchmark$$.message("URL: https://github.com/Pauan/Immutable");
-        $$Benchmark$$.message("Version: 1.0.0");
+        $$Benchmark$$.message("Version: 1.1.0");
       });
       /*benchmark.group("Elm", function () {
         benchmark.message("URL: http://elm-lang.org/");

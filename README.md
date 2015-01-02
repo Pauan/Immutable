@@ -76,6 +76,12 @@ You can also use this to convert from one data type to another:
     var stack  = Stack(list);
     var record = Record(stack);
 
+You can also losslessly convert to/from JSON, allowing for sending Immutable objects over the network:
+
+    var record = Record({ foo: 1 });
+    var json   = toJSON(record);
+    var record = fromJSON(json);
+
 
 For developers
 ==============
@@ -84,4 +90,4 @@ You'll probably need to use `npm install` to get the required dependencies. Ever
 
 Run the benchmarks with `node build/Benchmark.js`. This will take a long time (several minutes, possibly hours).
 
-Run the tests by using `node build/Test.js`.
+The unit tests are automatically run when using `npm install`, but you can also run them manually by using `node build/Test.js`.

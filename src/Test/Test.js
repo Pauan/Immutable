@@ -1,6 +1,6 @@
 import { defaultSort, simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
-         isQueue, isStack, isImmutable, fromJS, isRecord, Record } from "../Immutable/Immutable";
+         isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON } from "../Immutable/Immutable";
 import { nil } from "../Immutable/nil";
 import { assert } from "./assert";
 
@@ -148,6 +148,29 @@ function test_forEach(constructor, input) {
   assert(deepEqual(a, input));
 }
 
+
+function verify_json_equal(x) {
+  var y = toJSON(x);
+  assert(y !== x);
+
+  var z = fromJSON(y);
+  assert(z !== y);
+
+  assert(equal(x, z));
+}
+
+
+function verify_json(x, expected) {
+  var y = toJSON(x);
+  assert(y !== x);
+
+  var z = fromJSON(y);
+  assert(z !== y);
+
+  assert(equal(x, z));
+  assert(deepEqual(toJS(x), expected));
+  assert(deepEqual(toJS(z), expected));
+}
 
 
 // TODO test that this works correctly
@@ -477,6 +500,20 @@ context("Dict", function () {
                      { foo: { bar: 2 } }));
   });
 
+  test("toJSON", function () {
+    verify_json(dict_empty, {});
+    verify_json(dict_foo, { foo: 1 });
+    verify_json(Dict({ foo: Dict({ bar: 2 }) }), { foo: { bar: 2 } });
+
+    verify_json(SortedDict(defaultSort, { foo: SortedDict(defaultSort, { bar: 2 }) }), { foo: { bar: 2 } });
+
+    verify_json_equal(Dict([[Dict({ foo: 1 }), Dict({ bar: 2 })]]));
+
+    assert_raises(function () {
+      toJSON(SortedDict(simpleSort, {}));
+    }, "Cannot convert SortedDict to JSON");
+  });
+
   test("random keys", function () {
     var o = Dict();
     var js = {};
@@ -704,6 +741,18 @@ context("Set", function () {
     assert(deepEqual(toJS(five_set), [1, 2, 3, 4, 5]));
     assert(deepEqual(toJS(Set([1, 2, Set([3])])),
                      [[3], 1, 2]));
+  });
+
+  test("toJSON", function () {
+    verify_json(empty_set, []);
+    verify_json(five_set, [1, 2, 3, 4, 5]);
+    verify_json(Set([4, 5, Set([1, 2, 3])]), [[1, 2, 3], 4, 5]);
+
+    verify_json(SortedSet(defaultSort, [4, 5, SortedSet(defaultSort, [1, 2, 3])]), [[1, 2, 3], 4, 5]);
+
+    assert_raises(function () {
+      toJSON(SortedSet(simpleSort, []));
+    }, "Cannot convert SortedSet to JSON");
   });
 
   test("random elements", function () {
@@ -1077,6 +1126,12 @@ context("List", function () {
     assert(deepEqual(toJS(List([1, 2, List([3])])), [1, 2, [3]]));
   });
 
+  test("toJSON", function () {
+    verify_json(empty_list, []);
+    verify_json(five_list, [1, 2, 3, 4, 5]);
+    verify_json(List([4, 5, List([1, 2, 3])]), [4, 5, [1, 2, 3]]);
+  });
+
   test("random elements", function () {
     var o = List();
     var a = [];
@@ -1282,6 +1337,12 @@ context("Queue", function () {
     assert(deepEqual(toJS(Queue([1, 2, Queue([3])])), [1, 2, [3]]));
   });
 
+  test("toJSON", function () {
+    verify_json(empty_queue, []);
+    verify_json(five_queue, [1, 2, 3, 4, 5]);
+    verify_json(Queue([4, 5, Queue([1, 2, 3])]), [4, 5, [1, 2, 3]]);
+  });
+
   test("forEach", function () {
     test_forEach(Queue, []);
 
@@ -1403,6 +1464,12 @@ context("Stack", function () {
     assert(deepEqual(toJS(empty_stack), []));
     assert(deepEqual(toJS(five_stack), [1, 2, 3, 4, 5]));
     assert(deepEqual(toJS(Stack([1, 2, Stack([3])])), [1, 2, [3]]));
+  });
+
+  test("toJSON", function () {
+    verify_json(empty_stack, []);
+    verify_json(five_stack, [1, 2, 3, 4, 5]);
+    verify_json(Stack([4, 5, Stack([1, 2, 3])]), [4, 5, [1, 2, 3]]);
   });
 
   test("forEach", function () {
@@ -1588,6 +1655,12 @@ context("Record", function () {
                      { foo: { bar: 2 } }));
   });
 
+  test("toJSON", function () {
+    verify_json(Empty, {});
+    verify_json(Foo, { foo: 1 });
+    verify_json(Record({ foo: Record({ bar: 2 }) }), { foo: { bar: 2 } });
+  });
+
   test("forEach", function () {
     test_forEach(Record, []);
     test_forEach(Record, [["foo", 2]]);
@@ -1622,6 +1695,23 @@ test("isImmutable", function () {
   assert(isImmutable(Foo));
 });
 
+test("toJS", function () {
+  var x = {};
+  assert(toJS(x) === x);
+
+  var x = [];
+  assert(toJS(x) === x);
+
+  var x = new Date();
+  assert(toJS(x) === x);
+
+  var x = /foo/;
+  assert(toJS(x) === x);
+
+  assert(toJS("foo") === "foo");
+  assert(toJS(5) === 5);
+});
+
 test("fromJS", function () {
   verify_dict(fromJS({ foo: 1 }), { foo: 1 });
   verify_list(fromJS([1, 2, 3]), [1, 2, 3]);
@@ -1640,6 +1730,40 @@ test("fromJS", function () {
 
   assert(fromJS("foo") === "foo");
   assert(fromJS(5) === 5);
+});
+
+test("toJSON", function () {
+  var x = {};
+  assert(toJSON(x) === x);
+
+  var x = [];
+  assert(toJSON(x) === x);
+
+  var x = new Date();
+  assert(toJSON(x) === x);
+
+  var x = /foo/;
+  assert(toJSON(x) === x);
+
+  assert(toJSON("foo") === "foo");
+  assert(toJSON(5) === 5);
+});
+
+test("fromJSON", function () {
+  var x = {};
+  assert(fromJSON(x) === x);
+
+  var x = [];
+  assert(fromJSON(x) === x);
+
+  var x = new Date();
+  assert(fromJSON(x) === x);
+
+  var x = /foo/;
+  assert(fromJSON(x) === x);
+
+  assert(fromJSON("foo") === "foo");
+  assert(fromJSON(5) === 5);
 });
 
 

@@ -1,0 +1,30 @@
+/**
+   @function fromJSON
+   @param {Any} [x]
+   @return {Any}
+   @summary Converts specially marked JSON to a [::Dict],
+            [::Set], [::List], [::Queue], [::Stack], or
+            [::Record]
+   @desc
+     Most things are returned as-is, except specially marked
+     JSON is converted into a [::Dict], [::Set], [::List],
+     [::Queue], [::Stack], or [::Record].
+
+     This conversion takes `O(n)` time.
+
+     This is useful because it's *lossless*: if you use
+     [::toJSON] followed by [::fromJSON], the two objects
+     will be equal:
+
+         var x = Record({ foo: 1 });
+
+         // true
+         equal(x, fromJSON(toJSON(x)));
+
+     This makes it possible to store Immutable objects on disk,
+     or send them over the network with JSON, reconstructing
+     them on the other side.
+
+     If you just want to use a library that expects normal
+     JavaScript objects, use [::toJS] and [::fromJS] instead.
+ */

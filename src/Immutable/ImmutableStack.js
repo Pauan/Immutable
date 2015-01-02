@@ -1,3 +1,4 @@
+import { toJSON_array, fromJSON_array, toJSON_interface, fromJSON_registry } from "./toJSON";
 import { toJS_array, toJS_interface } from "./toJS";
 import { hash, hash_interface } from "./hash";
 import { join_lines } from "./util";
@@ -12,6 +13,14 @@ export function ImmutableStack(root, len) {
 }
 
 ImmutableStack.prototype = Object.create(ImmutableBase);
+
+fromJSON_registry["Stack"] = function (x) {
+  return Stack(fromJSON_array(x));
+};
+
+ImmutableStack.prototype[toJSON_interface] = function (x) {
+  return toJSON_array("Stack", x);
+};
 
 ImmutableStack.prototype[toJS_interface] = toJS_array;
 
@@ -78,3 +87,29 @@ ImmutableStack.prototype.concat = function (right) {
 
   return self;
 };
+
+
+export function isStack(x) {
+  return x instanceof ImmutableStack;
+}
+
+// TODO code duplication with Queue
+export function Stack(x) {
+  if (x != null) {
+    if (x instanceof ImmutableStack) {
+      return x;
+
+    } else {
+      // TODO use concat ?
+      var o = new ImmutableStack(nil, 0);
+
+      x.forEach(function (x) {
+        o = o.push(x);
+      });
+
+      return o;
+    }
+  } else {
+    return new ImmutableStack(nil, 0);
+  }
+}
