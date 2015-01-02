@@ -35,6 +35,8 @@ Quick overview
 
   * `get` `set` `modify` `update`
 
+----
+
 `Dict` and `Set` can have anything as keys, including mutable objects and immutable objects (`Dict`, `Set`, `List`, etc.)
 
 You can also use `SortedDict` and `SortedSet` to define your own custom sorting.
