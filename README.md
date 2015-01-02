@@ -43,19 +43,19 @@ You can also use `SortedDict` and `SortedSet` to define your own custom sorting.
 
 Equality is well defined, and is based on [egal](http://home.pipeline.com/~hbaker1/ObjectIdentity.html).
 
-What that means is that mutable objects are only equal if they are exactly the same object, but immutable objects are equal if they have the same value:
+What that means is that mutable objects are only equal if they are exactly the same object, but immutable objects are equal if they have the same value.
+
+These two mutable objects are different, and so they are not equal:
 
     // false
     equal({ foo: 1 },
           { foo: 1 });
 
-The two mutable objects are different, and so they are not equal.
+These two immutable objects are different, but they have the same keys/values, and so they are equal:
 
     // true
     equal(Dict({ foo: 1 }),
           Dict({ foo: 1 }));
-
-The two immutable objects are different, but they have the same keys/values, and so they are equal.
 
 This is the only sane default behavior for equality.
 
