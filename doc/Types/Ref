@@ -1,0 +1,105 @@
+/**
+   @class Ref
+   @summary A mutable data type that can hold a single value
+
+   @function Ref
+   @param {Any} [initial] The initial value for the ref.
+   @param {optional Function} [onchange] Function to call whenever the ref changes.
+   @desc
+     The ref has the initial value of `initial`.
+
+     Whenever the ref changes, the function `onchange` is called
+     with the old value and the new value.
+
+     ----
+
+     [::Ref] is the only mutable data type provided by
+     this library. It holds a single value, which can be
+     anything.
+
+     Generally you will use immutable data as much as possible,
+     but occasionally it's useful to have a little bit of
+     mutability.
+
+     You will typically have a [::Ref] which contains immutable
+     data. The only way to "change" the data is to change the ref,
+     replacing the old immutable data with new immutable data.
+
+     As an example:
+
+         var car = Ref(Record({
+           "mph": 0
+         }));
+
+     We have a `car`, but now we want to change its `mph` property:
+
+         car.modify(function (record) {
+           return record.set("mph", 10);
+         });
+
+     The above code calls the function with the current value of
+     the ref (in this case, `record`), and whatever the function
+     returns is the new value for the ref.
+
+     In other words, we took the current immutable record, returned
+     a new record with `mph` set to `10`, and now the ref contains
+     the new immutable record.
+
+     This is very different from JavaScript, where every property
+     is mutable.
+
+     This has two major advantages:
+
+     1) It gives fine-grained control over mutability. You can
+        have a dictionary which is contained within a single ref,
+        or you can have a dictionary where each individual property
+        contains a ref, or even a combination of the two.
+
+     2) In JavaScript, code could change your objects at any
+        time, making your code difficult to understand.
+
+        With refs, the ref itself is mutable, but the data
+        it contains is immutable, so if you grab the data out
+        of the ref, you can be assured that it will never
+        change.
+
+   @function Ref.get
+   @return {Any} The value for the ref
+   @summary Returns the value for the ref
+   @desc
+     This function runs in `O(1)` time.
+
+   @function Ref.set
+   @param {Any} [value] The new value to use for the ref
+   @summary Changes the value of the ref to `value`
+   @desc
+     This function runs in `O(1)` time.
+
+     This mutates the ref, it does *not* return a new ref!
+
+     This will call the `onchange` function of the ref.
+
+   @function Ref.modify
+   @param {Function} [fn] The function which will modify the value of the ref
+   @summary Changes the value of the ref using `fn`
+   @desc
+     This function runs in `O(1)` time.
+
+     This mutates the ref, it does *not* return a new ref!
+
+     This will call the `onchange` function of the ref.
+
+     ----
+
+     This function calls `fn` with the current value of the ref,
+     and whatever `fn` returns will be used as the new value for
+     the ref:
+
+         var ref = Ref(5);
+
+         // The ref now has a value of 15
+         ref.modify(function (x) { return x + 10 });
+
+         // The ref now has a value of 25
+         ref.modify(function (x) { return x + 10 });
+*/

@@ -247,8 +247,8 @@
     var $$$Immutable$nil$$nil = {};
     $$$Immutable$nil$$nil.depth      = 0;
     $$$Immutable$nil$$nil.size       = 0;
-    $$$Immutable$nil$$nil.forEach    = function (f) {};
-    $$$Immutable$nil$$nil.forEachRev = function (f) {};
+    $$$Immutable$nil$$nil.forEach    = function () {};
+    $$$Immutable$nil$$nil.forEachRev = function () {};
     function $$AVL$$max(x, y) {
       if (x > y) {
         return x;
@@ -1882,6 +1882,59 @@
 
       return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
+
+    var $$ImmutableRef$$ref_id = 0;
+
+    function $$ImmutableRef$$ImmutableRef(value, onchange) {
+      this._id = ++$$ImmutableRef$$ref_id;
+      this._value = value;
+      this._onchange = onchange;
+    }
+
+    $$ImmutableRef$$ImmutableRef.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$ImmutableRef$$ImmutableRef.prototype[$$hash$$hash_interface] = function (x) {
+      return "(Ref " + $$hash$$hash(x._id) + ")";
+    };
+
+    $$ImmutableRef$$ImmutableRef.prototype.get = function () {
+      return this._value;
+    };
+
+    $$ImmutableRef$$ImmutableRef.prototype.set = function (value) {
+      var old = this._value;
+      if (value !== old) {
+        this._value = value;
+        if (this._onchange != null) {
+          this._onchange(old, value);
+        }
+      }
+    };
+
+    $$ImmutableRef$$ImmutableRef.prototype.modify = function (f) {
+      this.set(f(this.get()));
+    };
+
+
+    function $$ImmutableRef$$deref(x) {
+      if ($$ImmutableRef$$isRef(x)) {
+        return x.get();
+      } else {
+        return x;
+      }
+    }
+
+    function $$ImmutableRef$$isRef(x) {
+      return x instanceof $$ImmutableRef$$ImmutableRef;
+    }
+
+    function $$ImmutableRef$$Ref(value, onchange) {
+      if (arguments.length < 1 || arguments.length > 2) {
+        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
+      }
+
+      return new $$ImmutableRef$$ImmutableRef(value, onchange);
+    }
     function $$$Immutable$Immutable$$equal(x, y) {
       return x === y || $$hash$$hash(x) === $$hash$$hash(y);
     }
@@ -1950,6 +2003,9 @@
       exports.Record = $$ImmutableRecord$$Record;
       exports.toJSON = $$toJSON$$toJSON;
       exports.fromJSON = $$toJSON$$fromJSON;
+      exports.deref = $$ImmutableRef$$deref;
+      exports.Ref = $$ImmutableRef$$Ref;
+      exports.isRef = $$ImmutableRef$$isRef;
     });
     function $$assert$$assert(x) {
       if (arguments.length !== 1) {
@@ -3633,10 +3689,124 @@
     });
 
 
+    src$Test$Test$$context("Ref", function () {
+      var ref1 = $$ImmutableRef$$Ref(1);
+      var ref2 = $$ImmutableRef$$Ref(2);
+
+      src$Test$Test$$test("isRef", function () {
+        $$assert$$assert(!$$ImmutableRef$$isRef($$ImmutableDict$$Dict()));
+        $$assert$$assert($$ImmutableRef$$isRef(ref1));
+        $$assert$$assert($$ImmutableRef$$isRef(ref2));
+      });
+
+      src$Test$Test$$test("toString", function () {
+        $$assert$$assert("" + ref1 === "(Ref 1)");
+        $$assert$$assert("" + ref2 === "(Ref 2)");
+        $$assert$$assert("" + $$ImmutableRef$$Ref(50) === "(Ref 3)");
+        $$assert$$assert("" + $$ImmutableRef$$Ref([100]) === "(Ref 4)");
+      });
+
+      src$Test$Test$$test("init", function () {
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableRef$$Ref();
+        }, "Expected 1 to 2 arguments but got 0");
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableRef$$Ref(1, 2, 3);
+        }, "Expected 1 to 2 arguments but got 3");
+      });
+
+      src$Test$Test$$test("get", function () {
+        $$assert$$assert(ref1.get() === 1);
+        $$assert$$assert(ref2.get() === 2);
+      });
+
+      src$Test$Test$$test("set", function () {
+        $$assert$$assert(ref1.get() === 1);
+        ref1.set(50);
+        $$assert$$assert(ref1.get() === 50);
+
+        var ran = false;
+
+        var x = $$ImmutableRef$$Ref(5, function (before, after) {
+          $$assert$$assert(before === 5);
+          $$assert$$assert(after === 10);
+          ran = true;
+        });
+
+        x.set(10);
+
+        $$assert$$assert(x.get() === 10);
+        $$assert$$assert(ran === true);
+
+
+        var ran = false;
+
+        var x = $$ImmutableRef$$Ref(5, function () {
+          ran = true;
+        });
+
+        x.set(5);
+
+        $$assert$$assert(x.get() === 5);
+        $$assert$$assert(ran === false);
+      });
+
+      src$Test$Test$$test("modify", function () {
+        var ran1 = false;
+        var ran2 = false;
+
+        var x = $$ImmutableRef$$Ref(5, function (before, after) {
+          $$assert$$assert(before === 5);
+          $$assert$$assert(after === 10);
+          ran1 = true;
+        });
+
+        x.modify(function (x) {
+          $$assert$$assert(x === 5);
+          ran2 = true;
+          return 10;
+        });
+
+        $$assert$$assert(x.get() === 10);
+        $$assert$$assert(ran1 === true);
+        $$assert$$assert(ran2 === true);
+
+
+        var ran1 = false;
+        var ran2 = false;
+
+        var x = $$ImmutableRef$$Ref(5, function () {
+          ran1 = true;
+        });
+
+        x.modify(function (x) {
+          $$assert$$assert(x === 5);
+          ran2 = true;
+          return 5;
+        });
+
+        $$assert$$assert(x.get() === 5);
+        $$assert$$assert(ran1 === false);
+        $$assert$$assert(ran2 === true);
+      });
+
+      src$Test$Test$$test("equal", function () {
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(ref1, ref2));
+        $$assert$$assert($$$Immutable$Immutable$$equal(ref1, ref1));
+        $$assert$$assert($$$Immutable$Immutable$$equal(ref2, ref2));
+
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableRef$$Ref(1), $$ImmutableRef$$Ref(1)));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(ref1, $$ImmutableRef$$Ref(1)));
+      });
+    });
+
+
     src$Test$Test$$test("isImmutable", function () {
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable(5));
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable({}));
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable([]));
+      $$assert$$assert(!$$$Immutable$Immutable$$isImmutable($$ImmutableRef$$Ref(5)));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$Dict()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$Set()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableList$$List()));
@@ -3666,6 +3836,9 @@
 
       $$assert$$assert($$toJS$$toJS("foo") === "foo");
       $$assert$$assert($$toJS$$toJS(5) === 5);
+
+      var x = $$ImmutableRef$$Ref(5);
+      $$assert$$assert($$toJS$$toJS(x) === x);
     });
 
     src$Test$Test$$test("fromJS", function () {
@@ -3686,6 +3859,9 @@
 
       $$assert$$assert($$$Immutable$Immutable$$fromJS("foo") === "foo");
       $$assert$$assert($$$Immutable$Immutable$$fromJS(5) === 5);
+
+      var x = $$ImmutableRef$$Ref(5);
+      $$assert$$assert($$$Immutable$Immutable$$fromJS(x) === x);
     });
 
     src$Test$Test$$test("toJSON", function () {
@@ -3703,6 +3879,9 @@
 
       $$assert$$assert($$toJSON$$toJSON("foo") === "foo");
       $$assert$$assert($$toJSON$$toJSON(5) === 5);
+
+      var x = $$ImmutableRef$$Ref(5);
+      $$assert$$assert($$toJSON$$toJSON(x) === x);
     });
 
     src$Test$Test$$test("fromJSON", function () {
@@ -3720,6 +3899,19 @@
 
       $$assert$$assert($$toJSON$$fromJSON("foo") === "foo");
       $$assert$$assert($$toJSON$$fromJSON(5) === 5);
+
+      var x = $$ImmutableRef$$Ref(5);
+      $$assert$$assert($$toJSON$$fromJSON(x) === x);
+    });
+
+    src$Test$Test$$test("deref", function () {
+      $$assert$$assert($$ImmutableRef$$deref(5) === 5);
+
+      var x = $$ImmutableDict$$Dict();
+      $$assert$$assert($$ImmutableRef$$deref(x) === x);
+
+      $$assert$$assert($$ImmutableRef$$deref($$ImmutableRef$$Ref(5)) === 5);
+      $$assert$$assert($$ImmutableRef$$deref($$ImmutableRef$$Ref(x)) === x);
     });
 
 

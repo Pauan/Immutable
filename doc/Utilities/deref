@@ -1,0 +1,13 @@
+/**
+   @function deref
+   @param {Any} [x]
+   @return {Any}
+   @summary Dereferences a [::Ref]
+   @desc
+     If `x` is a [::Ref], it will return the ref's current value.
+
+     Otherwise it returns `x` as-is.
+
+     This is useful if you want to make sure you have a value, and
+     you're not sure whether something is a ref or not.
+ */

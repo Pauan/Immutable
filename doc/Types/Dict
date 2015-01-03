@@ -116,6 +116,10 @@
 
      This does not modify the dict, it returns a new dict.
 
+     If `key` is not in the dict, it will throw an error.
+
+     ----
+
      This function calls `fn` with the value for `key`, and
      whatever `fn` returns will be used as the new value for
      `key`:
@@ -130,8 +134,6 @@
 
          // This returns the dict { "foo": 1, "bar": 12 }
          dict.modify("bar", function (x) { return x + 10 });
-
-     If `key` is not in the dict, it will throw an error.
 
    @function Dict.merge
    @param {sequence::Sequence} [other] Sequence of keys/values to add to this dict

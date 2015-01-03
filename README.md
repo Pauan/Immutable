@@ -35,6 +35,10 @@ Quick overview
 
   * `get` `set` `modify` `update`
 
+* `Ref`
+
+  * `get` `set` `modify`
+
 ----
 
 `Dict` and `Set` can have anything as keys, including mutable objects and immutable objects (`Dict`, `Set`, `List`, etc.)

@@ -10,12 +10,14 @@ import { isList, List } from "./ImmutableList";
 import { isQueue, Queue } from "./ImmutableQueue";
 import { isStack, Stack } from "./ImmutableStack";
 import { isRecord, Record } from "./ImmutableRecord";
+import { deref, Ref, isRef } from "./ImmutableRef";
 
 export { toJS, simpleSort, defaultSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
          SortedSet, Set, isSet, isSortedSet,
          isList, List, isQueue, Queue,
-         isStack, Stack, isRecord, Record };
+         isStack, Stack, isRecord, Record,
+         deref, Ref, isRef };
 
 
 // TODO support -0 and 0 ?
@@ -23,6 +25,7 @@ export function equal(x, y) {
   return x === y || hash(x) === hash(y);
 }
 
+// TODO use `x instanceof ImmutableBase` ? What about ImmutableRef ?
 export function isImmutable(x) {
   return isDict(x) || isSet(x) || isList(x) || isQueue(x) || isStack(x) || isRecord(x);
 }
@@ -88,4 +91,7 @@ export function fromJS(x) {
   exports.Record = Record;
   exports.toJSON = toJSON;
   exports.fromJSON = fromJSON;
+  exports.deref = deref;
+  exports.Ref = Ref;
+  exports.isRef = isRef;
 });

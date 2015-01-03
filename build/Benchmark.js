@@ -103,6 +103,18 @@
                 return $$$Immutable$Immutable$$Record;
             },
 
+            get deref() {
+                return $$$Immutable$Immutable$$deref;
+            },
+
+            get Ref() {
+                return $$$Immutable$Immutable$$Ref;
+            },
+
+            get isRef() {
+                return $$$Immutable$Immutable$$isRef;
+            },
+
             get equal() {
                 return $$$Immutable$Immutable$$equal;
             },
@@ -463,8 +475,8 @@
     var $$$Immutable$nil$$nil = {};
     $$$Immutable$nil$$nil.depth      = 0;
     $$$Immutable$nil$$nil.size       = 0;
-    $$$Immutable$nil$$nil.forEach    = function (f) {};
-    $$$Immutable$nil$$nil.forEachRev = function (f) {};
+    $$$Immutable$nil$$nil.forEach    = function () {};
+    $$$Immutable$nil$$nil.forEachRev = function () {};
     function $$AVL$$max(x, y) {
       if (x > y) {
         return x;
@@ -2098,6 +2110,59 @@
 
       return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
+
+    var $$ImmutableRef$$ref_id = 0;
+
+    function $$ImmutableRef$$ImmutableRef(value, onchange) {
+      this._id = ++$$ImmutableRef$$ref_id;
+      this._value = value;
+      this._onchange = onchange;
+    }
+
+    $$ImmutableRef$$ImmutableRef.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+
+    $$ImmutableRef$$ImmutableRef.prototype[$$hash$$hash_interface] = function (x) {
+      return "(Ref " + $$hash$$hash(x._id) + ")";
+    };
+
+    $$ImmutableRef$$ImmutableRef.prototype.get = function () {
+      return this._value;
+    };
+
+    $$ImmutableRef$$ImmutableRef.prototype.set = function (value) {
+      var old = this._value;
+      if (value !== old) {
+        this._value = value;
+        if (this._onchange != null) {
+          this._onchange(old, value);
+        }
+      }
+    };
+
+    $$ImmutableRef$$ImmutableRef.prototype.modify = function (f) {
+      this.set(f(this.get()));
+    };
+
+
+    function $$ImmutableRef$$deref(x) {
+      if ($$ImmutableRef$$isRef(x)) {
+        return x.get();
+      } else {
+        return x;
+      }
+    }
+
+    function $$ImmutableRef$$isRef(x) {
+      return x instanceof $$ImmutableRef$$ImmutableRef;
+    }
+
+    function $$ImmutableRef$$Ref(value, onchange) {
+      if (arguments.length < 1 || arguments.length > 2) {
+        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
+      }
+
+      return new $$ImmutableRef$$ImmutableRef(value, onchange);
+    }
     function $$$Immutable$Immutable$$equal(x, y) {
       return x === y || $$hash$$hash(x) === $$hash$$hash(y);
     }
@@ -2166,6 +2231,9 @@
       exports.Record = $$ImmutableRecord$$Record;
       exports.toJSON = $$toJSON$$toJSON;
       exports.fromJSON = $$toJSON$$fromJSON;
+      exports.deref = $$ImmutableRef$$deref;
+      exports.Ref = $$ImmutableRef$$Ref;
+      exports.isRef = $$ImmutableRef$$isRef;
     });
 
     $$Benchmark$$.group("Information", function () {

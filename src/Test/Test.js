@@ -1,6 +1,7 @@
 import { defaultSort, simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
-         isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON } from "../Immutable/Immutable";
+         isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
+         deref, Ref, isRef } from "../Immutable/Immutable";
 import { nil } from "../Immutable/nil";
 import { assert } from "./assert";
 
@@ -1677,10 +1678,124 @@ context("Record", function () {
 });
 
 
+context("Ref", function () {
+  var ref1 = Ref(1);
+  var ref2 = Ref(2);
+
+  test("isRef", function () {
+    assert(!isRef(Dict()));
+    assert(isRef(ref1));
+    assert(isRef(ref2));
+  });
+
+  test("toString", function () {
+    assert("" + ref1 === "(Ref 1)");
+    assert("" + ref2 === "(Ref 2)");
+    assert("" + Ref(50) === "(Ref 3)");
+    assert("" + Ref([100]) === "(Ref 4)");
+  });
+
+  test("init", function () {
+    assert_raises(function () {
+      Ref();
+    }, "Expected 1 to 2 arguments but got 0");
+
+    assert_raises(function () {
+      Ref(1, 2, 3);
+    }, "Expected 1 to 2 arguments but got 3");
+  });
+
+  test("get", function () {
+    assert(ref1.get() === 1);
+    assert(ref2.get() === 2);
+  });
+
+  test("set", function () {
+    assert(ref1.get() === 1);
+    ref1.set(50);
+    assert(ref1.get() === 50);
+
+    var ran = false;
+
+    var x = Ref(5, function (before, after) {
+      assert(before === 5);
+      assert(after === 10);
+      ran = true;
+    });
+
+    x.set(10);
+
+    assert(x.get() === 10);
+    assert(ran === true);
+
+
+    var ran = false;
+
+    var x = Ref(5, function () {
+      ran = true;
+    });
+
+    x.set(5);
+
+    assert(x.get() === 5);
+    assert(ran === false);
+  });
+
+  test("modify", function () {
+    var ran1 = false;
+    var ran2 = false;
+
+    var x = Ref(5, function (before, after) {
+      assert(before === 5);
+      assert(after === 10);
+      ran1 = true;
+    });
+
+    x.modify(function (x) {
+      assert(x === 5);
+      ran2 = true;
+      return 10;
+    });
+
+    assert(x.get() === 10);
+    assert(ran1 === true);
+    assert(ran2 === true);
+
+
+    var ran1 = false;
+    var ran2 = false;
+
+    var x = Ref(5, function () {
+      ran1 = true;
+    });
+
+    x.modify(function (x) {
+      assert(x === 5);
+      ran2 = true;
+      return 5;
+    });
+
+    assert(x.get() === 5);
+    assert(ran1 === false);
+    assert(ran2 === true);
+  });
+
+  test("equal", function () {
+    assert(!equal(ref1, ref2));
+    assert(equal(ref1, ref1));
+    assert(equal(ref2, ref2));
+
+    assert(!equal(Ref(1), Ref(1)));
+    assert(!equal(ref1, Ref(1)));
+  });
+});
+
+
 test("isImmutable", function () {
   assert(!isImmutable(5));
   assert(!isImmutable({}));
   assert(!isImmutable([]));
+  assert(!isImmutable(Ref(5)));
   assert(isImmutable(Dict()));
   assert(isImmutable(Set()));
   assert(isImmutable(List()));
@@ -1710,6 +1825,9 @@ test("toJS", function () {
 
   assert(toJS("foo") === "foo");
   assert(toJS(5) === 5);
+
+  var x = Ref(5);
+  assert(toJS(x) === x);
 });
 
 test("fromJS", function () {
@@ -1730,6 +1848,9 @@ test("fromJS", function () {
 
   assert(fromJS("foo") === "foo");
   assert(fromJS(5) === 5);
+
+  var x = Ref(5);
+  assert(fromJS(x) === x);
 });
 
 test("toJSON", function () {
@@ -1747,6 +1868,9 @@ test("toJSON", function () {
 
   assert(toJSON("foo") === "foo");
   assert(toJSON(5) === 5);
+
+  var x = Ref(5);
+  assert(toJSON(x) === x);
 });
 
 test("fromJSON", function () {
@@ -1764,6 +1888,19 @@ test("fromJSON", function () {
 
   assert(fromJSON("foo") === "foo");
   assert(fromJSON(5) === 5);
+
+  var x = Ref(5);
+  assert(fromJSON(x) === x);
+});
+
+test("deref", function () {
+  assert(deref(5) === 5);
+
+  var x = Dict();
+  assert(deref(x) === x);
+
+  assert(deref(Ref(5)) === 5);
+  assert(deref(Ref(x)) === x);
 });
 
 
