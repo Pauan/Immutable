@@ -11,8 +11,15 @@
 
      This conversion takes `O(n)` time.
 
-     This is useful because it's *lossless*: if you use
-     [::toJSON] followed by [::fromJSON], the two objects
+     ----
+
+     You *cannot* use [::Tag] with [::toJSON], but you
+     *can* use [::UUIDTag].
+
+     ----
+
+     This function is useful because it's *lossless*: if you
+     use [::toJSON] followed by [::fromJSON], the two objects
      will be equal:
 
          var x = Record({ foo: 1 });
@@ -20,9 +27,11 @@
          // true
          equal(x, fromJSON(toJSON(x)));
 
-     This makes it possible to store Immutable objects on disk,
+     This makes it possible to store immutable objects on disk,
      or send them over the network with JSON, reconstructing
      them on the other side.
+
+     ----
 
      If you just want to use a library that expects normal
      JavaScript objects, use [::toJS] and [::fromJS] instead.

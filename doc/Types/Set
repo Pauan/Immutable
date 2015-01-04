@@ -37,8 +37,9 @@
          // Returns true
          set.has(obj2);
 
-     You can also use a [::Dict], [::Set], or [::List] as values,
-     and they are treated as equal if their keys/values are equal:
+     You can also use immutable objects like [::Dict], [::Set],
+     or [::List] as values, and they are treated as equal if their
+     keys/values are equal:
 
          var obj1 = Dict({ foo: 1 });
          var obj2 = Dict({ foo: 1 });

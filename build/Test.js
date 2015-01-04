@@ -175,9 +175,10 @@
         var key   = _array[0];
         var value = _array[1];
 
+        // Tags are currently implemented as strings
         // TODO use isString test ?
         if (typeof key !== "string") {
-          throw new Error("Cannot convert to JavaScript: expected string key but got " + key);
+          throw new Error("Cannot convert to JavaScript: expected key to be string or Tag but got " + key);
         }
 
         o[key] = $$toJS$$toJS(value);
@@ -2586,6 +2587,10 @@
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(dict_foo), { foo: 1 }));
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 2 }) })),
                          { foo: { bar: 2 } }));
+
+        src$Test$Test$$assert_raises(function () {
+          $$toJS$$toJS($$ImmutableDict$$Dict().set($$ImmutableDict$$Dict({ foo: 1 }), 2));
+        }, "Cannot convert to JavaScript: expected key to be string or Tag but got (Dict\n  \"foo\" = 1)");
       });
 
       src$Test$Test$$test("toJSON", function () {
@@ -3977,6 +3982,12 @@
         $$assert$$assert(x.get(uuid_tag2) === 4);
 
         $$assert$$assert("" + x === "(Dict\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3)");
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(x), {
+          "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)": 1,
+          "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)": 2,
+          "(UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4)": 4,
+          "(UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f)": 3
+        }));
       });
 
       src$Test$Test$$test("Record", function () {
@@ -3988,6 +3999,12 @@
         $$assert$$assert(x.get(uuid_tag2) === 4);
 
         $$assert$$assert("" + x === "(Record\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4)");
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(x), {
+          "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)": 1,
+          "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)": 2,
+          "(UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f)": 3,
+          "(UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4)": 4
+        }));
       });
 
       src$Test$Test$$test("toJS", function () {

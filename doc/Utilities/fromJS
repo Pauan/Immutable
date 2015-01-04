@@ -15,7 +15,7 @@
      but you want to use a library that gives you ordinary
      JavaScript objects/arrays.
 
-     If you want to losslessly store an Immutable object on
+     If you want to losslessly store an immutable object on
      disk, or send it over the network, you can use [::toJSON]
      and [::fromJSON] instead.
  */

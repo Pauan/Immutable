@@ -15,8 +15,8 @@
 
      ----
 
-     Mutable objects are treated as equal if they
-     are exactly the same object:
+     Mutable objects (including [::Ref]) are treated
+     as equal if they are exactly the same object:
 
          var obj = {};
 
@@ -83,6 +83,39 @@
      This takes `O(n)` time, except the results
      are cached so that afterwards it takes `O(1)`
      time.
+
+     ----
+
+     [::Record] are treated as equal if they have
+     the same keys/values, in the same order:
+
+         equal(Record({ foo: 1 }),
+               Record({ foo: 1 })); // true
+
+     This takes `O(n)` time, except the results
+     are cached so that afterwards it takes `O(1)`
+     time.
+
+     ----
+
+     [::Tag] are treated as equal if they are
+     exactly the same tag:
+
+         var tag = Tag();
+
+         equal(tag, tag); // true
+
+     This takes `O(1)` time.
+
+     ----
+
+     [::UUIDTag] are treated as equal if they have
+     the same UUID:
+
+         equal(UUIDTag("fce81b71-9793-4f8b-b090-810a5e82e9aa"),
+               UUIDTag("fce81b71-9793-4f8b-b090-810a5e82e9aa")); // true
+
+     This takes `O(1)` time.
 
      ----
 

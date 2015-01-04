@@ -499,6 +499,10 @@ context("Dict", function () {
     assert(deepEqual(toJS(dict_foo), { foo: 1 }));
     assert(deepEqual(toJS(Dict({ foo: Dict({ bar: 2 }) })),
                      { foo: { bar: 2 } }));
+
+    assert_raises(function () {
+      toJS(Dict().set(Dict({ foo: 1 }), 2));
+    }, "Cannot convert to JavaScript: expected key to be string or Tag but got (Dict\n  \"foo\" = 1)");
   });
 
   test("toJSON", function () {
@@ -1890,6 +1894,12 @@ context("Tag", function () {
     assert(x.get(uuid_tag2) === 4);
 
     assert("" + x === "(Dict\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3)");
+    assert(deepEqual(toJS(x), {
+      "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)": 1,
+      "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)": 2,
+      "(UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4)": 4,
+      "(UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f)": 3
+    }));
   });
 
   test("Record", function () {
@@ -1901,6 +1911,12 @@ context("Tag", function () {
     assert(x.get(uuid_tag2) === 4);
 
     assert("" + x === "(Record\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4)");
+    assert(deepEqual(toJS(x), {
+      "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)": 1,
+      "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)": 2,
+      "(UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f)": 3,
+      "(UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4)": 4
+    }));
   });
 
   test("toJS", function () {

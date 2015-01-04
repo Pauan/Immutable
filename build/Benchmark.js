@@ -419,9 +419,10 @@
         var key   = _array[0];
         var value = _array[1];
 
+        // Tags are currently implemented as strings
         // TODO use isString test ?
         if (typeof key !== "string") {
-          throw new Error("Cannot convert to JavaScript: expected string key but got " + key);
+          throw new Error("Cannot convert to JavaScript: expected key to be string or Tag but got " + key);
         }
 
         o[key] = $$toJS$$toJS(value);

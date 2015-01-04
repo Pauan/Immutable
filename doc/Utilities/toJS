@@ -3,24 +3,26 @@
    @param {Any} [x]
    @return {Any}
    @summary Converts a [::Dict], [::Set], [::List],
-            [::Queue], or [::Stack] to its JavaScript
-            equivalent
+            [::Queue], [::Stack], or [::Record] to its
+            JavaScript equivalent
    @desc
      Most things are returned as-is, except:
 
-     * [::Dict] are converted to a JavaScript object. The keys must be strings.
+     * [::Dict] are converted to a JavaScript object. The keys must be strings or [::Tag].
      * [::Set] are converted to a JavaScript array.
      * [::List] are converted to a JavaScript array.
      * [::Queue] are converted to a JavaScript array.
      * [::Stack] are converted to a JavaScript array.
+     * [::Record] are converted to a JavaScript object.
 
      This conversion takes `O(n)` time.
 
      This is useful if you like using [::Dict], [::Set],
-     [::List], [::Queue], or [::Stack] but you want to use a
-     library that requires ordinary JavaScript objects/arrays.
+     [::List], [::Queue], [::Stack], or [::Record] but you want
+     to use a library that requires ordinary JavaScript
+     objects/arrays.
 
-     If you want to losslessly store an Immutable object on
+     If you want to losslessly store an immutable object on
      disk, or send it over the network, you can use [::toJSON]
      and [::fromJSON] instead.
  */

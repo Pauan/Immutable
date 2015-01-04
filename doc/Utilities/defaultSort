@@ -15,7 +15,7 @@
 
      This function works on everything, including (but not limited to)
      numbers, strings, booleans, mutable objects, [::Dict], [::Set],
-     [::List], [::Queue], and [::Stack].
+     [::List], [::Queue], [::Stack], [::Record], [::Ref], and [::Tag].
 
      Equality is the same as [::equal], which means mutable objects
      are only equal if they are exactly the same object, and immutable
@@ -36,4 +36,7 @@
        Of course you should only do that if you have an *actual*
        performance problem, and you've benchmarked to verify that
        the problem is [::defaultSort].
+
+       Alternatively, consider using [::Record], which is even faster
+       than [::SortedDict] with [::simpleSort].
  */

@@ -1,10 +1,10 @@
 /**
    @class Record
-   @summary An immutable fixed-size dictionary mapping strings to values
+   @summary An immutable fixed-size dictionary mapping strings/Tags to values
    @desc
      A [::Record] is much faster and lighter-weight than a [::Dict],
-     but in exchange for that they can only have strings for
-     keys, and you cannot add or remove keys from a [::Record].
+     but in exchange for that they can only have strings or [::Tag]
+     for keys, and you cannot add or remove keys from a [::Record].
 
    @function Record
    @param {optional sequence::Sequence|Object} [obj]
@@ -16,8 +16,8 @@
      If `obj` is a JavaScript literal like `{ foo: 1 }`,
      then the keys/values will be added to the record.
 
-     In either case, the keys must be strings, and they
-     will be in the same order as `obj`.
+     In either case, the keys must be strings or [::Tag],
+     and they will be in the same order as `obj`.
 
      This takes `O(n)` time, unless `obj` is already
      a [::Record], in which case it takes `O(1)` time.
