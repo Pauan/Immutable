@@ -1,5 +1,5 @@
 import { hash } from "./hash";
-import { isJSLiteral } from "./util";
+import { isObject, isJSLiteral } from "./util";
 
 import { toJS } from "./toJS";
 import { toJSON, fromJSON } from "./toJSON";
@@ -10,14 +10,16 @@ import { isList, List } from "./ImmutableList";
 import { isQueue, Queue } from "./ImmutableQueue";
 import { isStack, Stack } from "./ImmutableStack";
 import { isRecord, Record } from "./ImmutableRecord";
-import { deref, Ref, isRef } from "./ImmutableRef";
+import { deref, Ref, isRef } from "./MutableRef";
+import { isTag, isUUIDTag, Tag, UUIDTag } from "./Tag";
 
 export { toJS, simpleSort, defaultSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
          SortedSet, Set, isSet, isSortedSet,
          isList, List, isQueue, Queue,
          isStack, Stack, isRecord, Record,
-         deref, Ref, isRef };
+         deref, Ref, isRef,
+         isTag, isUUIDTag, Tag, UUIDTag };
 
 
 // TODO support -0 and 0 ?
@@ -27,7 +29,23 @@ export function equal(x, y) {
 
 // TODO use `x instanceof ImmutableBase` ? What about ImmutableRef ?
 export function isImmutable(x) {
-  return isDict(x) || isSet(x) || isList(x) || isQueue(x) || isStack(x) || isRecord(x);
+  if (isObject(x)) {
+    return Object.isFrozen(x) ||
+           isDict(x)  ||
+           isSet(x)   ||
+           isList(x)  ||
+           isQueue(x) ||
+           isStack(x) ||
+           isRecord(x);
+  } else {
+    var type = typeof x;
+    // Tags are currently implemented with strings
+    return type === "string"  ||
+           type === "number"  ||
+           type === "boolean" ||
+           type === "symbol"  ||
+           x == null;
+  }
 }
 
 export function fromJS(x) {
@@ -94,4 +112,8 @@ export function fromJS(x) {
   exports.deref = deref;
   exports.Ref = Ref;
   exports.isRef = isRef;
+  exports.isTag = isTag;
+  exports.isUUIDTag = isUUIDTag;
+  exports.Tag = Tag;
+  exports.UUIDTag = UUIDTag;
 });

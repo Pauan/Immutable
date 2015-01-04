@@ -1,11 +1,11 @@
 import { max } from "./AVL";
 import { defaultSort, key_get, key_set, key_remove } from "./Sorted";
-import { hash, hash_interface } from "./hash";
+import { hash, tag_hash } from "./hash";
 import { join_lines } from "./util";
-import { toJSON_array, fromJSON_array, toJSON_interface, fromJSON_registry } from "./toJSON";
-import { toJS_array, toJS_interface } from "./toJS";
+import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
+import { toJS_array, tag_toJS } from "./toJS";
 import { nil } from "./nil";
-import { ImmutableBase } from "./ImmutableBase";
+import { ImmutableBase } from "./Base";
 
 function SetNode(left, right, key) {
   this.left  = left;
@@ -47,7 +47,7 @@ fromJSON_registry["Set"] = function (x) {
   return Set(fromJSON_array(x));
 };
 
-ImmutableSet.prototype[toJSON_interface] = function (x) {
+ImmutableSet.prototype[tag_toJSON] = function (x) {
   if (x.sort === defaultSort) {
     return toJSON_array("Set", x);
   } else {
@@ -55,7 +55,7 @@ ImmutableSet.prototype[toJSON_interface] = function (x) {
   }
 };
 
-ImmutableSet.prototype[hash_interface] = function (x) {
+ImmutableSet.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     var a = [];
 
@@ -76,7 +76,7 @@ ImmutableSet.prototype[hash_interface] = function (x) {
   return x.hash;
 };
 
-ImmutableSet.prototype[toJS_interface] = toJS_array;
+ImmutableSet.prototype[tag_toJS] = toJS_array;
 
 // TODO code duplication with ImmutableDict
 // TODO Symbol.iterator

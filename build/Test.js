@@ -1,5 +1,47 @@
 (function() {
     "use strict";
+    var $$Tag$$tag_uuid = "48de6fff-9d11-472d-a76f-ed77a59a5cbc";
+    var $$Tag$$tag_id = 0;
+
+    var $$Tag$$uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+    var $$Tag$$uuid_regexp = new RegExp("^" + $$Tag$$uuid + "$");
+
+    var $$Tag$$is_tag_regexp = new RegExp("^\\(Tag " + $$Tag$$tag_uuid + " [0-9]+\\)$");
+
+    var $$Tag$$is_uuid_tag_regexp = new RegExp("^\\(UUIDTag " + $$Tag$$uuid + "\\)$");
+
+    function $$Tag$$isUUID(x) {
+      return typeof x === "string" && $$Tag$$uuid_regexp.test(x);
+    }
+
+    function $$Tag$$isTag(x) {
+      return typeof x === "string" && ($$Tag$$is_tag_regexp.test(x) || $$Tag$$is_uuid_tag_regexp.test(x));
+    }
+
+    function $$Tag$$isUUIDTag(x) {
+      return typeof x === "string" && $$Tag$$is_uuid_tag_regexp.test(x);
+    }
+
+    function $$Tag$$Tag() {
+      if (arguments.length === 0) {
+        return "(Tag " + $$Tag$$tag_uuid + " " + (++$$Tag$$tag_id) + ")";
+      } else {
+        throw new Error("Expected 0 arguments but got " + arguments.length);
+      }
+    }
+
+    function $$Tag$$UUIDTag(id) {
+      if (arguments.length === 1) {
+        if ($$Tag$$isUUID(id)) {
+          return "(UUIDTag " + id + ")";
+        } else {
+          throw new Error("Expected a lower-case UUID, but got: " + id);
+        }
+
+      } else {
+        throw new Error("Expected 1 argument but got " + arguments.length);
+      }
+    }
     function $$util$$isObject(x) {
       return Object(x) === x;
     }
@@ -33,7 +75,7 @@
         return "";
       }
     }
-    var $$hash$$hash_interface = "__CFB38D33-7CD8-419E-A1B6-61D1B8AC7C83_hash__";
+    var $$hash$$tag_hash = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
 
     var $$hash$$mutable_hash_id = 0;
 
@@ -41,7 +83,11 @@
       var type = typeof x;
       // TODO this is probably pretty inefficient
       if (type === "string") {
-        return "\"" + x.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"").replace(/\n/g, "\n ") + "\"";
+        if ($$Tag$$isTag(x)) {
+          return x;
+        } else {
+          return "\"" + x.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"").replace(/\n/g, "\n ") + "\"";
+        }
 
       } else if (type === "number"    ||
                  type === "boolean"   ||
@@ -50,14 +96,14 @@
         return "" + x;
 
       } else {
-        var hasher = x[$$hash$$hash_interface];
+        var hasher = x[$$hash$$tag_hash];
         if (hasher != null) {
           return hasher(x);
 
         } else {
           var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
 
-          Object.defineProperty(x, $$hash$$hash_interface, {
+          Object.defineProperty(x, $$hash$$tag_hash, {
             configurable: false,
             enumerable: false,
             writable: false,
@@ -107,11 +153,11 @@
 
       return $$util$$join_lines(a, spaces);
     }
-    var $$toJS$$toJS_interface = "__DEE5921D-20A6-40D0-9A74-40C5BAC8C663_toJS__";
+    var $$toJS$$tag_toJS = $$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
 
     function $$toJS$$toJS(x) {
       if ($$util$$isObject(x)) {
-        var fn = x[$$toJS$$toJS_interface];
+        var fn = x[$$toJS$$tag_toJS];
         if (fn != null) {
           return fn(x);
         } else {
@@ -151,12 +197,12 @@
     }
     var $$toJSON$$fromJSON_registry = {};
 
-    var $$toJSON$$toJSON_type      = "__B81911B5-071E-431E-B82E-AA7ADFEA301F_type__";
-    var $$toJSON$$toJSON_interface = "__836134D4-35C1-46C4-971D-1522F0A1E75A_toJSON__";
+    var $$toJSON$$tag_toJSON_type = $$Tag$$UUIDTag("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37");
+    var $$toJSON$$tag_toJSON      = $$Tag$$UUIDTag("99e14916-bc99-4c48-81aa-299cf1ad6de3");
 
     function $$toJSON$$fromJSON(x) {
       if ($$util$$isObject(x)) {
-        var type = x[$$toJSON$$toJSON_type];
+        var type = x[$$toJSON$$tag_toJSON_type];
         if (type != null) {
           var register = $$toJSON$$fromJSON_registry[type];
           if (register != null) {
@@ -167,6 +213,12 @@
         } else {
           return x;
         }
+      } else if ($$Tag$$isTag(x)) {
+        if ($$Tag$$isUUIDTag(x)) {
+          return x;
+        } else {
+          throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
+        }
       } else {
         return x;
       }
@@ -174,11 +226,17 @@
 
     function $$toJSON$$toJSON(x) {
       if ($$util$$isObject(x)) {
-        var fn = x[$$toJSON$$toJSON_interface];
+        var fn = x[$$toJSON$$tag_toJSON];
         if (fn != null) {
           return fn(x);
         } else {
           return x;
+        }
+      } else if ($$Tag$$isTag(x)) {
+        if ($$Tag$$isUUIDTag(x)) {
+          return x;
+        } else {
+          throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
         }
       } else {
         return x;
@@ -188,7 +246,7 @@
     function $$toJSON$$toJSON_object(type, x) {
       var o = {};
 
-      o[$$toJSON$$toJSON_type] = type;
+      o[$$toJSON$$tag_toJSON_type] = type;
 
       o.keys   = [];
       o.values = [];
@@ -207,7 +265,7 @@
     function $$toJSON$$toJSON_array(type, x) {
       var o = {};
 
-      o[$$toJSON$$toJSON_type] = type;
+      o[$$toJSON$$tag_toJSON_type] = type;
 
       o.values = [];
 
@@ -462,13 +520,15 @@
         }
       }
     }
-    var $$ImmutableBase$$ImmutableBase = {};
+    var $$Base$$MutableBase   = {};
+    var $$Base$$ImmutableBase = {};
 
-    $$ImmutableBase$$ImmutableBase.toString = function () {
+    function $$Base$$toString() {
       return $$hash$$hash(this);
-    };
+    }
 
-    $$ImmutableBase$$ImmutableBase.inspect = $$ImmutableBase$$ImmutableBase.toString;
+    $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
+    $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
 
     function $$ImmutableDict$$KeyNode(left, right, key, value) {
       this.left  = left;
@@ -506,9 +566,9 @@
       this.hash = null;
     }
 
-    $$ImmutableDict$$ImmutableDict.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableDict$$ImmutableDict.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableDict$$ImmutableDict.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         // We don't use equal, for increased speed
         if (x.sort === $$Sorted$$defaultSort) {
@@ -525,7 +585,7 @@
       return $$ImmutableDict$$Dict($$toJSON$$fromJSON_object(x));
     };
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableDict$$ImmutableDict.prototype[$$toJSON$$tag_toJSON] = function (x) {
       if (x.sort === $$Sorted$$defaultSort) {
         return $$toJSON$$toJSON_object("Dict", x);
       } else {
@@ -533,7 +593,7 @@
       }
     };
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
+    $$ImmutableDict$$ImmutableDict.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_object;
 
     // TODO Symbol.iterator
     $$ImmutableDict$$ImmutableDict.prototype.forEach = function (f) {
@@ -692,13 +752,13 @@
       this.hash = null;
     }
 
-    $$ImmutableSet$$ImmutableSet.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableSet$$ImmutableSet.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["Set"] = function (x) {
       return $$ImmutableSet$$Set($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableSet$$ImmutableSet.prototype[$$toJSON$$tag_toJSON] = function (x) {
       if (x.sort === $$Sorted$$defaultSort) {
         return $$toJSON$$toJSON_array("Set", x);
       } else {
@@ -706,7 +766,7 @@
       }
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableSet$$ImmutableSet.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = [];
 
@@ -727,7 +787,7 @@
       return x.hash;
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
+    $$ImmutableSet$$ImmutableSet.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
     // TODO code duplication with ImmutableDict
     // TODO Symbol.iterator
@@ -1221,17 +1281,17 @@
       this.hash = null;
     }
 
-    $$ImmutableList$$ImmutableList.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableList$$ImmutableList.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["List"] = function (x) {
       return $$ImmutableList$$List($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableList$$ImmutableList.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("List", x);
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableList$$ImmutableList.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = [];
 
@@ -1245,7 +1305,7 @@
       return x.hash;
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
+    $$ImmutableList$$ImmutableList.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
     // TODO Symbol.iterator
     $$ImmutableList$$ImmutableList.prototype.forEach = function (f) {
@@ -1532,17 +1592,17 @@
       this.hash  = null;
     }
 
-    $$ImmutableQueue$$ImmutableQueue.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableQueue$$ImmutableQueue.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["Queue"] = function (x) {
       return $$ImmutableQueue$$Queue($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("Queue", x);
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
     $$ImmutableQueue$$ImmutableQueue.prototype.isEmpty = function () {
       return this.left === $$$Immutable$nil$$nil && this.right === $$$Immutable$nil$$nil;
@@ -1553,7 +1613,7 @@
       this.right.forEachRev(f);
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = [];
 
@@ -1650,17 +1710,17 @@
       this.hash = null;
     }
 
-    $$ImmutableStack$$ImmutableStack.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableStack$$ImmutableStack.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["Stack"] = function (x) {
       return $$ImmutableStack$$Stack($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableStack$$ImmutableStack.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableStack$$ImmutableStack.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("Stack", x);
     };
 
-    $$ImmutableStack$$ImmutableStack.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
+    $$ImmutableStack$$ImmutableStack.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
     // TODO code duplication with ImmutableSet
     $$ImmutableStack$$ImmutableStack.prototype.isEmpty = function () {
@@ -1668,7 +1728,7 @@
     };
 
     // TODO code duplication
-    $$ImmutableStack$$ImmutableStack.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableStack$$ImmutableStack.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = [];
 
@@ -1750,25 +1810,33 @@
         return new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
       }
     }
+
+    function $$ImmutableRecord$$checkKey(key) {
+      // Tags are currently implemented as strings
+      if (typeof key !== "string") {
+        throw new Error("Expected key to be a string or Tag but got " + key);
+      }
+    }
+
     function $$ImmutableRecord$$ImmutableRecord(keys, values) {
       this.keys   = keys;
       this.values = values;
       this.hash   = null;
     }
 
-    $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["Record"] = function (x) {
       return $$ImmutableRecord$$Record($$toJSON$$fromJSON_object(x));
     };
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_object("Record", x);
     };
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_object;
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         x.hash = "(Record" + $$hash$$hash_dict(x, "  ") + ")";
       }
@@ -1786,10 +1854,7 @@
     };
 
     $$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
-      // TODO code duplication
-      if (typeof key !== "string") {
-        throw new Error("Expected string key but got " + key);
-      }
+      $$ImmutableRecord$$checkKey(key);
 
       var index = this.keys[key];
       if (index == null) {
@@ -1807,10 +1872,7 @@
     };
 
     $$ImmutableRecord$$ImmutableRecord.prototype.modify = function (key, f) {
-      // TODO code duplication
-      if (typeof key !== "string") {
-        throw new Error("Expected string key but got " + key);
-      }
+      $$ImmutableRecord$$checkKey(key);
 
       var keys  = this.keys;
       var index = keys[key];
@@ -1857,10 +1919,7 @@
 
         } else if ($$util$$isJSLiteral(obj)) {
           Object.keys(obj).forEach(function (key) {
-            // TODO code duplication
-            if (typeof key !== "string") {
-              throw new Error("Expected string key but got " + key);
-            }
+            $$ImmutableRecord$$checkKey(key);
 
             keys[key] = values.push(obj[key]) - 1;
           });
@@ -1870,10 +1929,7 @@
             var key   = _array[0];
             var value = _array[1];
 
-            // TODO code duplication
-            if (typeof key !== "string") {
-              throw new Error("Expected string key but got " + key);
-            }
+            $$ImmutableRecord$$checkKey(key);
 
             keys[key] = values.push(value) - 1;
           });
@@ -1883,25 +1939,25 @@
       return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
 
-    var $$ImmutableRef$$ref_id = 0;
+    var $$MutableRef$$ref_id = 0;
 
-    function $$ImmutableRef$$ImmutableRef(value, onchange) {
-      this._id = ++$$ImmutableRef$$ref_id;
+    function $$MutableRef$$MutableRef(value, onchange) {
+      this._id = ++$$MutableRef$$ref_id;
       this._value = value;
       this._onchange = onchange;
     }
 
-    $$ImmutableRef$$ImmutableRef.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$MutableRef$$MutableRef.prototype = Object.create($$Base$$MutableBase);
 
-    $$ImmutableRef$$ImmutableRef.prototype[$$hash$$hash_interface] = function (x) {
+    $$MutableRef$$MutableRef.prototype[$$hash$$tag_hash] = function (x) {
       return "(Ref " + $$hash$$hash(x._id) + ")";
     };
 
-    $$ImmutableRef$$ImmutableRef.prototype.get = function () {
+    $$MutableRef$$MutableRef.prototype.get = function () {
       return this._value;
     };
 
-    $$ImmutableRef$$ImmutableRef.prototype.set = function (value) {
+    $$MutableRef$$MutableRef.prototype.set = function (value) {
       var old = this._value;
       if (value !== old) {
         this._value = value;
@@ -1911,36 +1967,52 @@
       }
     };
 
-    $$ImmutableRef$$ImmutableRef.prototype.modify = function (f) {
+    $$MutableRef$$MutableRef.prototype.modify = function (f) {
       this.set(f(this.get()));
     };
 
 
-    function $$ImmutableRef$$deref(x) {
-      if ($$ImmutableRef$$isRef(x)) {
+    function $$MutableRef$$deref(x) {
+      if ($$MutableRef$$isRef(x)) {
         return x.get();
       } else {
         return x;
       }
     }
 
-    function $$ImmutableRef$$isRef(x) {
-      return x instanceof $$ImmutableRef$$ImmutableRef;
+    function $$MutableRef$$isRef(x) {
+      return x instanceof $$MutableRef$$MutableRef;
     }
 
-    function $$ImmutableRef$$Ref(value, onchange) {
+    function $$MutableRef$$Ref(value, onchange) {
       if (arguments.length < 1 || arguments.length > 2) {
         throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
       }
 
-      return new $$ImmutableRef$$ImmutableRef(value, onchange);
+      return new $$MutableRef$$MutableRef(value, onchange);
     }
     function $$$Immutable$Immutable$$equal(x, y) {
       return x === y || $$hash$$hash(x) === $$hash$$hash(y);
     }
 
     function $$$Immutable$Immutable$$isImmutable(x) {
-      return $$ImmutableDict$$isDict(x) || $$ImmutableSet$$isSet(x) || $$ImmutableList$$isList(x) || $$ImmutableQueue$$isQueue(x) || $$ImmutableStack$$isStack(x) || $$ImmutableRecord$$isRecord(x);
+      if ($$util$$isObject(x)) {
+        return Object.isFrozen(x) ||
+               $$ImmutableDict$$isDict(x)  ||
+               $$ImmutableSet$$isSet(x)   ||
+               $$ImmutableList$$isList(x)  ||
+               $$ImmutableQueue$$isQueue(x) ||
+               $$ImmutableStack$$isStack(x) ||
+               $$ImmutableRecord$$isRecord(x);
+      } else {
+        var type = typeof x;
+        // Tags are currently implemented with strings
+        return type === "string"  ||
+               type === "number"  ||
+               type === "boolean" ||
+               type === "symbol"  ||
+               x == null;
+      }
     }
 
     function $$$Immutable$Immutable$$fromJS(x) {
@@ -2003,9 +2075,13 @@
       exports.Record = $$ImmutableRecord$$Record;
       exports.toJSON = $$toJSON$$toJSON;
       exports.fromJSON = $$toJSON$$fromJSON;
-      exports.deref = $$ImmutableRef$$deref;
-      exports.Ref = $$ImmutableRef$$Ref;
-      exports.isRef = $$ImmutableRef$$isRef;
+      exports.deref = $$MutableRef$$deref;
+      exports.Ref = $$MutableRef$$Ref;
+      exports.isRef = $$MutableRef$$isRef;
+      exports.isTag = $$Tag$$isTag;
+      exports.isUUIDTag = $$Tag$$isUUIDTag;
+      exports.Tag = $$Tag$$Tag;
+      exports.UUIDTag = $$Tag$$UUIDTag;
     });
     function $$assert$$assert(x) {
       if (arguments.length !== 1) {
@@ -3608,19 +3684,19 @@
 
         src$Test$Test$$assert_raises(function () {
           $$ImmutableRecord$$Record(o);
-        }, "Expected string key but got [object Object]");
+        }, "Expected key to be a string or Tag but got [object Object]");
 
         src$Test$Test$$assert_raises(function () {
           Foo.get({});
-        }, "Expected string key but got [object Object]");
+        }, "Expected key to be a string or Tag but got [object Object]");
 
         src$Test$Test$$assert_raises(function () {
           Foo.set({}, 5);
-        }, "Expected string key but got [object Object]");
+        }, "Expected key to be a string or Tag but got [object Object]");
 
         src$Test$Test$$assert_raises(function () {
           Foo.modify({}, function () { throw new Error("FAIL") });
-        }, "Expected string key but got [object Object]");
+        }, "Expected key to be a string or Tag but got [object Object]");
       });
 
       src$Test$Test$$test("=== when not modified", function () {
@@ -3690,29 +3766,29 @@
 
 
     src$Test$Test$$context("Ref", function () {
-      var ref1 = $$ImmutableRef$$Ref(1);
-      var ref2 = $$ImmutableRef$$Ref(2);
+      var ref1 = $$MutableRef$$Ref(1);
+      var ref2 = $$MutableRef$$Ref(2);
 
       src$Test$Test$$test("isRef", function () {
-        $$assert$$assert(!$$ImmutableRef$$isRef($$ImmutableDict$$Dict()));
-        $$assert$$assert($$ImmutableRef$$isRef(ref1));
-        $$assert$$assert($$ImmutableRef$$isRef(ref2));
+        $$assert$$assert(!$$MutableRef$$isRef($$ImmutableDict$$Dict()));
+        $$assert$$assert($$MutableRef$$isRef(ref1));
+        $$assert$$assert($$MutableRef$$isRef(ref2));
       });
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + ref1 === "(Ref 1)");
         $$assert$$assert("" + ref2 === "(Ref 2)");
-        $$assert$$assert("" + $$ImmutableRef$$Ref(50) === "(Ref 3)");
-        $$assert$$assert("" + $$ImmutableRef$$Ref([100]) === "(Ref 4)");
+        $$assert$$assert("" + $$MutableRef$$Ref(50) === "(Ref 3)");
+        $$assert$$assert("" + $$MutableRef$$Ref([100]) === "(Ref 4)");
       });
 
       src$Test$Test$$test("init", function () {
         src$Test$Test$$assert_raises(function () {
-          $$ImmutableRef$$Ref();
+          $$MutableRef$$Ref();
         }, "Expected 1 to 2 arguments but got 0");
 
         src$Test$Test$$assert_raises(function () {
-          $$ImmutableRef$$Ref(1, 2, 3);
+          $$MutableRef$$Ref(1, 2, 3);
         }, "Expected 1 to 2 arguments but got 3");
       });
 
@@ -3728,7 +3804,7 @@
 
         var ran = false;
 
-        var x = $$ImmutableRef$$Ref(5, function (before, after) {
+        var x = $$MutableRef$$Ref(5, function (before, after) {
           $$assert$$assert(before === 5);
           $$assert$$assert(after === 10);
           ran = true;
@@ -3742,7 +3818,7 @@
 
         var ran = false;
 
-        var x = $$ImmutableRef$$Ref(5, function () {
+        var x = $$MutableRef$$Ref(5, function () {
           ran = true;
         });
 
@@ -3756,7 +3832,7 @@
         var ran1 = false;
         var ran2 = false;
 
-        var x = $$ImmutableRef$$Ref(5, function (before, after) {
+        var x = $$MutableRef$$Ref(5, function (before, after) {
           $$assert$$assert(before === 5);
           $$assert$$assert(after === 10);
           ran1 = true;
@@ -3776,7 +3852,7 @@
         var ran1 = false;
         var ran2 = false;
 
-        var x = $$ImmutableRef$$Ref(5, function () {
+        var x = $$MutableRef$$Ref(5, function () {
           ran1 = true;
         });
 
@@ -3796,17 +3872,172 @@
         $$assert$$assert($$$Immutable$Immutable$$equal(ref1, ref1));
         $$assert$$assert($$$Immutable$Immutable$$equal(ref2, ref2));
 
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableRef$$Ref(1), $$ImmutableRef$$Ref(1)));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal(ref1, $$ImmutableRef$$Ref(1)));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$MutableRef$$Ref(1), $$MutableRef$$Ref(1)));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(ref1, $$MutableRef$$Ref(1)));
+      });
+    });
+
+
+    src$Test$Test$$context("Tag", function () {
+      var tag1 = $$Tag$$Tag();
+      var tag2 = $$Tag$$Tag();
+      var uuid_tag1 = $$Tag$$UUIDTag("dc353abd-d920-4c17-b911-55bd1c78c06f");
+      var uuid_tag2 = $$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4");
+
+      src$Test$Test$$test("isTag", function () {
+        $$assert$$assert(!$$Tag$$isTag("foo"));
+        $$assert$$assert(!$$Tag$$isTag($$ImmutableDict$$Dict()));
+        $$assert$$assert($$Tag$$isTag(tag1));
+        $$assert$$assert($$Tag$$isTag(tag2));
+        $$assert$$assert($$Tag$$isTag(uuid_tag1));
+        $$assert$$assert($$Tag$$isTag(uuid_tag2));
+
+        $$assert$$assert(!$$Tag$$isUUIDTag("foo"));
+        $$assert$$assert(!$$Tag$$isUUIDTag($$ImmutableDict$$Dict()));
+        $$assert$$assert(!$$Tag$$isUUIDTag(tag1));
+        $$assert$$assert(!$$Tag$$isUUIDTag(tag2));
+        $$assert$$assert($$Tag$$isUUIDTag(uuid_tag1));
+        $$assert$$assert($$Tag$$isUUIDTag(uuid_tag2));
+      });
+
+      src$Test$Test$$test("toString", function () {
+        $$assert$$assert("" + tag1 === "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)");
+        $$assert$$assert("" + tag2 === "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)");
+        $$assert$$assert("" + $$Tag$$Tag() === "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 3)");
+        $$assert$$assert("" + uuid_tag1 === "(UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f)");
+        $$assert$$assert("" + uuid_tag2 === "(UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4)");
+        $$assert$$assert("" + $$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4") === "(UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4)");
+      });
+
+      src$Test$Test$$test("init", function () {
+        src$Test$Test$$assert_raises(function () {
+          $$Tag$$Tag(1);
+        }, "Expected 0 arguments but got 1");
+
+        src$Test$Test$$assert_raises(function () {
+          $$Tag$$Tag(1, 2);
+        }, "Expected 0 arguments but got 2");
+
+        src$Test$Test$$assert_raises(function () {
+          $$Tag$$UUIDTag();
+        }, "Expected 1 argument but got 0");
+
+        src$Test$Test$$assert_raises(function () {
+          $$Tag$$UUIDTag(1, 2);
+        }, "Expected 1 argument but got 2");
+
+        src$Test$Test$$assert_raises(function () {
+          $$Tag$$UUIDTag("foo");
+        }, "Expected a lower-case UUID, but got: foo");
+      });
+
+      src$Test$Test$$test("equal", function () {
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(tag1, tag2));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(tag1, uuid_tag1));
+        $$assert$$assert($$$Immutable$Immutable$$equal(tag1, tag1));
+        $$assert$$assert($$$Immutable$Immutable$$equal(tag2, tag2));
+
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(uuid_tag1, uuid_tag2));
+        $$assert$$assert($$$Immutable$Immutable$$equal(uuid_tag1, uuid_tag1));
+        $$assert$$assert($$$Immutable$Immutable$$equal(uuid_tag2, uuid_tag2));
+
+        $$assert$$assert($$$Immutable$Immutable$$equal(uuid_tag2, $$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4")));
+
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$Tag$$Tag(), $$Tag$$Tag()));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(tag1, $$Tag$$Tag()));
+      });
+
+      src$Test$Test$$test("===", function () {
+        $$assert$$assert(tag1 !== tag2);
+        $$assert$$assert(tag1 !== uuid_tag1);
+        $$assert$$assert(tag1 === tag1);
+        $$assert$$assert(tag2 === tag2);
+
+        $$assert$$assert(uuid_tag1 !== uuid_tag2);
+        $$assert$$assert(uuid_tag1 === uuid_tag1);
+        $$assert$$assert(uuid_tag2 === uuid_tag2);
+
+        $$assert$$assert(uuid_tag2 === $$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4"));
+
+        $$assert$$assert($$Tag$$Tag() !== $$Tag$$Tag());
+        $$assert$$assert(tag1 !== $$Tag$$Tag());
+      });
+
+      src$Test$Test$$test("Dict", function () {
+        var x = $$ImmutableDict$$Dict();
+
+        x = x.set(tag1, 1);
+        x = x.set(tag2, 2);
+        x = x.set(uuid_tag1, 3);
+        x = x.set(uuid_tag2, 4);
+
+        $$assert$$assert(x.get(tag1) === 1);
+        $$assert$$assert(x.get(tag2) === 2);
+        $$assert$$assert(x.get(uuid_tag1) === 3);
+        $$assert$$assert(x.get(uuid_tag2) === 4);
+
+        $$assert$$assert("" + x === "(Dict\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3)");
+      });
+
+      src$Test$Test$$test("Record", function () {
+        var x = $$ImmutableRecord$$Record([[tag1, 1], [tag2, 2], [uuid_tag1, 3], [uuid_tag2, 4]]);
+
+        $$assert$$assert(x.get(tag1) === 1);
+        $$assert$$assert(x.get(tag2) === 2);
+        $$assert$$assert(x.get(uuid_tag1) === 3);
+        $$assert$$assert(x.get(uuid_tag2) === 4);
+
+        $$assert$$assert("" + x === "(Record\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4)");
+      });
+
+      src$Test$Test$$test("toJS", function () {
+        $$assert$$assert($$toJS$$toJS(tag1) === tag1);
+        $$assert$$assert($$toJS$$toJS(uuid_tag1) === uuid_tag1);
+
+        $$assert$$assert($$$Immutable$Immutable$$fromJS(tag1) === tag1);
+        $$assert$$assert($$$Immutable$Immutable$$fromJS(uuid_tag1) === uuid_tag1);
+      });
+
+      src$Test$Test$$test("toJSON", function () {
+        src$Test$Test$$assert_raises(function () {
+          $$toJSON$$toJSON(tag1);
+        }, "Cannot convert Tag to JSON, use UUIDTag instead: (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)");
+
+        $$assert$$assert($$toJSON$$toJSON(uuid_tag1) === uuid_tag1);
+
+        src$Test$Test$$assert_raises(function () {
+          $$toJSON$$fromJSON(tag1);
+        }, "Cannot convert Tag from JSON, use UUIDTag instead: (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)");
+
+        $$assert$$assert($$toJSON$$fromJSON(uuid_tag1) === uuid_tag1);
+
+
+        var x = $$ImmutableDict$$Dict([[tag1, 1]]);
+
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(x), { "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)": 1 }));
+
+        src$Test$Test$$assert_raises(function () {
+          $$toJSON$$toJSON(x);
+        }, "Cannot convert Tag to JSON, use UUIDTag instead: (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)");
+
+
+        var x = $$ImmutableDict$$Dict([[uuid_tag1, 1]]);
+
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(x), { "(UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f)": 1 }));
+
+        $$assert$$assert($$$Immutable$Immutable$$equal($$toJSON$$fromJSON($$toJSON$$toJSON(x)), x));
       });
     });
 
 
     src$Test$Test$$test("isImmutable", function () {
-      $$assert$$assert(!$$$Immutable$Immutable$$isImmutable(5));
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable({}));
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable([]));
-      $$assert$$assert(!$$$Immutable$Immutable$$isImmutable($$ImmutableRef$$Ref(5)));
+      $$assert$$assert(!$$$Immutable$Immutable$$isImmutable($$MutableRef$$Ref(5)));
+
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable(5));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable("foo"));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable(Object.freeze({})));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$Dict()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$Set()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableList$$List()));
@@ -3816,6 +4047,8 @@
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$SortedSet($$Sorted$$defaultSort)));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$SortedSet($$Sorted$$simpleSort)));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$Tag$$Tag()));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$Tag$$UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
 
       var Foo = $$ImmutableRecord$$Record({});
       $$assert$$assert($$$Immutable$Immutable$$isImmutable(Foo));
@@ -3837,7 +4070,7 @@
       $$assert$$assert($$toJS$$toJS("foo") === "foo");
       $$assert$$assert($$toJS$$toJS(5) === 5);
 
-      var x = $$ImmutableRef$$Ref(5);
+      var x = $$MutableRef$$Ref(5);
       $$assert$$assert($$toJS$$toJS(x) === x);
     });
 
@@ -3860,7 +4093,7 @@
       $$assert$$assert($$$Immutable$Immutable$$fromJS("foo") === "foo");
       $$assert$$assert($$$Immutable$Immutable$$fromJS(5) === 5);
 
-      var x = $$ImmutableRef$$Ref(5);
+      var x = $$MutableRef$$Ref(5);
       $$assert$$assert($$$Immutable$Immutable$$fromJS(x) === x);
     });
 
@@ -3880,7 +4113,7 @@
       $$assert$$assert($$toJSON$$toJSON("foo") === "foo");
       $$assert$$assert($$toJSON$$toJSON(5) === 5);
 
-      var x = $$ImmutableRef$$Ref(5);
+      var x = $$MutableRef$$Ref(5);
       $$assert$$assert($$toJSON$$toJSON(x) === x);
     });
 
@@ -3900,18 +4133,18 @@
       $$assert$$assert($$toJSON$$fromJSON("foo") === "foo");
       $$assert$$assert($$toJSON$$fromJSON(5) === 5);
 
-      var x = $$ImmutableRef$$Ref(5);
+      var x = $$MutableRef$$Ref(5);
       $$assert$$assert($$toJSON$$fromJSON(x) === x);
     });
 
     src$Test$Test$$test("deref", function () {
-      $$assert$$assert($$ImmutableRef$$deref(5) === 5);
+      $$assert$$assert($$MutableRef$$deref(5) === 5);
 
       var x = $$ImmutableDict$$Dict();
-      $$assert$$assert($$ImmutableRef$$deref(x) === x);
+      $$assert$$assert($$MutableRef$$deref(x) === x);
 
-      $$assert$$assert($$ImmutableRef$$deref($$ImmutableRef$$Ref(5)) === 5);
-      $$assert$$assert($$ImmutableRef$$deref($$ImmutableRef$$Ref(x)) === x);
+      $$assert$$assert($$MutableRef$$deref($$MutableRef$$Ref(5)) === 5);
+      $$assert$$assert($$MutableRef$$deref($$MutableRef$$Ref(x)) === x);
     });
 
 

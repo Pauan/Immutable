@@ -1,6 +1,12 @@
 /**
    @function isImmutable
    @param {Any} [x]
-   @return {Boolean} `true` if `x` is a [::Dict], [::Set], [::List], [::Queue], or [::Stack]
-   @summary Returns whether `x` is a [::Dict], [::Set], [::List], [::Queue], or [::Stack]
+   @return {Boolean} `true` if `x` is immutable
+   @summary Returns whether `x` is immutable
+   @desc
+     Strings, numbers, booleans, null, undefined, symbols, frozen
+     objects, [::Dict], [::List], [::Queue], [::Record], [::Set],
+     [::Stack], and [::Tag] are immutable.
+
+     Everything else is mutable.
  */

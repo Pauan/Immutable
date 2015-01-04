@@ -1,25 +1,25 @@
-import { hash, hash_interface } from "./hash";
-import { ImmutableBase } from "./ImmutableBase";
+import { hash, tag_hash } from "./hash";
+import { MutableBase } from "./Base";
 
 var ref_id = 0;
 
-export function ImmutableRef(value, onchange) {
+export function MutableRef(value, onchange) {
   this._id = ++ref_id;
   this._value = value;
   this._onchange = onchange;
 }
 
-ImmutableRef.prototype = Object.create(ImmutableBase);
+MutableRef.prototype = Object.create(MutableBase);
 
-ImmutableRef.prototype[hash_interface] = function (x) {
+MutableRef.prototype[tag_hash] = function (x) {
   return "(Ref " + hash(x._id) + ")";
 };
 
-ImmutableRef.prototype.get = function () {
+MutableRef.prototype.get = function () {
   return this._value;
 };
 
-ImmutableRef.prototype.set = function (value) {
+MutableRef.prototype.set = function (value) {
   var old = this._value;
   if (value !== old) {
     this._value = value;
@@ -29,7 +29,7 @@ ImmutableRef.prototype.set = function (value) {
   }
 };
 
-ImmutableRef.prototype.modify = function (f) {
+MutableRef.prototype.modify = function (f) {
   this.set(f(this.get()));
 };
 
@@ -43,7 +43,7 @@ export function deref(x) {
 }
 
 export function isRef(x) {
-  return x instanceof ImmutableRef;
+  return x instanceof MutableRef;
 }
 
 export function Ref(value, onchange) {
@@ -51,5 +51,5 @@ export function Ref(value, onchange) {
     throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
   }
 
-  return new ImmutableRef(value, onchange);
+  return new MutableRef(value, onchange);
 }

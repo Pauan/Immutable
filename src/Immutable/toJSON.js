@@ -1,13 +1,14 @@
+import { isTag, isUUIDTag, UUIDTag } from "./Tag";
 import { isObject } from "./util";
 
 export var fromJSON_registry = {};
 
-export var toJSON_type      = "__B81911B5-071E-431E-B82E-AA7ADFEA301F_type__";
-export var toJSON_interface = "__836134D4-35C1-46C4-971D-1522F0A1E75A_toJSON__";
+export var tag_toJSON_type = UUIDTag("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37");
+export var tag_toJSON      = UUIDTag("99e14916-bc99-4c48-81aa-299cf1ad6de3");
 
 export function fromJSON(x) {
   if (isObject(x)) {
-    var type = x[toJSON_type];
+    var type = x[tag_toJSON_type];
     if (type != null) {
       var register = fromJSON_registry[type];
       if (register != null) {
@@ -18,6 +19,12 @@ export function fromJSON(x) {
     } else {
       return x;
     }
+  } else if (isTag(x)) {
+    if (isUUIDTag(x)) {
+      return x;
+    } else {
+      throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
+    }
   } else {
     return x;
   }
@@ -25,11 +32,17 @@ export function fromJSON(x) {
 
 export function toJSON(x) {
   if (isObject(x)) {
-    var fn = x[toJSON_interface];
+    var fn = x[tag_toJSON];
     if (fn != null) {
       return fn(x);
     } else {
       return x;
+    }
+  } else if (isTag(x)) {
+    if (isUUIDTag(x)) {
+      return x;
+    } else {
+      throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
     }
   } else {
     return x;
@@ -39,7 +52,7 @@ export function toJSON(x) {
 export function toJSON_object(type, x) {
   var o = {};
 
-  o[toJSON_type] = type;
+  o[tag_toJSON_type] = type;
 
   o.keys   = [];
   o.values = [];
@@ -58,7 +71,7 @@ export function toJSON_object(type, x) {
 export function toJSON_array(type, x) {
   var o = {};
 
-  o[toJSON_type] = type;
+  o[tag_toJSON_type] = type;
 
   o.values = [];
 

@@ -1,10 +1,11 @@
+import { UUIDTag } from "./Tag";
 import { isObject } from "./util";
 
-export var toJS_interface = "__DEE5921D-20A6-40D0-9A74-40C5BAC8C663_toJS__";
+export var tag_toJS = UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
 
 export function toJS(x) {
   if (isObject(x)) {
-    var fn = x[toJS_interface];
+    var fn = x[tag_toJS];
     if (fn != null) {
       return fn(x);
     } else {

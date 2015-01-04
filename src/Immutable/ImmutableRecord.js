@@ -1,9 +1,16 @@
 import { modify as array_modify } from "./Array";
-import { hash, hash_interface, hash_dict } from "./hash";
-import { toJSON_object, fromJSON_object, toJSON_interface, fromJSON_registry } from "./toJSON";
-import { toJS_object, toJS_interface } from "./toJS";
-import { ImmutableBase } from "./ImmutableBase";
+import { hash, tag_hash, hash_dict } from "./hash";
+import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
+import { toJS_object, tag_toJS } from "./toJS";
+import { ImmutableBase } from "./Base";
 import { isJSLiteral } from "./util";
+
+function checkKey(key) {
+  // Tags are currently implemented as strings
+  if (typeof key !== "string") {
+    throw new Error("Expected key to be a string or Tag but got " + key);
+  }
+}
 
 export function ImmutableRecord(keys, values) {
   this.keys   = keys;
@@ -17,13 +24,13 @@ fromJSON_registry["Record"] = function (x) {
   return Record(fromJSON_object(x));
 };
 
-ImmutableRecord.prototype[toJSON_interface] = function (x) {
+ImmutableRecord.prototype[tag_toJSON] = function (x) {
   return toJSON_object("Record", x);
 };
 
-ImmutableRecord.prototype[toJS_interface] = toJS_object;
+ImmutableRecord.prototype[tag_toJS] = toJS_object;
 
-ImmutableRecord.prototype[hash_interface] = function (x) {
+ImmutableRecord.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     x.hash = "(Record" + hash_dict(x, "  ") + ")";
   }
@@ -41,10 +48,7 @@ ImmutableRecord.prototype.forEach = function (f) {
 };
 
 ImmutableRecord.prototype.get = function (key) {
-  // TODO code duplication
-  if (typeof key !== "string") {
-    throw new Error("Expected string key but got " + key);
-  }
+  checkKey(key);
 
   var index = this.keys[key];
   if (index == null) {
@@ -62,10 +66,7 @@ ImmutableRecord.prototype.set = function (key, value) {
 };
 
 ImmutableRecord.prototype.modify = function (key, f) {
-  // TODO code duplication
-  if (typeof key !== "string") {
-    throw new Error("Expected string key but got " + key);
-  }
+  checkKey(key);
 
   var keys  = this.keys;
   var index = keys[key];
@@ -112,10 +113,7 @@ export function Record(obj) {
 
     } else if (isJSLiteral(obj)) {
       Object.keys(obj).forEach(function (key) {
-        // TODO code duplication
-        if (typeof key !== "string") {
-          throw new Error("Expected string key but got " + key);
-        }
+        checkKey(key);
 
         keys[key] = values.push(obj[key]) - 1;
       });
@@ -125,10 +123,7 @@ export function Record(obj) {
         var key   = _array[0];
         var value = _array[1];
 
-        // TODO code duplication
-        if (typeof key !== "string") {
-          throw new Error("Expected string key but got " + key);
-        }
+        checkKey(key);
 
         keys[key] = values.push(value) - 1;
       });

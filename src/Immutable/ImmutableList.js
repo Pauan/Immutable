@@ -1,10 +1,10 @@
 import { insert as array_insert, modify as array_modify, remove as array_remove } from "./Array";
 import { max, balanced_node, concat, insert_min, insert_max } from "./AVL";
-import { hash_interface, hash } from "./hash";
+import { tag_hash, hash } from "./hash";
 import { join_lines } from "./util";
-import { toJSON_array, fromJSON_array, toJSON_interface, fromJSON_registry } from "./toJSON";
-import { toJS_array, toJS_interface } from "./toJS";
-import { ImmutableBase } from "./ImmutableBase";
+import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
+import { toJS_array, tag_toJS } from "./toJS";
+import { ImmutableBase } from "./Base";
 import { nil } from "./nil";
 
 // We use conses at the very end of the list for very fast O(1) push
@@ -291,11 +291,11 @@ fromJSON_registry["List"] = function (x) {
   return List(fromJSON_array(x));
 };
 
-ImmutableList.prototype[toJSON_interface] = function (x) {
+ImmutableList.prototype[tag_toJSON] = function (x) {
   return toJSON_array("List", x);
 };
 
-ImmutableList.prototype[hash_interface] = function (x) {
+ImmutableList.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     var a = [];
 
@@ -309,7 +309,7 @@ ImmutableList.prototype[hash_interface] = function (x) {
   return x.hash;
 };
 
-ImmutableList.prototype[toJS_interface] = toJS_array;
+ImmutableList.prototype[tag_toJS] = toJS_array;
 
 // TODO Symbol.iterator
 ImmutableList.prototype.forEach = function (f) {

@@ -1,10 +1,10 @@
-import { toJSON_array, fromJSON_array, toJSON_interface, fromJSON_registry } from "./toJSON";
-import { toJS_array, toJS_interface } from "./toJS";
-import { hash, hash_interface } from "./hash";
+import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
+import { toJS_array, tag_toJS } from "./toJS";
+import { hash, tag_hash } from "./hash";
 import { join_lines } from "./util";
 import { Cons } from "./Cons";
 import { nil } from "./nil";
-import { ImmutableBase } from "./ImmutableBase";
+import { ImmutableBase } from "./Base";
 
 export function ImmutableQueue(left, right, len) {
   this.left  = left;
@@ -19,11 +19,11 @@ fromJSON_registry["Queue"] = function (x) {
   return Queue(fromJSON_array(x));
 };
 
-ImmutableQueue.prototype[toJSON_interface] = function (x) {
+ImmutableQueue.prototype[tag_toJSON] = function (x) {
   return toJSON_array("Queue", x);
 };
 
-ImmutableQueue.prototype[toJS_interface] = toJS_array;
+ImmutableQueue.prototype[tag_toJS] = toJS_array;
 
 ImmutableQueue.prototype.isEmpty = function () {
   return this.left === nil && this.right === nil;
@@ -34,7 +34,7 @@ ImmutableQueue.prototype.forEach = function (f) {
   this.right.forEachRev(f);
 };
 
-ImmutableQueue.prototype[hash_interface] = function (x) {
+ImmutableQueue.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     var a = [];
 

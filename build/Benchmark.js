@@ -115,6 +115,22 @@
                 return $$$Immutable$Immutable$$isRef;
             },
 
+            get isTag() {
+                return $$$Immutable$Immutable$$isTag;
+            },
+
+            get isUUIDTag() {
+                return $$$Immutable$Immutable$$isUUIDTag;
+            },
+
+            get Tag() {
+                return $$$Immutable$Immutable$$Tag;
+            },
+
+            get UUIDTag() {
+                return $$$Immutable$Immutable$$UUIDTag;
+            },
+
             get equal() {
                 return $$$Immutable$Immutable$$equal;
             },
@@ -228,6 +244,48 @@
       $$Benchmark$$add_timers();
       $$Benchmark$$suite.run();
     }
+    var $$Tag$$tag_uuid = "48de6fff-9d11-472d-a76f-ed77a59a5cbc";
+    var $$Tag$$tag_id = 0;
+
+    var $$Tag$$uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+    var $$Tag$$uuid_regexp = new RegExp("^" + $$Tag$$uuid + "$");
+
+    var $$Tag$$is_tag_regexp = new RegExp("^\\(Tag " + $$Tag$$tag_uuid + " [0-9]+\\)$");
+
+    var $$Tag$$is_uuid_tag_regexp = new RegExp("^\\(UUIDTag " + $$Tag$$uuid + "\\)$");
+
+    function $$Tag$$isUUID(x) {
+      return typeof x === "string" && $$Tag$$uuid_regexp.test(x);
+    }
+
+    function $$Tag$$isTag(x) {
+      return typeof x === "string" && ($$Tag$$is_tag_regexp.test(x) || $$Tag$$is_uuid_tag_regexp.test(x));
+    }
+
+    function $$Tag$$isUUIDTag(x) {
+      return typeof x === "string" && $$Tag$$is_uuid_tag_regexp.test(x);
+    }
+
+    function $$Tag$$Tag() {
+      if (arguments.length === 0) {
+        return "(Tag " + $$Tag$$tag_uuid + " " + (++$$Tag$$tag_id) + ")";
+      } else {
+        throw new Error("Expected 0 arguments but got " + arguments.length);
+      }
+    }
+
+    function $$Tag$$UUIDTag(id) {
+      if (arguments.length === 1) {
+        if ($$Tag$$isUUID(id)) {
+          return "(UUIDTag " + id + ")";
+        } else {
+          throw new Error("Expected a lower-case UUID, but got: " + id);
+        }
+
+      } else {
+        throw new Error("Expected 1 argument but got " + arguments.length);
+      }
+    }
     function $$util$$isObject(x) {
       return Object(x) === x;
     }
@@ -261,7 +319,7 @@
         return "";
       }
     }
-    var $$hash$$hash_interface = "__CFB38D33-7CD8-419E-A1B6-61D1B8AC7C83_hash__";
+    var $$hash$$tag_hash = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
 
     var $$hash$$mutable_hash_id = 0;
 
@@ -269,7 +327,11 @@
       var type = typeof x;
       // TODO this is probably pretty inefficient
       if (type === "string") {
-        return "\"" + x.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"").replace(/\n/g, "\n ") + "\"";
+        if ($$Tag$$isTag(x)) {
+          return x;
+        } else {
+          return "\"" + x.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"").replace(/\n/g, "\n ") + "\"";
+        }
 
       } else if (type === "number"    ||
                  type === "boolean"   ||
@@ -278,14 +340,14 @@
         return "" + x;
 
       } else {
-        var hasher = x[$$hash$$hash_interface];
+        var hasher = x[$$hash$$tag_hash];
         if (hasher != null) {
           return hasher(x);
 
         } else {
           var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
 
-          Object.defineProperty(x, $$hash$$hash_interface, {
+          Object.defineProperty(x, $$hash$$tag_hash, {
             configurable: false,
             enumerable: false,
             writable: false,
@@ -335,11 +397,11 @@
 
       return $$util$$join_lines(a, spaces);
     }
-    var $$toJS$$toJS_interface = "__DEE5921D-20A6-40D0-9A74-40C5BAC8C663_toJS__";
+    var $$toJS$$tag_toJS = $$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
 
     function $$toJS$$toJS(x) {
       if ($$util$$isObject(x)) {
-        var fn = x[$$toJS$$toJS_interface];
+        var fn = x[$$toJS$$tag_toJS];
         if (fn != null) {
           return fn(x);
         } else {
@@ -379,12 +441,12 @@
     }
     var $$toJSON$$fromJSON_registry = {};
 
-    var $$toJSON$$toJSON_type      = "__B81911B5-071E-431E-B82E-AA7ADFEA301F_type__";
-    var $$toJSON$$toJSON_interface = "__836134D4-35C1-46C4-971D-1522F0A1E75A_toJSON__";
+    var $$toJSON$$tag_toJSON_type = $$Tag$$UUIDTag("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37");
+    var $$toJSON$$tag_toJSON      = $$Tag$$UUIDTag("99e14916-bc99-4c48-81aa-299cf1ad6de3");
 
     function $$toJSON$$fromJSON(x) {
       if ($$util$$isObject(x)) {
-        var type = x[$$toJSON$$toJSON_type];
+        var type = x[$$toJSON$$tag_toJSON_type];
         if (type != null) {
           var register = $$toJSON$$fromJSON_registry[type];
           if (register != null) {
@@ -395,6 +457,12 @@
         } else {
           return x;
         }
+      } else if ($$Tag$$isTag(x)) {
+        if ($$Tag$$isUUIDTag(x)) {
+          return x;
+        } else {
+          throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
+        }
       } else {
         return x;
       }
@@ -402,11 +470,17 @@
 
     function $$toJSON$$toJSON(x) {
       if ($$util$$isObject(x)) {
-        var fn = x[$$toJSON$$toJSON_interface];
+        var fn = x[$$toJSON$$tag_toJSON];
         if (fn != null) {
           return fn(x);
         } else {
           return x;
+        }
+      } else if ($$Tag$$isTag(x)) {
+        if ($$Tag$$isUUIDTag(x)) {
+          return x;
+        } else {
+          throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
         }
       } else {
         return x;
@@ -416,7 +490,7 @@
     function $$toJSON$$toJSON_object(type, x) {
       var o = {};
 
-      o[$$toJSON$$toJSON_type] = type;
+      o[$$toJSON$$tag_toJSON_type] = type;
 
       o.keys   = [];
       o.values = [];
@@ -435,7 +509,7 @@
     function $$toJSON$$toJSON_array(type, x) {
       var o = {};
 
-      o[$$toJSON$$toJSON_type] = type;
+      o[$$toJSON$$tag_toJSON_type] = type;
 
       o.values = [];
 
@@ -690,13 +764,15 @@
         }
       }
     }
-    var $$ImmutableBase$$ImmutableBase = {};
+    var $$Base$$MutableBase   = {};
+    var $$Base$$ImmutableBase = {};
 
-    $$ImmutableBase$$ImmutableBase.toString = function () {
+    function $$Base$$toString() {
       return $$hash$$hash(this);
-    };
+    }
 
-    $$ImmutableBase$$ImmutableBase.inspect = $$ImmutableBase$$ImmutableBase.toString;
+    $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
+    $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
 
     function $$ImmutableDict$$KeyNode(left, right, key, value) {
       this.left  = left;
@@ -734,9 +810,9 @@
       this.hash = null;
     }
 
-    $$ImmutableDict$$ImmutableDict.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableDict$$ImmutableDict.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableDict$$ImmutableDict.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         // We don't use equal, for increased speed
         if (x.sort === $$Sorted$$defaultSort) {
@@ -753,7 +829,7 @@
       return $$ImmutableDict$$Dict($$toJSON$$fromJSON_object(x));
     };
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableDict$$ImmutableDict.prototype[$$toJSON$$tag_toJSON] = function (x) {
       if (x.sort === $$Sorted$$defaultSort) {
         return $$toJSON$$toJSON_object("Dict", x);
       } else {
@@ -761,7 +837,7 @@
       }
     };
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
+    $$ImmutableDict$$ImmutableDict.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_object;
 
     // TODO Symbol.iterator
     $$ImmutableDict$$ImmutableDict.prototype.forEach = function (f) {
@@ -920,13 +996,13 @@
       this.hash = null;
     }
 
-    $$ImmutableSet$$ImmutableSet.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableSet$$ImmutableSet.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["Set"] = function (x) {
       return $$ImmutableSet$$Set($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableSet$$ImmutableSet.prototype[$$toJSON$$tag_toJSON] = function (x) {
       if (x.sort === $$Sorted$$defaultSort) {
         return $$toJSON$$toJSON_array("Set", x);
       } else {
@@ -934,7 +1010,7 @@
       }
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableSet$$ImmutableSet.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = [];
 
@@ -955,7 +1031,7 @@
       return x.hash;
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
+    $$ImmutableSet$$ImmutableSet.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
     // TODO code duplication with ImmutableDict
     // TODO Symbol.iterator
@@ -1449,17 +1525,17 @@
       this.hash = null;
     }
 
-    $$ImmutableList$$ImmutableList.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableList$$ImmutableList.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["List"] = function (x) {
       return $$ImmutableList$$List($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableList$$ImmutableList.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("List", x);
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableList$$ImmutableList.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = [];
 
@@ -1473,7 +1549,7 @@
       return x.hash;
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
+    $$ImmutableList$$ImmutableList.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
     // TODO Symbol.iterator
     $$ImmutableList$$ImmutableList.prototype.forEach = function (f) {
@@ -1760,17 +1836,17 @@
       this.hash  = null;
     }
 
-    $$ImmutableQueue$$ImmutableQueue.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableQueue$$ImmutableQueue.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["Queue"] = function (x) {
       return $$ImmutableQueue$$Queue($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("Queue", x);
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
     $$ImmutableQueue$$ImmutableQueue.prototype.isEmpty = function () {
       return this.left === $$$Immutable$nil$$nil && this.right === $$$Immutable$nil$$nil;
@@ -1781,7 +1857,7 @@
       this.right.forEachRev(f);
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = [];
 
@@ -1878,17 +1954,17 @@
       this.hash = null;
     }
 
-    $$ImmutableStack$$ImmutableStack.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableStack$$ImmutableStack.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["Stack"] = function (x) {
       return $$ImmutableStack$$Stack($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableStack$$ImmutableStack.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableStack$$ImmutableStack.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("Stack", x);
     };
 
-    $$ImmutableStack$$ImmutableStack.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_array;
+    $$ImmutableStack$$ImmutableStack.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
     // TODO code duplication with ImmutableSet
     $$ImmutableStack$$ImmutableStack.prototype.isEmpty = function () {
@@ -1896,7 +1972,7 @@
     };
 
     // TODO code duplication
-    $$ImmutableStack$$ImmutableStack.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableStack$$ImmutableStack.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = [];
 
@@ -1978,25 +2054,33 @@
         return new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
       }
     }
+
+    function $$ImmutableRecord$$checkKey(key) {
+      // Tags are currently implemented as strings
+      if (typeof key !== "string") {
+        throw new Error("Expected key to be a string or Tag but got " + key);
+      }
+    }
+
     function $$ImmutableRecord$$ImmutableRecord(keys, values) {
       this.keys   = keys;
       this.values = values;
       this.hash   = null;
     }
 
-    $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$Base$$ImmutableBase);
 
     $$toJSON$$fromJSON_registry["Record"] = function (x) {
       return $$ImmutableRecord$$Record($$toJSON$$fromJSON_object(x));
     };
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJSON$$toJSON_interface] = function (x) {
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_object("Record", x);
     };
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$toJS_interface] = $$toJS$$toJS_object;
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_object;
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$hash$$hash_interface] = function (x) {
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         x.hash = "(Record" + $$hash$$hash_dict(x, "  ") + ")";
       }
@@ -2014,10 +2098,7 @@
     };
 
     $$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
-      // TODO code duplication
-      if (typeof key !== "string") {
-        throw new Error("Expected string key but got " + key);
-      }
+      $$ImmutableRecord$$checkKey(key);
 
       var index = this.keys[key];
       if (index == null) {
@@ -2035,10 +2116,7 @@
     };
 
     $$ImmutableRecord$$ImmutableRecord.prototype.modify = function (key, f) {
-      // TODO code duplication
-      if (typeof key !== "string") {
-        throw new Error("Expected string key but got " + key);
-      }
+      $$ImmutableRecord$$checkKey(key);
 
       var keys  = this.keys;
       var index = keys[key];
@@ -2085,10 +2163,7 @@
 
         } else if ($$util$$isJSLiteral(obj)) {
           Object.keys(obj).forEach(function (key) {
-            // TODO code duplication
-            if (typeof key !== "string") {
-              throw new Error("Expected string key but got " + key);
-            }
+            $$ImmutableRecord$$checkKey(key);
 
             keys[key] = values.push(obj[key]) - 1;
           });
@@ -2098,10 +2173,7 @@
             var key   = _array[0];
             var value = _array[1];
 
-            // TODO code duplication
-            if (typeof key !== "string") {
-              throw new Error("Expected string key but got " + key);
-            }
+            $$ImmutableRecord$$checkKey(key);
 
             keys[key] = values.push(value) - 1;
           });
@@ -2111,25 +2183,25 @@
       return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
 
-    var $$ImmutableRef$$ref_id = 0;
+    var $$MutableRef$$ref_id = 0;
 
-    function $$ImmutableRef$$ImmutableRef(value, onchange) {
-      this._id = ++$$ImmutableRef$$ref_id;
+    function $$MutableRef$$MutableRef(value, onchange) {
+      this._id = ++$$MutableRef$$ref_id;
       this._value = value;
       this._onchange = onchange;
     }
 
-    $$ImmutableRef$$ImmutableRef.prototype = Object.create($$ImmutableBase$$ImmutableBase);
+    $$MutableRef$$MutableRef.prototype = Object.create($$Base$$MutableBase);
 
-    $$ImmutableRef$$ImmutableRef.prototype[$$hash$$hash_interface] = function (x) {
+    $$MutableRef$$MutableRef.prototype[$$hash$$tag_hash] = function (x) {
       return "(Ref " + $$hash$$hash(x._id) + ")";
     };
 
-    $$ImmutableRef$$ImmutableRef.prototype.get = function () {
+    $$MutableRef$$MutableRef.prototype.get = function () {
       return this._value;
     };
 
-    $$ImmutableRef$$ImmutableRef.prototype.set = function (value) {
+    $$MutableRef$$MutableRef.prototype.set = function (value) {
       var old = this._value;
       if (value !== old) {
         this._value = value;
@@ -2139,36 +2211,52 @@
       }
     };
 
-    $$ImmutableRef$$ImmutableRef.prototype.modify = function (f) {
+    $$MutableRef$$MutableRef.prototype.modify = function (f) {
       this.set(f(this.get()));
     };
 
 
-    function $$ImmutableRef$$deref(x) {
-      if ($$ImmutableRef$$isRef(x)) {
+    function $$MutableRef$$deref(x) {
+      if ($$MutableRef$$isRef(x)) {
         return x.get();
       } else {
         return x;
       }
     }
 
-    function $$ImmutableRef$$isRef(x) {
-      return x instanceof $$ImmutableRef$$ImmutableRef;
+    function $$MutableRef$$isRef(x) {
+      return x instanceof $$MutableRef$$MutableRef;
     }
 
-    function $$ImmutableRef$$Ref(value, onchange) {
+    function $$MutableRef$$Ref(value, onchange) {
       if (arguments.length < 1 || arguments.length > 2) {
         throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
       }
 
-      return new $$ImmutableRef$$ImmutableRef(value, onchange);
+      return new $$MutableRef$$MutableRef(value, onchange);
     }
     function $$$Immutable$Immutable$$equal(x, y) {
       return x === y || $$hash$$hash(x) === $$hash$$hash(y);
     }
 
     function $$$Immutable$Immutable$$isImmutable(x) {
-      return $$ImmutableDict$$isDict(x) || $$ImmutableSet$$isSet(x) || $$ImmutableList$$isList(x) || $$ImmutableQueue$$isQueue(x) || $$ImmutableStack$$isStack(x) || $$ImmutableRecord$$isRecord(x);
+      if ($$util$$isObject(x)) {
+        return Object.isFrozen(x) ||
+               $$ImmutableDict$$isDict(x)  ||
+               $$ImmutableSet$$isSet(x)   ||
+               $$ImmutableList$$isList(x)  ||
+               $$ImmutableQueue$$isQueue(x) ||
+               $$ImmutableStack$$isStack(x) ||
+               $$ImmutableRecord$$isRecord(x);
+      } else {
+        var type = typeof x;
+        // Tags are currently implemented with strings
+        return type === "string"  ||
+               type === "number"  ||
+               type === "boolean" ||
+               type === "symbol"  ||
+               x == null;
+      }
     }
 
     function $$$Immutable$Immutable$$fromJS(x) {
@@ -2231,9 +2319,13 @@
       exports.Record = $$ImmutableRecord$$Record;
       exports.toJSON = $$toJSON$$toJSON;
       exports.fromJSON = $$toJSON$$fromJSON;
-      exports.deref = $$ImmutableRef$$deref;
-      exports.Ref = $$ImmutableRef$$Ref;
-      exports.isRef = $$ImmutableRef$$isRef;
+      exports.deref = $$MutableRef$$deref;
+      exports.Ref = $$MutableRef$$Ref;
+      exports.isRef = $$MutableRef$$isRef;
+      exports.isTag = $$Tag$$isTag;
+      exports.isUUIDTag = $$Tag$$isUUIDTag;
+      exports.Tag = $$Tag$$Tag;
+      exports.UUIDTag = $$Tag$$UUIDTag;
     });
 
     $$Benchmark$$.group("Information", function () {

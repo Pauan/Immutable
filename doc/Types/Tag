@@ -1,0 +1,140 @@
+/**
+   @class Tag
+   @summary An immutable unique value
+
+   @function Tag
+   @desc
+     A tag is similar to a string, except that it's *unique*: if
+     you call [::Tag] twice, you get two different tags:
+
+         var x = Tag();
+         var y = Tag();
+
+         // false
+         equal(x, y);
+
+     In addition to using [::equal], you can also use JavaScript's
+     `===` and `!==` operators for tags:
+
+         // false
+         x === y;
+
+         // true
+         x === x;
+
+     The *only* purpose of a tag is to be unique. You should
+     not rely upon anything other than the uniqueness of a tag.
+
+     ----
+
+     There is one major limitation of [::Tag]: you can't
+     convert a tag to/from JSON.
+
+     The reason for this is that it's essentially
+     impossible to guarantee uniqueness when using
+     multiple processes.
+
+     If you want to convert to/from JSON, you should use
+     [::UUIDTag] instead. For this reason, it's strongly
+     recommended that libraries use [::UUIDTag].
+
+     ----
+
+     A tag can be used anywhere that a string can be used.
+
+     Unlike strings, tags are guaranteed to not collide with
+     anything else, including other tags and strings.
+
+     This allows you to create private data that only you
+     can access:
+
+         var my_tag = Tag();
+
+         var obj = {};
+
+         obj[my_tag] = 50;
+
+         // This returns 50
+         obj[my_tag];
+
+     However, because of certain features of JavaScript,
+     it's possible for a malicious person to get the tag,
+     so you shouldn't store sensitive data like passwords
+     with a tag.
+
+     But you can use this to attach data to an existing
+     object, in a way that doesn't interfere with the
+     object's existing properties.
+
+     ----
+
+     The biggest use-case of tags is to create interfaces.
+
+     An interface is the combination of a function and
+     a tag. This allows you to change the behavior of the
+     function based upon the type of its argument.
+
+     Here's an example:
+
+         var tag_print = Tag();
+
+         function print(x) {
+           var fn = x[tag_print];
+           if (fn != null) {
+             return fn(x);
+           } else {
+             throw new Error("Cannot print object!");
+           }
+         }
+
+     Any object that has a `tag_print` method can be
+     printed. Let's create a printable object:
+
+         function Foo(x) {
+           this.foo = x;
+         }
+
+         Foo.prototype[tag_print] = function (x) {
+           return "(Foo " + x.foo + ")";
+         };
+
+     Now if we call `print(new Foo(5))` it returns `"(Foo 5)"`.
+     This lets us create new data types and give them custom
+     behavior for the `print` function.
+
+     Unlike strings, tags are unique, so there's no chance of
+     a name collision. You can have two different modules
+     which both export a `tag_print` tag, and it will work
+     just fine, because each tag is unique.
+
+     If the `print` function is part of a library, it would
+     be better if it used [::UUIDTag] instead of [::Tag].
+
+     ----
+
+     Another use of tags is event listeners. It's common
+     to use things like this:
+
+         foo.on("click", function () {
+           ...
+         });
+
+         foo.on("keypress", function () {
+           ...
+         });
+
+     The problem is, what if somebody else defines a
+     "click" event with different behavior? Oops, now there's
+     a name collision. With tags, there is no collision:
+
+         foo.on(tag_click, function () {
+           ...
+         });
+
+         foo.on(tag_keypress, function () {
+           ...
+         });
+
+     Basically, anything that requires a unique id that
+     doesn't collide can probably benefit from tags.
+*/

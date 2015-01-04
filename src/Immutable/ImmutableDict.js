@@ -1,10 +1,10 @@
 import { max } from "./AVL";
 import { defaultSort, key_get, key_set, key_modify, key_remove } from "./Sorted";
-import { hash, hash_interface, hash_dict } from "./hash";
-import { toJS_object, toJS_interface } from "./toJS";
-import { toJSON_object, fromJSON_object, toJSON_interface, fromJSON_registry } from "./toJSON";
+import { hash, tag_hash, hash_dict } from "./hash";
+import { toJS_object, tag_toJS } from "./toJS";
+import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { nil } from "./nil";
-import { ImmutableBase } from "./ImmutableBase";
+import { ImmutableBase } from "./Base";
 import { isJSLiteral } from "./util";
 
 function KeyNode(left, right, key, value) {
@@ -45,7 +45,7 @@ export function ImmutableDict(root, sort) {
 
 ImmutableDict.prototype = Object.create(ImmutableBase);
 
-ImmutableDict.prototype[hash_interface] = function (x) {
+ImmutableDict.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     // We don't use equal, for increased speed
     if (x.sort === defaultSort) {
@@ -62,7 +62,7 @@ fromJSON_registry["Dict"] = function (x) {
   return Dict(fromJSON_object(x));
 };
 
-ImmutableDict.prototype[toJSON_interface] = function (x) {
+ImmutableDict.prototype[tag_toJSON] = function (x) {
   if (x.sort === defaultSort) {
     return toJSON_object("Dict", x);
   } else {
@@ -70,7 +70,7 @@ ImmutableDict.prototype[toJSON_interface] = function (x) {
   }
 };
 
-ImmutableDict.prototype[toJS_interface] = toJS_object;
+ImmutableDict.prototype[tag_toJS] = toJS_object;
 
 // TODO Symbol.iterator
 ImmutableDict.prototype.forEach = function (f) {

@@ -1,6 +1,7 @@
+import { isTag, UUIDTag } from "./Tag";
 import { pad_right, repeat, join_lines } from "./util";
 
-export var hash_interface = "__CFB38D33-7CD8-419E-A1B6-61D1B8AC7C83_hash__";
+export var tag_hash = UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
 
 var mutable_hash_id = 0;
 
@@ -8,7 +9,11 @@ export function hash(x) {
   var type = typeof x;
   // TODO this is probably pretty inefficient
   if (type === "string") {
-    return "\"" + x.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"").replace(/\n/g, "\n ") + "\"";
+    if (isTag(x)) {
+      return x;
+    } else {
+      return "\"" + x.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"").replace(/\n/g, "\n ") + "\"";
+    }
 
   } else if (type === "number"    ||
              type === "boolean"   ||
@@ -17,14 +22,14 @@ export function hash(x) {
     return "" + x;
 
   } else {
-    var hasher = x[hash_interface];
+    var hasher = x[tag_hash];
     if (hasher != null) {
       return hasher(x);
 
     } else {
       var id = "(Mutable " + (++mutable_hash_id) + ")";
 
-      Object.defineProperty(x, hash_interface, {
+      Object.defineProperty(x, tag_hash, {
         configurable: false,
         enumerable: false,
         writable: false,
