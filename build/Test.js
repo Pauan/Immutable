@@ -79,6 +79,16 @@
 
     var $$hash$$mutable_hash_id = 0;
 
+    function $$hash$$hash_string(x) {
+      return "\"" + x.replace(/[\\\"\n]/g, function (s) {
+        if (s === "\n") {
+          return s + " ";
+        } else {
+          return "\\" + s;
+        }
+      }) + "\"";
+    }
+
     function $$hash$$hash(x) {
       var type = typeof x;
       // TODO this is probably pretty inefficient
@@ -86,7 +96,7 @@
         if ($$Tag$$isTag(x)) {
           return x;
         } else {
-          return "\"" + x.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"").replace(/\n/g, "\n ") + "\"";
+          return $$hash$$hash_string(x);
         }
 
       } else if (type === "number"    ||
@@ -1848,22 +1858,23 @@
     $$ImmutableRecord$$ImmutableRecord.prototype.forEach = function (f) {
       var keys   = this.keys;
       var values = this.values;
-      for (var s in keys) {
-        var index = keys[s];
-        f([s, values[index]]);
+
+      for (var i = 0, l = keys.length; i < l; ++i) {
+        f([keys[i], values[i]]);
       }
     };
 
     $$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
       $$ImmutableRecord$$checkKey(key);
 
-      var index = this.keys[key];
-      if (index == null) {
-        throw new Error("Key " + key + " not found");
-
-      } else {
-        return this.values[index];
+      var keys = this.keys;
+      for (var i = 0, l = keys.length; i < l; ++i) {
+        if (keys[i] === key) {
+          return this.values[i];
+        }
       }
+
+      throw new Error("Key " + key + " not found");
     };
 
     $$ImmutableRecord$$ImmutableRecord.prototype.set = function (key, value) {
@@ -1875,20 +1886,20 @@
     $$ImmutableRecord$$ImmutableRecord.prototype.modify = function (key, f) {
       $$ImmutableRecord$$checkKey(key);
 
-      var keys  = this.keys;
-      var index = keys[key];
-      if (index == null) {
-        throw new Error("Key " + key + " not found");
-
-      } else {
-        var values = this.values;
-        var array  = $$Array$$modify(values, index, f);
-        if (array === values) {
-          return this;
-        } else {
-          return new $$ImmutableRecord$$ImmutableRecord(keys, array);
+      var keys = this.keys;
+      for (var i = 0, l = keys.length; i < l; ++i) {
+        if (keys[i] === key) {
+          var values = this.values;
+          var array  = $$Array$$modify(values, i, f);
+          if (array === values) {
+            return this;
+          } else {
+            return new $$ImmutableRecord$$ImmutableRecord(keys, array);
+          }
         }
       }
+
+      throw new Error("Key " + key + " not found");
     };
 
     // TODO code duplication with ImmutableDict
@@ -1911,7 +1922,7 @@
     }
 
     function $$ImmutableRecord$$Record(obj) {
-      var keys   = {};
+      var keys   = [];
       var values = [];
 
       if (obj != null) {
@@ -1922,7 +1933,8 @@
           Object.keys(obj).forEach(function (key) {
             $$ImmutableRecord$$checkKey(key);
 
-            keys[key] = values.push(obj[key]) - 1;
+            keys.push(key);
+            values.push(obj[key]);
           });
 
         } else {
@@ -1932,7 +1944,8 @@
 
             $$ImmutableRecord$$checkKey(key);
 
-            keys[key] = values.push(value) - 1;
+            keys.push(key);
+            values.push(value);
           });
         }
       }

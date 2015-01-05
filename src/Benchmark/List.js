@@ -6,7 +6,9 @@ import * as immutable from "../Immutable/Immutable";
 import { insert as insert_at, modify as modify_at, remove as remove_at } from "../Immutable/Array";
 import { nil } from "../Immutable/nil";
 import { Cons } from "../Immutable/Cons";
-import "./Header";
+import { header } from "./Header";
+
+header();
 
 function cons_push(x, i) {
   return new Cons(i, x);

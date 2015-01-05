@@ -11,7 +11,7 @@ var suite = new Benchmark.Suite({
       if (/\./.test(num)) {
         num = "" + Math.round(+num);
       }
-      return rpad(text, 30) + lpad(" " + lpad(num, 13) + " ops/sec", 30);
+      return rpad(text, 49) + lpad(" " + lpad(num, 13) + " ops/sec", 21);
     });
     console.log(s);
   }
@@ -57,7 +57,7 @@ function add_timers() {
 }
 
 export function group(name, f) {
-  message(repeat(60 - indent, "-"));
+  message(repeat(70 - indent, "-"));
   message(name + ":");
 
   var old_indent = indent;

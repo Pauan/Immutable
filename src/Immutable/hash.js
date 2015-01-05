@@ -5,6 +5,16 @@ export var tag_hash = UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
 
 var mutable_hash_id = 0;
 
+export function hash_string(x) {
+  return "\"" + x.replace(/[\\\"\n]/g, function (s) {
+    if (s === "\n") {
+      return s + " ";
+    } else {
+      return "\\" + s;
+    }
+  }) + "\"";
+}
+
 export function hash(x) {
   var type = typeof x;
   // TODO this is probably pretty inefficient
@@ -12,7 +22,7 @@ export function hash(x) {
     if (isTag(x)) {
       return x;
     } else {
-      return "\"" + x.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"").replace(/\n/g, "\n ") + "\"";
+      return hash_string(x);
     }
 
   } else if (type === "number"    ||
