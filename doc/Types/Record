@@ -102,4 +102,17 @@
 
          // { foo: 50, bar: 2 }
          defaults.update(other);
+
+     You can also use this to update a [::Record] with a JavaScript
+     object literal:
+
+         var defaults = Record({
+           "foo": 1,
+           "bar": 2
+         });
+
+         // { foo: 50, bar: 2 }
+         defaults.update({
+           foo: 50
+         });
  */

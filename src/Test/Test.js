@@ -1,4 +1,4 @@
-import { defaultSort, simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
+import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag } from "../Immutable/Immutable";
@@ -10,6 +10,16 @@ import { assert } from "./assert";
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function otherSort(x, y) {
+  if (x === y) {
+    return 0;
+  } else if (x < y) {
+    return -1;
+  } else {
+    return 1;
+  }
 }
 
 // http://bost.ocks.org/mike/shuffle/
@@ -177,6 +187,7 @@ function verify_json(x, expected) {
 // TODO test that this works correctly
 function verify_dict(tree, obj) {
   var sort = tree.sort;
+  var hash_fn = tree.hash_fn;
 
   function loop(node, lt, gt) {
     if (node !== nil) {
@@ -190,12 +201,12 @@ function verify_dict(tree, obj) {
 
       // Every left node must be lower than the parent node
       lt.forEach(function (parent) {
-        assert(sort(node.key, parent.key) < 0);
+        assert(sort(hash_fn(node.key), hash_fn(parent.key)) < 0);
       });
 
       // Every right node must be greater than the parent node
       gt.forEach(function (parent) {
-        assert(sort(node.key, parent.key) > 0);
+        assert(sort(hash_fn(node.key), hash_fn(parent.key)) > 0);
       });
 
       loop(left,  lt.concat([node]), gt);
@@ -300,10 +311,9 @@ context("Dict", function () {
     assert(!isDict(Set()));
 
     assert(isDict(Dict()));
-    assert(isDict(SortedDict(defaultSort)));
+    assert(isDict(SortedDict(simpleSort)));
 
     assert(isSortedDict(SortedDict(simpleSort)));
-    assert(!isSortedDict(SortedDict(defaultSort)));
     assert(!isSortedDict(Dict()));
   });
 
@@ -399,6 +409,7 @@ context("Dict", function () {
     verify_dict(Dict({ foo: 1 }).merge(Dict({ bar: 2 })), { foo: 1, bar: 2 });
     verify_dict(Dict({ foo: 1 }).merge(Dict({ foo: 2 })), { foo: 2 });
     verify_dict(Dict({ foo: 1 }).merge(Dict({ foo: 2, bar: 3 })), { foo: 2, bar: 3 });
+    verify_dict(Dict({ foo: 1 }).merge({ bar: 2 }), { foo: 1, bar: 2 });
   });
 
   test("complex keys", function () {
@@ -443,8 +454,21 @@ context("Dict", function () {
 
   test("=== when not modified", function () {
     assert(Dict(dict_foo) === dict_foo);
-    assert(SortedDict(defaultSort, dict_foo) === dict_foo);
-    assert(SortedDict(simpleSort, dict_foo) !== dict_foo);
+
+    var x = SortedDict(simpleSort, dict_foo);
+    assert(x !== dict_foo);
+    assert(Dict(x) !== x);
+    assert(SortedDict(simpleSort, x) === x);
+
+    var x = SortedDict(simpleSort, dict_foo);
+    assert(SortedDict(otherSort, x) !== x);
+
+    var x = SortedDict(otherSort, dict_foo);
+    assert(SortedDict(simpleSort, x) !== x);
+
+    var x = SortedDict(otherSort, dict_foo);
+    assert(SortedDict(otherSort, x) === x);
+
 
     assert(dict_empty.remove("foo") === dict_empty);
 
@@ -487,11 +511,14 @@ context("Dict", function () {
     assert(!equal(Dict({ foo: Dict({ bar: 2 }) }),
                   Dict({ foo: Dict({ bar: 3 }) })));
 
-    assert(equal(SortedDict(defaultSort, { foo: 1 }),
-                 Dict({ foo: 1 })));
+    assert(equal(SortedDict(simpleSort, { foo: 1 }),
+                 SortedDict(simpleSort, { foo: 1 })));
 
     assert(!equal(SortedDict(simpleSort, { foo: 1 }),
                   Dict({ foo: 1 })));
+
+    assert(!equal(SortedDict(simpleSort, { foo: 1 }),
+                  SortedDict(otherSort, { foo: 1 })));
   });
 
   test("toJS", function () {
@@ -509,8 +536,6 @@ context("Dict", function () {
     verify_json(dict_empty, {});
     verify_json(dict_foo, { foo: 1 });
     verify_json(Dict({ foo: Dict({ bar: 2 }) }), { foo: { bar: 2 } });
-
-    verify_json(SortedDict(defaultSort, { foo: SortedDict(defaultSort, { bar: 2 }) }), { foo: { bar: 2 } });
 
     verify_json_equal(Dict([[Dict({ foo: 1 }), Dict({ bar: 2 })]]));
 
@@ -554,7 +579,6 @@ context("Dict", function () {
 
   test("toString", function () {
     assert("" + Dict() === "(Dict)");
-    assert("" + SortedDict(defaultSort) === "(Dict)");
     assert("" + SortedDict(simpleSort) === "(SortedDict (Mutable 3))");
     assert("" + SortedDict(simpleSort, { foo: 1 }) === "(SortedDict (Mutable 3)\n  \"foo\" = 1)");
     assert("" + SortedDict(simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 3)\n  \"bar\" = 2\n  \"foo\" = 1)");
@@ -589,10 +613,9 @@ context("Set", function () {
     assert(!isSet(Dict()));
 
     assert(isSet(Set()));
-    assert(isSet(SortedSet(defaultSort)));
+    assert(isSet(SortedSet(simpleSort)));
 
     assert(isSortedSet(SortedSet(simpleSort)));
-    assert(!isSortedSet(SortedSet(defaultSort)));
     assert(!isSortedSet(Set()));
   });
 
@@ -705,6 +728,23 @@ context("Set", function () {
   });
 
   test("=== when not modified", function () {
+    assert(Set(five_set) === five_set);
+
+    var x = SortedSet(simpleSort, five_set);
+    assert(x !== five_set);
+    assert(Set(x) !== x);
+    assert(SortedSet(simpleSort, x) === x);
+
+    var x = SortedSet(simpleSort, five_set);
+    assert(SortedSet(otherSort, x) !== x);
+
+    var x = SortedSet(otherSort, five_set);
+    assert(SortedSet(simpleSort, x) !== x);
+
+    var x = SortedSet(otherSort, five_set);
+    assert(SortedSet(otherSort, x) === x);
+
+
     assert(empty_set.union(empty_set) === empty_set);
     assert(empty_set.union(five_set) !== five_set);
     assert(five_set.union(empty_set) === five_set);
@@ -712,7 +752,6 @@ context("Set", function () {
     assert(five_set.union(Set([1, 2, 3])) === five_set);
 
     assert(Set(five_set) === five_set);
-    assert(SortedSet(defaultSort, five_set) === five_set);
     assert(SortedSet(simpleSort, five_set) !== five_set);
 
     assert(empty_set.remove(1) === empty_set);
@@ -735,8 +774,12 @@ context("Set", function () {
     assert(equal(Set([Set([1])]), Set([Set([1])])));
     assert(!equal(Set([Set([1])]), Set([Set([2])])));
 
-    assert(equal(SortedSet(defaultSort, [1, 2, 3]),
-                 Set([1, 2, 3])));
+    assert(equal(SortedSet(simpleSort, [1, 2, 3]),
+                 SortedSet(simpleSort, [1, 2, 3])));
+
+    assert(!equal(SortedSet(simpleSort, [1, 2, 3]),
+                  SortedSet(otherSort, [1, 2, 3])));
+
     assert(!equal(SortedSet(simpleSort, [1, 2, 3]),
                   Set([1, 2, 3])));
   });
@@ -753,8 +796,6 @@ context("Set", function () {
     verify_json(five_set, [1, 2, 3, 4, 5]);
     verify_json(Set([4, 5, Set([1, 2, 3])]), [[1, 2, 3], 4, 5]);
 
-    verify_json(SortedSet(defaultSort, [4, 5, SortedSet(defaultSort, [1, 2, 3])]), [[1, 2, 3], 4, 5]);
-
     assert_raises(function () {
       toJSON(SortedSet(simpleSort, []));
     }, "Cannot convert SortedSet to JSON");
@@ -765,11 +806,12 @@ context("Set", function () {
     var a = [];
 
     var sort = o.sort;
+    var hash_fn = o.hash_fn;
 
     // TODO utilities for these
     function push_sorted(a, x, sort) {
       for (var i = 0, l = a.length; i < l; ++i) {
-        if (sort(x, a[i]) <= 0) {
+        if (sort(hash_fn(x), hash_fn(a[i])) <= 0) {
           a.splice(i, 0, x);
           return;
         }
@@ -809,7 +851,6 @@ context("Set", function () {
 
   test("toString", function () {
     assert("" + Set() === "(Set)");
-    assert("" + SortedSet(defaultSort) === "(Set)");
     assert("" + SortedSet(simpleSort) === "(SortedSet (Mutable 3))");
     assert("" + Set([1, 2, 3, 4, 5]) === "(Set\n  1\n  2\n  3\n  4\n  5)");
     assert("" + SortedSet(simpleSort, [1, 2, 3, 4, 5]) === "(SortedSet (Mutable 3)\n  1\n  2\n  3\n  4\n  5)");
@@ -1590,6 +1631,7 @@ context("Record", function () {
     verify_record(Record({ foo: 1 }), { foo: 1 });
     verify_record(Record({ foo: 1 }).update(Record({ foo: 2 })), { foo: 2 });
     verify_record(Record({ foo: 1 }).update([["foo", 3]]), { foo: 3 });
+    verify_record(Record({ foo: 1 }).update({ foo: 3 }), { foo: 3 });
 
     assert_raises(function () {
       Record({ foo: 1 }).update(Record({ foo: 2, bar: 3 }));
@@ -1972,9 +2014,7 @@ test("isImmutable", function () {
   assert(isImmutable(List()));
   assert(isImmutable(Queue()));
   assert(isImmutable(Stack()));
-  assert(isImmutable(SortedDict(defaultSort)));
   assert(isImmutable(SortedDict(simpleSort)));
-  assert(isImmutable(SortedSet(defaultSort)));
   assert(isImmutable(SortedSet(simpleSort)));
   assert(isImmutable(Tag()));
   assert(isImmutable(UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));

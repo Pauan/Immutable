@@ -75,6 +75,10 @@
         return "";
       }
     }
+
+    function $$util$$identity(x) {
+      return x;
+    }
     var $$hash$$tag_hash = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
 
     var $$hash$$mutable_hash_id = 0;
@@ -415,15 +419,9 @@
       }
     }
 
-    function $$Sorted$$defaultSort(x, y) {
-      x = $$hash$$hash(x);
-      y = $$hash$$hash(y);
-      return $$Sorted$$simpleSort(x, y);
-    }
-
-    function $$Sorted$$key_get(node, sort, key) {
+    function $$Sorted$$key_get(node, sort, hash) {
       while (node !== $$$Immutable$nil$$nil) {
-        var order = sort(key, node.key);
+        var order = sort(hash, node.hash);
         if (order === 0) {
           break;
 
@@ -438,7 +436,7 @@
       return node;
     }
 
-    function $$Sorted$$key_set(node, sort, key, new_node) {
+    function $$Sorted$$key_set(node, sort, hash, new_node) {
       if (node === $$$Immutable$nil$$nil) {
         return new_node;
 
@@ -446,12 +444,12 @@
         var left  = node.left;
         var right = node.right;
 
-        var order = sort(key, node.key);
+        var order = sort(hash, node.hash);
         if (order === 0) {
           return node.modify(new_node);
 
         } else if (order < 0) {
-          var child = $$Sorted$$key_set(left, sort, key, new_node);
+          var child = $$Sorted$$key_set(left, sort, hash, new_node);
           if (child === left) {
             return node;
           } else {
@@ -459,7 +457,7 @@
           }
 
         } else {
-          var child = $$Sorted$$key_set(right, sort, key, new_node);
+          var child = $$Sorted$$key_set(right, sort, hash, new_node);
           if (child === right) {
             return node;
           } else {
@@ -469,7 +467,7 @@
       }
     }
 
-    function $$Sorted$$key_modify(node, sort, key, f) {
+    function $$Sorted$$key_modify(node, sort, hash, key, f) {
       if (node === $$$Immutable$nil$$nil) {
         throw new Error("Key " + key + " not found");
 
@@ -477,13 +475,13 @@
         var left  = node.left;
         var right = node.right;
 
-        var order = sort(key, node.key);
+        var order = sort(hash, node.hash);
         if (order === 0) {
           // TODO what if `f` suspends?
-          return node.modify({ key: key, value: f(node.value) });
+          return node.modify({ key: key, hash: hash, value: f(node.value) });
 
         } else if (order < 0) {
-          var child = $$Sorted$$key_modify(left, sort, key, f);
+          var child = $$Sorted$$key_modify(left, sort, hash, key, f);
           if (child === left) {
             return node;
           } else {
@@ -491,7 +489,7 @@
           }
 
         } else {
-          var child = $$Sorted$$key_modify(right, sort, key, f);
+          var child = $$Sorted$$key_modify(right, sort, hash, key, f);
           if (child === right) {
             return node;
           } else {
@@ -501,7 +499,7 @@
       }
     }
 
-    function $$Sorted$$key_remove(node, sort, key) {
+    function $$Sorted$$key_remove(node, sort, hash) {
       if (node === $$$Immutable$nil$$nil) {
         return node;
 
@@ -509,12 +507,12 @@
         var left  = node.left;
         var right = node.right;
 
-        var order = sort(key, node.key);
+        var order = sort(hash, node.hash);
         if (order === 0) {
           return $$AVL$$concat(left, right);
 
         } else if (order < 0) {
-          var child = $$Sorted$$key_remove(left, sort, key);
+          var child = $$Sorted$$key_remove(left, sort, hash);
           if (child === left) {
             return node;
           } else {
@@ -522,7 +520,7 @@
           }
 
         } else {
-          var child = $$Sorted$$key_remove(right, sort, key);
+          var child = $$Sorted$$key_remove(right, sort, hash);
           if (child === right) {
             return node;
           } else {
@@ -541,26 +539,28 @@
     $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
     $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
 
-    function $$ImmutableDict$$KeyNode(left, right, key, value) {
+    function $$ImmutableDict$$KeyNode(left, right, hash, key, value) {
       this.left  = left;
       this.right = right;
+      this.hash  = hash;
       this.key   = key;
       this.value = value;
       this.depth = $$AVL$$max(left.depth, right.depth) + 1;
     }
 
     $$ImmutableDict$$KeyNode.prototype.copy = function (left, right) {
-      return new $$ImmutableDict$$KeyNode(left, right, this.key, this.value);
+      return new $$ImmutableDict$$KeyNode(left, right, this.hash, this.key, this.value);
     };
 
     $$ImmutableDict$$KeyNode.prototype.modify = function (info) {
+      var hash  = info.hash;
       var key   = info.key;
       var value = info.value;
       // We don't use equal, for increased speed
-      if (this.key === key && this.value === value) {
+      if (this.hash === hash && this.key === key && this.value === value) {
         return this;
       } else {
-        return new $$ImmutableDict$$KeyNode(this.left, this.right, key, value);
+        return new $$ImmutableDict$$KeyNode(this.left, this.right, hash, key, value);
       }
     };
 
@@ -571,9 +571,10 @@
     };
 
 
-    function $$ImmutableDict$$ImmutableDict(root, sort) {
+    function $$ImmutableDict$$ImmutableDict(root, sort, hash_fn) {
       this.root = root;
       this.sort = sort;
+      this.hash_fn = hash_fn;
       this.hash = null;
     }
 
@@ -582,7 +583,7 @@
     $$ImmutableDict$$ImmutableDict.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         // We don't use equal, for increased speed
-        if (x.sort === $$Sorted$$defaultSort) {
+        if ($$ImmutableDict$$isDict(x) && !$$ImmutableDict$$isSortedDict(x)) {
           x.hash = "(Dict" + $$hash$$hash_dict(x, "  ") + ")";
         } else {
           x.hash = "(SortedDict " + $$hash$$hash(x.sort) + $$hash$$hash_dict(x, "  ") + ")";
@@ -597,7 +598,7 @@
     };
 
     $$ImmutableDict$$ImmutableDict.prototype[$$toJSON$$tag_toJSON] = function (x) {
-      if (x.sort === $$Sorted$$defaultSort) {
+      if ($$ImmutableDict$$isDict(x) && !$$ImmutableDict$$isSortedDict(x)) {
         return $$toJSON$$toJSON_object("Dict", x);
       } else {
         throw new Error("Cannot convert SortedDict to JSON");
@@ -617,12 +618,12 @@
 
     // TODO what if `sort` suspends ?
     $$ImmutableDict$$ImmutableDict.prototype.has = function (key) {
-      return $$Sorted$$key_get(this.root, this.sort, key) !== $$$Immutable$nil$$nil;
+      return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$$Immutable$nil$$nil;
     };
 
     // TODO what if `sort` suspends ?
     $$ImmutableDict$$ImmutableDict.prototype.get = function (key, def) {
-      var node = $$Sorted$$key_get(this.root, this.sort, key);
+      var node = $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key));
       if (node === $$$Immutable$nil$$nil) {
         if (arguments.length === 2) {
           return def;
@@ -639,11 +640,13 @@
     $$ImmutableDict$$ImmutableDict.prototype.set = function (key, value) {
       var root = this.root;
       var sort = this.sort;
-      var node = $$Sorted$$key_set(root, sort, key, new $$ImmutableDict$$KeyNode($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, key, value));
+      var hash_fn = this.hash_fn;
+      var hash = hash_fn(key);
+      var node = $$Sorted$$key_set(root, sort, hash, new $$ImmutableDict$$KeyNode($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, hash, key, value));
       if (node === root) {
         return this;
       } else {
-        return new $$ImmutableDict$$ImmutableDict(node, sort);
+        return new $$ImmutableDict$$ImmutableDict(node, sort, hash_fn);
       }
     };
 
@@ -652,11 +655,12 @@
     $$ImmutableDict$$ImmutableDict.prototype.remove = function (key) {
       var root = this.root;
       var sort = this.sort;
-      var node = $$Sorted$$key_remove(root, sort, key);
+      var hash_fn = this.hash_fn;
+      var node = $$Sorted$$key_remove(root, sort, hash_fn(key));
       if (node === root) {
         return this;
       } else {
-        return new $$ImmutableDict$$ImmutableDict(node, sort);
+        return new $$ImmutableDict$$ImmutableDict(node, sort, hash_fn);
       }
     };
 
@@ -665,11 +669,12 @@
     $$ImmutableDict$$ImmutableDict.prototype.modify = function (key, f) {
       var root = this.root;
       var sort = this.sort;
-      var node = $$Sorted$$key_modify(root, sort, key, f);
+      var hash_fn = this.hash_fn;
+      var node = $$Sorted$$key_modify(root, sort, hash_fn(key), key, f);
       if (node === root) {
         return this;
       } else {
-        return new $$ImmutableDict$$ImmutableDict(node, sort);
+        return new $$ImmutableDict$$ImmutableDict(node, sort, hash_fn);
       }
     };
 
@@ -677,12 +682,19 @@
     $$ImmutableDict$$ImmutableDict.prototype.merge = function (other) {
       var self = this;
 
-      other.forEach(function (_array) {
-        var key   = _array[0];
-        var value = _array[1];
+      if ($$util$$isJSLiteral(other)) {
+        Object.keys(other).forEach(function (key) {
+          self = self.set(key, other[key]);
+        });
 
-        self = self.set(key, value);
-      });
+      } else {
+        other.forEach(function (_array) {
+          var key   = _array[0];
+          var value = _array[1];
+
+          self = self.set(key, value);
+        });
+      }
 
       return self;
     };
@@ -693,60 +705,54 @@
     }
 
     function $$ImmutableDict$$isSortedDict(x) {
-      return $$ImmutableDict$$isDict(x) && x.sort !== $$Sorted$$defaultSort;
+      return $$ImmutableDict$$isDict(x) && x.hash_fn === $$util$$identity;
     }
 
     function $$ImmutableDict$$SortedDict(sort, obj) {
       if (obj != null) {
         // We don't use equal, for increased speed
-        if (obj instanceof $$ImmutableDict$$ImmutableDict && obj.sort === sort) {
+        if ($$ImmutableDict$$isSortedDict(obj) && obj.sort === sort) {
           return obj;
-
         } else {
-          var o = new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
-
-          if ($$util$$isJSLiteral(obj)) {
-            Object.keys(obj).forEach(function (key) {
-              o = o.set(key, obj[key]);
-            });
-
-          } else {
-            obj.forEach(function (_array) {
-              var key   = _array[0];
-              var value = _array[1];
-              o = o.set(key, value);
-            });
-          }
-
-          return o;
+          return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort, $$util$$identity).merge(obj);
         }
       } else {
-        return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort);
+        return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, sort, $$util$$identity);
       }
     }
 
     function $$ImmutableDict$$Dict(obj) {
-      return $$ImmutableDict$$SortedDict($$Sorted$$defaultSort, obj);
+      if (obj != null) {
+        if ($$ImmutableDict$$isDict(obj) && !$$ImmutableDict$$isSortedDict(obj)) {
+          return obj;
+        } else {
+          return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, $$Sorted$$simpleSort, $$hash$$hash).merge(obj);
+        }
+      } else {
+        return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+      }
     }
 
-    function $$ImmutableSet$$SetNode(left, right, key) {
+    function $$ImmutableSet$$SetNode(left, right, hash, key) {
       this.left  = left;
       this.right = right;
+      this.hash  = hash;
       this.key   = key;
       this.depth = $$AVL$$max(left.depth, right.depth) + 1;
     }
 
     $$ImmutableSet$$SetNode.prototype.copy = function (left, right) {
-      return new $$ImmutableSet$$SetNode(left, right, this.key);
+      return new $$ImmutableSet$$SetNode(left, right, this.hash, this.key);
     };
 
     $$ImmutableSet$$SetNode.prototype.modify = function (info) {
-      var key = info.key;
+      var hash = info.hash;
+      var key  = info.key;
       // We don't use equal, for increased speed
-      if (this.key === key) {
+      if (this.hash === hash && this.key === key) {
         return this;
       } else {
-        return new $$ImmutableSet$$SetNode(this.left, this.right, key);
+        return new $$ImmutableSet$$SetNode(this.left, this.right, hash, key);
       }
     };
 
@@ -757,9 +763,10 @@
     };
 
 
-    function $$ImmutableSet$$ImmutableSet(root, sort) {
+    function $$ImmutableSet$$ImmutableSet(root, sort, hash_fn) {
       this.root = root;
       this.sort = sort;
+      this.hash_fn = hash_fn;
       this.hash = null;
     }
 
@@ -770,7 +777,7 @@
     };
 
     $$ImmutableSet$$ImmutableSet.prototype[$$toJSON$$tag_toJSON] = function (x) {
-      if (x.sort === $$Sorted$$defaultSort) {
+      if ($$ImmutableSet$$isSet(x) && !$$ImmutableSet$$isSortedSet(x)) {
         return $$toJSON$$toJSON_array("Set", x);
       } else {
         throw new Error("Cannot convert SortedSet to JSON");
@@ -787,8 +794,7 @@
 
         var spaces = "  ";
 
-        // We don't use equal, for increased speed
-        if (x.sort === $$Sorted$$defaultSort) {
+        if ($$ImmutableSet$$isSet(x) && !$$ImmutableSet$$isSortedSet(x)) {
           x.hash = "(Set" + $$util$$join_lines(a, spaces) + ")";
         } else {
           x.hash = "(SortedSet " + $$hash$$hash(x.sort) + $$util$$join_lines(a, spaces) + ")";
@@ -814,18 +820,20 @@
     // TODO code duplication with ImmutableDict
     // TODO what if `sort` suspends ?
     $$ImmutableSet$$ImmutableSet.prototype.has = function (key) {
-      return $$Sorted$$key_get(this.root, this.sort, key) !== $$$Immutable$nil$$nil;
+      return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$$Immutable$nil$$nil;
     };
 
     // TODO what if `sort` suspends ?
     $$ImmutableSet$$ImmutableSet.prototype.add = function (key) {
       var root = this.root;
       var sort = this.sort;
-      var node = $$Sorted$$key_set(root, sort, key, new $$ImmutableSet$$SetNode($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, key));
+      var hash_fn = this.hash_fn;
+      var hash = hash_fn(key);
+      var node = $$Sorted$$key_set(root, sort, hash, new $$ImmutableSet$$SetNode($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, hash, key));
       if (node === root) {
         return this;
       } else {
-        return new $$ImmutableSet$$ImmutableSet(node, sort);
+        return new $$ImmutableSet$$ImmutableSet(node, sort, hash_fn);
       }
     };
 
@@ -833,11 +841,12 @@
     $$ImmutableSet$$ImmutableSet.prototype.remove = function (key) {
       var root = this.root;
       var sort = this.sort;
-      var node = $$Sorted$$key_remove(root, sort, key);
+      var hash_fn = this.hash_fn;
+      var node = $$Sorted$$key_remove(root, sort, hash_fn(key));
       if (node === root) {
         return this;
       } else {
-        return new $$ImmutableSet$$ImmutableSet(node, sort);
+        return new $$ImmutableSet$$ImmutableSet(node, sort, hash_fn);
       }
     };
 
@@ -854,11 +863,12 @@
 
     $$ImmutableSet$$ImmutableSet.prototype.intersect = function (other) {
       var self = this;
-      if (self.root === $$$Immutable$nil$$nil) {
+
+      if (self.isEmpty()) {
         return self;
 
       } else {
-        var out = new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, self.sort);
+        var out = new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, self.sort, self.hash_fn);
 
         // TODO iterator
         other.forEach(function (value) {
@@ -890,7 +900,7 @@
     $$ImmutableSet$$ImmutableSet.prototype.subtract = function (other) {
       var self = this;
 
-      if (self.root !== $$$Immutable$nil$$nil) {
+      if (!self.isEmpty()) {
         // TODO iterator
         other.forEach(function (value) {
           self = self.remove(value);
@@ -906,32 +916,32 @@
     }
 
     function $$ImmutableSet$$isSortedSet(x) {
-      return $$ImmutableSet$$isSet(x) && x.sort !== $$Sorted$$defaultSort;
+      return $$ImmutableSet$$isSet(x) && x.hash_fn === $$util$$identity;
     }
 
     function $$ImmutableSet$$SortedSet(sort, array) {
       if (array != null) {
         // We don't use equal, for increased speed
-        if (array instanceof $$ImmutableSet$$ImmutableSet && array.sort === sort) {
+        if ($$ImmutableSet$$isSortedSet(array) && array.sort === sort) {
           return array;
-
         } else {
-          // TODO use concat ?
-          var o = new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
-
-          array.forEach(function (x) {
-            o = o.add(x);
-          });
-
-          return o;
+          return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort, $$util$$identity).union(array);
         }
       } else {
-        return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort);
+        return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, sort, $$util$$identity);
       }
     }
 
     function $$ImmutableSet$$Set(array) {
-      return $$ImmutableSet$$SortedSet($$Sorted$$defaultSort, array);
+      if (array != null) {
+        if ($$ImmutableSet$$isSet(array) && !$$ImmutableSet$$isSortedSet(array)) {
+          return array;
+        } else {
+          return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, $$Sorted$$simpleSort, $$hash$$hash).union(array);
+        }
+      } else {
+        return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+      }
     }
     function $$Array$$copy(array) {
       var len = array.length;
@@ -1858,23 +1868,22 @@
     $$ImmutableRecord$$ImmutableRecord.prototype.forEach = function (f) {
       var keys   = this.keys;
       var values = this.values;
-
-      for (var i = 0, l = keys.length; i < l; ++i) {
-        f([keys[i], values[i]]);
+      for (var s in keys) {
+        var index = keys[s];
+        f([s, values[index]]);
       }
     };
 
     $$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
       $$ImmutableRecord$$checkKey(key);
 
-      var keys = this.keys;
-      for (var i = 0, l = keys.length; i < l; ++i) {
-        if (keys[i] === key) {
-          return this.values[i];
-        }
-      }
+      var index = this.keys[key];
+      if (index == null) {
+        throw new Error("Key " + key + " not found");
 
-      throw new Error("Key " + key + " not found");
+      } else {
+        return this.values[index];
+      }
     };
 
     $$ImmutableRecord$$ImmutableRecord.prototype.set = function (key, value) {
@@ -1886,32 +1895,39 @@
     $$ImmutableRecord$$ImmutableRecord.prototype.modify = function (key, f) {
       $$ImmutableRecord$$checkKey(key);
 
-      var keys = this.keys;
-      for (var i = 0, l = keys.length; i < l; ++i) {
-        if (keys[i] === key) {
-          var values = this.values;
-          var array  = $$Array$$modify(values, i, f);
-          if (array === values) {
-            return this;
-          } else {
-            return new $$ImmutableRecord$$ImmutableRecord(keys, array);
-          }
+      var keys  = this.keys;
+      var index = keys[key];
+      if (index == null) {
+        throw new Error("Key " + key + " not found");
+
+      } else {
+        var values = this.values;
+        var array  = $$Array$$modify(values, index, f);
+        if (array === values) {
+          return this;
+        } else {
+          return new $$ImmutableRecord$$ImmutableRecord(keys, array);
         }
       }
-
-      throw new Error("Key " + key + " not found");
     };
 
     // TODO code duplication with ImmutableDict
     $$ImmutableRecord$$ImmutableRecord.prototype.update = function (other) {
       var self = this;
 
-      other.forEach(function (_array) {
-        var key   = _array[0];
-        var value = _array[1];
+      if ($$util$$isJSLiteral(other)) {
+        Object.keys(other).forEach(function (key) {
+          self = self.set(key, other[key]);
+        });
 
-        self = self.set(key, value);
-      });
+      } else {
+        other.forEach(function (_array) {
+          var key   = _array[0];
+          var value = _array[1];
+
+          self = self.set(key, value);
+        });
+      }
 
       return self;
     };
@@ -1922,19 +1938,18 @@
     }
 
     function $$ImmutableRecord$$Record(obj) {
-      var keys   = [];
+      var keys   = {};
       var values = [];
 
       if (obj != null) {
-        if (obj instanceof $$ImmutableRecord$$ImmutableRecord) {
+        if ($$ImmutableRecord$$isRecord(obj)) {
           return obj;
 
         } else if ($$util$$isJSLiteral(obj)) {
           Object.keys(obj).forEach(function (key) {
             $$ImmutableRecord$$checkKey(key);
 
-            keys.push(key);
-            values.push(obj[key]);
+            keys[key] = values.push(obj[key]) - 1;
           });
 
         } else {
@@ -1944,8 +1959,7 @@
 
             $$ImmutableRecord$$checkKey(key);
 
-            keys.push(key);
-            values.push(value);
+            keys[key] = values.push(value) - 1;
           });
         }
       }
@@ -2084,7 +2098,6 @@
       exports.Queue = $$ImmutableQueue$$Queue;
       exports.Stack = $$ImmutableStack$$Stack;
       exports.simpleSort = $$Sorted$$simpleSort;
-      exports.defaultSort = $$Sorted$$defaultSort;
       exports.isRecord = $$ImmutableRecord$$isRecord;
       exports.Record = $$ImmutableRecord$$Record;
       exports.toJSON = $$toJSON$$toJSON;
@@ -2111,6 +2124,16 @@
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
     function src$Test$Test$$randomInt(min, max) {
       return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    function src$Test$Test$$otherSort(x, y) {
+      if (x === y) {
+        return 0;
+      } else if (x < y) {
+        return -1;
+      } else {
+        return 1;
+      }
     }
 
     // http://bost.ocks.org/mike/shuffle/
@@ -2278,6 +2301,7 @@
     // TODO test that this works correctly
     function src$Test$Test$$verify_dict(tree, obj) {
       var sort = tree.sort;
+      var hash_fn = tree.hash_fn;
 
       function loop(node, lt, gt) {
         if (node !== $$$Immutable$nil$$nil) {
@@ -2291,12 +2315,12 @@
 
           // Every left node must be lower than the parent node
           lt.forEach(function (parent) {
-            $$assert$$assert(sort(node.key, parent.key) < 0);
+            $$assert$$assert(sort(hash_fn(node.key), hash_fn(parent.key)) < 0);
           });
 
           // Every right node must be greater than the parent node
           gt.forEach(function (parent) {
-            $$assert$$assert(sort(node.key, parent.key) > 0);
+            $$assert$$assert(sort(hash_fn(node.key), hash_fn(parent.key)) > 0);
           });
 
           loop(left,  lt.concat([node]), gt);
@@ -2401,10 +2425,9 @@
         $$assert$$assert(!$$ImmutableDict$$isDict($$ImmutableSet$$Set()));
 
         $$assert$$assert($$ImmutableDict$$isDict($$ImmutableDict$$Dict()));
-        $$assert$$assert($$ImmutableDict$$isDict($$ImmutableDict$$SortedDict($$Sorted$$defaultSort)));
+        $$assert$$assert($$ImmutableDict$$isDict($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
 
         $$assert$$assert($$ImmutableDict$$isSortedDict($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
-        $$assert$$assert(!$$ImmutableDict$$isSortedDict($$ImmutableDict$$SortedDict($$Sorted$$defaultSort)));
         $$assert$$assert(!$$ImmutableDict$$isSortedDict($$ImmutableDict$$Dict()));
       });
 
@@ -2500,6 +2523,7 @@
         src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }).merge($$ImmutableDict$$Dict({ bar: 2 })), { foo: 1, bar: 2 });
         src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }).merge($$ImmutableDict$$Dict({ foo: 2 })), { foo: 2 });
         src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }).merge($$ImmutableDict$$Dict({ foo: 2, bar: 3 })), { foo: 2, bar: 3 });
+        src$Test$Test$$verify_dict($$ImmutableDict$$Dict({ foo: 1 }).merge({ bar: 2 }), { foo: 1, bar: 2 });
       });
 
       src$Test$Test$$test("complex keys", function () {
@@ -2544,8 +2568,21 @@
 
       src$Test$Test$$test("=== when not modified", function () {
         $$assert$$assert($$ImmutableDict$$Dict(dict_foo) === dict_foo);
-        $$assert$$assert($$ImmutableDict$$SortedDict($$Sorted$$defaultSort, dict_foo) === dict_foo);
-        $$assert$$assert($$ImmutableDict$$SortedDict($$Sorted$$simpleSort, dict_foo) !== dict_foo);
+
+        var x = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, dict_foo);
+        $$assert$$assert(x !== dict_foo);
+        $$assert$$assert($$ImmutableDict$$Dict(x) !== x);
+        $$assert$$assert($$ImmutableDict$$SortedDict($$Sorted$$simpleSort, x) === x);
+
+        var x = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, dict_foo);
+        $$assert$$assert($$ImmutableDict$$SortedDict(src$Test$Test$$otherSort, x) !== x);
+
+        var x = $$ImmutableDict$$SortedDict(src$Test$Test$$otherSort, dict_foo);
+        $$assert$$assert($$ImmutableDict$$SortedDict($$Sorted$$simpleSort, x) !== x);
+
+        var x = $$ImmutableDict$$SortedDict(src$Test$Test$$otherSort, dict_foo);
+        $$assert$$assert($$ImmutableDict$$SortedDict(src$Test$Test$$otherSort, x) === x);
+
 
         $$assert$$assert(dict_empty.remove("foo") === dict_empty);
 
@@ -2588,11 +2625,14 @@
         $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 2 }) }),
                       $$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 3 }) })));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableDict$$SortedDict($$Sorted$$defaultSort, { foo: 1 }),
-                     $$ImmutableDict$$Dict({ foo: 1 })));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 }),
+                     $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 })));
 
         $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 }),
                       $$ImmutableDict$$Dict({ foo: 1 })));
+
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 }),
+                      $$ImmutableDict$$SortedDict(src$Test$Test$$otherSort, { foo: 1 })));
       });
 
       src$Test$Test$$test("toJS", function () {
@@ -2610,8 +2650,6 @@
         src$Test$Test$$verify_json(dict_empty, {});
         src$Test$Test$$verify_json(dict_foo, { foo: 1 });
         src$Test$Test$$verify_json($$ImmutableDict$$Dict({ foo: $$ImmutableDict$$Dict({ bar: 2 }) }), { foo: { bar: 2 } });
-
-        src$Test$Test$$verify_json($$ImmutableDict$$SortedDict($$Sorted$$defaultSort, { foo: $$ImmutableDict$$SortedDict($$Sorted$$defaultSort, { bar: 2 }) }), { foo: { bar: 2 } });
 
         src$Test$Test$$verify_json_equal($$ImmutableDict$$Dict([[$$ImmutableDict$$Dict({ foo: 1 }), $$ImmutableDict$$Dict({ bar: 2 })]]));
 
@@ -2655,7 +2693,6 @@
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + $$ImmutableDict$$Dict() === "(Dict)");
-        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$defaultSort) === "(Dict)");
         $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort) === "(SortedDict (Mutable 3))");
         $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 }) === "(SortedDict (Mutable 3)\n  \"foo\" = 1)");
         $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 3)\n  \"bar\" = 2\n  \"foo\" = 1)");
@@ -2690,10 +2727,9 @@
         $$assert$$assert(!$$ImmutableSet$$isSet($$ImmutableDict$$Dict()));
 
         $$assert$$assert($$ImmutableSet$$isSet($$ImmutableSet$$Set()));
-        $$assert$$assert($$ImmutableSet$$isSet($$ImmutableSet$$SortedSet($$Sorted$$defaultSort)));
+        $$assert$$assert($$ImmutableSet$$isSet($$ImmutableSet$$SortedSet($$Sorted$$simpleSort)));
 
         $$assert$$assert($$ImmutableSet$$isSortedSet($$ImmutableSet$$SortedSet($$Sorted$$simpleSort)));
-        $$assert$$assert(!$$ImmutableSet$$isSortedSet($$ImmutableSet$$SortedSet($$Sorted$$defaultSort)));
         $$assert$$assert(!$$ImmutableSet$$isSortedSet($$ImmutableSet$$Set()));
       });
 
@@ -2806,6 +2842,23 @@
       });
 
       src$Test$Test$$test("=== when not modified", function () {
+        $$assert$$assert($$ImmutableSet$$Set(five_set) === five_set);
+
+        var x = $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, five_set);
+        $$assert$$assert(x !== five_set);
+        $$assert$$assert($$ImmutableSet$$Set(x) !== x);
+        $$assert$$assert($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, x) === x);
+
+        var x = $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, five_set);
+        $$assert$$assert($$ImmutableSet$$SortedSet(src$Test$Test$$otherSort, x) !== x);
+
+        var x = $$ImmutableSet$$SortedSet(src$Test$Test$$otherSort, five_set);
+        $$assert$$assert($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, x) !== x);
+
+        var x = $$ImmutableSet$$SortedSet(src$Test$Test$$otherSort, five_set);
+        $$assert$$assert($$ImmutableSet$$SortedSet(src$Test$Test$$otherSort, x) === x);
+
+
         $$assert$$assert(empty_set.union(empty_set) === empty_set);
         $$assert$$assert(empty_set.union(five_set) !== five_set);
         $$assert$$assert(five_set.union(empty_set) === five_set);
@@ -2813,7 +2866,6 @@
         $$assert$$assert(five_set.union($$ImmutableSet$$Set([1, 2, 3])) === five_set);
 
         $$assert$$assert($$ImmutableSet$$Set(five_set) === five_set);
-        $$assert$$assert($$ImmutableSet$$SortedSet($$Sorted$$defaultSort, five_set) === five_set);
         $$assert$$assert($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, five_set) !== five_set);
 
         $$assert$$assert(empty_set.remove(1) === empty_set);
@@ -2836,8 +2888,12 @@
         $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableSet$$Set([$$ImmutableSet$$Set([1])]), $$ImmutableSet$$Set([$$ImmutableSet$$Set([1])])));
         $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableSet$$Set([$$ImmutableSet$$Set([1])]), $$ImmutableSet$$Set([$$ImmutableSet$$Set([2])])));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableSet$$SortedSet($$Sorted$$defaultSort, [1, 2, 3]),
-                     $$ImmutableSet$$Set([1, 2, 3])));
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3]),
+                     $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3])));
+
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3]),
+                      $$ImmutableSet$$SortedSet(src$Test$Test$$otherSort, [1, 2, 3])));
+
         $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3]),
                       $$ImmutableSet$$Set([1, 2, 3])));
       });
@@ -2854,8 +2910,6 @@
         src$Test$Test$$verify_json(five_set, [1, 2, 3, 4, 5]);
         src$Test$Test$$verify_json($$ImmutableSet$$Set([4, 5, $$ImmutableSet$$Set([1, 2, 3])]), [[1, 2, 3], 4, 5]);
 
-        src$Test$Test$$verify_json($$ImmutableSet$$SortedSet($$Sorted$$defaultSort, [4, 5, $$ImmutableSet$$SortedSet($$Sorted$$defaultSort, [1, 2, 3])]), [[1, 2, 3], 4, 5]);
-
         src$Test$Test$$assert_raises(function () {
           $$toJSON$$toJSON($$ImmutableSet$$SortedSet($$Sorted$$simpleSort, []));
         }, "Cannot convert SortedSet to JSON");
@@ -2866,11 +2920,12 @@
         var a = [];
 
         var sort = o.sort;
+        var hash_fn = o.hash_fn;
 
         // TODO utilities for these
         function push_sorted(a, x, sort) {
           for (var i = 0, l = a.length; i < l; ++i) {
-            if (sort(x, a[i]) <= 0) {
+            if (sort(hash_fn(x), hash_fn(a[i])) <= 0) {
               a.splice(i, 0, x);
               return;
             }
@@ -2910,7 +2965,6 @@
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + $$ImmutableSet$$Set() === "(Set)");
-        $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$defaultSort) === "(Set)");
         $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$simpleSort) === "(SortedSet (Mutable 3))");
         $$assert$$assert("" + $$ImmutableSet$$Set([1, 2, 3, 4, 5]) === "(Set\n  1\n  2\n  3\n  4\n  5)");
         $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3, 4, 5]) === "(SortedSet (Mutable 3)\n  1\n  2\n  3\n  4\n  5)");
@@ -3691,6 +3745,7 @@
         src$Test$Test$$verify_record($$ImmutableRecord$$Record({ foo: 1 }), { foo: 1 });
         src$Test$Test$$verify_record($$ImmutableRecord$$Record({ foo: 1 }).update($$ImmutableRecord$$Record({ foo: 2 })), { foo: 2 });
         src$Test$Test$$verify_record($$ImmutableRecord$$Record({ foo: 1 }).update([["foo", 3]]), { foo: 3 });
+        src$Test$Test$$verify_record($$ImmutableRecord$$Record({ foo: 1 }).update({ foo: 3 }), { foo: 3 });
 
         src$Test$Test$$assert_raises(function () {
           $$ImmutableRecord$$Record({ foo: 1 }).update($$ImmutableRecord$$Record({ foo: 2, bar: 3 }));
@@ -4073,9 +4128,7 @@
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableList$$List()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableQueue$$Queue()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableStack$$Stack()));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$SortedDict($$Sorted$$defaultSort)));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$SortedSet($$Sorted$$defaultSort)));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$SortedSet($$Sorted$$simpleSort)));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$Tag$$Tag()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$Tag$$UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));

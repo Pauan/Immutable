@@ -20,7 +20,7 @@ export function header() {
     });
     benchmark.group("Immutable", function () {
       benchmark.message("URL: https://github.com/Pauan/Immutable");
-      benchmark.message("Version: 2.0.0");
+      benchmark.message("Version: 3.0.0");
     });
     /*benchmark.group("Elm", function () {
       benchmark.message("URL: http://elm-lang.org/");

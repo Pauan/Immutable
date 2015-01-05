@@ -1,32 +1,34 @@
 import { max } from "./AVL";
-import { defaultSort, key_get, key_set, key_modify, key_remove } from "./Sorted";
+import { simpleSort, key_get, key_set, key_modify, key_remove } from "./Sorted";
 import { hash, tag_hash, hash_dict } from "./hash";
 import { toJS_object, tag_toJS } from "./toJS";
 import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { nil } from "./nil";
 import { ImmutableBase } from "./Base";
-import { isJSLiteral } from "./util";
+import { isJSLiteral, identity } from "./util";
 
-function KeyNode(left, right, key, value) {
+function KeyNode(left, right, hash, key, value) {
   this.left  = left;
   this.right = right;
+  this.hash  = hash;
   this.key   = key;
   this.value = value;
   this.depth = max(left.depth, right.depth) + 1;
 }
 
 KeyNode.prototype.copy = function (left, right) {
-  return new KeyNode(left, right, this.key, this.value);
+  return new KeyNode(left, right, this.hash, this.key, this.value);
 };
 
 KeyNode.prototype.modify = function (info) {
+  var hash  = info.hash;
   var key   = info.key;
   var value = info.value;
   // We don't use equal, for increased speed
-  if (this.key === key && this.value === value) {
+  if (this.hash === hash && this.key === key && this.value === value) {
     return this;
   } else {
-    return new KeyNode(this.left, this.right, key, value);
+    return new KeyNode(this.left, this.right, hash, key, value);
   }
 };
 
@@ -37,9 +39,10 @@ KeyNode.prototype.forEach = function (f) {
 };
 
 
-export function ImmutableDict(root, sort) {
+export function ImmutableDict(root, sort, hash_fn) {
   this.root = root;
   this.sort = sort;
+  this.hash_fn = hash_fn;
   this.hash = null;
 }
 
@@ -48,7 +51,7 @@ ImmutableDict.prototype = Object.create(ImmutableBase);
 ImmutableDict.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     // We don't use equal, for increased speed
-    if (x.sort === defaultSort) {
+    if (isDict(x) && !isSortedDict(x)) {
       x.hash = "(Dict" + hash_dict(x, "  ") + ")";
     } else {
       x.hash = "(SortedDict " + hash(x.sort) + hash_dict(x, "  ") + ")";
@@ -63,7 +66,7 @@ fromJSON_registry["Dict"] = function (x) {
 };
 
 ImmutableDict.prototype[tag_toJSON] = function (x) {
-  if (x.sort === defaultSort) {
+  if (isDict(x) && !isSortedDict(x)) {
     return toJSON_object("Dict", x);
   } else {
     throw new Error("Cannot convert SortedDict to JSON");
@@ -83,12 +86,12 @@ ImmutableDict.prototype.isEmpty = function () {
 
 // TODO what if `sort` suspends ?
 ImmutableDict.prototype.has = function (key) {
-  return key_get(this.root, this.sort, key) !== nil;
+  return key_get(this.root, this.sort, this.hash_fn(key)) !== nil;
 };
 
 // TODO what if `sort` suspends ?
 ImmutableDict.prototype.get = function (key, def) {
-  var node = key_get(this.root, this.sort, key);
+  var node = key_get(this.root, this.sort, this.hash_fn(key));
   if (node === nil) {
     if (arguments.length === 2) {
       return def;
@@ -105,11 +108,13 @@ ImmutableDict.prototype.get = function (key, def) {
 ImmutableDict.prototype.set = function (key, value) {
   var root = this.root;
   var sort = this.sort;
-  var node = key_set(root, sort, key, new KeyNode(nil, nil, key, value));
+  var hash_fn = this.hash_fn;
+  var hash = hash_fn(key);
+  var node = key_set(root, sort, hash, new KeyNode(nil, nil, hash, key, value));
   if (node === root) {
     return this;
   } else {
-    return new ImmutableDict(node, sort);
+    return new ImmutableDict(node, sort, hash_fn);
   }
 };
 
@@ -118,11 +123,12 @@ ImmutableDict.prototype.set = function (key, value) {
 ImmutableDict.prototype.remove = function (key) {
   var root = this.root;
   var sort = this.sort;
-  var node = key_remove(root, sort, key);
+  var hash_fn = this.hash_fn;
+  var node = key_remove(root, sort, hash_fn(key));
   if (node === root) {
     return this;
   } else {
-    return new ImmutableDict(node, sort);
+    return new ImmutableDict(node, sort, hash_fn);
   }
 };
 
@@ -131,11 +137,12 @@ ImmutableDict.prototype.remove = function (key) {
 ImmutableDict.prototype.modify = function (key, f) {
   var root = this.root;
   var sort = this.sort;
-  var node = key_modify(root, sort, key, f);
+  var hash_fn = this.hash_fn;
+  var node = key_modify(root, sort, hash_fn(key), key, f);
   if (node === root) {
     return this;
   } else {
-    return new ImmutableDict(node, sort);
+    return new ImmutableDict(node, sort, hash_fn);
   }
 };
 
@@ -143,12 +150,19 @@ ImmutableDict.prototype.modify = function (key, f) {
 ImmutableDict.prototype.merge = function (other) {
   var self = this;
 
-  other.forEach(function (_array) {
-    var key   = _array[0];
-    var value = _array[1];
+  if (isJSLiteral(other)) {
+    Object.keys(other).forEach(function (key) {
+      self = self.set(key, other[key]);
+    });
 
-    self = self.set(key, value);
-  });
+  } else {
+    other.forEach(function (_array) {
+      var key   = _array[0];
+      var value = _array[1];
+
+      self = self.set(key, value);
+    });
+  }
 
   return self;
 };
@@ -159,38 +173,30 @@ export function isDict(x) {
 }
 
 export function isSortedDict(x) {
-  return isDict(x) && x.sort !== defaultSort;
+  return isDict(x) && x.hash_fn === identity;
 }
 
 export function SortedDict(sort, obj) {
   if (obj != null) {
     // We don't use equal, for increased speed
-    if (obj instanceof ImmutableDict && obj.sort === sort) {
+    if (isSortedDict(obj) && obj.sort === sort) {
       return obj;
-
     } else {
-      var o = new ImmutableDict(nil, sort);
-
-      if (isJSLiteral(obj)) {
-        Object.keys(obj).forEach(function (key) {
-          o = o.set(key, obj[key]);
-        });
-
-      } else {
-        obj.forEach(function (_array) {
-          var key   = _array[0];
-          var value = _array[1];
-          o = o.set(key, value);
-        });
-      }
-
-      return o;
+      return new ImmutableDict(nil, sort, identity).merge(obj);
     }
   } else {
-    return new ImmutableDict(nil, sort);
+    return new ImmutableDict(nil, sort, identity);
   }
 }
 
 export function Dict(obj) {
-  return SortedDict(defaultSort, obj);
+  if (obj != null) {
+    if (isDict(obj) && !isSortedDict(obj)) {
+      return obj;
+    } else {
+      return new ImmutableDict(nil, simpleSort, hash).merge(obj);
+    }
+  } else {
+    return new ImmutableDict(nil, simpleSort, hash);
+  }
 }

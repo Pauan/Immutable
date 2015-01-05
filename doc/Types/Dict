@@ -150,8 +150,8 @@
 
      If a key from `other` already exists in this dict, it is overwritten.
 
-     `other` must be a [sequence::Sequence] where each value
-     is an array of `[key, value]`
+     `other` must be either a JavaScript object literal, or a
+     [sequence::Sequence] where each value is an array of `[key, value]`
 
      You can use this to merge two [::Dict]:
 
@@ -165,4 +165,15 @@
 
          // { foo: 1, bar: 2 }
          foo.merge(bar);
+
+     You can also use this to merge with a JavaScript object literal:
+
+         var foo = Dict({
+           foo: 1
+         });
+
+         // { foo: 1, bar: 2 }
+         foo.merge({
+           bar: 2
+         });
  */

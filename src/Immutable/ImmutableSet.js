@@ -1,30 +1,32 @@
 import { max } from "./AVL";
-import { defaultSort, key_get, key_set, key_remove } from "./Sorted";
+import { simpleSort, key_get, key_set, key_remove } from "./Sorted";
 import { hash, tag_hash } from "./hash";
-import { join_lines } from "./util";
+import { join_lines, identity } from "./util";
 import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_array, tag_toJS } from "./toJS";
 import { nil } from "./nil";
 import { ImmutableBase } from "./Base";
 
-function SetNode(left, right, key) {
+function SetNode(left, right, hash, key) {
   this.left  = left;
   this.right = right;
+  this.hash  = hash;
   this.key   = key;
   this.depth = max(left.depth, right.depth) + 1;
 }
 
 SetNode.prototype.copy = function (left, right) {
-  return new SetNode(left, right, this.key);
+  return new SetNode(left, right, this.hash, this.key);
 };
 
 SetNode.prototype.modify = function (info) {
-  var key = info.key;
+  var hash = info.hash;
+  var key  = info.key;
   // We don't use equal, for increased speed
-  if (this.key === key) {
+  if (this.hash === hash && this.key === key) {
     return this;
   } else {
-    return new SetNode(this.left, this.right, key);
+    return new SetNode(this.left, this.right, hash, key);
   }
 };
 
@@ -35,9 +37,10 @@ SetNode.prototype.forEach = function (f) {
 };
 
 
-export function ImmutableSet(root, sort) {
+export function ImmutableSet(root, sort, hash_fn) {
   this.root = root;
   this.sort = sort;
+  this.hash_fn = hash_fn;
   this.hash = null;
 }
 
@@ -48,7 +51,7 @@ fromJSON_registry["Set"] = function (x) {
 };
 
 ImmutableSet.prototype[tag_toJSON] = function (x) {
-  if (x.sort === defaultSort) {
+  if (isSet(x) && !isSortedSet(x)) {
     return toJSON_array("Set", x);
   } else {
     throw new Error("Cannot convert SortedSet to JSON");
@@ -65,8 +68,7 @@ ImmutableSet.prototype[tag_hash] = function (x) {
 
     var spaces = "  ";
 
-    // We don't use equal, for increased speed
-    if (x.sort === defaultSort) {
+    if (isSet(x) && !isSortedSet(x)) {
       x.hash = "(Set" + join_lines(a, spaces) + ")";
     } else {
       x.hash = "(SortedSet " + hash(x.sort) + join_lines(a, spaces) + ")";
@@ -92,18 +94,20 @@ ImmutableSet.prototype.isEmpty = function () {
 // TODO code duplication with ImmutableDict
 // TODO what if `sort` suspends ?
 ImmutableSet.prototype.has = function (key) {
-  return key_get(this.root, this.sort, key) !== nil;
+  return key_get(this.root, this.sort, this.hash_fn(key)) !== nil;
 };
 
 // TODO what if `sort` suspends ?
 ImmutableSet.prototype.add = function (key) {
   var root = this.root;
   var sort = this.sort;
-  var node = key_set(root, sort, key, new SetNode(nil, nil, key));
+  var hash_fn = this.hash_fn;
+  var hash = hash_fn(key);
+  var node = key_set(root, sort, hash, new SetNode(nil, nil, hash, key));
   if (node === root) {
     return this;
   } else {
-    return new ImmutableSet(node, sort);
+    return new ImmutableSet(node, sort, hash_fn);
   }
 };
 
@@ -111,11 +115,12 @@ ImmutableSet.prototype.add = function (key) {
 ImmutableSet.prototype.remove = function (key) {
   var root = this.root;
   var sort = this.sort;
-  var node = key_remove(root, sort, key);
+  var hash_fn = this.hash_fn;
+  var node = key_remove(root, sort, hash_fn(key));
   if (node === root) {
     return this;
   } else {
-    return new ImmutableSet(node, sort);
+    return new ImmutableSet(node, sort, hash_fn);
   }
 };
 
@@ -132,11 +137,12 @@ ImmutableSet.prototype.union = function (other) {
 
 ImmutableSet.prototype.intersect = function (other) {
   var self = this;
-  if (self.root === nil) {
+
+  if (self.isEmpty()) {
     return self;
 
   } else {
-    var out = new ImmutableSet(nil, self.sort);
+    var out = new ImmutableSet(nil, self.sort, self.hash_fn);
 
     // TODO iterator
     other.forEach(function (value) {
@@ -168,7 +174,7 @@ ImmutableSet.prototype.disjoint = function (other) {
 ImmutableSet.prototype.subtract = function (other) {
   var self = this;
 
-  if (self.root !== nil) {
+  if (!self.isEmpty()) {
     // TODO iterator
     other.forEach(function (value) {
       self = self.remove(value);
@@ -184,30 +190,30 @@ export function isSet(x) {
 }
 
 export function isSortedSet(x) {
-  return isSet(x) && x.sort !== defaultSort;
+  return isSet(x) && x.hash_fn === identity;
 }
 
 export function SortedSet(sort, array) {
   if (array != null) {
     // We don't use equal, for increased speed
-    if (array instanceof ImmutableSet && array.sort === sort) {
+    if (isSortedSet(array) && array.sort === sort) {
       return array;
-
     } else {
-      // TODO use concat ?
-      var o = new ImmutableSet(nil, sort);
-
-      array.forEach(function (x) {
-        o = o.add(x);
-      });
-
-      return o;
+      return new ImmutableSet(nil, sort, identity).union(array);
     }
   } else {
-    return new ImmutableSet(nil, sort);
+    return new ImmutableSet(nil, sort, identity);
   }
 }
 
 export function Set(array) {
-  return SortedSet(defaultSort, array);
+  if (array != null) {
+    if (isSet(array) && !isSortedSet(array)) {
+      return array;
+    } else {
+      return new ImmutableSet(nil, simpleSort, hash).union(array);
+    }
+  } else {
+    return new ImmutableSet(nil, simpleSort, hash);
+  }
 }

@@ -18,6 +18,4 @@
 
      e.g. You shouldn't use this function if you want to use both
      numbers and strings as keys in the same Dict/Set.
-
-     If you want a sort function that works on anything, use [::defaultSort].
  */

@@ -3,7 +3,7 @@ import { isObject, isJSLiteral } from "./util";
 
 import { toJS } from "./toJS";
 import { toJSON, fromJSON } from "./toJSON";
-import { simpleSort, defaultSort } from "./Sorted";
+import { simpleSort } from "./Sorted";
 import { SortedDict, Dict, isDict, isSortedDict } from "./ImmutableDict";
 import { SortedSet, Set, isSet, isSortedSet } from "./ImmutableSet";
 import { isList, List } from "./ImmutableList";
@@ -13,7 +13,7 @@ import { isRecord, Record } from "./ImmutableRecord";
 import { deref, Ref, isRef } from "./MutableRef";
 import { isTag, isUUIDTag, Tag, UUIDTag } from "./Tag";
 
-export { toJS, simpleSort, defaultSort, toJSON, fromJSON,
+export { toJS, simpleSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
          SortedSet, Set, isSet, isSortedSet,
          isList, List, isQueue, Queue,
@@ -104,7 +104,6 @@ export function fromJS(x) {
   exports.Queue = Queue;
   exports.Stack = Stack;
   exports.simpleSort = simpleSort;
-  exports.defaultSort = defaultSort;
   exports.isRecord = isRecord;
   exports.Record = Record;
   exports.toJSON = toJSON;

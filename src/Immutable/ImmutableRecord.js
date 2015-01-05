@@ -88,12 +88,19 @@ ImmutableRecord.prototype.modify = function (key, f) {
 ImmutableRecord.prototype.update = function (other) {
   var self = this;
 
-  other.forEach(function (_array) {
-    var key   = _array[0];
-    var value = _array[1];
+  if (isJSLiteral(other)) {
+    Object.keys(other).forEach(function (key) {
+      self = self.set(key, other[key]);
+    });
 
-    self = self.set(key, value);
-  });
+  } else {
+    other.forEach(function (_array) {
+      var key   = _array[0];
+      var value = _array[1];
+
+      self = self.set(key, value);
+    });
+  }
 
   return self;
 };
@@ -108,7 +115,7 @@ export function Record(obj) {
   var values = [];
 
   if (obj != null) {
-    if (obj instanceof ImmutableRecord) {
+    if (isRecord(obj)) {
       return obj;
 
     } else if (isJSLiteral(obj)) {

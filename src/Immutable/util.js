@@ -31,3 +31,7 @@ export function join_lines(a, spaces) {
     return "";
   }
 }
+
+export function identity(x) {
+  return x;
+}
