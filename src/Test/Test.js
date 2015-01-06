@@ -1,7 +1,7 @@
 import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
-         deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag } from "../Immutable/Immutable";
+         deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, each } from "../Immutable/Immutable";
 import { nil } from "../Immutable/nil";
 import { assert } from "./assert";
 
@@ -60,7 +60,11 @@ function test(s, f) {
     ++TESTS_FAILED;
     console.log("");
     console.log("*** " + (CONTEXT ? CONTEXT + "." : "") + s + " FAILED");
-    console.log(e.stack);
+    if (e.stack) {
+      console.log(e.stack);
+    } else {
+      console.log(e);
+    }
     console.log("");
   }
 }
@@ -151,9 +155,9 @@ function deepEqual(x, y) {
   }
 }
 
-function test_forEach(constructor, input) {
+function test_each(constructor, input) {
   var a = [];
-  constructor(input).forEach(function (x) {
+  each(constructor(input), function (x) {
     a.push(x);
   });
   assert(deepEqual(a, input));
@@ -498,6 +502,8 @@ context("Dict", function () {
     assert(dict_foo.merge([]) === dict_foo);
     assert(dict_foo.merge([["foo", 1]]) === dict_foo);
     assert(dict_foo.merge([["foo", 2]]) !== dict_foo);
+
+    assert(dict_empty.merge(dict_foo) !== dict_foo);
   });
 
   test("equal", function () {
@@ -570,11 +576,11 @@ context("Dict", function () {
     });
   });
 
-  test("forEach", function () {
-    test_forEach(Dict, []);
+  test("each", function () {
+    test_each(Dict, []);
 
     var corge = Dict({ corge: 3 });
-    test_forEach(Dict, [["bar", 2], ["foo", 1], ["qux", corge]]);
+    test_each(Dict, [["bar", 2], ["foo", 1], ["qux", corge]]);
   });
 
   test("toString", function () {
@@ -842,11 +848,11 @@ context("Set", function () {
     verify_set(o, []);
   });
 
-  test("forEach", function () {
-    test_forEach(Set, []);
+  test("each", function () {
+    test_each(Set, []);
 
     var four = Set([4]);
-    test_forEach(Set, [four, 1, 2, 3]);
+    test_each(Set, [four, 1, 2, 3]);
   });
 
   test("toString", function () {
@@ -1249,14 +1255,14 @@ context("List", function () {
     test_concat(199);
   });
 
-  test("forEach", function () {
-    test_forEach(List, []);
+  test("each", function () {
+    test_each(List, []);
 
     var list = List([4]);
-    test_forEach(List, [1, 2, 3, list]);
+    test_each(List, [1, 2, 3, list]);
 
     var expected = random_list(200);
-    test_forEach(List, expected);
+    test_each(List, expected);
   });
 
   test("toString", function () {
@@ -1389,11 +1395,11 @@ context("Queue", function () {
     verify_json(Queue([4, 5, Queue([1, 2, 3])]), [4, 5, [1, 2, 3]]);
   });
 
-  test("forEach", function () {
-    test_forEach(Queue, []);
+  test("each", function () {
+    test_each(Queue, []);
 
     var x = Queue([3]);
-    test_forEach(Queue, [1, 2, x, 4]);
+    test_each(Queue, [1, 2, x, 4]);
   });
 
   test("toString", function () {
@@ -1518,11 +1524,11 @@ context("Stack", function () {
     verify_json(Stack([4, 5, Stack([1, 2, 3])]), [4, 5, [1, 2, 3]]);
   });
 
-  test("forEach", function () {
-    test_forEach(Stack, []);
+  test("each", function () {
+    test_each(Stack, []);
 
     var x = Stack([3]);
-    test_forEach(Stack, [1, 2, x, 4]);
+    test_each(Stack, [1, 2, x, 4]);
   });
 
   test("toString", function () {
@@ -1708,11 +1714,11 @@ context("Record", function () {
     verify_json(Record({ foo: Record({ bar: 2 }) }), { foo: { bar: 2 } });
   });
 
-  test("forEach", function () {
-    test_forEach(Record, []);
-    test_forEach(Record, [["foo", 2]]);
-    test_forEach(Record, [["foo", 2], ["bar", 3]]);
-    test_forEach(Record, [["bar", 3], ["foo", 2]]);
+  test("each", function () {
+    test_each(Record, []);
+    test_each(Record, [["foo", 2]]);
+    test_each(Record, [["foo", 2], ["bar", 3]]);
+    test_each(Record, [["bar", 3], ["foo", 2]]);
   });
 
   // TODO

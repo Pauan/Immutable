@@ -1,11 +1,12 @@
-import { max } from "./AVL";
+import { max, iter_tree } from "./AVL";
 import { simpleSort, key_get, key_set, key_modify, key_remove } from "./Sorted";
 import { hash, tag_hash, hash_dict } from "./hash";
 import { toJS_object, tag_toJS } from "./toJS";
 import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { nil } from "./nil";
 import { ImmutableBase } from "./Base";
-import { isJSLiteral, identity } from "./util";
+import { tag_iter, iter_object, map_iter, each } from "./iter";
+import { identity } from "./util";
 
 function KeyNode(left, right, hash, key, value) {
   this.left  = left;
@@ -32,12 +33,6 @@ KeyNode.prototype.modify = function (info) {
   }
 };
 
-KeyNode.prototype.forEach = function (f) {
-  this.left.forEach(f);
-  f([this.key, this.value]);
-  this.right.forEach(f);
-};
-
 
 export function ImmutableDict(root, sort, hash_fn) {
   this.root = root;
@@ -47,6 +42,12 @@ export function ImmutableDict(root, sort, hash_fn) {
 }
 
 ImmutableDict.prototype = Object.create(ImmutableBase);
+
+ImmutableDict.prototype[tag_iter] = function (x) {
+  return map_iter(iter_tree(x.root), function (node) {
+    return [node.key, node.value];
+  });
+};
 
 ImmutableDict.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
@@ -74,11 +75,6 @@ ImmutableDict.prototype[tag_toJSON] = function (x) {
 };
 
 ImmutableDict.prototype[tag_toJS] = toJS_object;
-
-// TODO Symbol.iterator
-ImmutableDict.prototype.forEach = function (f) {
-  this.root.forEach(f);
-};
 
 ImmutableDict.prototype.isEmpty = function () {
   return this.root === nil;
@@ -150,19 +146,12 @@ ImmutableDict.prototype.modify = function (key, f) {
 ImmutableDict.prototype.merge = function (other) {
   var self = this;
 
-  if (isJSLiteral(other)) {
-    Object.keys(other).forEach(function (key) {
-      self = self.set(key, other[key]);
-    });
+  each(iter_object(other), function (_array) {
+    var key   = _array[0];
+    var value = _array[1];
 
-  } else {
-    other.forEach(function (_array) {
-      var key   = _array[0];
-      var value = _array[1];
-
-      self = self.set(key, value);
-    });
-  }
+    self = self.set(key, value);
+  });
 
   return self;
 };

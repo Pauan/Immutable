@@ -1,5 +1,6 @@
 import { isTag, UUIDTag } from "./Tag";
 import { pad_right, repeat, join_lines } from "./util";
+import { each } from "./iter";
 
 export var tag_hash = UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
 
@@ -58,13 +59,13 @@ export function hash_dict(x, spaces) {
 
   var max_key = 0;
 
-  x.forEach(function (_array) {
+  each(x, function (_array) {
     var key   = hash(_array[0]);
     var value = hash(_array[1]);
 
     key = key.split(/\n/);
 
-    key.forEach(function (key) {
+    each(key, function (key) {
       max_key = Math.max(max_key, key.length);
     });
 

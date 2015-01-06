@@ -4,7 +4,8 @@ import { hash, tag_hash } from "./hash";
 import { join_lines } from "./util";
 import { ImmutableBase } from "./Base";
 import { nil } from "./nil";
-import { Cons } from "./Cons";
+import { Cons, iter_cons } from "./Cons";
+import { tag_iter, each, reverse_iter } from "./iter";
 
 export function ImmutableStack(root, len) {
   this.root = root;
@@ -16,6 +17,10 @@ ImmutableStack.prototype = Object.create(ImmutableBase);
 
 fromJSON_registry["Stack"] = function (x) {
   return Stack(fromJSON_array(x));
+};
+
+ImmutableStack.prototype[tag_iter] = function (x) {
+  return reverse_iter(iter_cons(x.root));
 };
 
 ImmutableStack.prototype[tag_toJSON] = function (x) {
@@ -34,7 +39,7 @@ ImmutableStack.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     var a = [];
 
-    x.forEach(function (x) {
+    each(x, function (x) {
       a.push(hash(x));
     });
 
@@ -42,10 +47,6 @@ ImmutableStack.prototype[tag_hash] = function (x) {
   }
 
   return x.hash;
-};
-
-ImmutableStack.prototype.forEach = function (f) {
-  this.root.forEachRev(f);
 };
 
 // TODO code duplication with ImmutableQueue
@@ -81,7 +82,7 @@ ImmutableStack.prototype.pop = function () {
 ImmutableStack.prototype.concat = function (right) {
   var self = this;
 
-  right.forEach(function (x) {
+  each(right, function (x) {
     self = self.push(x);
   });
 
@@ -93,21 +94,12 @@ export function isStack(x) {
   return x instanceof ImmutableStack;
 }
 
-// TODO code duplication with Queue
 export function Stack(x) {
   if (x != null) {
     if (x instanceof ImmutableStack) {
       return x;
-
     } else {
-      // TODO use concat ?
-      var o = new ImmutableStack(nil, 0);
-
-      x.forEach(function (x) {
-        o = o.push(x);
-      });
-
-      return o;
+      return new ImmutableStack(nil, 0).concat(x);
     }
   } else {
     return new ImmutableStack(nil, 0);

@@ -1,5 +1,6 @@
 import { UUIDTag } from "./Tag";
 import { isObject } from "./util";
+import { each } from "./iter";
 
 export var tag_toJS = UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
 
@@ -19,7 +20,7 @@ export function toJS(x) {
 export function toJS_object(x) {
   var o = {};
 
-  x.forEach(function (_array) {
+  each(x, function (_array) {
     var key   = _array[0];
     var value = _array[1];
 
@@ -38,7 +39,7 @@ export function toJS_object(x) {
 export function toJS_array(x) {
   var a = [];
 
-  x.forEach(function (value) {
+  each(x, function (value) {
     a.push(toJS(value));
   });
 

@@ -1,14 +1,15 @@
 import { insert as array_insert, modify as array_modify, remove as array_remove } from "./Array";
-import { max, balanced_node, concat, insert_min, insert_max } from "./AVL";
+import { max, balanced_node, concat, insert_min, insert_max, iter_tree } from "./AVL";
 import { tag_hash, hash } from "./hash";
 import { join_lines } from "./util";
 import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_array, tag_toJS } from "./toJS";
 import { ImmutableBase } from "./Base";
+import { tag_iter, iter, mapcat_iter, concat_iter, reverse_iter, each } from "./iter";
 import { nil } from "./nil";
 
 // We use conses at the very end of the list for very fast O(1) push
-import { Cons } from "./Cons";
+import { Cons, iter_cons } from "./Cons";
 
 
 // It's faster to use arrays for small lists
@@ -96,14 +97,6 @@ function ArrayNode(left, right, array) {
 
 ArrayNode.prototype.copy = function (left, right) {
   return new ArrayNode(left, right, this.array);
-};
-
-ArrayNode.prototype.forEach = function (f) {
-  this.left.forEach(f);
-  this.array.forEach(function (x) {
-    f(x);
-  });
-  this.right.forEach(f);
 };
 
 
@@ -299,7 +292,7 @@ ImmutableList.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     var a = [];
 
-    x.forEach(function (x) {
+    each(x, function (x) {
       a.push(hash(x));
     });
 
@@ -311,10 +304,11 @@ ImmutableList.prototype[tag_hash] = function (x) {
 
 ImmutableList.prototype[tag_toJS] = toJS_array;
 
-// TODO Symbol.iterator
-ImmutableList.prototype.forEach = function (f) {
-  this.root.forEach(f);
-  this.tail.forEachRev(f);
+ImmutableList.prototype[tag_iter] = function (x) {
+  var tree = mapcat_iter(iter_tree(x.root), function (node) {
+    return iter(node.array);
+  });
+  return concat_iter(tree, reverse_iter(iter_cons(x.tail)));
 };
 
 ImmutableList.prototype.isEmpty = function () {
@@ -558,8 +552,7 @@ ImmutableList.prototype.concat = function (right) {
   } else {
     var self = this;
 
-    // TODO use iterator
-    right.forEach(function (x) {
+    each(right, function (x) {
       self = self.insert(x);
     });
 
@@ -589,15 +582,8 @@ export function List(array) {
   if (array != null) {
     if (array instanceof ImmutableList) {
       return array;
-
     } else {
-      var o = new ImmutableList(nil, nil, 0);
-
-      array.forEach(function (x) {
-        o = o.insert(x);
-      });
-
-      return o;
+      return new ImmutableList(nil, nil, 0).concat(array);
     }
   } else {
     return new ImmutableList(nil, nil, 0);

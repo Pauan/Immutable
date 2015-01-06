@@ -2,8 +2,9 @@ import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./t
 import { toJS_array, tag_toJS } from "./toJS";
 import { hash, tag_hash } from "./hash";
 import { join_lines } from "./util";
-import { Cons } from "./Cons";
+import { Cons, iter_cons, each_cons } from "./Cons";
 import { nil } from "./nil";
+import { tag_iter, concat_iter, reverse_iter, each } from "./iter";
 import { ImmutableBase } from "./Base";
 
 export function ImmutableQueue(left, right, len) {
@@ -29,16 +30,15 @@ ImmutableQueue.prototype.isEmpty = function () {
   return this.left === nil && this.right === nil;
 };
 
-ImmutableQueue.prototype.forEach = function (f) {
-  this.left.forEach(f);
-  this.right.forEachRev(f);
+ImmutableQueue.prototype[tag_iter] = function (x) {
+  return concat_iter(iter_cons(x.left), reverse_iter(iter_cons(x.right)));
 };
 
 ImmutableQueue.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     var a = [];
 
-    x.forEach(function (x) {
+    each(x, function (x) {
       a.push(hash(x));
     });
 
@@ -80,7 +80,8 @@ ImmutableQueue.prototype.pop = function () {
     if (left === nil) {
       var right = nil;
 
-      this.right.forEach(function (x) {
+      // TODO a little gross
+      each_cons(this.right, function (x) {
         right = new Cons(x, right);
       });
 
@@ -94,7 +95,7 @@ ImmutableQueue.prototype.pop = function () {
 ImmutableQueue.prototype.concat = function (right) {
   var self = this;
 
-  right.forEach(function (x) {
+  each(right, function (x) {
     self = self.push(x);
   });
 
@@ -106,21 +107,12 @@ export function isQueue(x) {
   return x instanceof ImmutableQueue;
 }
 
-// TODO code duplication with Stack
 export function Queue(x) {
   if (x != null) {
     if (x instanceof ImmutableQueue) {
       return x;
-
     } else {
-      // TODO use concat ?
-      var o = new ImmutableQueue(nil, nil, 0);
-
-      x.forEach(function (x) {
-        o = o.push(x);
-      });
-
-      return o;
+      return new ImmutableQueue(nil, nil, 0).concat(x);
     }
   } else {
     return new ImmutableQueue(nil, nil, 0);

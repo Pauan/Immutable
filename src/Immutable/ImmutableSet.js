@@ -1,4 +1,4 @@
-import { max } from "./AVL";
+import { max, iter_tree } from "./AVL";
 import { simpleSort, key_get, key_set, key_remove } from "./Sorted";
 import { hash, tag_hash } from "./hash";
 import { join_lines, identity } from "./util";
@@ -6,6 +6,7 @@ import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./t
 import { toJS_array, tag_toJS } from "./toJS";
 import { nil } from "./nil";
 import { ImmutableBase } from "./Base";
+import { tag_iter, map_iter, each } from "./iter";
 
 function SetNode(left, right, hash, key) {
   this.left  = left;
@@ -30,12 +31,6 @@ SetNode.prototype.modify = function (info) {
   }
 };
 
-SetNode.prototype.forEach = function (f) {
-  this.left.forEach(f);
-  f(this.key);
-  this.right.forEach(f);
-};
-
 
 export function ImmutableSet(root, sort, hash_fn) {
   this.root = root;
@@ -50,6 +45,12 @@ fromJSON_registry["Set"] = function (x) {
   return Set(fromJSON_array(x));
 };
 
+ImmutableSet.prototype[tag_iter] = function (x) {
+  return map_iter(iter_tree(x.root), function (node) {
+    return node.key;
+  });
+};
+
 ImmutableSet.prototype[tag_toJSON] = function (x) {
   if (isSet(x) && !isSortedSet(x)) {
     return toJSON_array("Set", x);
@@ -62,7 +63,7 @@ ImmutableSet.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
     var a = [];
 
-    x.forEach(function (value) {
+    each(x, function (value) {
       a.push(hash(value));
     });
 
@@ -79,12 +80,6 @@ ImmutableSet.prototype[tag_hash] = function (x) {
 };
 
 ImmutableSet.prototype[tag_toJS] = toJS_array;
-
-// TODO code duplication with ImmutableDict
-// TODO Symbol.iterator
-ImmutableSet.prototype.forEach = function (f) {
-  this.root.forEach(f);
-};
 
 // TODO code duplication with ImmutableDict
 ImmutableSet.prototype.isEmpty = function () {
@@ -127,8 +122,7 @@ ImmutableSet.prototype.remove = function (key) {
 ImmutableSet.prototype.union = function (other) {
   var self = this;
 
-  // TODO iterator
-  other.forEach(function (value) {
+  each(other, function (value) {
     self = self.add(value);
   });
 
@@ -144,8 +138,7 @@ ImmutableSet.prototype.intersect = function (other) {
   } else {
     var out = new ImmutableSet(nil, self.sort, self.hash_fn);
 
-    // TODO iterator
-    other.forEach(function (value) {
+    each(other, function (value) {
       if (self.has(value)) {
         out = out.add(value);
       }
@@ -158,8 +151,7 @@ ImmutableSet.prototype.intersect = function (other) {
 ImmutableSet.prototype.disjoint = function (other) {
   var self = this;
 
-  // TODO iterator
-  other.forEach(function (value) {
+  each(other, function (value) {
     if (self.has(value)) {
       self = self.remove(value);
     } else {
@@ -175,8 +167,7 @@ ImmutableSet.prototype.subtract = function (other) {
   var self = this;
 
   if (!self.isEmpty()) {
-    // TODO iterator
-    other.forEach(function (value) {
+    each(other, function (value) {
       self = self.remove(value);
     });
   }

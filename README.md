@@ -1,7 +1,7 @@
 How to use
 ==========
 
-Just load up `build/Immutable.js`. It works with AMD, CommonJS / Node.js, and browser globals.
+Just load up `build/Immutable.js`. It works with AMD / Require.js, CommonJS / Node.js, or the `Immutable` global variable.
 
 You can find documentation in the `doc` folder.
 

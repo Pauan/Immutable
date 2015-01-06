@@ -198,6 +198,234 @@
     function $$util$$identity(x) {
       return x;
     }
+    var $$iter$$tag_iter = $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
+
+    function $$iter$$iter_array(array) {
+      var i = 0;
+
+      return {
+        next: function () {
+          if (i < array.length) {
+            return { value: array[i++] }
+          } else {
+            return { done: true }
+          }
+        }
+      };
+    }
+
+    function $$iter$$iter(x) {
+      var fn = x[$$iter$$tag_iter];
+      if (fn != null) {
+        return fn(x);
+
+      } else if (Array.isArray(x)) {
+        return $$iter$$iter_array(x);
+
+      // TODO this isn't quite correct
+      } else if (typeof x === "string") {
+        return $$iter$$iter_array(x);
+
+      } else {
+        throw new Error("Cannot iter: " + x);
+      }
+    }
+
+    function $$iter$$make_seq(f) {
+      var o = {};
+      o[$$iter$$tag_iter] = function () {
+        return f();
+      };
+      return o;
+    }
+
+    function $$iter$$each_iter(iterator, f) {
+      for (;;) {
+        var info = iterator.next();
+        // TODO what if it has a value too?
+        if (info.done) {
+          break;
+        } else {
+          f(info.value);
+        }
+      }
+    }
+
+    function $$iter$$map_iter(iterator, f) {
+      return {
+        next: function () {
+          var info = iterator.next();
+          // TODO what if it has a value too?
+          if (info.done) {
+            // TODO just return `info` ?
+            return { done: true };
+          } else {
+            return { value: f(info.value) };
+          }
+        }
+      };
+    }
+
+    function $$iter$$concat_iter(x, y) {
+      var x_done = false;
+      var y_done = false;
+
+      return {
+        next: function () {
+          for (;;) {
+            if (x_done) {
+              if (y_done) {
+                return { done: true };
+              } else {
+                var info = y.next();
+                if (info.done) {
+                  y_done = true;
+                } else {
+                  return info;
+                }
+              }
+            } else {
+              var info = x.next();
+              if (info.done) {
+                x_done = true;
+              } else {
+                return info;
+              }
+            }
+          }
+        }
+      };
+    }
+
+    function $$iter$$reverse_iter(iterator) {
+      var stack = null;
+      var i     = null;
+
+      return {
+        next: function () {
+          if (stack === null) {
+            stack = [];
+
+            // TODO should it do this here, or inside `next` ?
+            $$iter$$each_iter(iterator, function (x) {
+              stack.push(x);
+            });
+
+            i = stack.length;
+          }
+
+          if (i) {
+            return { value: stack[--i] };
+          } else {
+            return { done: true };
+          }
+        }
+      };
+    }
+
+    function $$iter$$mapcat_iter(iterator, f) {
+      var done = false;
+      var sub  = null;
+
+      return {
+        next: function () {
+          for (;;) {
+            if (done) {
+              return { done: true };
+
+            } else if (sub === null) {
+              var info = iterator.next();
+              // TODO what if it has a value too?
+              if (info.done) {
+                done = true;
+              } else {
+                sub = f(info.value);
+              }
+
+            } else {
+              var info = sub.next();
+              if (info.done) {
+                sub = null;
+              } else {
+                return info;
+              }
+            }
+          }
+        }
+      };
+    }
+
+    function $$iter$$iter_object(x) {
+      if ($$util$$isJSLiteral(x)) {
+        return $$iter$$map(Object.keys(x), function (key) {
+          return [key, x[key]];
+        });
+      } else {
+        return x;
+      }
+    }
+
+
+    function $$iter$$each(x, f) {
+      $$iter$$each_iter($$iter$$iter(x), f);
+    }
+
+    function $$iter$$findIndex(x, f, def) {
+      var iterator = $$iter$$iter(x);
+
+      var index = 0;
+
+      for (;;) {
+        var info = iterator.next();
+        // TODO what if it has a value too?
+        if (info.done) {
+          if (arguments.length === 3) {
+            return def;
+          } else {
+            throw new Error("findIndex did not find anything");
+          }
+
+        } else if (f(info.value)) {
+          return index;
+
+        } else {
+          ++index;
+        }
+      }
+    }
+
+    function $$iter$$map(x, f) {
+      return $$iter$$make_seq(function () {
+        return $$iter$$map_iter($$iter$$iter(x), f);
+      });
+    }
+
+    function $$iter$$reverse(x) {
+      return $$iter$$make_seq(function () {
+        return $$iter$$reverse_iter($$iter$$iter(x));
+      });
+    }
+
+    function $$iter$$keep(x, f) {
+      return $$iter$$make_seq(function () {
+        var iterator = $$iter$$iter(x);
+        return {
+          next: function () {
+            for (;;) {
+              var info = iterator.next();
+              // TODO what if it has a value too?
+              if (info.done) {
+                // TODO just return `info` ?
+                return { done: true };
+              } else if (f(info.value)) {
+                return info;
+              }
+            }
+          }
+        };
+      });
+    }
+
     var $$hash$$tag_hash = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
 
     var $$hash$$mutable_hash_id = 0;
@@ -255,13 +483,13 @@
 
       var max_key = 0;
 
-      x.forEach(function (_array) {
+      $$iter$$each(x, function (_array) {
         var key   = $$hash$$hash(_array[0]);
         var value = $$hash$$hash(_array[1]);
 
         key = key.split(/\n/);
 
-        key.forEach(function (key) {
+        $$iter$$each(key, function (key) {
           max_key = Math.max(max_key, key.length);
         });
 
@@ -304,7 +532,7 @@
     function $$toJS$$toJS_object(x) {
       var o = {};
 
-      x.forEach(function (_array) {
+      $$iter$$each(x, function (_array) {
         var key   = _array[0];
         var value = _array[1];
 
@@ -323,7 +551,7 @@
     function $$toJS$$toJS_array(x) {
       var a = [];
 
-      x.forEach(function (value) {
+      $$iter$$each(x, function (value) {
         a.push($$toJS$$toJS(value));
       });
 
@@ -385,7 +613,7 @@
       o.keys   = [];
       o.values = [];
 
-      x.forEach(function (_array) {
+      $$iter$$each(x, function (_array) {
         var key   = _array[0];
         var value = _array[1];
 
@@ -403,7 +631,7 @@
 
       o.values = [];
 
-      x.forEach(function (value) {
+      $$iter$$each(x, function (value) {
         o.values.push($$toJSON$$toJSON(value));
       });
 
@@ -439,8 +667,6 @@
     var $$nil$$nil = {};
     $$nil$$nil.depth      = 0;
     $$nil$$nil.size       = 0;
-    $$nil$$nil.forEach    = function () {};
-    $$nil$$nil.forEachRev = function () {};
     function $$AVL$$max(x, y) {
       if (x > y) {
         return x;
@@ -527,6 +753,34 @@
         // TODO do we need to use balanced_node ?
         return $$AVL$$balanced_node(node, node.left, $$AVL$$insert_max(node.right, new_node));
       }
+    }
+
+    function $$AVL$$iter_tree(node) {
+      var parents = [];
+
+      while (node !== $$nil$$nil) {
+        parents.push(node);
+        node = node.left;
+      }
+
+      return {
+        next: function () {
+          if (parents.length) {
+            var parent = parents.pop();
+
+            node = parent.right;
+
+            while (node !== $$nil$$nil) {
+              parents.push(node);
+              node = node.left;
+            }
+
+            return { value: parent };
+          } else {
+            return { done: true };
+          }
+        }
+      };
     }
     function $$Sorted$$simpleSort(x, y) {
       if (x === y) {
@@ -683,12 +937,6 @@
       }
     };
 
-    $$ImmutableDict$$KeyNode.prototype.forEach = function (f) {
-      this.left.forEach(f);
-      f([this.key, this.value]);
-      this.right.forEach(f);
-    };
-
 
     function $$ImmutableDict$$ImmutableDict(root, sort, hash_fn) {
       this.root = root;
@@ -698,6 +946,12 @@
     }
 
     $$ImmutableDict$$ImmutableDict.prototype = Object.create($$Base$$ImmutableBase);
+
+    $$ImmutableDict$$ImmutableDict.prototype[$$iter$$tag_iter] = function (x) {
+      return $$iter$$map_iter($$AVL$$iter_tree(x.root), function (node) {
+        return [node.key, node.value];
+      });
+    };
 
     $$ImmutableDict$$ImmutableDict.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
@@ -725,11 +979,6 @@
     };
 
     $$ImmutableDict$$ImmutableDict.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_object;
-
-    // TODO Symbol.iterator
-    $$ImmutableDict$$ImmutableDict.prototype.forEach = function (f) {
-      this.root.forEach(f);
-    };
 
     $$ImmutableDict$$ImmutableDict.prototype.isEmpty = function () {
       return this.root === $$nil$$nil;
@@ -801,19 +1050,12 @@
     $$ImmutableDict$$ImmutableDict.prototype.merge = function (other) {
       var self = this;
 
-      if ($$util$$isJSLiteral(other)) {
-        Object.keys(other).forEach(function (key) {
-          self = self.set(key, other[key]);
-        });
+      $$iter$$each($$iter$$iter_object(other), function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
 
-      } else {
-        other.forEach(function (_array) {
-          var key   = _array[0];
-          var value = _array[1];
-
-          self = self.set(key, value);
-        });
-      }
+        self = self.set(key, value);
+      });
 
       return self;
     };
@@ -875,12 +1117,6 @@
       }
     };
 
-    $$ImmutableSet$$SetNode.prototype.forEach = function (f) {
-      this.left.forEach(f);
-      f(this.key);
-      this.right.forEach(f);
-    };
-
 
     function $$ImmutableSet$$ImmutableSet(root, sort, hash_fn) {
       this.root = root;
@@ -895,6 +1131,12 @@
       return $$ImmutableSet$$Set($$toJSON$$fromJSON_array(x));
     };
 
+    $$ImmutableSet$$ImmutableSet.prototype[$$iter$$tag_iter] = function (x) {
+      return $$iter$$map_iter($$AVL$$iter_tree(x.root), function (node) {
+        return node.key;
+      });
+    };
+
     $$ImmutableSet$$ImmutableSet.prototype[$$toJSON$$tag_toJSON] = function (x) {
       if ($$ImmutableSet$$isSet(x) && !$$ImmutableSet$$isSortedSet(x)) {
         return $$toJSON$$toJSON_array("Set", x);
@@ -907,7 +1149,7 @@
       if (x.hash === null) {
         var a = [];
 
-        x.forEach(function (value) {
+        $$iter$$each(x, function (value) {
           a.push($$hash$$hash(value));
         });
 
@@ -924,12 +1166,6 @@
     };
 
     $$ImmutableSet$$ImmutableSet.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
-
-    // TODO code duplication with ImmutableDict
-    // TODO Symbol.iterator
-    $$ImmutableSet$$ImmutableSet.prototype.forEach = function (f) {
-      this.root.forEach(f);
-    };
 
     // TODO code duplication with ImmutableDict
     $$ImmutableSet$$ImmutableSet.prototype.isEmpty = function () {
@@ -972,8 +1208,7 @@
     $$ImmutableSet$$ImmutableSet.prototype.union = function (other) {
       var self = this;
 
-      // TODO iterator
-      other.forEach(function (value) {
+      $$iter$$each(other, function (value) {
         self = self.add(value);
       });
 
@@ -989,8 +1224,7 @@
       } else {
         var out = new $$ImmutableSet$$ImmutableSet($$nil$$nil, self.sort, self.hash_fn);
 
-        // TODO iterator
-        other.forEach(function (value) {
+        $$iter$$each(other, function (value) {
           if (self.has(value)) {
             out = out.add(value);
           }
@@ -1003,8 +1237,7 @@
     $$ImmutableSet$$ImmutableSet.prototype.disjoint = function (other) {
       var self = this;
 
-      // TODO iterator
-      other.forEach(function (value) {
+      $$iter$$each(other, function (value) {
         if (self.has(value)) {
           self = self.remove(value);
         } else {
@@ -1020,8 +1253,7 @@
       var self = this;
 
       if (!self.isEmpty()) {
-        // TODO iterator
-        other.forEach(function (value) {
+        $$iter$$each(other, function (value) {
           self = self.remove(value);
         });
       }
@@ -1132,19 +1364,26 @@
       this.cdr = cdr;
     }
 
-    $$Cons$$Cons.prototype.forEach = function (f) {
-      var self = this;
-      while (self !== $$nil$$nil) {
-        f(self.car);
-        self = self.cdr;
-      }
-    };
+    function $$Cons$$iter_cons(x) {
+      return {
+        next: function () {
+          if (x === $$nil$$nil) {
+            return { done: true };
+          } else {
+            var value = x.car;
+            x = x.cdr;
+            return { value: value };
+          }
+        }
+      };
+    }
 
-    // TODO this isn't tail recursive
-    $$Cons$$Cons.prototype.forEachRev = function (f) {
-      this.cdr.forEachRev(f);
-      f(this.car);
-    };
+    function $$Cons$$each_cons(x, f) {
+      while (x !== $$nil$$nil) {
+        f(x.car);
+        x = x.cdr;
+      }
+    }
 
 
     // It's faster to use arrays for small lists
@@ -1232,14 +1471,6 @@
 
     $$ImmutableList$$ArrayNode.prototype.copy = function (left, right) {
       return new $$ImmutableList$$ArrayNode(left, right, this.array);
-    };
-
-    $$ImmutableList$$ArrayNode.prototype.forEach = function (f) {
-      this.left.forEach(f);
-      this.array.forEach(function (x) {
-        f(x);
-      });
-      this.right.forEach(f);
     };
 
 
@@ -1435,7 +1666,7 @@
       if (x.hash === null) {
         var a = [];
 
-        x.forEach(function (x) {
+        $$iter$$each(x, function (x) {
           a.push($$hash$$hash(x));
         });
 
@@ -1447,10 +1678,11 @@
 
     $$ImmutableList$$ImmutableList.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
-    // TODO Symbol.iterator
-    $$ImmutableList$$ImmutableList.prototype.forEach = function (f) {
-      this.root.forEach(f);
-      this.tail.forEachRev(f);
+    $$ImmutableList$$ImmutableList.prototype[$$iter$$tag_iter] = function (x) {
+      var tree = $$iter$$mapcat_iter($$AVL$$iter_tree(x.root), function (node) {
+        return $$iter$$iter(node.array);
+      });
+      return $$iter$$concat_iter(tree, $$iter$$reverse_iter($$Cons$$iter_cons(x.tail)));
     };
 
     $$ImmutableList$$ImmutableList.prototype.isEmpty = function () {
@@ -1694,8 +1926,7 @@
       } else {
         var self = this;
 
-        // TODO use iterator
-        right.forEach(function (x) {
+        $$iter$$each(right, function (x) {
           self = self.insert(x);
         });
 
@@ -1711,15 +1942,8 @@
       if (array != null) {
         if (array instanceof $$ImmutableList$$ImmutableList) {
           return array;
-
         } else {
-          var o = new $$ImmutableList$$ImmutableList($$nil$$nil, $$nil$$nil, 0);
-
-          array.forEach(function (x) {
-            o = o.insert(x);
-          });
-
-          return o;
+          return new $$ImmutableList$$ImmutableList($$nil$$nil, $$nil$$nil, 0).concat(array);
         }
       } else {
         return new $$ImmutableList$$ImmutableList($$nil$$nil, $$nil$$nil, 0);
@@ -1748,16 +1972,15 @@
       return this.left === $$nil$$nil && this.right === $$nil$$nil;
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype.forEach = function (f) {
-      this.left.forEach(f);
-      this.right.forEachRev(f);
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$iter$$tag_iter] = function (x) {
+      return $$iter$$concat_iter($$Cons$$iter_cons(x.left), $$iter$$reverse_iter($$Cons$$iter_cons(x.right)));
     };
 
     $$ImmutableQueue$$ImmutableQueue.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = [];
 
-        x.forEach(function (x) {
+        $$iter$$each(x, function (x) {
           a.push($$hash$$hash(x));
         });
 
@@ -1799,7 +2022,8 @@
         if (left === $$nil$$nil) {
           var right = $$nil$$nil;
 
-          this.right.forEach(function (x) {
+          // TODO a little gross
+          $$Cons$$each_cons(this.right, function (x) {
             right = new $$Cons$$Cons(x, right);
           });
 
@@ -1813,7 +2037,7 @@
     $$ImmutableQueue$$ImmutableQueue.prototype.concat = function (right) {
       var self = this;
 
-      right.forEach(function (x) {
+      $$iter$$each(right, function (x) {
         self = self.push(x);
       });
 
@@ -1829,16 +2053,8 @@
       if (x != null) {
         if (x instanceof $$ImmutableQueue$$ImmutableQueue) {
           return x;
-
         } else {
-          // TODO use concat ?
-          var o = new $$ImmutableQueue$$ImmutableQueue($$nil$$nil, $$nil$$nil, 0);
-
-          x.forEach(function (x) {
-            o = o.push(x);
-          });
-
-          return o;
+          return new $$ImmutableQueue$$ImmutableQueue($$nil$$nil, $$nil$$nil, 0).concat(x);
         }
       } else {
         return new $$ImmutableQueue$$ImmutableQueue($$nil$$nil, $$nil$$nil, 0);
@@ -1854,6 +2070,10 @@
 
     $$toJSON$$fromJSON_registry["Stack"] = function (x) {
       return $$ImmutableStack$$Stack($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype[$$iter$$tag_iter] = function (x) {
+      return $$iter$$reverse_iter($$Cons$$iter_cons(x.root));
     };
 
     $$ImmutableStack$$ImmutableStack.prototype[$$toJSON$$tag_toJSON] = function (x) {
@@ -1872,7 +2092,7 @@
       if (x.hash === null) {
         var a = [];
 
-        x.forEach(function (x) {
+        $$iter$$each(x, function (x) {
           a.push($$hash$$hash(x));
         });
 
@@ -1880,10 +2100,6 @@
       }
 
       return x.hash;
-    };
-
-    $$ImmutableStack$$ImmutableStack.prototype.forEach = function (f) {
-      this.root.forEachRev(f);
     };
 
     // TODO code duplication with ImmutableQueue
@@ -1919,7 +2135,7 @@
     $$ImmutableStack$$ImmutableStack.prototype.concat = function (right) {
       var self = this;
 
-      right.forEach(function (x) {
+      $$iter$$each(right, function (x) {
         self = self.push(x);
       });
 
@@ -1935,16 +2151,8 @@
       if (x != null) {
         if (x instanceof $$ImmutableStack$$ImmutableStack) {
           return x;
-
         } else {
-          // TODO use concat ?
-          var o = new $$ImmutableStack$$ImmutableStack($$nil$$nil, 0);
-
-          x.forEach(function (x) {
-            o = o.push(x);
-          });
-
-          return o;
+          return new $$ImmutableStack$$ImmutableStack($$nil$$nil, 0).concat(x);
         }
       } else {
         return new $$ImmutableStack$$ImmutableStack($$nil$$nil, 0);
@@ -1984,13 +2192,16 @@
       return x.hash;
     };
 
-    $$ImmutableRecord$$ImmutableRecord.prototype.forEach = function (f) {
-      var keys   = this.keys;
-      var values = this.values;
-      for (var s in keys) {
-        var index = keys[s];
-        f([s, values[index]]);
-      }
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$iter$$tag_iter] = function (x) {
+      var keys   = x.keys;
+      var values = x.values;
+
+      // TODO a little gross
+      return $$iter$$iter($$iter$$map($$iter$$iter_object(keys), function (_array) {
+        var s     = _array[0];
+        var index = _array[1];
+        return [s, values[index]];
+      }));
     };
 
     $$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
@@ -2034,19 +2245,12 @@
     $$ImmutableRecord$$ImmutableRecord.prototype.update = function (other) {
       var self = this;
 
-      if ($$util$$isJSLiteral(other)) {
-        Object.keys(other).forEach(function (key) {
-          self = self.set(key, other[key]);
-        });
+      $$iter$$each($$iter$$iter_object(other), function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
 
-      } else {
-        other.forEach(function (_array) {
-          var key   = _array[0];
-          var value = _array[1];
-
-          self = self.set(key, value);
-        });
-      }
+        self = self.set(key, value);
+      });
 
       return self;
     };
@@ -2064,15 +2268,8 @@
         if ($$ImmutableRecord$$isRecord(obj)) {
           return obj;
 
-        } else if ($$util$$isJSLiteral(obj)) {
-          Object.keys(obj).forEach(function (key) {
-            $$ImmutableRecord$$checkKey(key);
-
-            keys[key] = values.push(obj[key]) - 1;
-          });
-
         } else {
-          obj.forEach(function (_array) {
+          $$iter$$each($$iter$$iter_object(obj), function (_array) {
             var key   = _array[0];
             var value = _array[1];
 
@@ -2228,6 +2425,11 @@
       exports.isUUIDTag = $$Tag$$isUUIDTag;
       exports.Tag = $$Tag$$Tag;
       exports.UUIDTag = $$Tag$$UUIDTag;
+      exports.each = $$iter$$each;
+      exports.map = $$iter$$map;
+      exports.keep = $$iter$$keep;
+      exports.findIndex = $$iter$$findIndex;
+      exports.reverse = $$iter$$reverse;
     });
     function $$Header$$header() {
       $$Benchmark$$.group("Information", function () {

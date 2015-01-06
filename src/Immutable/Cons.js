@@ -5,16 +5,23 @@ export function Cons(car, cdr) {
   this.cdr = cdr;
 }
 
-Cons.prototype.forEach = function (f) {
-  var self = this;
-  while (self !== nil) {
-    f(self.car);
-    self = self.cdr;
-  }
-};
+export function iter_cons(x) {
+  return {
+    next: function () {
+      if (x === nil) {
+        return { done: true };
+      } else {
+        var value = x.car;
+        x = x.cdr;
+        return { value: value };
+      }
+    }
+  };
+}
 
-// TODO this isn't tail recursive
-Cons.prototype.forEachRev = function (f) {
-  this.cdr.forEachRev(f);
-  f(this.car);
-};
+export function each_cons(x, f) {
+  while (x !== nil) {
+    f(x.car);
+    x = x.cdr;
+  }
+}

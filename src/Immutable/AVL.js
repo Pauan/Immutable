@@ -91,3 +91,32 @@ export function insert_max(node, new_node) {
     return balanced_node(node, node.left, insert_max(node.right, new_node));
   }
 }
+
+// http://n00tc0d3r.blogspot.com/2013/08/implement-iterator-for-binarytree-i-in.html
+export function iter_tree(node) {
+  var parents = [];
+
+  while (node !== nil) {
+    parents.push(node);
+    node = node.left;
+  }
+
+  return {
+    next: function () {
+      if (parents.length) {
+        var parent = parents.pop();
+
+        node = parent.right;
+
+        while (node !== nil) {
+          parents.push(node);
+          node = node.left;
+        }
+
+        return { value: parent };
+      } else {
+        return { done: true };
+      }
+    }
+  };
+}

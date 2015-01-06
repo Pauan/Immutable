@@ -3,7 +3,7 @@ import { hash, tag_hash, hash_dict } from "./hash";
 import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_object, tag_toJS } from "./toJS";
 import { ImmutableBase } from "./Base";
-import { isJSLiteral } from "./util";
+import { tag_iter, iter_object, map, iter, each } from "./iter";
 
 function checkKey(key) {
   // Tags are currently implemented as strings
@@ -38,13 +38,16 @@ ImmutableRecord.prototype[tag_hash] = function (x) {
   return x.hash;
 };
 
-ImmutableRecord.prototype.forEach = function (f) {
-  var keys   = this.keys;
-  var values = this.values;
-  for (var s in keys) {
-    var index = keys[s];
-    f([s, values[index]]);
-  }
+ImmutableRecord.prototype[tag_iter] = function (x) {
+  var keys   = x.keys;
+  var values = x.values;
+
+  // TODO a little gross
+  return iter(map(iter_object(keys), function (_array) {
+    var s     = _array[0];
+    var index = _array[1];
+    return [s, values[index]];
+  }));
 };
 
 ImmutableRecord.prototype.get = function (key) {
@@ -88,19 +91,12 @@ ImmutableRecord.prototype.modify = function (key, f) {
 ImmutableRecord.prototype.update = function (other) {
   var self = this;
 
-  if (isJSLiteral(other)) {
-    Object.keys(other).forEach(function (key) {
-      self = self.set(key, other[key]);
-    });
+  each(iter_object(other), function (_array) {
+    var key   = _array[0];
+    var value = _array[1];
 
-  } else {
-    other.forEach(function (_array) {
-      var key   = _array[0];
-      var value = _array[1];
-
-      self = self.set(key, value);
-    });
-  }
+    self = self.set(key, value);
+  });
 
   return self;
 };
@@ -118,15 +114,8 @@ export function Record(obj) {
     if (isRecord(obj)) {
       return obj;
 
-    } else if (isJSLiteral(obj)) {
-      Object.keys(obj).forEach(function (key) {
-        checkKey(key);
-
-        keys[key] = values.push(obj[key]) - 1;
-      });
-
     } else {
-      obj.forEach(function (_array) {
+      each(iter_object(obj), function (_array) {
         var key   = _array[0];
         var value = _array[1];
 

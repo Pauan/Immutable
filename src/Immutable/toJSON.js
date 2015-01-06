@@ -1,5 +1,6 @@
 import { isTag, isUUIDTag, UUIDTag } from "./Tag";
 import { isObject } from "./util";
+import { each } from "./iter";
 
 export var fromJSON_registry = {};
 
@@ -57,7 +58,7 @@ export function toJSON_object(type, x) {
   o.keys   = [];
   o.values = [];
 
-  x.forEach(function (_array) {
+  each(x, function (_array) {
     var key   = _array[0];
     var value = _array[1];
 
@@ -75,7 +76,7 @@ export function toJSON_array(type, x) {
 
   o.values = [];
 
-  x.forEach(function (value) {
+  each(x, function (value) {
     o.values.push(toJSON(value));
   });
 
