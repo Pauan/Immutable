@@ -298,22 +298,17 @@
     }
 
     function $$iter$$reverse_iter(iterator) {
-      var stack = null;
-      var i     = null;
+      var stack = [];
+
+      // TODO should it do this here, or inside `next` ?
+      $$iter$$each_iter(iterator, function (x) {
+        stack.push(x);
+      });
+
+      var i = stack.length;
 
       return {
         next: function () {
-          if (stack === null) {
-            stack = [];
-
-            // TODO should it do this here, or inside `next` ?
-            $$iter$$each_iter(iterator, function (x) {
-              stack.push(x);
-            });
-
-            i = stack.length;
-          }
-
           if (i) {
             return { value: stack[--i] };
           } else {

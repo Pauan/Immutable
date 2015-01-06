@@ -1,3 +1,5 @@
+// TODO unit tests for this stuff
+
 import { UUIDTag } from "./Tag";
 import { isJSLiteral } from "./util";
 
@@ -101,22 +103,17 @@ export function concat_iter(x, y) {
 }
 
 export function reverse_iter(iterator) {
-  var stack = null;
-  var i     = null;
+  var stack = [];
+
+  // TODO should it do this here, or inside `next` ?
+  each_iter(iterator, function (x) {
+    stack.push(x);
+  });
+
+  var i = stack.length;
 
   return {
     next: function () {
-      if (stack === null) {
-        stack = [];
-
-        // TODO should it do this here, or inside `next` ?
-        each_iter(iterator, function (x) {
-          stack.push(x);
-        });
-
-        i = stack.length;
-      }
-
       if (i) {
         return { value: stack[--i] };
       } else {
