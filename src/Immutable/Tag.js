@@ -14,13 +14,20 @@ export function isUUID(x) {
 }
 
 export function isTag(x) {
-  return typeof x === "string" && (is_tag_regexp.test(x) || is_uuid_tag_regexp.test(x));
+  var type = typeof x;
+         // TODO documentation for this
+  return type === "symbol" ||
+         (type === "string" &&
+          (is_tag_regexp.test(x) ||
+           is_uuid_tag_regexp.test(x)));
 }
 
+// TODO Symbol support
 export function isUUIDTag(x) {
   return typeof x === "string" && is_uuid_tag_regexp.test(x);
 }
 
+// TODO Symbol support ?
 export function Tag() {
   if (arguments.length === 0) {
     return "(Tag " + tag_uuid + " " + (++tag_id) + ")";
@@ -29,6 +36,7 @@ export function Tag() {
   }
 }
 
+// TODO Symbol support ?
 export function UUIDTag(id) {
   if (arguments.length === 1) {
     if (isUUID(id)) {

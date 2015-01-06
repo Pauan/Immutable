@@ -38,9 +38,9 @@ ImmutableRecord.prototype[tag_hash] = function (x) {
   return x.hash;
 };
 
-ImmutableRecord.prototype[tag_iter] = function (x) {
-  var keys   = x.keys;
-  var values = x.values;
+ImmutableRecord.prototype[tag_iter] = function () {
+  var keys   = this.keys;
+  var values = this.values;
 
   // TODO a little gross
   return iter(map(iter_object(keys), function (_array) {

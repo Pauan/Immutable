@@ -304,11 +304,11 @@ ImmutableList.prototype[tag_hash] = function (x) {
 
 ImmutableList.prototype[tag_toJS] = toJS_array;
 
-ImmutableList.prototype[tag_iter] = function (x) {
-  var tree = mapcat_iter(iter_tree(x.root), function (node) {
+ImmutableList.prototype[tag_iter] = function () {
+  var tree = mapcat_iter(iter_tree(this.root), function (node) {
     return iter(node.array);
   });
-  return concat_iter(tree, reverse_iter(iter_cons(x.tail)));
+  return concat_iter(tree, reverse_iter(iter_cons(this.tail)));
 };
 
 ImmutableList.prototype.isEmpty = function () {

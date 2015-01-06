@@ -43,8 +43,8 @@ export function ImmutableDict(root, sort, hash_fn) {
 
 ImmutableDict.prototype = Object.create(ImmutableBase);
 
-ImmutableDict.prototype[tag_iter] = function (x) {
-  return map_iter(iter_tree(x.root), function (node) {
+ImmutableDict.prototype[tag_iter] = function () {
+  return map_iter(iter_tree(this.root), function (node) {
     return [node.key, node.value];
   });
 };

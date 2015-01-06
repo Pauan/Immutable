@@ -3,7 +3,9 @@
 import { UUIDTag } from "./Tag";
 import { isJSLiteral } from "./util";
 
-export var tag_iter = UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
+export var tag_iter = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
+                        ? Symbol.iterator
+                        : UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3"));
 
 function iter_array(array) {
   var i = 0;
@@ -11,9 +13,9 @@ function iter_array(array) {
   return {
     next: function () {
       if (i < array.length) {
-        return { value: array[i++] }
+        return { value: array[i++] };
       } else {
-        return { done: true }
+        return { done: true };
       }
     }
   };
@@ -22,7 +24,7 @@ function iter_array(array) {
 export function iter(x) {
   var fn = x[tag_iter];
   if (fn != null) {
-    return fn(x);
+    return fn.call(x);
 
   } else if (Array.isArray(x)) {
     return iter_array(x);
@@ -36,11 +38,10 @@ export function iter(x) {
   }
 }
 
+// TODO have `tag_iter` return `this`, and then have `next` directly on `o` ?
 export function make_seq(f) {
   var o = {};
-  o[tag_iter] = function () {
-    return f();
-  };
+  o[tag_iter] = f;
   return o;
 }
 
@@ -155,6 +156,7 @@ export function mapcat_iter(iterator, f) {
   };
 }
 
+// TODO what if the JS literal has a `tag_iter` property ?
 export function iter_object(x) {
   if (isJSLiteral(x)) {
     return map(Object.keys(x), function (key) {

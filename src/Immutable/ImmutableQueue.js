@@ -30,8 +30,8 @@ ImmutableQueue.prototype.isEmpty = function () {
   return this.left === nil && this.right === nil;
 };
 
-ImmutableQueue.prototype[tag_iter] = function (x) {
-  return concat_iter(iter_cons(x.left), reverse_iter(iter_cons(x.right)));
+ImmutableQueue.prototype[tag_iter] = function () {
+  return concat_iter(iter_cons(this.left), reverse_iter(iter_cons(this.right)));
 };
 
 ImmutableQueue.prototype[tag_hash] = function (x) {

@@ -19,8 +19,8 @@ fromJSON_registry["Stack"] = function (x) {
   return Stack(fromJSON_array(x));
 };
 
-ImmutableStack.prototype[tag_iter] = function (x) {
-  return reverse_iter(iter_cons(x.root));
+ImmutableStack.prototype[tag_iter] = function () {
+  return reverse_iter(iter_cons(this.root));
 };
 
 ImmutableStack.prototype[tag_toJSON] = function (x) {

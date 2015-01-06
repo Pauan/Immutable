@@ -134,7 +134,12 @@
     }
 
     function $$Tag$$isTag(x) {
-      return typeof x === "string" && ($$Tag$$is_tag_regexp.test(x) || $$Tag$$is_uuid_tag_regexp.test(x));
+      var type = typeof x;
+             // TODO documentation for this
+      return type === "symbol" ||
+             (type === "string" &&
+              ($$Tag$$is_tag_regexp.test(x) ||
+               $$Tag$$is_uuid_tag_regexp.test(x)));
     }
 
     function $$Tag$$isUUIDTag(x) {
@@ -198,7 +203,9 @@
     function $$util$$identity(x) {
       return x;
     }
-    var $$iter$$tag_iter = $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
+    var $$iter$$tag_iter = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
+                            ? Symbol.iterator
+                            : $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3"));
 
     function $$iter$$iter_array(array) {
       var i = 0;
@@ -206,9 +213,9 @@
       return {
         next: function () {
           if (i < array.length) {
-            return { value: array[i++] }
+            return { value: array[i++] };
           } else {
-            return { done: true }
+            return { done: true };
           }
         }
       };
@@ -217,7 +224,7 @@
     function $$iter$$iter(x) {
       var fn = x[$$iter$$tag_iter];
       if (fn != null) {
-        return fn(x);
+        return fn.call(x);
 
       } else if (Array.isArray(x)) {
         return $$iter$$iter_array(x);
@@ -233,9 +240,7 @@
 
     function $$iter$$make_seq(f) {
       var o = {};
-      o[$$iter$$tag_iter] = function () {
-        return f();
-      };
+      o[$$iter$$tag_iter] = f;
       return o;
     }
 
@@ -942,8 +947,8 @@
 
     $$ImmutableDict$$ImmutableDict.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$iter$$tag_iter] = function (x) {
-      return $$iter$$map_iter($$AVL$$iter_tree(x.root), function (node) {
+    $$ImmutableDict$$ImmutableDict.prototype[$$iter$$tag_iter] = function () {
+      return $$iter$$map_iter($$AVL$$iter_tree(this.root), function (node) {
         return [node.key, node.value];
       });
     };
@@ -1126,8 +1131,8 @@
       return $$ImmutableSet$$Set($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$iter$$tag_iter] = function (x) {
-      return $$iter$$map_iter($$AVL$$iter_tree(x.root), function (node) {
+    $$ImmutableSet$$ImmutableSet.prototype[$$iter$$tag_iter] = function () {
+      return $$iter$$map_iter($$AVL$$iter_tree(this.root), function (node) {
         return node.key;
       });
     };
@@ -1673,11 +1678,11 @@
 
     $$ImmutableList$$ImmutableList.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
-    $$ImmutableList$$ImmutableList.prototype[$$iter$$tag_iter] = function (x) {
-      var tree = $$iter$$mapcat_iter($$AVL$$iter_tree(x.root), function (node) {
+    $$ImmutableList$$ImmutableList.prototype[$$iter$$tag_iter] = function () {
+      var tree = $$iter$$mapcat_iter($$AVL$$iter_tree(this.root), function (node) {
         return $$iter$$iter(node.array);
       });
-      return $$iter$$concat_iter(tree, $$iter$$reverse_iter($$Cons$$iter_cons(x.tail)));
+      return $$iter$$concat_iter(tree, $$iter$$reverse_iter($$Cons$$iter_cons(this.tail)));
     };
 
     $$ImmutableList$$ImmutableList.prototype.isEmpty = function () {
@@ -1967,8 +1972,8 @@
       return this.left === $$nil$$nil && this.right === $$nil$$nil;
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$iter$$tag_iter] = function (x) {
-      return $$iter$$concat_iter($$Cons$$iter_cons(x.left), $$iter$$reverse_iter($$Cons$$iter_cons(x.right)));
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$iter$$tag_iter] = function () {
+      return $$iter$$concat_iter($$Cons$$iter_cons(this.left), $$iter$$reverse_iter($$Cons$$iter_cons(this.right)));
     };
 
     $$ImmutableQueue$$ImmutableQueue.prototype[$$hash$$tag_hash] = function (x) {
@@ -2067,8 +2072,8 @@
       return $$ImmutableStack$$Stack($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableStack$$ImmutableStack.prototype[$$iter$$tag_iter] = function (x) {
-      return $$iter$$reverse_iter($$Cons$$iter_cons(x.root));
+    $$ImmutableStack$$ImmutableStack.prototype[$$iter$$tag_iter] = function () {
+      return $$iter$$reverse_iter($$Cons$$iter_cons(this.root));
     };
 
     $$ImmutableStack$$ImmutableStack.prototype[$$toJSON$$tag_toJSON] = function (x) {
@@ -2187,9 +2192,9 @@
       return x.hash;
     };
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$iter$$tag_iter] = function (x) {
-      var keys   = x.keys;
-      var values = x.values;
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$iter$$tag_iter] = function () {
+      var keys   = this.keys;
+      var values = this.values;
 
       // TODO a little gross
       return $$iter$$iter($$iter$$map($$iter$$iter_object(keys), function (_array) {

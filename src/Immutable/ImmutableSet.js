@@ -45,8 +45,8 @@ fromJSON_registry["Set"] = function (x) {
   return Set(fromJSON_array(x));
 };
 
-ImmutableSet.prototype[tag_iter] = function (x) {
-  return map_iter(iter_tree(x.root), function (node) {
+ImmutableSet.prototype[tag_iter] = function () {
+  return map_iter(iter_tree(this.root), function (node) {
     return node.key;
   });
 };
