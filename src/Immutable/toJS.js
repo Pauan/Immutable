@@ -1,5 +1,5 @@
 import { UUIDTag } from "./Tag";
-import { isObject } from "./util";
+import { isObject, destructure_pair } from "./util";
 import { each } from "./iter";
 
 export var tag_toJS = UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
@@ -21,16 +21,15 @@ export function toJS_object(x) {
   var o = {};
 
   each(x, function (_array) {
-    var key   = _array[0];
-    var value = _array[1];
+    destructure_pair(_array, function (key, value) {
+      // Tags are currently implemented as strings
+      // TODO use isString test ?
+      if (typeof key !== "string") {
+        throw new Error("Cannot convert to JavaScript: expected key to be string or Tag but got " + key);
+      }
 
-    // Tags are currently implemented as strings
-    // TODO use isString test ?
-    if (typeof key !== "string") {
-      throw new Error("Cannot convert to JavaScript: expected key to be string or Tag but got " + key);
-    }
-
-    o[key] = toJS(value);
+      o[key] = toJS(value);
+    });
   });
 
   return o;

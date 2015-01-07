@@ -4,6 +4,7 @@ import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from ".
 import { toJS_object, tag_toJS } from "./toJS";
 import { ImmutableBase } from "./Base";
 import { tag_iter, iter_object, map, iter, each, foldl } from "./iter";
+import { destructure_pair } from "./util";
 
 function checkKey(key) {
   // Tags are currently implemented as strings
@@ -44,9 +45,10 @@ ImmutableRecord.prototype[tag_iter] = function () {
 
   // TODO a little gross
   return iter(map(iter_object(keys), function (_array) {
-    var s     = _array[0];
-    var index = _array[1];
-    return [s, values[index]];
+    // TODO should this use destructure_pair ?
+    return destructure_pair(_array, function (s, index) {
+      return [s, values[index]];
+    });
   }));
 };
 
@@ -90,9 +92,9 @@ ImmutableRecord.prototype.modify = function (key, f) {
 // TODO code duplication with ImmutableDict
 ImmutableRecord.prototype.update = function (other) {
   return foldl(iter_object(other), this, function (self, _array) {
-    var key   = _array[0];
-    var value = _array[1];
-    return self.set(key, value);
+    return destructure_pair(_array, function (key, value) {
+      return self.set(key, value);
+    });
   });
 };
 
@@ -111,12 +113,10 @@ export function Record(obj) {
 
     } else {
       each(iter_object(obj), function (_array) {
-        var key   = _array[0];
-        var value = _array[1];
-
-        checkKey(key);
-
-        keys[key] = values.push(value) - 1;
+        destructure_pair(_array, function (key, value) {
+          checkKey(key);
+          keys[key] = values.push(value) - 1;
+        });
       });
     }
   }

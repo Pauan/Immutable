@@ -24,3 +24,23 @@ export function pad_right(input, i, s) {
 export function identity(x) {
   return x;
 }
+
+export function plural(i, s) {
+  if (i === 1) {
+    return s;
+  } else {
+    return s + "s";
+  }
+}
+
+export function destructure_pair(x, f) {
+  if (Array.isArray(x)) {
+    if (x.length === 2) {
+      return f(x[0], x[1]);
+    } else {
+      throw new Error("Expected array with 2 elements but got " + x.length + " " + plural(x.length, "element"));
+    }
+  } else {
+    throw new Error("Expected array but got: " + x);
+  }
+}

@@ -351,6 +351,24 @@ context("Dict", function () {
     verify_dict(x, { foo: 1 });
     assert(equal(x, dict_foo));
     assert(equal(dict_foo, x));
+
+    verify_dict(Dict([["foo", 2]]), { foo: 2 });
+
+    assert_raises(function () {
+      Dict([{}]);
+    }, "Expected array but got: [object Object]");
+
+    assert_raises(function () {
+      Dict([[]]);
+    }, "Expected array with 2 elements but got 0 elements");
+
+    assert_raises(function () {
+      Dict([["foo"]]);
+    }, "Expected array with 2 elements but got 1 element");
+
+    assert_raises(function () {
+      Dict([["foo", 2, 3]]);
+    }, "Expected array with 2 elements but got 3 elements");
   });
 
   test("isEmpty", function () {
@@ -434,6 +452,24 @@ context("Dict", function () {
     verify_dict(Dict({ foo: 1 }).merge(Dict({ foo: 2 })), { foo: 2 });
     verify_dict(Dict({ foo: 1 }).merge(Dict({ foo: 2, bar: 3 })), { foo: 2, bar: 3 });
     verify_dict(Dict({ foo: 1 }).merge({ bar: 2 }), { foo: 1, bar: 2 });
+
+    verify_dict(Dict().merge([["foo", 2]]), { foo: 2 });
+
+    assert_raises(function () {
+      Dict().merge([{}]);
+    }, "Expected array but got: [object Object]");
+
+    assert_raises(function () {
+      Dict().merge([[]]);
+    }, "Expected array with 2 elements but got 0 elements");
+
+    assert_raises(function () {
+      Dict().merge([["foo"]]);
+    }, "Expected array with 2 elements but got 1 element");
+
+    assert_raises(function () {
+      Dict().merge([["foo", 2, 3]]);
+    }, "Expected array with 2 elements but got 3 elements");
   });
 
   test("complex keys", function () {
@@ -1656,6 +1692,25 @@ context("Record", function () {
     verify_record(Record({ foo: 2 }), { foo: 2 });
 
     verify_record(Record(), {});
+
+
+    verify_record(Record([["foo", 2]]), { foo: 2 });
+
+    assert_raises(function () {
+      Record([{}]);
+    }, "Expected array but got: [object Object]");
+
+    assert_raises(function () {
+      Record([[]]);
+    }, "Expected array with 2 elements but got 0 elements");
+
+    assert_raises(function () {
+      Record([["foo"]]);
+    }, "Expected array with 2 elements but got 1 element");
+
+    assert_raises(function () {
+      Record([["foo", 2, 3]]);
+    }, "Expected array with 2 elements but got 3 elements");
   });
 
   test("get", function () {
@@ -1714,6 +1769,25 @@ context("Record", function () {
     assert_raises(function () {
       Record({ foo: 1 }).update(Record({ foo: 2, bar: 3 }));
     }, "Key bar not found");
+
+
+    verify_record(Record([["foo", 2]]).update([["foo", 3]]), { foo: 3 });
+
+    assert_raises(function () {
+      Record([["foo", 2]]).update([{}]);
+    }, "Expected array but got: [object Object]");
+
+    assert_raises(function () {
+      Record([["foo", 2]]).update([[]]);
+    }, "Expected array with 2 elements but got 0 elements");
+
+    assert_raises(function () {
+      Record([["foo", 2]]).update([["foo"]]);
+    }, "Expected array with 2 elements but got 1 element");
+
+    assert_raises(function () {
+      Record([["foo", 2]]).update([["foo", 2, 3]]);
+    }, "Expected array with 2 elements but got 3 elements");
   });
 
   test("complex keys", function () {
@@ -1721,6 +1795,10 @@ context("Record", function () {
 
     assert_raises(function () {
       Record(o);
+    }, "Expected key to be a string or Tag but got [object Object]");
+
+    assert_raises(function () {
+      Record([[{}, 1]]);
     }, "Expected key to be a string or Tag but got [object Object]");
 
     assert_raises(function () {

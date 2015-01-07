@@ -192,6 +192,26 @@
     function $$util$$identity(x) {
       return x;
     }
+
+    function $$util$$plural(i, s) {
+      if (i === 1) {
+        return s;
+      } else {
+        return s + "s";
+      }
+    }
+
+    function $$util$$destructure_pair(x, f) {
+      if (Array.isArray(x)) {
+        if (x.length === 2) {
+          return f(x[0], x[1]);
+        } else {
+          throw new Error("Expected array with 2 elements but got " + x.length + " " + $$util$$plural(x.length, "element"));
+        }
+      } else {
+        throw new Error("Expected array but got: " + x);
+      }
+    }
     var $$iter$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
                                    ? Symbol.iterator
                                    : null);
@@ -516,18 +536,20 @@
       var a = [];
 
       $$iter$$each(x, function (_array) {
-        var key   = $$hash$$hash(_array[0]);
-        var value = $$hash$$hash(_array[1]);
+        $$util$$destructure_pair(_array, function (key, value) {
+          key   = $$hash$$hash(key);
+          value = $$hash$$hash(value);
 
-        key = key.split(/\n/);
+          key = key.split(/\n/);
 
-        $$iter$$each(key, function (key) {
-          max_key = Math.max(max_key, key.length);
-        });
+          $$iter$$each(key, function (key) {
+            max_key = Math.max(max_key, key.length);
+          });
 
-        a.push({
-          key: key,
-          value: value
+          a.push({
+            key: key,
+            value: value
+          });
         });
       });
 
@@ -573,16 +595,15 @@
       var o = {};
 
       $$iter$$each(x, function (_array) {
-        var key   = _array[0];
-        var value = _array[1];
+        $$util$$destructure_pair(_array, function (key, value) {
+          // Tags are currently implemented as strings
+          // TODO use isString test ?
+          if (typeof key !== "string") {
+            throw new Error("Cannot convert to JavaScript: expected key to be string or Tag but got " + key);
+          }
 
-        // Tags are currently implemented as strings
-        // TODO use isString test ?
-        if (typeof key !== "string") {
-          throw new Error("Cannot convert to JavaScript: expected key to be string or Tag but got " + key);
-        }
-
-        o[key] = $$toJS$$toJS(value);
+          o[key] = $$toJS$$toJS(value);
+        });
       });
 
       return o;
@@ -654,11 +675,10 @@
       o.values = [];
 
       $$iter$$each(x, function (_array) {
-        var key   = _array[0];
-        var value = _array[1];
-
-        o.keys.push($$toJSON$$toJSON(key));
-        o.values.push($$toJSON$$toJSON(value));
+        $$util$$destructure_pair(_array, function (key, value) {
+          o.keys.push($$toJSON$$toJSON(key));
+          o.values.push($$toJSON$$toJSON(value));
+        });
       });
 
       return o;
@@ -1099,9 +1119,9 @@
     // TODO code duplication with ImmutableRecord
     $$ImmutableDict$$ImmutableDict.prototype.merge = function (other) {
       return $$iter$$foldl($$iter$$iter_object(other), this, function (self, _array) {
-        var key   = _array[0];
-        var value = _array[1];
-        return self.set(key, value);
+        return $$util$$destructure_pair(_array, function (key, value) {
+          return self.set(key, value);
+        });
       });
     };
 
@@ -2232,9 +2252,10 @@
 
       // TODO a little gross
       return $$iter$$iter($$iter$$map($$iter$$iter_object(keys), function (_array) {
-        var s     = _array[0];
-        var index = _array[1];
-        return [s, values[index]];
+        // TODO should this use destructure_pair ?
+        return $$util$$destructure_pair(_array, function (s, index) {
+          return [s, values[index]];
+        });
       }));
     };
 
@@ -2278,9 +2299,9 @@
     // TODO code duplication with ImmutableDict
     $$ImmutableRecord$$ImmutableRecord.prototype.update = function (other) {
       return $$iter$$foldl($$iter$$iter_object(other), this, function (self, _array) {
-        var key   = _array[0];
-        var value = _array[1];
-        return self.set(key, value);
+        return $$util$$destructure_pair(_array, function (key, value) {
+          return self.set(key, value);
+        });
       });
     };
 
@@ -2299,12 +2320,10 @@
 
         } else {
           $$iter$$each($$iter$$iter_object(obj), function (_array) {
-            var key   = _array[0];
-            var value = _array[1];
-
-            $$ImmutableRecord$$checkKey(key);
-
-            keys[key] = values.push(value) - 1;
+            $$util$$destructure_pair(_array, function (key, value) {
+              $$ImmutableRecord$$checkKey(key);
+              keys[key] = values.push(value) - 1;
+            });
           });
         }
       }

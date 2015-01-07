@@ -1,5 +1,5 @@
 import { isTag, isUUIDTag, UUIDTag } from "./Tag";
-import { isObject } from "./util";
+import { isObject, destructure_pair } from "./util";
 import { each } from "./iter";
 
 export var fromJSON_registry = {};
@@ -59,11 +59,10 @@ export function toJSON_object(type, x) {
   o.values = [];
 
   each(x, function (_array) {
-    var key   = _array[0];
-    var value = _array[1];
-
-    o.keys.push(toJSON(key));
-    o.values.push(toJSON(value));
+    destructure_pair(_array, function (key, value) {
+      o.keys.push(toJSON(key));
+      o.values.push(toJSON(value));
+    });
   });
 
   return o;

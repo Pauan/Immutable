@@ -6,7 +6,7 @@ import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from ".
 import { nil } from "./nil";
 import { ImmutableBase } from "./Base";
 import { tag_iter, iter_object, map_iter, foldl } from "./iter";
-import { identity } from "./util";
+import { identity, destructure_pair } from "./util";
 
 function KeyNode(left, right, hash, key, value) {
   this.left  = left;
@@ -149,9 +149,9 @@ ImmutableDict.prototype.modify = function (key, f) {
 // TODO code duplication with ImmutableRecord
 ImmutableDict.prototype.merge = function (other) {
   return foldl(iter_object(other), this, function (self, _array) {
-    var key   = _array[0];
-    var value = _array[1];
-    return self.set(key, value);
+    return destructure_pair(_array, function (key, value) {
+      return self.set(key, value);
+    });
   });
 };
 

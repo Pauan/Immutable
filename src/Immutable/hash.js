@@ -1,5 +1,5 @@
 import { isTag, UUIDTag } from "./Tag";
-import { pad_right, repeat } from "./util";
+import { pad_right, repeat, destructure_pair } from "./util";
 import { map, each, join } from "./iter";
 
 export var tag_hash = UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
@@ -60,18 +60,20 @@ export function hash_dict(x, spaces) {
   var a = [];
 
   each(x, function (_array) {
-    var key   = hash(_array[0]);
-    var value = hash(_array[1]);
+    destructure_pair(_array, function (key, value) {
+      key   = hash(key);
+      value = hash(value);
 
-    key = key.split(/\n/);
+      key = key.split(/\n/);
 
-    each(key, function (key) {
-      max_key = Math.max(max_key, key.length);
-    });
+      each(key, function (key) {
+        max_key = Math.max(max_key, key.length);
+      });
 
-    a.push({
-      key: key,
-      value: value
+      a.push({
+        key: key,
+        value: value
+      });
     });
   });
 
