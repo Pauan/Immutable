@@ -3,9 +3,11 @@
 import { UUIDTag } from "./Tag";
 import { isJSLiteral } from "./util";
 
-export var tag_iter = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
-                        ? Symbol.iterator
-                        : UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3"));
+export var Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
+                               ? Symbol.iterator
+                               : null);
+
+export var tag_iter = UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
 
 function iter_array(array) {
   var i = 0;
@@ -22,8 +24,12 @@ function iter_array(array) {
 }
 
 export function iter(x) {
-  var fn = x[tag_iter];
-  if (fn != null) {
+  var fn;
+
+  if ((fn = x[tag_iter]) != null) {
+    return fn.call(x);
+
+  } else if (Symbol_iterator !== null && (fn = x[Symbol_iterator]) != null) {
     return fn.call(x);
 
   } else if (Array.isArray(x)) {
