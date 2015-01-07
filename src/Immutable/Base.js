@@ -1,5 +1,6 @@
 import { hash } from "./hash";
-import { Symbol_iterator, iter } from "./iter";
+import { iter } from "./iter";
+import { Symbol_iterator } from "./static";
 
 export var MutableBase   = {};
 export var ImmutableBase = {};

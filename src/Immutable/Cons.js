@@ -1,4 +1,4 @@
-import { nil } from "./nil";
+import { nil } from "./static";
 
 export function Cons(car, cdr) {
   this.car = car;

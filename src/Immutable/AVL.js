@@ -1,7 +1,7 @@
 // http://arclanguage.org/item?id=14181
 // http://arclanguage.org/item?id=18936
 
-import { nil } from "./nil";
+import { nil } from "./static";
 
 // Faster than using Math.max
 export function max(x, y) {

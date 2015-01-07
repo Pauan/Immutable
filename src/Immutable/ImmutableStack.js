@@ -1,11 +1,11 @@
-import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
-import { toJS_array, tag_toJS } from "./toJS";
-import { tag_hash, hash_array } from "./hash";
+import { toJSON_array, fromJSON_array } from "./toJSON";
+import { toJS_array } from "./toJS";
+import { hash_array } from "./hash";
 import { ImmutableBase } from "./Base";
-import { nil } from "./nil";
 import { Cons, iter_cons } from "./Cons";
-import { tag_iter, reverse_iter } from "./iter";
+import { reverse_iter } from "./iter";
 import { sorted_isEmpty, stack_size, stack_concat } from "./Sorted";
+import { nil, tag_toJSON, fromJSON_registry, tag_toJS, tag_hash, tag_iter } from "./static";
 
 export function ImmutableStack(root, len) {
   this.root = root;

@@ -1,8 +1,7 @@
-import { isTag, UUIDTag } from "./Tag";
+import { isTag } from "./Tag";
 import { pad_right, repeat, destructure_pair } from "./util";
 import { map, each, join } from "./iter";
-
-export var tag_hash = UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
+import { tag_hash } from "./static";
 
 var mutable_hash_id = 0;
 

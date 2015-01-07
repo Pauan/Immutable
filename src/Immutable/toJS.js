@@ -1,8 +1,6 @@
-import { UUIDTag } from "./Tag";
 import { isObject, destructure_pair } from "./util";
 import { each } from "./iter";
-
-export var tag_toJS = UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
+import { tag_toJS } from "./static";
 
 export function toJS(x) {
   if (isObject(x)) {

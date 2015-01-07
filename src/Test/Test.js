@@ -2,7 +2,7 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, each } from "../Immutable/Immutable";
-import { nil } from "../Immutable/nil";
+import { nil } from "../Immutable/static";
 import { assert } from "./assert";
 
 

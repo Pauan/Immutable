@@ -1,7 +1,7 @@
 import { concat, balanced_node } from "./AVL";
-import { nil } from "./nil";
 import { foldl, iter_object } from "./iter";
 import { destructure_pair } from "./util";
+import { nil } from "./static";
 
 export function simpleSort(x, y) {
   if (x === y) {

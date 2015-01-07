@@ -1,11 +1,12 @@
 import { modify as array_modify } from "./Array";
-import { hash, tag_hash, hash_dict } from "./hash";
-import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
-import { toJS_object, tag_toJS } from "./toJS";
+import { hash, hash_dict } from "./hash";
+import { toJSON_object, fromJSON_object } from "./toJSON";
+import { toJS_object } from "./toJS";
 import { ImmutableBase } from "./Base";
-import { tag_iter, iter_object, map, iter, each } from "./iter";
+import { iter_object, map, iter, each } from "./iter";
 import { destructure_pair } from "./util";
 import { sorted_merge } from "./Sorted";
+import { tag_hash, tag_toJSON, fromJSON_registry, tag_toJS, tag_iter } from "./static";
 
 function checkKey(key) {
   // Tags are currently implemented as strings

@@ -1,11 +1,12 @@
 import { insert as array_insert, modify as array_modify, remove as array_remove } from "./Array";
 import { max, balanced_node, concat, insert_min, insert_max, iter_tree } from "./AVL";
-import { tag_hash, hash_array } from "./hash";
-import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
-import { toJS_array, tag_toJS } from "./toJS";
+import { hash_array } from "./hash";
+import { toJSON_array, fromJSON_array } from "./toJSON";
+import { toJS_array } from "./toJS";
 import { ImmutableBase } from "./Base";
-import { tag_iter, iter, mapcat_iter, concat_iter, reverse_iter, foldl } from "./iter";
-import { nil } from "./nil";
+import { iter, mapcat_iter, concat_iter, reverse_iter, foldl } from "./iter";
+import { nil, tag_hash, tag_toJSON, fromJSON_registry, tag_toJS, tag_iter } from "./static";
+import { nth_has, ordered_has } from "./Ordered";
 
 // We use conses at the very end of the list for very fast O(1) push
 import { Cons, iter_cons } from "./Cons";
@@ -98,10 +99,6 @@ ArrayNode.prototype.copy = function (left, right) {
   return new ArrayNode(left, right, this.array);
 };
 
-
-function nth_has(index, len) {
-  return index >= 0 && index < len;
-}
 
 function nth_get(node, index) {
   for (;;) {
@@ -279,6 +276,10 @@ export function ImmutableList(root, tail, tail_size) {
 
 ImmutableList.prototype = Object.create(ImmutableBase);
 
+ImmutableList.prototype[tag_hash] = hash_array("List");
+ImmutableList.prototype[tag_toJS] = toJS_array;
+ImmutableList.prototype.has = ordered_has;
+
 fromJSON_registry["List"] = function (x) {
   return List(fromJSON_array(x));
 };
@@ -286,10 +287,6 @@ fromJSON_registry["List"] = function (x) {
 ImmutableList.prototype[tag_toJSON] = function (x) {
   return toJSON_array("List", x);
 };
-
-ImmutableList.prototype[tag_hash] = hash_array("List");
-
-ImmutableList.prototype[tag_toJS] = toJS_array;
 
 ImmutableList.prototype[tag_iter] = function () {
   var tree = mapcat_iter(iter_tree(this.root), function (node) {
@@ -308,16 +305,6 @@ ImmutableList.prototype.removeAll = function () {
 
 ImmutableList.prototype.size = function () {
   return this.root.size + this.tail_size;
-};
-
-ImmutableList.prototype.has = function (index) {
-  var len = this.size();
-
-  if (index < 0) {
-    index += len;
-  }
-
-  return nth_has(index, len);
 };
 
 ImmutableList.prototype.get = function (index, def) {

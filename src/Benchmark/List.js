@@ -4,7 +4,7 @@ var mori        = require("mori");
 import * as benchmark from "./Benchmark";
 import * as immutable from "../Immutable/Immutable";
 import { insert as insert_at, modify as modify_at, remove as remove_at } from "../Immutable/Array";
-import { nil } from "../Immutable/nil";
+import { nil } from "../Immutable/static";
 import { Cons } from "../Immutable/Cons";
 import { header } from "./Header";
 

@@ -1,5 +1,6 @@
-import { hash, tag_hash } from "./hash";
+import { hash } from "./hash";
 import { MutableBase } from "./Base";
+import { tag_hash } from "./static";
 
 var ref_id = 0;
 

@@ -1,11 +1,7 @@
-import { isTag, isUUIDTag, UUIDTag } from "./Tag";
+import { isTag, isUUIDTag } from "./Tag";
 import { isObject, destructure_pair } from "./util";
 import { each } from "./iter";
-
-export var fromJSON_registry = {};
-
-export var tag_toJSON_type = UUIDTag("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37");
-export var tag_toJSON      = UUIDTag("99e14916-bc99-4c48-81aa-299cf1ad6de3");
+import { tag_toJSON, tag_toJSON_type, fromJSON_registry } from "./static";
 
 export function fromJSON(x) {
   if (isObject(x)) {

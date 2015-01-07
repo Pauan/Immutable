@@ -1,13 +1,13 @@
 import { max, iter_tree } from "./AVL";
 import { simpleSort, sorted_isEmpty, sorted_has, key_get, key_set, key_modify,
          sorted_remove, sorted_merge } from "./Sorted";
-import { hash, tag_hash, hash_dict } from "./hash";
-import { toJS_object, tag_toJS } from "./toJS";
-import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
-import { nil } from "./nil";
+import { hash, hash_dict } from "./hash";
+import { toJS_object } from "./toJS";
+import { toJSON_object, fromJSON_object } from "./toJSON";
 import { ImmutableBase } from "./Base";
-import { tag_iter, map_iter } from "./iter";
+import { map_iter } from "./iter";
 import { identity } from "./util";
+import { nil, tag_hash, tag_toJS, tag_toJSON, fromJSON_registry, tag_iter } from "./static";
 
 
 function KeyNode(left, right, hash, key, value) {

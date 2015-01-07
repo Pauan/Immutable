@@ -1,11 +1,11 @@
-import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
-import { toJS_array, tag_toJS } from "./toJS";
-import { tag_hash, hash_array } from "./hash";
+import { toJSON_array, fromJSON_array } from "./toJSON";
+import { toJS_array } from "./toJS";
+import { hash_array } from "./hash";
 import { Cons, iter_cons, each_cons } from "./Cons";
-import { nil } from "./nil";
-import { tag_iter, concat_iter, reverse_iter } from "./iter";
+import { concat_iter, reverse_iter } from "./iter";
 import { ImmutableBase } from "./Base";
 import { stack_size, stack_concat } from "./Sorted";
+import { nil, tag_hash, tag_toJSON, fromJSON_registry, tag_toJS, tag_iter } from "./static";
 
 export function ImmutableQueue(left, right, len) {
   this.left  = left;

@@ -1,11 +1,8 @@
-import { UUIDTag } from "./Tag";
 import { isJSLiteral } from "./util";
+import { tag_iter, Symbol_iterator } from "./static";
 
-export var Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
-                               ? Symbol.iterator
-                               : null);
-
-export var tag_iter = UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
+// TODO circular import
+import { List } from "./ImmutableList";
 
 function iter_array(array) {
   var i = 0;
@@ -112,6 +109,54 @@ export function concat_iter(x, y) {
   };
 }
 
+export function zip(x, def) {
+  var hasDefault = (arguments.length === 2);
+
+  return make_seq(function () {
+    var args = toArray(x).map(function (x) {
+      return iter(x);
+    });
+
+    var isDone = false;
+
+    return {
+      next: function () {
+        for (;;) {
+          if (isDone) {
+            return { done: true };
+
+          } else {
+            var out  = List();
+            var seen = false;
+
+            for (var i = 0, l = args.length; i < l; ++i) {
+              var info = args[i].next();
+              if (info.done) {
+                if (hasDefault) {
+                  out = out.insert(def);
+                } else {
+                  seen = false;
+                  break;
+                }
+              } else {
+                seen = true;
+                out = out.insert(info.value);
+              }
+            }
+
+            if (seen) {
+              return { value: out };
+
+            } else {
+              isDone = true;
+            }
+          }
+        }
+      }
+    };
+  });
+}
+
 export function reverse_iter(iterator) {
   var stack = [];
 
@@ -147,13 +192,18 @@ export function foldr(x, init, f) {
 }
 
 export function toArray(x) {
-  var a = [];
+  if (Array.isArray(x)) {
+    return x;
 
-  each(x, function (x) {
-    a.push(x);
-  });
+  } else {
+    var a = [];
 
-  return a;
+    each(x, function (x) {
+      a.push(x);
+    });
+
+    return a;
+  }
 }
 
 export function join(x, separator) {
@@ -161,7 +211,12 @@ export function join(x, separator) {
     separator = "";
   }
 
-  return toArray(x).join(separator);
+  if (typeof x === "string" && separator === "") {
+    return x;
+  } else {
+    // TODO this requires O(n) space, perhaps we can use an iterator to make it O(1) space ?
+    return toArray(x).join(separator);
+  }
 }
 
 export function mapcat_iter(iterator, f) {
