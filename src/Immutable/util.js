@@ -21,17 +21,6 @@ export function pad_right(input, i, s) {
   return input + repeat(s, right);
 }
 
-export function join_lines(a, spaces) {
-  if (a.length) {
-    var separator = "\n" + spaces;
-    return separator + a.map(function (x) {
-      return x.replace(/\n/g, separator);
-    }).join(separator);
-  } else {
-    return "";
-  }
-}
-
 export function identity(x) {
   return x;
 }

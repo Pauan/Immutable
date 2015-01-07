@@ -12,7 +12,7 @@ import { isStack, Stack } from "./ImmutableStack";
 import { isRecord, Record } from "./ImmutableRecord";
 import { deref, Ref, isRef } from "./MutableRef";
 import { isTag, isUUIDTag, Tag, UUIDTag } from "./Tag";
-import { each, map, keep, findIndex, reverse } from "./iter";
+import { each, map, keep, findIndex, reverse, foldl, foldr, join } from "./iter";
 
 export { toJS, simpleSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
@@ -21,7 +21,7 @@ export { toJS, simpleSort, toJSON, fromJSON,
          isStack, Stack, isRecord, Record,
          deref, Ref, isRef,
          isTag, isUUIDTag, Tag, UUIDTag,
-         each, map, keep, findIndex, reverse };
+         each, map, keep, findIndex, reverse, foldl, foldr, join };
 
 
 // TODO support -0 and 0 ?
@@ -122,4 +122,7 @@ export function fromJS(x) {
   exports.keep = keep;
   exports.findIndex = findIndex;
   exports.reverse = reverse;
+  exports.foldl = foldl;
+  exports.foldr = foldr;
+  exports.join = join;
 });

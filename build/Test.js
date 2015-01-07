@@ -70,23 +70,14 @@
       return input + $$util$$repeat(s, right);
     }
 
-    function $$util$$join_lines(a, spaces) {
-      if (a.length) {
-        var separator = "\n" + spaces;
-        return separator + a.map(function (x) {
-          return x.replace(/\n/g, separator);
-        }).join(separator);
-      } else {
-        return "";
-      }
-    }
-
     function $$util$$identity(x) {
       return x;
     }
-    var $$iter$$tag_iter = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
-                            ? Symbol.iterator
-                            : $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3"));
+    var $$iter$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
+                                   ? Symbol.iterator
+                                   : null);
+
+    var $$iter$$tag_iter = $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
 
     function $$iter$$iter_array(array) {
       var i = 0;
@@ -103,8 +94,12 @@
     }
 
     function $$iter$$iter(x) {
-      var fn = x[$$iter$$tag_iter];
-      if (fn != null) {
+      var fn;
+
+      if ((fn = x[$$iter$$tag_iter]) != null) {
+        return fn.call(x);
+
+      } else if ($$iter$$Symbol_iterator !== null && (fn = x[$$iter$$Symbol_iterator]) != null) {
         return fn.call(x);
 
       } else if (Array.isArray(x)) {
@@ -202,6 +197,37 @@
           }
         }
       };
+    }
+
+    function $$iter$$foldl(x, init, f) {
+      $$iter$$each(x, function (x) {
+        init = f(init, x);
+      });
+      return init;
+    }
+
+    function $$iter$$foldr(x, init, f) {
+      return $$iter$$foldl($$iter$$reverse(x), init, function (x, y) {
+        return f(y, x);
+      });
+    }
+
+    function $$iter$$toArray(x) {
+      var a = [];
+
+      $$iter$$each(x, function (x) {
+        a.push(x);
+      });
+
+      return a;
+    }
+
+    function $$iter$$join(x, separator) {
+      if (separator == null) {
+        separator = "";
+      }
+
+      return $$iter$$toArray(x).join(separator);
     }
 
     function $$iter$$mapcat_iter(iterator, f) {
@@ -360,9 +386,9 @@
     }
 
     function $$hash$$hash_dict(x, spaces) {
-      var a = [];
-
       var max_key = 0;
+
+      var a = [];
 
       $$iter$$each(x, function (_array) {
         var key   = $$hash$$hash(_array[0]);
@@ -382,18 +408,26 @@
 
       var spaces = "  ";
 
-      a = a.map(function (x) {
+      a = $$iter$$map(a, function (x) {
         var last = x.key.length - 1;
         x.key[last] = $$util$$pad_right(x.key[last], max_key, " ");
 
-        var key = x.key.join("\n");
+        var key = $$iter$$join(x.key, "\n");
 
         var value = x.value.replace(/\n/g, "\n" + $$util$$repeat(" ", max_key + 3));
 
         return key + " = " + value;
       });
 
-      return $$util$$join_lines(a, spaces);
+      return $$hash$$join_lines(a, spaces);
+    }
+
+    function $$hash$$join_lines(a, spaces) {
+      var separator = "\n" + spaces;
+
+      return $$iter$$join($$iter$$map(a, function (x) {
+        return separator + x.replace(/\n/g, separator);
+      }));
     }
     var $$toJS$$tag_toJS = $$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
 
@@ -793,6 +827,12 @@
     $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
     $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
 
+    if ($$iter$$Symbol_iterator !== null) {
+      $$Base$$MutableBase[$$iter$$Symbol_iterator] = $$Base$$ImmutableBase[$$iter$$Symbol_iterator] = function () {
+        return $$iter$$iter(this);
+      };
+    }
+
     function $$ImmutableDict$$KeyNode(left, right, hash, key, value) {
       this.left  = left;
       this.right = right;
@@ -929,16 +969,11 @@
 
     // TODO code duplication with ImmutableRecord
     $$ImmutableDict$$ImmutableDict.prototype.merge = function (other) {
-      var self = this;
-
-      $$iter$$each($$iter$$iter_object(other), function (_array) {
+      return $$iter$$foldl($$iter$$iter_object(other), this, function (self, _array) {
         var key   = _array[0];
         var value = _array[1];
-
-        self = self.set(key, value);
+        return self.set(key, value);
       });
-
-      return self;
     };
 
 
@@ -1028,18 +1063,16 @@
 
     $$ImmutableSet$$ImmutableSet.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
-        var a = [];
-
-        $$iter$$each(x, function (value) {
-          a.push($$hash$$hash(value));
+        var a = $$iter$$map(x, function (value) {
+          return $$hash$$hash(value);
         });
 
         var spaces = "  ";
 
         if ($$ImmutableSet$$isSet(x) && !$$ImmutableSet$$isSortedSet(x)) {
-          x.hash = "(Set" + $$util$$join_lines(a, spaces) + ")";
+          x.hash = "(Set" + $$hash$$join_lines(a, spaces) + ")";
         } else {
-          x.hash = "(SortedSet " + $$hash$$hash(x.sort) + $$util$$join_lines(a, spaces) + ")";
+          x.hash = "(SortedSet " + $$hash$$hash(x.sort) + $$hash$$join_lines(a, spaces) + ")";
         }
       }
 
@@ -1051,6 +1084,10 @@
     // TODO code duplication with ImmutableDict
     $$ImmutableSet$$ImmutableSet.prototype.isEmpty = function () {
       return this.root === $$$Immutable$nil$$nil;
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype.removeAll = function () {
+      return new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, this.sort, this.hash_fn);
     };
 
     // TODO code duplication with ImmutableDict
@@ -1087,13 +1124,9 @@
     };
 
     $$ImmutableSet$$ImmutableSet.prototype.union = function (other) {
-      var self = this;
-
-      $$iter$$each(other, function (value) {
-        self = self.add(value);
+      return $$iter$$foldl(other, this, function (self, value) {
+        return self.add(value);
       });
-
-      return self;
     };
 
     $$ImmutableSet$$ImmutableSet.prototype.intersect = function (other) {
@@ -1103,43 +1136,39 @@
         return self;
 
       } else {
-        var out = new $$ImmutableSet$$ImmutableSet($$$Immutable$nil$$nil, self.sort, self.hash_fn);
+        var out = self.removeAll();
 
-        $$iter$$each(other, function (value) {
+        return $$iter$$foldl(other, out, function (out, value) {
           if (self.has(value)) {
-            out = out.add(value);
+            return out.add(value);
+          } else {
+            return out;
           }
         });
-
-        return out;
       }
     };
 
+    // TODO what about duplicates in `other` ?
     $$ImmutableSet$$ImmutableSet.prototype.disjoint = function (other) {
-      var self = this;
-
-      $$iter$$each(other, function (value) {
+      return $$iter$$foldl(other, this, function (self, value) {
         if (self.has(value)) {
-          self = self.remove(value);
+          return self.remove(value);
         } else {
-          self = self.add(value);
+          return self.add(value);
         }
       });
-
-      return self;
     };
 
-    // TODO what about the empty set ?
+    // TODO what about if `other` is empty ?
     $$ImmutableSet$$ImmutableSet.prototype.subtract = function (other) {
-      var self = this;
+      if (this.isEmpty()) {
+        return this;
 
-      if (!self.isEmpty()) {
-        $$iter$$each(other, function (value) {
-          self = self.remove(value);
+      } else {
+        return $$iter$$foldl(other, this, function (self, value) {
+          return self.remove(value);
         });
       }
-
-      return self;
     };
 
 
@@ -1545,13 +1574,11 @@
 
     $$ImmutableList$$ImmutableList.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
-        var a = [];
-
-        $$iter$$each(x, function (x) {
-          a.push($$hash$$hash(x));
+        var a = $$iter$$map(x, function (x) {
+          return $$hash$$hash(x);
         });
 
-        x.hash = "(List" + $$util$$join_lines(a, "  ") + ")";
+        x.hash = "(List" + $$hash$$join_lines(a, "  ") + ")";
       }
 
       return x.hash;
@@ -1805,13 +1832,9 @@
         }
 
       } else {
-        var self = this;
-
-        $$iter$$each(right, function (x) {
-          self = self.insert(x);
+        return $$iter$$foldl(right, this, function (self, x) {
+          return self.insert(x);
         });
-
-        return self;
       }
     };
 
@@ -1859,13 +1882,11 @@
 
     $$ImmutableQueue$$ImmutableQueue.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
-        var a = [];
-
-        $$iter$$each(x, function (x) {
-          a.push($$hash$$hash(x));
+        var a = $$iter$$map(x, function (x) {
+          return $$hash$$hash(x);
         });
 
-        x.hash = "(Queue" + $$util$$join_lines(a, "  ") + ")";
+        x.hash = "(Queue" + $$hash$$join_lines(a, "  ") + ")";
       }
 
       return x.hash;
@@ -1904,6 +1925,7 @@
           var right = $$$Immutable$nil$$nil;
 
           // TODO a little gross
+          // TODO replace with foldl ?
           $$Cons$$each_cons(this.right, function (x) {
             right = new $$Cons$$Cons(x, right);
           });
@@ -1916,13 +1938,9 @@
     };
 
     $$ImmutableQueue$$ImmutableQueue.prototype.concat = function (right) {
-      var self = this;
-
-      $$iter$$each(right, function (x) {
-        self = self.push(x);
+      return $$iter$$foldl(right, this, function (self, x) {
+        return self.push(x);
       });
-
-      return self;
     };
 
 
@@ -1971,13 +1989,11 @@
     // TODO code duplication
     $$ImmutableStack$$ImmutableStack.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
-        var a = [];
-
-        $$iter$$each(x, function (x) {
-          a.push($$hash$$hash(x));
+        var a = $$iter$$map(x, function (x) {
+          return $$hash$$hash(x);
         });
 
-        x.hash = "(Stack" + $$util$$join_lines(a, "  ") + ")";
+        x.hash = "(Stack" + $$hash$$join_lines(a, "  ") + ")";
       }
 
       return x.hash;
@@ -2014,13 +2030,9 @@
 
     // TODO code duplication with ImmutableQueue
     $$ImmutableStack$$ImmutableStack.prototype.concat = function (right) {
-      var self = this;
-
-      $$iter$$each(right, function (x) {
-        self = self.push(x);
+      return $$iter$$foldl(right, this, function (self, x) {
+        return self.push(x);
       });
-
-      return self;
     };
 
 
@@ -2124,16 +2136,11 @@
 
     // TODO code duplication with ImmutableDict
     $$ImmutableRecord$$ImmutableRecord.prototype.update = function (other) {
-      var self = this;
-
-      $$iter$$each($$iter$$iter_object(other), function (_array) {
+      return $$iter$$foldl($$iter$$iter_object(other), this, function (self, _array) {
         var key   = _array[0];
         var value = _array[1];
-
-        self = self.set(key, value);
+        return self.set(key, value);
       });
-
-      return self;
     };
 
 
@@ -2311,6 +2318,9 @@
       exports.keep = $$iter$$keep;
       exports.findIndex = $$iter$$findIndex;
       exports.reverse = $$iter$$reverse;
+      exports.foldl = $$iter$$foldl;
+      exports.foldr = $$iter$$foldr;
+      exports.join = $$iter$$join;
     });
     function $$assert$$assert(x) {
       if (arguments.length !== 1) {

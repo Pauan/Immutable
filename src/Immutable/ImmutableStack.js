@@ -1,11 +1,10 @@
 import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_array, tag_toJS } from "./toJS";
-import { hash, tag_hash } from "./hash";
-import { join_lines } from "./util";
+import { hash, tag_hash, join_lines } from "./hash";
 import { ImmutableBase } from "./Base";
 import { nil } from "./nil";
 import { Cons, iter_cons } from "./Cons";
-import { tag_iter, each, reverse_iter } from "./iter";
+import { tag_iter, map, foldl, reverse_iter } from "./iter";
 
 export function ImmutableStack(root, len) {
   this.root = root;
@@ -37,10 +36,8 @@ ImmutableStack.prototype.isEmpty = function () {
 // TODO code duplication
 ImmutableStack.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
-    var a = [];
-
-    each(x, function (x) {
-      a.push(hash(x));
+    var a = map(x, function (x) {
+      return hash(x);
     });
 
     x.hash = "(Stack" + join_lines(a, "  ") + ")";
@@ -80,13 +77,9 @@ ImmutableStack.prototype.pop = function () {
 
 // TODO code duplication with ImmutableQueue
 ImmutableStack.prototype.concat = function (right) {
-  var self = this;
-
-  each(right, function (x) {
-    self = self.push(x);
+  return foldl(right, this, function (self, x) {
+    return self.push(x);
   });
-
-  return self;
 };
 
 

@@ -98,6 +98,14 @@
 
      If `value` is not in the set, it will do nothing.
 
+   @function Set.removeAll
+   @return {::Set} A new set with no values
+   @summary Returns a new set with no values
+   @desc
+     This function runs in `O(1)` time.
+
+     This does not modify the set, it returns a new set.
+
    @function Set.union
    @param {sequence::Sequence} [other] Sequence of values to union with this set
    @return {::Set} A new set which is the union of this set and `other`

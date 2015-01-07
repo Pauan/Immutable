@@ -3,7 +3,7 @@ import { hash, tag_hash, hash_dict } from "./hash";
 import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_object, tag_toJS } from "./toJS";
 import { ImmutableBase } from "./Base";
-import { tag_iter, iter_object, map, iter, each } from "./iter";
+import { tag_iter, iter_object, map, iter, each, foldl } from "./iter";
 
 function checkKey(key) {
   // Tags are currently implemented as strings
@@ -89,16 +89,11 @@ ImmutableRecord.prototype.modify = function (key, f) {
 
 // TODO code duplication with ImmutableDict
 ImmutableRecord.prototype.update = function (other) {
-  var self = this;
-
-  each(iter_object(other), function (_array) {
+  return foldl(iter_object(other), this, function (self, _array) {
     var key   = _array[0];
     var value = _array[1];
-
-    self = self.set(key, value);
+    return self.set(key, value);
   });
-
-  return self;
 };
 
 

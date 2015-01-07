@@ -1,6 +1,6 @@
 import { isTag, UUIDTag } from "./Tag";
-import { pad_right, repeat, join_lines } from "./util";
-import { each } from "./iter";
+import { pad_right, repeat } from "./util";
+import { map, each, join } from "./iter";
 
 export var tag_hash = UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
 
@@ -55,9 +55,9 @@ export function hash(x) {
 }
 
 export function hash_dict(x, spaces) {
-  var a = [];
-
   var max_key = 0;
+
+  var a = [];
 
   each(x, function (_array) {
     var key   = hash(_array[0]);
@@ -77,11 +77,11 @@ export function hash_dict(x, spaces) {
 
   var spaces = "  ";
 
-  a = a.map(function (x) {
+  a = map(a, function (x) {
     var last = x.key.length - 1;
     x.key[last] = pad_right(x.key[last], max_key, " ");
 
-    var key = x.key.join("\n");
+    var key = join(x.key, "\n");
 
     var value = x.value.replace(/\n/g, "\n" + repeat(" ", max_key + 3));
 
@@ -89,4 +89,12 @@ export function hash_dict(x, spaces) {
   });
 
   return join_lines(a, spaces);
+}
+
+export function join_lines(a, spaces) {
+  var separator = "\n" + spaces;
+
+  return join(map(a, function (x) {
+    return separator + x.replace(/\n/g, separator);
+  }));
 }

@@ -130,6 +130,37 @@ export function reverse_iter(iterator) {
   };
 }
 
+export function foldl(x, init, f) {
+  each(x, function (x) {
+    init = f(init, x);
+  });
+  return init;
+}
+
+export function foldr(x, init, f) {
+  return foldl(reverse(x), init, function (x, y) {
+    return f(y, x);
+  });
+}
+
+export function toArray(x) {
+  var a = [];
+
+  each(x, function (x) {
+    a.push(x);
+  });
+
+  return a;
+}
+
+export function join(x, separator) {
+  if (separator == null) {
+    separator = "";
+  }
+
+  return toArray(x).join(separator);
+}
+
 export function mapcat_iter(iterator, f) {
   var done = false;
   var sub  = null;

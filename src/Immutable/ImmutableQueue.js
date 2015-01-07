@@ -1,10 +1,9 @@
 import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_array, tag_toJS } from "./toJS";
-import { hash, tag_hash } from "./hash";
-import { join_lines } from "./util";
+import { hash, tag_hash, join_lines } from "./hash";
 import { Cons, iter_cons, each_cons } from "./Cons";
 import { nil } from "./nil";
-import { tag_iter, concat_iter, reverse_iter, each } from "./iter";
+import { tag_iter, concat_iter, reverse_iter, map, foldl } from "./iter";
 import { ImmutableBase } from "./Base";
 
 export function ImmutableQueue(left, right, len) {
@@ -36,10 +35,8 @@ ImmutableQueue.prototype[tag_iter] = function () {
 
 ImmutableQueue.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
-    var a = [];
-
-    each(x, function (x) {
-      a.push(hash(x));
+    var a = map(x, function (x) {
+      return hash(x);
     });
 
     x.hash = "(Queue" + join_lines(a, "  ") + ")";
@@ -81,6 +78,7 @@ ImmutableQueue.prototype.pop = function () {
       var right = nil;
 
       // TODO a little gross
+      // TODO replace with foldl ?
       each_cons(this.right, function (x) {
         right = new Cons(x, right);
       });
@@ -93,13 +91,9 @@ ImmutableQueue.prototype.pop = function () {
 };
 
 ImmutableQueue.prototype.concat = function (right) {
-  var self = this;
-
-  each(right, function (x) {
-    self = self.push(x);
+  return foldl(right, this, function (self, x) {
+    return self.push(x);
   });
-
-  return self;
 };
 
 

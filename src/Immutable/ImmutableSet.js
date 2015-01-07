@@ -1,12 +1,12 @@
 import { max, iter_tree } from "./AVL";
 import { simpleSort, key_get, key_set, key_remove } from "./Sorted";
-import { hash, tag_hash } from "./hash";
-import { join_lines, identity } from "./util";
+import { hash, tag_hash, join_lines } from "./hash";
+import { identity } from "./util";
 import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_array, tag_toJS } from "./toJS";
 import { nil } from "./nil";
 import { ImmutableBase } from "./Base";
-import { tag_iter, map_iter, each } from "./iter";
+import { tag_iter, map_iter, map, foldl } from "./iter";
 
 function SetNode(left, right, hash, key) {
   this.left  = left;
@@ -61,10 +61,8 @@ ImmutableSet.prototype[tag_toJSON] = function (x) {
 
 ImmutableSet.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
-    var a = [];
-
-    each(x, function (value) {
-      a.push(hash(value));
+    var a = map(x, function (value) {
+      return hash(value);
     });
 
     var spaces = "  ";
@@ -84,6 +82,10 @@ ImmutableSet.prototype[tag_toJS] = toJS_array;
 // TODO code duplication with ImmutableDict
 ImmutableSet.prototype.isEmpty = function () {
   return this.root === nil;
+};
+
+ImmutableSet.prototype.removeAll = function () {
+  return new ImmutableSet(nil, this.sort, this.hash_fn);
 };
 
 // TODO code duplication with ImmutableDict
@@ -120,13 +122,9 @@ ImmutableSet.prototype.remove = function (key) {
 };
 
 ImmutableSet.prototype.union = function (other) {
-  var self = this;
-
-  each(other, function (value) {
-    self = self.add(value);
+  return foldl(other, this, function (self, value) {
+    return self.add(value);
   });
-
-  return self;
 };
 
 ImmutableSet.prototype.intersect = function (other) {
@@ -136,43 +134,39 @@ ImmutableSet.prototype.intersect = function (other) {
     return self;
 
   } else {
-    var out = new ImmutableSet(nil, self.sort, self.hash_fn);
+    var out = self.removeAll();
 
-    each(other, function (value) {
+    return foldl(other, out, function (out, value) {
       if (self.has(value)) {
-        out = out.add(value);
+        return out.add(value);
+      } else {
+        return out;
       }
     });
-
-    return out;
   }
 };
 
+// TODO what about duplicates in `other` ?
 ImmutableSet.prototype.disjoint = function (other) {
-  var self = this;
-
-  each(other, function (value) {
+  return foldl(other, this, function (self, value) {
     if (self.has(value)) {
-      self = self.remove(value);
+      return self.remove(value);
     } else {
-      self = self.add(value);
+      return self.add(value);
     }
   });
-
-  return self;
 };
 
-// TODO what about the empty set ?
+// TODO what about if `other` is empty ?
 ImmutableSet.prototype.subtract = function (other) {
-  var self = this;
+  if (this.isEmpty()) {
+    return this;
 
-  if (!self.isEmpty()) {
-    each(other, function (value) {
-      self = self.remove(value);
+  } else {
+    return foldl(other, this, function (self, value) {
+      return self.remove(value);
     });
   }
-
-  return self;
 };
 
 

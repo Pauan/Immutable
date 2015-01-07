@@ -1,11 +1,10 @@
 import { insert as array_insert, modify as array_modify, remove as array_remove } from "./Array";
 import { max, balanced_node, concat, insert_min, insert_max, iter_tree } from "./AVL";
-import { tag_hash, hash } from "./hash";
-import { join_lines } from "./util";
+import { tag_hash, hash, join_lines } from "./hash";
 import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_array, tag_toJS } from "./toJS";
 import { ImmutableBase } from "./Base";
-import { tag_iter, iter, mapcat_iter, concat_iter, reverse_iter, each } from "./iter";
+import { tag_iter, iter, mapcat_iter, concat_iter, reverse_iter, map, foldl } from "./iter";
 import { nil } from "./nil";
 
 // We use conses at the very end of the list for very fast O(1) push
@@ -290,10 +289,8 @@ ImmutableList.prototype[tag_toJSON] = function (x) {
 
 ImmutableList.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
-    var a = [];
-
-    each(x, function (x) {
-      a.push(hash(x));
+    var a = map(x, function (x) {
+      return hash(x);
     });
 
     x.hash = "(List" + join_lines(a, "  ") + ")";
@@ -550,13 +547,9 @@ ImmutableList.prototype.concat = function (right) {
     }
 
   } else {
-    var self = this;
-
-    each(right, function (x) {
-      self = self.insert(x);
+    return foldl(right, this, function (self, x) {
+      return self.insert(x);
     });
-
-    return self;
   }
 };
 
