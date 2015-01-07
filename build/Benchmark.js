@@ -569,6 +569,20 @@
       return $$hash$$join_lines(a, spaces);
     }
 
+    function $$hash$$hash_array(s) {
+      return function (x) {
+        if (x.hash === null) {
+          var a = $$iter$$map(x, function (x) {
+            return $$hash$$hash(x);
+          });
+
+          x.hash = "(" + s + $$hash$$join_lines(a, "  ") + ")";
+        }
+
+        return x.hash;
+      };
+    }
+
     function $$hash$$join_lines(a, spaces) {
       var separator = "\n" + spaces;
 
@@ -962,6 +976,47 @@
         }
       }
     }
+
+    function $$Sorted$$sorted_isEmpty() {
+      return this.root === $$nil$$nil;
+    }
+
+    function $$Sorted$$sorted_has(key) {
+      return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$nil$$nil;
+    }
+
+    function $$Sorted$$sorted_remove(f) {
+      return function (key) {
+        var root = this.root;
+        var sort = this.sort;
+        var hash_fn = this.hash_fn;
+        var node = $$Sorted$$key_remove(root, sort, hash_fn(key));
+        if (node === root) {
+          return this;
+        } else {
+          // TODO is this slower than using the constructor directly ?
+          return new f(node, sort, hash_fn);
+        }
+      };
+    }
+
+    function $$Sorted$$sorted_merge(other) {
+      return $$iter$$foldl($$iter$$iter_object(other), this, function (self, _array) {
+        return $$util$$destructure_pair(_array, function (key, value) {
+          return self.set(key, value);
+        });
+      });
+    }
+
+    function $$Sorted$$stack_size() {
+      return this.len;
+    }
+
+    function $$Sorted$$stack_concat(right) {
+      return $$iter$$foldl(right, this, function (self, x) {
+        return self.push(x);
+      });
+    }
     var $$Base$$MutableBase   = {};
     var $$Base$$ImmutableBase = {};
 
@@ -977,6 +1032,7 @@
         return $$iter$$iter(this);
       };
     }
+
 
     function $$ImmutableDict$$KeyNode(left, right, hash, key, value) {
       this.left  = left;
@@ -1013,6 +1069,12 @@
 
     $$ImmutableDict$$ImmutableDict.prototype = Object.create($$Base$$ImmutableBase);
 
+    $$ImmutableDict$$ImmutableDict.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_object;
+    $$ImmutableDict$$ImmutableDict.prototype.isEmpty = $$Sorted$$sorted_isEmpty;
+    $$ImmutableDict$$ImmutableDict.prototype.has = $$Sorted$$sorted_has;
+    $$ImmutableDict$$ImmutableDict.prototype.remove = $$Sorted$$sorted_remove($$ImmutableDict$$ImmutableDict);
+    $$ImmutableDict$$ImmutableDict.prototype.merge = $$Sorted$$sorted_merge;
+
     $$ImmutableDict$$ImmutableDict.prototype[$$iter$$tag_iter] = function () {
       return $$iter$$map_iter($$AVL$$iter_tree(this.root), function (node) {
         return [node.key, node.value];
@@ -1044,22 +1106,10 @@
       }
     };
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_object;
-
-    $$ImmutableDict$$ImmutableDict.prototype.isEmpty = function () {
-      return this.root === $$nil$$nil;
-    };
-
     $$ImmutableDict$$ImmutableDict.prototype.removeAll = function () {
       return new $$ImmutableDict$$ImmutableDict($$nil$$nil, this.sort, this.hash_fn);
     };
 
-    // TODO what if `sort` suspends ?
-    $$ImmutableDict$$ImmutableDict.prototype.has = function (key) {
-      return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$nil$$nil;
-    };
-
-    // TODO what if `sort` suspends ?
     $$ImmutableDict$$ImmutableDict.prototype.get = function (key, def) {
       var node = $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key));
       if (node === $$nil$$nil) {
@@ -1088,22 +1138,6 @@
       }
     };
 
-    // TODO code duplication
-    // TODO what if `sort` suspends ?
-    $$ImmutableDict$$ImmutableDict.prototype.remove = function (key) {
-      var root = this.root;
-      var sort = this.sort;
-      var hash_fn = this.hash_fn;
-      var node = $$Sorted$$key_remove(root, sort, hash_fn(key));
-      if (node === root) {
-        return this;
-      } else {
-        return new $$ImmutableDict$$ImmutableDict(node, sort, hash_fn);
-      }
-    };
-
-    // TODO code duplication
-    // TODO what if `sort` suspends ?
     $$ImmutableDict$$ImmutableDict.prototype.modify = function (key, f) {
       var root = this.root;
       var sort = this.sort;
@@ -1114,15 +1148,6 @@
       } else {
         return new $$ImmutableDict$$ImmutableDict(node, sort, hash_fn);
       }
-    };
-
-    // TODO code duplication with ImmutableRecord
-    $$ImmutableDict$$ImmutableDict.prototype.merge = function (other) {
-      return $$iter$$foldl($$iter$$iter_object(other), this, function (self, _array) {
-        return $$util$$destructure_pair(_array, function (key, value) {
-          return self.set(key, value);
-        });
-      });
     };
 
 
@@ -1159,6 +1184,7 @@
       }
     }
 
+
     function $$ImmutableSet$$SetNode(left, right, hash, key) {
       this.left  = left;
       this.right = right;
@@ -1191,6 +1217,11 @@
     }
 
     $$ImmutableSet$$ImmutableSet.prototype = Object.create($$Base$$ImmutableBase);
+
+    $$ImmutableSet$$ImmutableSet.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableSet$$ImmutableSet.prototype.isEmpty = $$Sorted$$sorted_isEmpty;
+    $$ImmutableSet$$ImmutableSet.prototype.has = $$Sorted$$sorted_has;
+    $$ImmutableSet$$ImmutableSet.prototype.remove = $$Sorted$$sorted_remove($$ImmutableSet$$ImmutableSet);
 
     $$toJSON$$fromJSON_registry["Set"] = function (x) {
       return $$ImmutableSet$$Set($$toJSON$$fromJSON_array(x));
@@ -1228,43 +1259,16 @@
       return x.hash;
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
-
-    // TODO code duplication with ImmutableDict
-    $$ImmutableSet$$ImmutableSet.prototype.isEmpty = function () {
-      return this.root === $$nil$$nil;
-    };
-
     $$ImmutableSet$$ImmutableSet.prototype.removeAll = function () {
       return new $$ImmutableSet$$ImmutableSet($$nil$$nil, this.sort, this.hash_fn);
     };
 
-    // TODO code duplication with ImmutableDict
-    // TODO what if `sort` suspends ?
-    $$ImmutableSet$$ImmutableSet.prototype.has = function (key) {
-      return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$nil$$nil;
-    };
-
-    // TODO what if `sort` suspends ?
     $$ImmutableSet$$ImmutableSet.prototype.add = function (key) {
       var root = this.root;
       var sort = this.sort;
       var hash_fn = this.hash_fn;
       var hash = hash_fn(key);
       var node = $$Sorted$$key_set(root, sort, hash, new $$ImmutableSet$$SetNode($$nil$$nil, $$nil$$nil, hash, key));
-      if (node === root) {
-        return this;
-      } else {
-        return new $$ImmutableSet$$ImmutableSet(node, sort, hash_fn);
-      }
-    };
-
-    // TODO what if `sort` suspends ?
-    $$ImmutableSet$$ImmutableSet.prototype.remove = function (key) {
-      var root = this.root;
-      var sort = this.sort;
-      var hash_fn = this.hash_fn;
-      var node = $$Sorted$$key_remove(root, sort, hash_fn(key));
       if (node === root) {
         return this;
       } else {
@@ -1721,17 +1725,7 @@
       return $$toJSON$$toJSON_array("List", x);
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$hash$$tag_hash] = function (x) {
-      if (x.hash === null) {
-        var a = $$iter$$map(x, function (x) {
-          return $$hash$$hash(x);
-        });
-
-        x.hash = "(List" + $$hash$$join_lines(a, "  ") + ")";
-      }
-
-      return x.hash;
-    };
+    $$ImmutableList$$ImmutableList.prototype[$$hash$$tag_hash] = $$hash$$hash_array("List");
 
     $$ImmutableList$$ImmutableList.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
@@ -2015,6 +2009,11 @@
 
     $$ImmutableQueue$$ImmutableQueue.prototype = Object.create($$Base$$ImmutableBase);
 
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$hash$$tag_hash] = $$hash$$hash_array("Queue");
+    $$ImmutableQueue$$ImmutableQueue.prototype.size = $$Sorted$$stack_size;
+    $$ImmutableQueue$$ImmutableQueue.prototype.concat = $$Sorted$$stack_concat;
+
     $$toJSON$$fromJSON_registry["Queue"] = function (x) {
       return $$ImmutableQueue$$Queue($$toJSON$$fromJSON_array(x));
     };
@@ -2022,8 +2021,6 @@
     $$ImmutableQueue$$ImmutableQueue.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("Queue", x);
     };
-
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
 
     $$ImmutableQueue$$ImmutableQueue.prototype.isEmpty = function () {
       return this.left === $$nil$$nil && this.right === $$nil$$nil;
@@ -2035,22 +2032,6 @@
 
     $$ImmutableQueue$$ImmutableQueue.prototype[$$iter$$tag_iter] = function () {
       return $$iter$$concat_iter($$Cons$$iter_cons(this.left), $$iter$$reverse_iter($$Cons$$iter_cons(this.right)));
-    };
-
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$hash$$tag_hash] = function (x) {
-      if (x.hash === null) {
-        var a = $$iter$$map(x, function (x) {
-          return $$hash$$hash(x);
-        });
-
-        x.hash = "(Queue" + $$hash$$join_lines(a, "  ") + ")";
-      }
-
-      return x.hash;
-    };
-
-    $$ImmutableQueue$$ImmutableQueue.prototype.size = function () {
-      return this.len;
     };
 
     $$ImmutableQueue$$ImmutableQueue.prototype.peek = function (def) {
@@ -2094,12 +2075,6 @@
       }
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype.concat = function (right) {
-      return $$iter$$foldl(right, this, function (self, x) {
-        return self.push(x);
-      });
-    };
-
 
     function $$ImmutableQueue$$isQueue(x) {
       return x instanceof $$ImmutableQueue$$ImmutableQueue;
@@ -2124,6 +2099,12 @@
 
     $$ImmutableStack$$ImmutableStack.prototype = Object.create($$Base$$ImmutableBase);
 
+    $$ImmutableStack$$ImmutableStack.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableStack$$ImmutableStack.prototype[$$hash$$tag_hash] = $$hash$$hash_array("Stack");
+    $$ImmutableStack$$ImmutableStack.prototype.isEmpty = $$Sorted$$sorted_isEmpty;
+    $$ImmutableStack$$ImmutableStack.prototype.size = $$Sorted$$stack_size;
+    $$ImmutableStack$$ImmutableStack.prototype.concat = $$Sorted$$stack_concat;
+
     $$toJSON$$fromJSON_registry["Stack"] = function (x) {
       return $$ImmutableStack$$Stack($$toJSON$$fromJSON_array(x));
     };
@@ -2136,33 +2117,8 @@
       return $$toJSON$$toJSON_array("Stack", x);
     };
 
-    $$ImmutableStack$$ImmutableStack.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_array;
-
-    // TODO code duplication with ImmutableSet
-    $$ImmutableStack$$ImmutableStack.prototype.isEmpty = function () {
-      return this.root === $$nil$$nil;
-    };
-
     $$ImmutableStack$$ImmutableStack.prototype.removeAll = function () {
       return new $$ImmutableStack$$ImmutableStack($$nil$$nil, 0);
-    };
-
-    // TODO code duplication
-    $$ImmutableStack$$ImmutableStack.prototype[$$hash$$tag_hash] = function (x) {
-      if (x.hash === null) {
-        var a = $$iter$$map(x, function (x) {
-          return $$hash$$hash(x);
-        });
-
-        x.hash = "(Stack" + $$hash$$join_lines(a, "  ") + ")";
-      }
-
-      return x.hash;
-    };
-
-    // TODO code duplication with ImmutableQueue
-    $$ImmutableStack$$ImmutableStack.prototype.size = function () {
-      return this.len;
     };
 
     $$ImmutableStack$$ImmutableStack.prototype.peek = function (def) {
@@ -2187,13 +2143,6 @@
       } else {
         return new $$ImmutableStack$$ImmutableStack(this.root.cdr, this.len - 1);
       }
-    };
-
-    // TODO code duplication with ImmutableQueue
-    $$ImmutableStack$$ImmutableStack.prototype.concat = function (right) {
-      return $$iter$$foldl(right, this, function (self, x) {
-        return self.push(x);
-      });
     };
 
 
@@ -2228,6 +2177,9 @@
 
     $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$Base$$ImmutableBase);
 
+    $$ImmutableRecord$$ImmutableRecord.prototype.update = $$Sorted$$sorted_merge;
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_object;
+
     $$toJSON$$fromJSON_registry["Record"] = function (x) {
       return $$ImmutableRecord$$Record($$toJSON$$fromJSON_object(x));
     };
@@ -2235,8 +2187,6 @@
     $$ImmutableRecord$$ImmutableRecord.prototype[$$toJSON$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_object("Record", x);
     };
-
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$toJS$$tag_toJS] = $$toJS$$toJS_object;
 
     $$ImmutableRecord$$ImmutableRecord.prototype[$$hash$$tag_hash] = function (x) {
       if (x.hash === null) {
@@ -2294,15 +2244,6 @@
           return new $$ImmutableRecord$$ImmutableRecord(keys, array);
         }
       }
-    };
-
-    // TODO code duplication with ImmutableDict
-    $$ImmutableRecord$$ImmutableRecord.prototype.update = function (other) {
-      return $$iter$$foldl($$iter$$iter_object(other), this, function (self, _array) {
-        return $$util$$destructure_pair(_array, function (key, value) {
-          return self.set(key, value);
-        });
-      });
     };
 
 
@@ -2396,6 +2337,7 @@
                $$ImmutableQueue$$isQueue(x) ||
                $$ImmutableStack$$isStack(x) ||
                $$ImmutableRecord$$isRecord(x);
+      // TODO just return true? are there any mutable value types?
       } else {
         var type = typeof x;
         // Tags are currently implemented with strings

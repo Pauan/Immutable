@@ -1,5 +1,6 @@
 import { max, iter_tree } from "./AVL";
-import { simpleSort, key_get, key_set, key_remove } from "./Sorted";
+import { simpleSort, key_get, key_set, key_remove, sorted_isEmpty,
+         sorted_has, sorted_remove } from "./Sorted";
 import { hash, tag_hash, join_lines } from "./hash";
 import { identity } from "./util";
 import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
@@ -7,6 +8,7 @@ import { toJS_array, tag_toJS } from "./toJS";
 import { nil } from "./nil";
 import { ImmutableBase } from "./Base";
 import { tag_iter, map_iter, map, foldl } from "./iter";
+
 
 function SetNode(left, right, hash, key) {
   this.left  = left;
@@ -40,6 +42,11 @@ export function ImmutableSet(root, sort, hash_fn) {
 }
 
 ImmutableSet.prototype = Object.create(ImmutableBase);
+
+ImmutableSet.prototype[tag_toJS] = toJS_array;
+ImmutableSet.prototype.isEmpty = sorted_isEmpty;
+ImmutableSet.prototype.has = sorted_has;
+ImmutableSet.prototype.remove = sorted_remove(ImmutableSet);
 
 fromJSON_registry["Set"] = function (x) {
   return Set(fromJSON_array(x));
@@ -77,43 +84,16 @@ ImmutableSet.prototype[tag_hash] = function (x) {
   return x.hash;
 };
 
-ImmutableSet.prototype[tag_toJS] = toJS_array;
-
-// TODO code duplication with ImmutableDict
-ImmutableSet.prototype.isEmpty = function () {
-  return this.root === nil;
-};
-
 ImmutableSet.prototype.removeAll = function () {
   return new ImmutableSet(nil, this.sort, this.hash_fn);
 };
 
-// TODO code duplication with ImmutableDict
-// TODO what if `sort` suspends ?
-ImmutableSet.prototype.has = function (key) {
-  return key_get(this.root, this.sort, this.hash_fn(key)) !== nil;
-};
-
-// TODO what if `sort` suspends ?
 ImmutableSet.prototype.add = function (key) {
   var root = this.root;
   var sort = this.sort;
   var hash_fn = this.hash_fn;
   var hash = hash_fn(key);
   var node = key_set(root, sort, hash, new SetNode(nil, nil, hash, key));
-  if (node === root) {
-    return this;
-  } else {
-    return new ImmutableSet(node, sort, hash_fn);
-  }
-};
-
-// TODO what if `sort` suspends ?
-ImmutableSet.prototype.remove = function (key) {
-  var root = this.root;
-  var sort = this.sort;
-  var hash_fn = this.hash_fn;
-  var node = key_remove(root, sort, hash_fn(key));
   if (node === root) {
     return this;
   } else {

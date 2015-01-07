@@ -1,10 +1,11 @@
 import { toJSON_array, fromJSON_array, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_array, tag_toJS } from "./toJS";
-import { hash, tag_hash, join_lines } from "./hash";
+import { tag_hash, hash_array } from "./hash";
 import { Cons, iter_cons, each_cons } from "./Cons";
 import { nil } from "./nil";
-import { tag_iter, concat_iter, reverse_iter, map, foldl } from "./iter";
+import { tag_iter, concat_iter, reverse_iter } from "./iter";
 import { ImmutableBase } from "./Base";
+import { stack_size, stack_concat } from "./Sorted";
 
 export function ImmutableQueue(left, right, len) {
   this.left  = left;
@@ -15,6 +16,11 @@ export function ImmutableQueue(left, right, len) {
 
 ImmutableQueue.prototype = Object.create(ImmutableBase);
 
+ImmutableQueue.prototype[tag_toJS] = toJS_array;
+ImmutableQueue.prototype[tag_hash] = hash_array("Queue");
+ImmutableQueue.prototype.size = stack_size;
+ImmutableQueue.prototype.concat = stack_concat;
+
 fromJSON_registry["Queue"] = function (x) {
   return Queue(fromJSON_array(x));
 };
@@ -22,8 +28,6 @@ fromJSON_registry["Queue"] = function (x) {
 ImmutableQueue.prototype[tag_toJSON] = function (x) {
   return toJSON_array("Queue", x);
 };
-
-ImmutableQueue.prototype[tag_toJS] = toJS_array;
 
 ImmutableQueue.prototype.isEmpty = function () {
   return this.left === nil && this.right === nil;
@@ -35,22 +39,6 @@ ImmutableQueue.prototype.removeAll = function () {
 
 ImmutableQueue.prototype[tag_iter] = function () {
   return concat_iter(iter_cons(this.left), reverse_iter(iter_cons(this.right)));
-};
-
-ImmutableQueue.prototype[tag_hash] = function (x) {
-  if (x.hash === null) {
-    var a = map(x, function (x) {
-      return hash(x);
-    });
-
-    x.hash = "(Queue" + join_lines(a, "  ") + ")";
-  }
-
-  return x.hash;
-};
-
-ImmutableQueue.prototype.size = function () {
-  return this.len;
 };
 
 ImmutableQueue.prototype.peek = function (def) {
@@ -92,12 +80,6 @@ ImmutableQueue.prototype.pop = function () {
       return new ImmutableQueue(left, this.right, this.len - 1);
     }
   }
-};
-
-ImmutableQueue.prototype.concat = function (right) {
-  return foldl(right, this, function (self, x) {
-    return self.push(x);
-  });
 };
 
 

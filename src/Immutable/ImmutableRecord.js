@@ -3,8 +3,9 @@ import { hash, tag_hash, hash_dict } from "./hash";
 import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { toJS_object, tag_toJS } from "./toJS";
 import { ImmutableBase } from "./Base";
-import { tag_iter, iter_object, map, iter, each, foldl } from "./iter";
+import { tag_iter, iter_object, map, iter, each } from "./iter";
 import { destructure_pair } from "./util";
+import { sorted_merge } from "./Sorted";
 
 function checkKey(key) {
   // Tags are currently implemented as strings
@@ -21,6 +22,9 @@ export function ImmutableRecord(keys, values) {
 
 ImmutableRecord.prototype = Object.create(ImmutableBase);
 
+ImmutableRecord.prototype.update = sorted_merge;
+ImmutableRecord.prototype[tag_toJS] = toJS_object;
+
 fromJSON_registry["Record"] = function (x) {
   return Record(fromJSON_object(x));
 };
@@ -28,8 +32,6 @@ fromJSON_registry["Record"] = function (x) {
 ImmutableRecord.prototype[tag_toJSON] = function (x) {
   return toJSON_object("Record", x);
 };
-
-ImmutableRecord.prototype[tag_toJS] = toJS_object;
 
 ImmutableRecord.prototype[tag_hash] = function (x) {
   if (x.hash === null) {
@@ -87,15 +89,6 @@ ImmutableRecord.prototype.modify = function (key, f) {
       return new ImmutableRecord(keys, array);
     }
   }
-};
-
-// TODO code duplication with ImmutableDict
-ImmutableRecord.prototype.update = function (other) {
-  return foldl(iter_object(other), this, function (self, _array) {
-    return destructure_pair(_array, function (key, value) {
-      return self.set(key, value);
-    });
-  });
 };
 
 

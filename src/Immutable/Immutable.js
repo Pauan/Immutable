@@ -39,6 +39,7 @@ export function isImmutable(x) {
            isQueue(x) ||
            isStack(x) ||
            isRecord(x);
+  // TODO just return true? are there any mutable value types?
   } else {
     var type = typeof x;
     // Tags are currently implemented with strings

@@ -1,12 +1,14 @@
 import { max, iter_tree } from "./AVL";
-import { simpleSort, key_get, key_set, key_modify, key_remove } from "./Sorted";
+import { simpleSort, sorted_isEmpty, sorted_has, key_get, key_set, key_modify,
+         sorted_remove, sorted_merge } from "./Sorted";
 import { hash, tag_hash, hash_dict } from "./hash";
 import { toJS_object, tag_toJS } from "./toJS";
 import { toJSON_object, fromJSON_object, tag_toJSON, fromJSON_registry } from "./toJSON";
 import { nil } from "./nil";
 import { ImmutableBase } from "./Base";
-import { tag_iter, iter_object, map_iter, foldl } from "./iter";
-import { identity, destructure_pair } from "./util";
+import { tag_iter, map_iter } from "./iter";
+import { identity } from "./util";
+
 
 function KeyNode(left, right, hash, key, value) {
   this.left  = left;
@@ -43,6 +45,12 @@ export function ImmutableDict(root, sort, hash_fn) {
 
 ImmutableDict.prototype = Object.create(ImmutableBase);
 
+ImmutableDict.prototype[tag_toJS] = toJS_object;
+ImmutableDict.prototype.isEmpty = sorted_isEmpty;
+ImmutableDict.prototype.has = sorted_has;
+ImmutableDict.prototype.remove = sorted_remove(ImmutableDict);
+ImmutableDict.prototype.merge = sorted_merge;
+
 ImmutableDict.prototype[tag_iter] = function () {
   return map_iter(iter_tree(this.root), function (node) {
     return [node.key, node.value];
@@ -74,22 +82,10 @@ ImmutableDict.prototype[tag_toJSON] = function (x) {
   }
 };
 
-ImmutableDict.prototype[tag_toJS] = toJS_object;
-
-ImmutableDict.prototype.isEmpty = function () {
-  return this.root === nil;
-};
-
 ImmutableDict.prototype.removeAll = function () {
   return new ImmutableDict(nil, this.sort, this.hash_fn);
 };
 
-// TODO what if `sort` suspends ?
-ImmutableDict.prototype.has = function (key) {
-  return key_get(this.root, this.sort, this.hash_fn(key)) !== nil;
-};
-
-// TODO what if `sort` suspends ?
 ImmutableDict.prototype.get = function (key, def) {
   var node = key_get(this.root, this.sort, this.hash_fn(key));
   if (node === nil) {
@@ -118,22 +114,6 @@ ImmutableDict.prototype.set = function (key, value) {
   }
 };
 
-// TODO code duplication
-// TODO what if `sort` suspends ?
-ImmutableDict.prototype.remove = function (key) {
-  var root = this.root;
-  var sort = this.sort;
-  var hash_fn = this.hash_fn;
-  var node = key_remove(root, sort, hash_fn(key));
-  if (node === root) {
-    return this;
-  } else {
-    return new ImmutableDict(node, sort, hash_fn);
-  }
-};
-
-// TODO code duplication
-// TODO what if `sort` suspends ?
 ImmutableDict.prototype.modify = function (key, f) {
   var root = this.root;
   var sort = this.sort;
@@ -144,15 +124,6 @@ ImmutableDict.prototype.modify = function (key, f) {
   } else {
     return new ImmutableDict(node, sort, hash_fn);
   }
-};
-
-// TODO code duplication with ImmutableRecord
-ImmutableDict.prototype.merge = function (other) {
-  return foldl(iter_object(other), this, function (self, _array) {
-    return destructure_pair(_array, function (key, value) {
-      return self.set(key, value);
-    });
-  });
 };
 
 

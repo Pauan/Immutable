@@ -1,5 +1,7 @@
 import { concat, balanced_node } from "./AVL";
 import { nil } from "./nil";
+import { foldl, iter_object } from "./iter";
+import { destructure_pair } from "./util";
 
 export function simpleSort(x, y) {
   if (x === y) {
@@ -125,4 +127,49 @@ export function key_remove(node, sort, hash) {
       }
     }
   }
+}
+
+// TODO this probably shouldn't be in here
+export function sorted_isEmpty() {
+  return this.root === nil;
+}
+
+export function sorted_has(key) {
+  return key_get(this.root, this.sort, this.hash_fn(key)) !== nil;
+}
+
+export function sorted_remove(f) {
+  return function (key) {
+    var root = this.root;
+    var sort = this.sort;
+    var hash_fn = this.hash_fn;
+    var node = key_remove(root, sort, hash_fn(key));
+    if (node === root) {
+      return this;
+    } else {
+      // TODO is this slower than using the constructor directly ?
+      return new f(node, sort, hash_fn);
+    }
+  };
+}
+
+// TODO this probably shouldn't be in here
+export function sorted_merge(other) {
+  return foldl(iter_object(other), this, function (self, _array) {
+    return destructure_pair(_array, function (key, value) {
+      return self.set(key, value);
+    });
+  });
+}
+
+// TODO this probably shouldn't be in here
+export function stack_size() {
+  return this.len;
+}
+
+// TODO this probably shouldn't be in here
+export function stack_concat(right) {
+  return foldl(right, this, function (self, x) {
+    return self.push(x);
+  });
 }

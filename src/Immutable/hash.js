@@ -93,6 +93,20 @@ export function hash_dict(x, spaces) {
   return join_lines(a, spaces);
 }
 
+export function hash_array(s) {
+  return function (x) {
+    if (x.hash === null) {
+      var a = map(x, function (x) {
+        return hash(x);
+      });
+
+      x.hash = "(" + s + join_lines(a, "  ") + ")";
+    }
+
+    return x.hash;
+  };
+}
+
 export function join_lines(a, spaces) {
   var separator = "\n" + spaces;
 
