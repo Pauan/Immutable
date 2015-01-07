@@ -107,6 +107,14 @@
 
      If `key` is not in the dict, it will do nothing.
 
+   @function Dict.removeAll
+   @return {::Dict} A new dict with no keys/values
+   @summary Returns a new dict with no keys/values
+   @desc
+     This function runs in `O(1)` time.
+
+     This does not modify the dict, it returns a new dict.
+
    @function Dict.modify
    @param {Any} [key] The key to modify in the dict
    @param {Function} [fn] The function which will modify the value at `key`

@@ -235,7 +235,13 @@
 
     function $$iter$$make_seq(f) {
       var o = {};
+
       o[$$iter$$tag_iter] = f;
+
+      if ($$iter$$Symbol_iterator !== null) {
+        o[$$iter$$Symbol_iterator] = f;
+      }
+
       return o;
     }
 
@@ -1024,6 +1030,10 @@
       return this.root === $$nil$$nil;
     };
 
+    $$ImmutableDict$$ImmutableDict.prototype.removeAll = function () {
+      return new $$ImmutableDict$$ImmutableDict($$nil$$nil, this.sort, this.hash_fn);
+    };
+
     // TODO what if `sort` suspends ?
     $$ImmutableDict$$ImmutableDict.prototype.has = function (key) {
       return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$nil$$nil;
@@ -1279,7 +1289,6 @@
       });
     };
 
-    // TODO what about if `other` is empty ?
     $$ImmutableSet$$ImmutableSet.prototype.subtract = function (other) {
       if (this.isEmpty()) {
         return this;
@@ -1717,6 +1726,10 @@
       return this.root === $$nil$$nil && this.tail === $$nil$$nil;
     };
 
+    $$ImmutableList$$ImmutableList.prototype.removeAll = function () {
+      return new $$ImmutableList$$ImmutableList($$nil$$nil, $$nil$$nil, 0);
+    };
+
     $$ImmutableList$$ImmutableList.prototype.size = function () {
       return this.root.size + this.tail_size;
     };
@@ -1996,6 +2009,10 @@
       return this.left === $$nil$$nil && this.right === $$nil$$nil;
     };
 
+    $$ImmutableQueue$$ImmutableQueue.prototype.removeAll = function () {
+      return new $$ImmutableQueue$$ImmutableQueue($$nil$$nil, $$nil$$nil, 0);
+    };
+
     $$ImmutableQueue$$ImmutableQueue.prototype[$$iter$$tag_iter] = function () {
       return $$iter$$concat_iter($$Cons$$iter_cons(this.left), $$iter$$reverse_iter($$Cons$$iter_cons(this.right)));
     };
@@ -2104,6 +2121,10 @@
     // TODO code duplication with ImmutableSet
     $$ImmutableStack$$ImmutableStack.prototype.isEmpty = function () {
       return this.root === $$nil$$nil;
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype.removeAll = function () {
+      return new $$ImmutableStack$$ImmutableStack($$nil$$nil, 0);
     };
 
     // TODO code duplication

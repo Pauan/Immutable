@@ -116,7 +116,13 @@
 
     function $$iter$$make_seq(f) {
       var o = {};
+
       o[$$iter$$tag_iter] = f;
+
+      if ($$iter$$Symbol_iterator !== null) {
+        o[$$iter$$Symbol_iterator] = f;
+      }
+
       return o;
     }
 
@@ -905,6 +911,10 @@
       return this.root === $$$Immutable$nil$$nil;
     };
 
+    $$ImmutableDict$$ImmutableDict.prototype.removeAll = function () {
+      return new $$ImmutableDict$$ImmutableDict($$$Immutable$nil$$nil, this.sort, this.hash_fn);
+    };
+
     // TODO what if `sort` suspends ?
     $$ImmutableDict$$ImmutableDict.prototype.has = function (key) {
       return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$$Immutable$nil$$nil;
@@ -1160,7 +1170,6 @@
       });
     };
 
-    // TODO what about if `other` is empty ?
     $$ImmutableSet$$ImmutableSet.prototype.subtract = function (other) {
       if (this.isEmpty()) {
         return this;
@@ -1598,6 +1607,10 @@
       return this.root === $$$Immutable$nil$$nil && this.tail === $$$Immutable$nil$$nil;
     };
 
+    $$ImmutableList$$ImmutableList.prototype.removeAll = function () {
+      return new $$ImmutableList$$ImmutableList($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
+    };
+
     $$ImmutableList$$ImmutableList.prototype.size = function () {
       return this.root.size + this.tail_size;
     };
@@ -1877,6 +1890,10 @@
       return this.left === $$$Immutable$nil$$nil && this.right === $$$Immutable$nil$$nil;
     };
 
+    $$ImmutableQueue$$ImmutableQueue.prototype.removeAll = function () {
+      return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$nil$$nil, $$$Immutable$nil$$nil, 0);
+    };
+
     $$ImmutableQueue$$ImmutableQueue.prototype[$$iter$$tag_iter] = function () {
       return $$iter$$concat_iter($$Cons$$iter_cons(this.left), $$iter$$reverse_iter($$Cons$$iter_cons(this.right)));
     };
@@ -1985,6 +2002,10 @@
     // TODO code duplication with ImmutableSet
     $$ImmutableStack$$ImmutableStack.prototype.isEmpty = function () {
       return this.root === $$$Immutable$nil$$nil;
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype.removeAll = function () {
+      return new $$ImmutableStack$$ImmutableStack($$$Immutable$nil$$nil, 0);
     };
 
     // TODO code duplication
@@ -2516,7 +2537,7 @@
 
 
     // TODO test that this works correctly
-    function src$Test$Test$$verify_dict(tree, obj) {
+    function src$Test$Test$$verify_tree(tree) {
       var sort = tree.sort;
       var hash_fn = tree.hash_fn;
 
@@ -2545,6 +2566,12 @@
         }
       }
       loop(tree.root, [], []);
+    }
+
+    function src$Test$Test$$verify_dict(tree, obj) {
+      $$assert$$assert($$ImmutableDict$$isDict(tree));
+
+      src$Test$Test$$verify_tree(tree);
 
       $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(tree), obj));
 
@@ -2552,10 +2579,18 @@
     }
 
     function src$Test$Test$$verify_set(tree, array) {
-      return src$Test$Test$$verify_dict(tree, array);
+      $$assert$$assert($$ImmutableSet$$isSet(tree));
+
+      src$Test$Test$$verify_tree(tree);
+
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(tree), array));
+
+      return tree;
     }
 
     function src$Test$Test$$verify_list(tree, array) {
+      $$assert$$assert($$ImmutableList$$isList(tree));
+
       function loop(node) {
         if (node !== $$$Immutable$nil$$nil) {
           var left  = node.left;
@@ -2591,6 +2626,8 @@
     }
 
     function src$Test$Test$$verify_queue(queue, array) {
+      $$assert$$assert($$ImmutableQueue$$isQueue(queue));
+
       if (!queue.isEmpty()) {
         $$assert$$assert(queue.left !== $$$Immutable$nil$$nil);
       }
@@ -2601,12 +2638,16 @@
     }
 
     function src$Test$Test$$verify_stack(stack, array) {
+      $$assert$$assert($$ImmutableStack$$isStack(stack));
+
       $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(stack), array));
 
       return stack;
     }
 
     function src$Test$Test$$verify_record(record, obj) {
+      $$assert$$assert($$ImmutableRecord$$isRecord(record));
+
       var count = 0;
 
       for (var s in record.keys) {
@@ -2929,6 +2970,23 @@
         $$assert$$assert("" + $$ImmutableDict$$Dict([[$$ImmutableDict$$Dict({ foo: 1 }), $$ImmutableDict$$Dict({ bar: 2 })]]) === "(Dict\n  (Dict\n    \"foo\" = 1) = (Dict\n                   \"bar\" = 2))");
       });
 
+      src$Test$Test$$test("removeAll", function () {
+        src$Test$Test$$verify_dict(dict_empty.removeAll(), {});
+        src$Test$Test$$verify_dict(dict_foo.removeAll(), {});
+
+        var empty_sorted_dict = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, {});
+        var foo_sorted_dict = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 });
+
+        src$Test$Test$$verify_dict(empty_sorted_dict.removeAll(), {});
+        src$Test$Test$$verify_dict(foo_sorted_dict.removeAll(), {});
+
+        $$assert$$assert(empty_sorted_dict.sort === empty_sorted_dict.removeAll().sort);
+        $$assert$$assert(empty_sorted_dict.hash_fn === empty_sorted_dict.removeAll().hash_fn);
+
+        $$assert$$assert(foo_sorted_dict.sort === foo_sorted_dict.removeAll().sort);
+        $$assert$$assert(foo_sorted_dict.hash_fn === foo_sorted_dict.removeAll().hash_fn);
+      });
+
       // TODO
       /*test("zip", function () {
         var a = [["a", 1], ["b", 2], ["c", 3], ["d", 4],
@@ -2992,6 +3050,23 @@
 
         src$Test$Test$$verify_set(five_set.remove(1), [2, 3, 4, 5]);
         src$Test$Test$$verify_set(five_set.remove(1).remove(4), [2, 3, 5]);
+      });
+
+      src$Test$Test$$test("removeAll", function () {
+        src$Test$Test$$verify_set(empty_set.removeAll(), []);
+        src$Test$Test$$verify_set(five_set.removeAll(), []);
+
+        var empty_sorted_set = $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, []);
+        var five_sorted_set = $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3, 4, 5]);
+
+        src$Test$Test$$verify_set(empty_sorted_set.removeAll(), []);
+        src$Test$Test$$verify_set(five_sorted_set.removeAll(), []);
+
+        $$assert$$assert(empty_sorted_set.sort === empty_sorted_set.removeAll().sort);
+        $$assert$$assert(empty_sorted_set.hash_fn === empty_sorted_set.removeAll().hash_fn);
+
+        $$assert$$assert(five_sorted_set.sort === five_sorted_set.removeAll().sort);
+        $$assert$$assert(five_sorted_set.hash_fn === five_sorted_set.removeAll().hash_fn);
       });
 
       src$Test$Test$$test("union", function () {
@@ -3311,6 +3386,11 @@
         src$Test$Test$$verify_list(five_list.remove(-2), [1, 2, 3, 5]);
         src$Test$Test$$verify_list(five_list.remove(0), [2, 3, 4, 5]);
         src$Test$Test$$verify_list(five_list.remove(1), [1, 3, 4, 5]);
+      });
+
+      src$Test$Test$$test("removeAll", function () {
+        src$Test$Test$$verify_list(empty_list.removeAll(), []);
+        src$Test$Test$$verify_list(five_list.removeAll(), []);
       });
 
       src$Test$Test$$test("modify", function () {
@@ -3670,6 +3750,11 @@
                      [5, 4, 3, 2, 1]);
       });
 
+      src$Test$Test$$test("removeAll", function () {
+        src$Test$Test$$verify_queue(empty_queue.removeAll(), []);
+        src$Test$Test$$verify_queue(five_queue.removeAll(), []);
+      });
+
       src$Test$Test$$test("pop", function () {
         src$Test$Test$$assert_raises(function () {
           empty_queue.pop();
@@ -3810,6 +3895,11 @@
 
         src$Test$Test$$verify_stack(five_stack.pop(), [1, 2, 3, 4]);
         src$Test$Test$$verify_stack(five_stack.pop().pop(), [1, 2, 3]);
+      });
+
+      src$Test$Test$$test("removeAll", function () {
+        src$Test$Test$$verify_stack(empty_stack.removeAll(), []);
+        src$Test$Test$$verify_stack(five_stack.removeAll(), []);
       });
 
       src$Test$Test$$test("concat", function () {

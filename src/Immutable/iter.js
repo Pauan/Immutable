@@ -1,5 +1,3 @@
-// TODO unit tests for this stuff
-
 import { UUIDTag } from "./Tag";
 import { isJSLiteral } from "./util";
 
@@ -44,10 +42,15 @@ export function iter(x) {
   }
 }
 
-// TODO have `tag_iter` return `this`, and then have `next` directly on `o` ?
 export function make_seq(f) {
   var o = {};
+
   o[tag_iter] = f;
+
+  if (Symbol_iterator !== null) {
+    o[Symbol_iterator] = f;
+  }
+
   return o;
 }
 

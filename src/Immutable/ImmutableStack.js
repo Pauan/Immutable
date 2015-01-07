@@ -33,6 +33,10 @@ ImmutableStack.prototype.isEmpty = function () {
   return this.root === nil;
 };
 
+ImmutableStack.prototype.removeAll = function () {
+  return new ImmutableStack(nil, 0);
+};
+
 // TODO code duplication
 ImmutableStack.prototype[tag_hash] = function (x) {
   if (x.hash === null) {

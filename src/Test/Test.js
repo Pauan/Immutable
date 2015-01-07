@@ -189,7 +189,7 @@ function verify_json(x, expected) {
 
 
 // TODO test that this works correctly
-function verify_dict(tree, obj) {
+function verify_tree(tree) {
   var sort = tree.sort;
   var hash_fn = tree.hash_fn;
 
@@ -218,6 +218,12 @@ function verify_dict(tree, obj) {
     }
   }
   loop(tree.root, [], []);
+}
+
+function verify_dict(tree, obj) {
+  assert(isDict(tree));
+
+  verify_tree(tree);
 
   assert(deepEqual(toJS(tree), obj));
 
@@ -225,10 +231,18 @@ function verify_dict(tree, obj) {
 }
 
 function verify_set(tree, array) {
-  return verify_dict(tree, array);
+  assert(isSet(tree));
+
+  verify_tree(tree);
+
+  assert(deepEqual(toJS(tree), array));
+
+  return tree;
 }
 
 function verify_list(tree, array) {
+  assert(isList(tree));
+
   function loop(node) {
     if (node !== nil) {
       var left  = node.left;
@@ -264,6 +278,8 @@ function verify_list(tree, array) {
 }
 
 function verify_queue(queue, array) {
+  assert(isQueue(queue));
+
   if (!queue.isEmpty()) {
     assert(queue.left !== nil);
   }
@@ -274,12 +290,16 @@ function verify_queue(queue, array) {
 }
 
 function verify_stack(stack, array) {
+  assert(isStack(stack));
+
   assert(deepEqual(toJS(stack), array));
 
   return stack;
 }
 
 function verify_record(record, obj) {
+  assert(isRecord(record));
+
   var count = 0;
 
   for (var s in record.keys) {
@@ -602,6 +622,23 @@ context("Dict", function () {
     assert("" + Dict([[Dict({ foo: 1 }), Dict({ bar: 2 })]]) === "(Dict\n  (Dict\n    \"foo\" = 1) = (Dict\n                   \"bar\" = 2))");
   });
 
+  test("removeAll", function () {
+    verify_dict(dict_empty.removeAll(), {});
+    verify_dict(dict_foo.removeAll(), {});
+
+    var empty_sorted_dict = SortedDict(simpleSort, {});
+    var foo_sorted_dict = SortedDict(simpleSort, { foo: 1 });
+
+    verify_dict(empty_sorted_dict.removeAll(), {});
+    verify_dict(foo_sorted_dict.removeAll(), {});
+
+    assert(empty_sorted_dict.sort === empty_sorted_dict.removeAll().sort);
+    assert(empty_sorted_dict.hash_fn === empty_sorted_dict.removeAll().hash_fn);
+
+    assert(foo_sorted_dict.sort === foo_sorted_dict.removeAll().sort);
+    assert(foo_sorted_dict.hash_fn === foo_sorted_dict.removeAll().hash_fn);
+  });
+
   // TODO
   /*test("zip", function () {
     var a = [["a", 1], ["b", 2], ["c", 3], ["d", 4],
@@ -665,6 +702,23 @@ context("Set", function () {
 
     verify_set(five_set.remove(1), [2, 3, 4, 5]);
     verify_set(five_set.remove(1).remove(4), [2, 3, 5]);
+  });
+
+  test("removeAll", function () {
+    verify_set(empty_set.removeAll(), []);
+    verify_set(five_set.removeAll(), []);
+
+    var empty_sorted_set = SortedSet(simpleSort, []);
+    var five_sorted_set = SortedSet(simpleSort, [1, 2, 3, 4, 5]);
+
+    verify_set(empty_sorted_set.removeAll(), []);
+    verify_set(five_sorted_set.removeAll(), []);
+
+    assert(empty_sorted_set.sort === empty_sorted_set.removeAll().sort);
+    assert(empty_sorted_set.hash_fn === empty_sorted_set.removeAll().hash_fn);
+
+    assert(five_sorted_set.sort === five_sorted_set.removeAll().sort);
+    assert(five_sorted_set.hash_fn === five_sorted_set.removeAll().hash_fn);
   });
 
   test("union", function () {
@@ -984,6 +1038,11 @@ context("List", function () {
     verify_list(five_list.remove(-2), [1, 2, 3, 5]);
     verify_list(five_list.remove(0), [2, 3, 4, 5]);
     verify_list(five_list.remove(1), [1, 3, 4, 5]);
+  });
+
+  test("removeAll", function () {
+    verify_list(empty_list.removeAll(), []);
+    verify_list(five_list.removeAll(), []);
   });
 
   test("modify", function () {
@@ -1343,6 +1402,11 @@ context("Queue", function () {
                  [5, 4, 3, 2, 1]);
   });
 
+  test("removeAll", function () {
+    verify_queue(empty_queue.removeAll(), []);
+    verify_queue(five_queue.removeAll(), []);
+  });
+
   test("pop", function () {
     assert_raises(function () {
       empty_queue.pop();
@@ -1483,6 +1547,11 @@ context("Stack", function () {
 
     verify_stack(five_stack.pop(), [1, 2, 3, 4]);
     verify_stack(five_stack.pop().pop(), [1, 2, 3]);
+  });
+
+  test("removeAll", function () {
+    verify_stack(empty_stack.removeAll(), []);
+    verify_stack(five_stack.removeAll(), []);
   });
 
   test("concat", function () {

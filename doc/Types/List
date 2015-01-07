@@ -112,6 +112,14 @@
 
      If `index` is not in the list, an error is thrown.
 
+   @function List.removeAll
+   @return {::List} A new list with no values
+   @summary Returns a new list with no values
+   @desc
+     This function runs in `O(1)` time.
+
+     This does not modify the list, it returns a new list.
+
    @function List.modify
    @param {Integer} [index] The index to modify in the list
    @param {Function} [fn] The function which will modify the value at `index`

@@ -80,6 +80,10 @@ ImmutableDict.prototype.isEmpty = function () {
   return this.root === nil;
 };
 
+ImmutableDict.prototype.removeAll = function () {
+  return new ImmutableDict(nil, this.sort, this.hash_fn);
+};
+
 // TODO what if `sort` suspends ?
 ImmutableDict.prototype.has = function (key) {
   return key_get(this.root, this.sort, this.hash_fn(key)) !== nil;

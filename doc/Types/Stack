@@ -29,6 +29,14 @@
 
      A stack is empty if it has no values in it.
 
+   @function Stack.removeAll
+   @return {::Stack} A new stack with no values
+   @summary Returns a new stack with no values
+   @desc
+     This function runs in `O(1)` time.
+
+     This does not modify the stack, it returns a new stack.
+
    @function Stack.size
    @return {Integer} The number of values in the stack
    @summary Returns the number of values in the stack

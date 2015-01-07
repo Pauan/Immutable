@@ -13,23 +13,23 @@ Quick overview
 
 * `Dict` `SortedDict`
 
-  * `has` `get` `set` `remove` `modify` `merge`
+  * `has` `get` `set` `remove` `removeAll` `modify` `merge`
 
 * `Set` `SortedSet`
 
-  * `has` `add` `remove` `union` `intersect` `disjoint` `subtract`
+  * `has` `add` `remove` `removeAll` `union` `intersect` `disjoint` `subtract`
 
 * `List`
 
-  * `size` `has` `get` `insert` `remove` `modify` `slice` `concat`
+  * `size` `has` `get` `insert` `remove` `removeAll` `modify` `slice` `concat`
 
 * `Queue`
 
-  * `size` `peek` `push` `pop` `concat`
+  * `size` `peek` `push` `pop` `concat` `removeAll`
 
 * `Stack`
 
-  * `size` `peek` `push` `pop` `concat`
+  * `size` `peek` `push` `pop` `concat` `removeAll`
 
 * `Record`
 

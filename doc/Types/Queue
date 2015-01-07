@@ -29,6 +29,14 @@
 
      A queue is empty if it has no values in it.
 
+   @function Queue.removeAll
+   @return {::Queue} A new queue with no values
+   @summary Returns a new queue with no values
+   @desc
+     This function runs in `O(1)` time.
+
+     This does not modify the queue, it returns a new queue.
+
    @function Queue.size
    @return {Integer} The number of values in the queue
    @summary Returns the number of values in the queue

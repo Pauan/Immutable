@@ -158,7 +158,6 @@ ImmutableSet.prototype.disjoint = function (other) {
   });
 };
 
-// TODO what about if `other` is empty ?
 ImmutableSet.prototype.subtract = function (other) {
   if (this.isEmpty()) {
     return this;

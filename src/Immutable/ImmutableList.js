@@ -312,6 +312,10 @@ ImmutableList.prototype.isEmpty = function () {
   return this.root === nil && this.tail === nil;
 };
 
+ImmutableList.prototype.removeAll = function () {
+  return new ImmutableList(nil, nil, 0);
+};
+
 ImmutableList.prototype.size = function () {
   return this.root.size + this.tail_size;
 };

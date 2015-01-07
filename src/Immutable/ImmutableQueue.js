@@ -29,6 +29,10 @@ ImmutableQueue.prototype.isEmpty = function () {
   return this.left === nil && this.right === nil;
 };
 
+ImmutableQueue.prototype.removeAll = function () {
+  return new ImmutableQueue(nil, nil, 0);
+};
+
 ImmutableQueue.prototype[tag_iter] = function () {
   return concat_iter(iter_cons(this.left), reverse_iter(iter_cons(this.right)));
 };
