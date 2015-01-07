@@ -146,13 +146,14 @@ ImmutableSet.prototype.intersect = function (other) {
   }
 };
 
-// TODO what about duplicates in `other` ?
 ImmutableSet.prototype.disjoint = function (other) {
-  return foldl(other, this, function (self, value) {
+  var self = this;
+
+  return foldl(other, self, function (out, value) {
     if (self.has(value)) {
-      return self.remove(value);
+      return out.remove(value);
     } else {
-      return self.add(value);
+      return out.add(value);
     }
   });
 };

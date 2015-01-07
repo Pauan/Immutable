@@ -689,6 +689,9 @@ context("Set", function () {
     verify_set(empty_set.disjoint(five_set), [1, 2, 3, 4, 5]);
     verify_set(five_set.disjoint([1, 2, 3]), [4, 5]);
     verify_set(five_set.disjoint([1, 2, 3, 6, 7, 8]), [4, 5, 6, 7, 8]);
+    verify_set(five_set.disjoint([1, 2, 3, 3, 6, 7, 8]), [4, 5, 6, 7, 8]);
+    verify_set(five_set.disjoint([1, 2, 3, 3, 3, 6, 7, 8]), [4, 5, 6, 7, 8]);
+    verify_set(five_set.disjoint([1, 2, 3, 3, 6, 6, 6, 7, 8]), [4, 5, 6, 7, 8]);
   });
 
   test("subtract", function () {

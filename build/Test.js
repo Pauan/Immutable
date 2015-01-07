@@ -1148,13 +1148,14 @@
       }
     };
 
-    // TODO what about duplicates in `other` ?
     $$ImmutableSet$$ImmutableSet.prototype.disjoint = function (other) {
-      return $$iter$$foldl(other, this, function (self, value) {
+      var self = this;
+
+      return $$iter$$foldl(other, self, function (out, value) {
         if (self.has(value)) {
-          return self.remove(value);
+          return out.remove(value);
         } else {
-          return self.add(value);
+          return out.add(value);
         }
       });
     };
@@ -3015,6 +3016,9 @@
         src$Test$Test$$verify_set(empty_set.disjoint(five_set), [1, 2, 3, 4, 5]);
         src$Test$Test$$verify_set(five_set.disjoint([1, 2, 3]), [4, 5]);
         src$Test$Test$$verify_set(five_set.disjoint([1, 2, 3, 6, 7, 8]), [4, 5, 6, 7, 8]);
+        src$Test$Test$$verify_set(five_set.disjoint([1, 2, 3, 3, 6, 7, 8]), [4, 5, 6, 7, 8]);
+        src$Test$Test$$verify_set(five_set.disjoint([1, 2, 3, 3, 3, 6, 7, 8]), [4, 5, 6, 7, 8]);
+        src$Test$Test$$verify_set(five_set.disjoint([1, 2, 3, 3, 6, 6, 6, 7, 8]), [4, 5, 6, 7, 8]);
       });
 
       src$Test$Test$$test("subtract", function () {

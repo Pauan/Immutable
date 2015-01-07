@@ -1267,13 +1267,14 @@
       }
     };
 
-    // TODO what about duplicates in `other` ?
     $$ImmutableSet$$ImmutableSet.prototype.disjoint = function (other) {
-      return $$iter$$foldl(other, this, function (self, value) {
+      var self = this;
+
+      return $$iter$$foldl(other, self, function (out, value) {
         if (self.has(value)) {
-          return self.remove(value);
+          return out.remove(value);
         } else {
-          return self.add(value);
+          return out.add(value);
         }
       });
     };
