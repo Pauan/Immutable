@@ -1,0 +1,70 @@
+/**
+   @function range
+   @param {optional Number} [start] Defaults to 0
+   @param {optional Number} [end]   Defaults to Infinity
+   @param {optional Number} [step]  Defaults to 1
+   @return {::Iterable}
+   @summary Returns an [::Iterable] that contains numbers
+            starting at `start`, ending just before `end`,
+            and incremented by `step`
+   @desc
+     This function returns an [::Iterable], which is lazy:
+     it only generates the values as needed.
+
+     If you want an array, use [::toArray].
+
+     ----
+
+     Without any arguments, this function generates an
+     infinite sequence of integers starting at 0:
+
+         // returns [0, 1, 2, 3, 4, 5...]
+         range();
+
+     With a single argument, you control where the sequence
+     starts:
+
+         // returns [5, 6, 7, 8, 9, 10...]
+         range(5);
+
+     With two arguments, you control where the sequence stops:
+
+         // returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+         range(0, 10);
+
+     `start` is always included in the sequence, but `end` is
+     never included in the sequence.
+
+     With three arguments, you can change how much to increment
+     each number:
+
+         // returns [0, 2, 4, 6, 8]
+         range(0, 10, 2);
+
+     If `start` is greater than `end`, it will count down rather
+     than up:
+
+         // returns [10, 8, 6, 4, 2]
+         range(10, 0, 2);
+
+     You can use a `step` of `0` to repeat `start` forever:
+
+         // returns [0, 0, 0, 0, 0...]
+         range(0, 10, 0);
+
+     Although integers are most common, you can also use
+     floating-point numbers for any of the three arguments:
+
+         // returns [2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
+         range(2.5, 6.2, 0.5);
+
+     Negative numbers are allowed for `start` or `end`:
+
+         // returns [-10, -9, -8, -7, -6, -5, -4, -3]
+         range(-10, -2);
+
+     The only restriction is that `step` cannot be negative:
+
+         // throws an error
+         range(0, 10, -1);
+ */

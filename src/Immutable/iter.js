@@ -424,6 +424,88 @@ export function findIndex(x, f, def) {
   }
 }
 
+export function take(x, count) {
+  // TODO isInteger function
+  if (Math.round(count) !== count) {
+    throw new Error("Count must be an integer");
+  }
+
+  if (count < 0) {
+    throw new Error("Count cannot be negative");
+  }
+
+  return make_seq(function () {
+    var iterator = iter(x);
+
+    return {
+      next: function () {
+        for (;;) {
+          if (count < 0) {
+            throw new Error("Invalid count");
+
+          } else if (count === 0) {
+            return { done: true };
+
+          } else {
+            var info = iterator.next();
+            if (info.done) {
+              count = 0;
+            } else {
+              --count;
+              return { value: info.value };
+            }
+          }
+        }
+      }
+    };
+  });
+}
+
+export function range(start, end, step) {
+  if (arguments.length < 1) {
+    start = 0;
+  }
+  if (arguments.length < 2) {
+    end = Infinity;
+  }
+  if (arguments.length < 3) {
+    step = 1;
+  }
+
+  if (step < 0) {
+    throw new Error("Step cannot be negative");
+  }
+
+  return make_seq(function () {
+    if (start < end) {
+      var next = function () {
+        if (start < end) {
+          var current = start;
+          start += step;
+          return { value: current };
+
+        } else {
+          return { done: true };
+        }
+      };
+    } else {
+      var next = function () {
+        if (start > end) {
+          var current = start;
+          start -= step;
+          return { value: current };
+
+        } else {
+          return { done: true };
+        }
+      };
+    }
+    return {
+      next: next
+    };
+  });
+}
+
 // TODO
 /*export function indexOf(x, value, def) {
   return findIndex(x, function (x) {

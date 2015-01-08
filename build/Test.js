@@ -544,6 +544,88 @@
       }
     }
 
+    function $$iter$$take(x, count) {
+      // TODO isInteger function
+      if (Math.round(count) !== count) {
+        throw new Error("Count must be an integer");
+      }
+
+      if (count < 0) {
+        throw new Error("Count cannot be negative");
+      }
+
+      return $$iter$$make_seq(function () {
+        var iterator = $$iter$$iter(x);
+
+        return {
+          next: function () {
+            for (;;) {
+              if (count < 0) {
+                throw new Error("Invalid count");
+
+              } else if (count === 0) {
+                return { done: true };
+
+              } else {
+                var info = iterator.next();
+                if (info.done) {
+                  count = 0;
+                } else {
+                  --count;
+                  return { value: info.value };
+                }
+              }
+            }
+          }
+        };
+      });
+    }
+
+    function $$iter$$range(start, end, step) {
+      if (arguments.length < 1) {
+        start = 0;
+      }
+      if (arguments.length < 2) {
+        end = Infinity;
+      }
+      if (arguments.length < 3) {
+        step = 1;
+      }
+
+      if (step < 0) {
+        throw new Error("Step cannot be negative");
+      }
+
+      return $$iter$$make_seq(function () {
+        if (start < end) {
+          var next = function () {
+            if (start < end) {
+              var current = start;
+              start += step;
+              return { value: current };
+
+            } else {
+              return { done: true };
+            }
+          };
+        } else {
+          var next = function () {
+            if (start > end) {
+              var current = start;
+              start -= step;
+              return { value: current };
+
+            } else {
+              return { done: true };
+            }
+          };
+        }
+        return {
+          next: next
+        };
+      });
+    }
+
     function $$iter$$map(x, f) {
       return $$iter$$make_seq(function () {
         return $$iter$$map_iter($$iter$$iter(x), f);
@@ -2588,6 +2670,8 @@
       exports.all = $$iter$$all;
       exports.find = $$iter$$find;
       exports.partition = $$iter$$partition;
+      exports.range = $$iter$$range;
+      exports.take = $$iter$$take;
     });
     function $$assert$$assert(x) {
       if (arguments.length !== 1) {
@@ -5473,6 +5557,43 @@
         return $$iter$$toArray(x);
       });
       $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["foo", 1], ["bar", 2]]));
+    });
+
+    src$Test$Test$$test("take", function () {
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$take([1, 2, 3, 4, 5], 0)), []));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$take([1, 2, 3, 4, 5], 2)), [1, 2]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$take([1, 2, 3, 4, 5], 200)), [1, 2, 3, 4, 5]));
+
+      src$Test$Test$$assert_raises(function () {
+        $$iter$$take([1, 2, 3, 4, 5], -5);
+      }, "Count cannot be negative");
+
+      src$Test$Test$$assert_raises(function () {
+        $$iter$$take([1, 2, 3, 4, 5], 5.1);
+      }, "Count must be an integer");
+    });
+
+    src$Test$Test$$test("range", function () {
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$take($$iter$$range(), 12)), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$take($$iter$$range(6), 12)), [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]));
+
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(0, 10)), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(5, 5)), []));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(4, 5)), [4]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(5, 4)), [5]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(10, 0)), [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]));
+
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(0, 10, 2)), [0, 2, 4, 6, 8]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(10, 0, 2)), [10, 8, 6, 4, 2]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(4.2, 6.9, 0.5)), [4.2, 4.7, 5.2, 5.7, 6.2, 6.7]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(-10, -2)), [-10, -9, -8, -7, -6, -5, -4, -3]));
+
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(0, 0.5, 0.1)), [ 0, 0.1, 0.2, 0.30000000000000004, 0.4 ]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$take($$iter$$range(5, 4, 0), 5)), [5, 5, 5, 5, 5]));
+
+      src$Test$Test$$assert_raises(function () {
+        $$iter$$range(5, 4, -1);
+      }, "Step cannot be negative");
     });
 
 

@@ -3,7 +3,7 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, Tuple, isTuple,
          each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
-         isIterable, any, all, find, partition } from "../Immutable/Immutable";
+         isIterable, any, all, find, partition, range, take } from "../Immutable/Immutable";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
 
@@ -2882,6 +2882,43 @@ test("toArray", function () {
     return toArray(x);
   });
   assert(deepEqual(toArray(x), [["foo", 1], ["bar", 2]]));
+});
+
+test("take", function () {
+  assert(deepEqual(toArray(take([1, 2, 3, 4, 5], 0)), []));
+  assert(deepEqual(toArray(take([1, 2, 3, 4, 5], 2)), [1, 2]));
+  assert(deepEqual(toArray(take([1, 2, 3, 4, 5], 200)), [1, 2, 3, 4, 5]));
+
+  assert_raises(function () {
+    take([1, 2, 3, 4, 5], -5);
+  }, "Count cannot be negative");
+
+  assert_raises(function () {
+    take([1, 2, 3, 4, 5], 5.1);
+  }, "Count must be an integer");
+});
+
+test("range", function () {
+  assert(deepEqual(toArray(take(range(), 12)), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]));
+  assert(deepEqual(toArray(take(range(6), 12)), [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]));
+
+  assert(deepEqual(toArray(range(0, 10)), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]));
+  assert(deepEqual(toArray(range(5, 5)), []));
+  assert(deepEqual(toArray(range(4, 5)), [4]));
+  assert(deepEqual(toArray(range(5, 4)), [5]));
+  assert(deepEqual(toArray(range(10, 0)), [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]));
+
+  assert(deepEqual(toArray(range(0, 10, 2)), [0, 2, 4, 6, 8]));
+  assert(deepEqual(toArray(range(10, 0, 2)), [10, 8, 6, 4, 2]));
+  assert(deepEqual(toArray(range(4.2, 6.9, 0.5)), [4.2, 4.7, 5.2, 5.7, 6.2, 6.7]));
+  assert(deepEqual(toArray(range(-10, -2)), [-10, -9, -8, -7, -6, -5, -4, -3]));
+
+  assert(deepEqual(toArray(range(0, 0.5, 0.1)), [ 0, 0.1, 0.2, 0.30000000000000004, 0.4 ]));
+  assert(deepEqual(toArray(take(range(5, 4, 0), 5)), [5, 5, 5, 5, 5]));
+
+  assert_raises(function () {
+    range(5, 4, -1);
+  }, "Step cannot be negative");
 });
 
 

@@ -1,0 +1,29 @@
+/**
+   @function take
+   @param {::Iterable} [x]
+   @param {Integer} [count]
+   @return {::Iterable}
+   @summary Returns an [::Iterable] that contains `count`
+            number of values from `x`
+   @desc
+     This function returns an [::Iterable], which is lazy:
+     it only generates the values as needed.
+
+     If you want an array, use [::toArray].
+
+     ----
+
+     This function is a simple way of dealing with
+     infinite [::Iterable]:
+
+         // returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+         take(range(), 10);
+
+     `count` must be an integer, and may not be negative:
+
+         // throws an error
+         take(range(), 0.5);
+
+         // throws an error
+         take(range(), -1);
+ */

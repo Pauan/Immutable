@@ -2,13 +2,10 @@ var immutablejs = require("immutable");
 var mori        = require("mori");
 
 import * as benchmark from "./Benchmark";
-import * as immutable from "../Immutable/Immutable";
+import { List } from "../Immutable/Immutable";
 import { insert as insert_at, modify as modify_at, remove as remove_at } from "../Immutable/Array";
 import { nil } from "../Immutable/static";
 import { Cons } from "../Immutable/Cons";
-import { header } from "./Header";
-
-header();
 
 function cons_push(x, i) {
   return new Cons(i, x);
@@ -155,7 +152,7 @@ function array_concat(array, other) {
 }
 
 
-function run(counter) {
+export function run(counter) {
   benchmark.group("List with " + counter + " values", function () {
     benchmark.group("Inserting at the end", function () {
       benchmark.time("JavaScript Array", function () {
@@ -191,7 +188,7 @@ function run(counter) {
       });
 
       benchmark.time("Immutable List", function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -199,7 +196,7 @@ function run(counter) {
       });
 
       /*benchmark.time("Immutable List (push)", function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -260,7 +257,7 @@ function run(counter) {
       });*/
 
       benchmark.time("Immutable List", function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i, 0);
@@ -302,7 +299,7 @@ function run(counter) {
       benchmark.message("Mori Vector");
 
       benchmark.time("Immutable List", function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           var pivot = Math.floor(Math.random() * a.size());
@@ -365,7 +362,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -432,7 +429,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -501,7 +498,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -566,7 +563,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -635,7 +632,7 @@ function run(counter) {
       })();*/
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -691,7 +688,7 @@ function run(counter) {
       benchmark.message("Mori Vector");
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -752,7 +749,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -811,7 +808,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -873,7 +870,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -941,7 +938,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -1006,7 +1003,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -1071,7 +1068,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -1136,7 +1133,7 @@ function run(counter) {
       })();
 
       ;(function () {
-        var a = immutable.List();
+        var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(i);
@@ -1151,14 +1148,3 @@ function run(counter) {
     });
   });
 }
-
-
-//run(1);
-run(10);
-run(100);
-run(1000);
-//run(10000);
-//run(100000);
-//run(1000000);
-
-benchmark.run();

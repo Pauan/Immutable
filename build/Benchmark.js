@@ -2,22 +2,27 @@
     "use strict";
 
     var $$Benchmark$$ = {
-        get group() {
-            return $$Benchmark$$group;
-        },
+            get group() {
+                return $$Benchmark$$group;
+            },
 
-        get message() {
-            return $$Benchmark$$message;
-        },
+            get message() {
+                return $$Benchmark$$message;
+            },
 
-        get time() {
-            return $$Benchmark$$time;
-        },
+            get time() {
+                return $$Benchmark$$time;
+            },
 
-        get run() {
-            return $$Benchmark$$run;
-        }
-    };
+            get run() {
+                return $$Benchmark$$run;
+            }
+        },
+        $$List$$ = {
+            get run() {
+                return $$List$$run;
+            }
+        };
 
     var $$Benchmark$$Benchmark = require("benchmark");
 
@@ -166,7 +171,7 @@
         throw new Error("Expected 1 argument but got " + arguments.length);
       }
     }
-    function $$Array$$copy(array) {
+    function $$$Immutable$Array$$copy(array) {
       var len = array.length;
       var out = new Array(len);
 
@@ -177,7 +182,7 @@
       return out;
     }
 
-    function $$Array$$insert(array, index, value) {
+    function $$$Immutable$Array$$insert(array, index, value) {
       var len = array.length + 1;
 
       var out = new Array(len);
@@ -199,7 +204,7 @@
       return out;
     }
 
-    function $$Array$$modify(array, index, f) {
+    function $$$Immutable$Array$$modify(array, index, f) {
       var old_value = array[index];
       var new_value = f(old_value);
 
@@ -207,13 +212,13 @@
         return array;
 
       } else {
-        var new_array = $$Array$$copy(array);
+        var new_array = $$$Immutable$Array$$copy(array);
         new_array[index] = new_value;
         return new_array;
       }
     }
 
-    function $$Array$$remove(array, index) {
+    function $$$Immutable$Array$$remove(array, index) {
       var len = array.length - 1;
 
       var out = new Array(len);
@@ -231,21 +236,21 @@
 
       return out;
     }
-    var $$static$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
+    var $$$Immutable$static$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
                                    ? Symbol.iterator
                                    : null);
 
-    var $$static$$tag_hash        = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
-    var $$static$$tag_iter        = $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
-    var $$static$$tag_toJS        = $$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
-    var $$static$$tag_toJSON_type = $$Tag$$UUIDTag("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37");
-    var $$static$$tag_toJSON      = $$Tag$$UUIDTag("99e14916-bc99-4c48-81aa-299cf1ad6de3");
+    var $$$Immutable$static$$tag_hash        = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
+    var $$$Immutable$static$$tag_iter        = $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
+    var $$$Immutable$static$$tag_toJS        = $$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
+    var $$$Immutable$static$$tag_toJSON_type = $$Tag$$UUIDTag("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37");
+    var $$$Immutable$static$$tag_toJSON      = $$Tag$$UUIDTag("99e14916-bc99-4c48-81aa-299cf1ad6de3");
 
-    var $$static$$fromJSON_registry = {};
+    var $$$Immutable$static$$fromJSON_registry = {};
 
-    var $$static$$nil = {};
-    $$static$$nil.depth      = 0;
-    $$static$$nil.size       = 0;
+    var $$$Immutable$static$$nil = {};
+    $$$Immutable$static$$nil.depth      = 0;
+    $$$Immutable$static$$nil.size       = 0;
 
     // TODO move into "./static.js" ?
     var $$iter$$empty = {};
@@ -266,8 +271,8 @@
 
     function $$iter$$isIterable(x) {
       if ($$util$$isObject(x)) {
-        return x[$$static$$tag_iter] != null ||
-               ($$static$$Symbol_iterator !== null && x[$$static$$Symbol_iterator]) ||
+        return x[$$$Immutable$static$$tag_iter] != null ||
+               ($$$Immutable$static$$Symbol_iterator !== null && x[$$$Immutable$static$$Symbol_iterator]) ||
                Array.isArray(x);
       } else {
         return typeof x === "string" && !$$Tag$$isTag(x);
@@ -277,11 +282,11 @@
     function $$iter$$iter(x) {
       var fn;
 
-      if ((fn = x[$$static$$tag_iter]) != null) {
+      if ((fn = x[$$$Immutable$static$$tag_iter]) != null) {
         return fn.call(x);
 
       // TODO should ES6 Iterables have precedence over `tag_iter` ?
-      } else if ($$static$$Symbol_iterator !== null && (fn = x[$$static$$Symbol_iterator]) != null) {
+      } else if ($$$Immutable$static$$Symbol_iterator !== null && (fn = x[$$$Immutable$static$$Symbol_iterator]) != null) {
         return fn.call(x);
 
       } else if (Array.isArray(x)) {
@@ -299,10 +304,10 @@
     function $$iter$$make_seq(f) {
       var o = {};
 
-      o[$$static$$tag_iter] = f;
+      o[$$$Immutable$static$$tag_iter] = f;
 
-      if ($$static$$Symbol_iterator !== null) {
-        o[$$static$$Symbol_iterator] = f;
+      if ($$$Immutable$static$$Symbol_iterator !== null) {
+        o[$$$Immutable$static$$Symbol_iterator] = f;
       }
 
       return o;
@@ -663,6 +668,88 @@
       }
     }
 
+    function $$iter$$take(x, count) {
+      // TODO isInteger function
+      if (Math.round(count) !== count) {
+        throw new Error("Count must be an integer");
+      }
+
+      if (count < 0) {
+        throw new Error("Count cannot be negative");
+      }
+
+      return $$iter$$make_seq(function () {
+        var iterator = $$iter$$iter(x);
+
+        return {
+          next: function () {
+            for (;;) {
+              if (count < 0) {
+                throw new Error("Invalid count");
+
+              } else if (count === 0) {
+                return { done: true };
+
+              } else {
+                var info = iterator.next();
+                if (info.done) {
+                  count = 0;
+                } else {
+                  --count;
+                  return { value: info.value };
+                }
+              }
+            }
+          }
+        };
+      });
+    }
+
+    function $$iter$$range(start, end, step) {
+      if (arguments.length < 1) {
+        start = 0;
+      }
+      if (arguments.length < 2) {
+        end = Infinity;
+      }
+      if (arguments.length < 3) {
+        step = 1;
+      }
+
+      if (step < 0) {
+        throw new Error("Step cannot be negative");
+      }
+
+      return $$iter$$make_seq(function () {
+        if (start < end) {
+          var next = function () {
+            if (start < end) {
+              var current = start;
+              start += step;
+              return { value: current };
+
+            } else {
+              return { done: true };
+            }
+          };
+        } else {
+          var next = function () {
+            if (start > end) {
+              var current = start;
+              start -= step;
+              return { value: current };
+
+            } else {
+              return { done: true };
+            }
+          };
+        }
+        return {
+          next: next
+        };
+      });
+    }
+
     function $$iter$$map(x, f) {
       return $$iter$$make_seq(function () {
         return $$iter$$map_iter($$iter$$iter(x), f);
@@ -696,9 +783,9 @@
 
     function $$toJSON$$fromJSON(x) {
       if ($$util$$isObject(x)) {
-        var type = x[$$static$$tag_toJSON_type];
+        var type = x[$$$Immutable$static$$tag_toJSON_type];
         if (type != null) {
-          var register = $$static$$fromJSON_registry[type];
+          var register = $$$Immutable$static$$fromJSON_registry[type];
           if (register != null) {
             return register(x);
           } else {
@@ -720,7 +807,7 @@
 
     function $$toJSON$$toJSON(x) {
       if ($$util$$isObject(x)) {
-        var fn = x[$$static$$tag_toJSON];
+        var fn = x[$$$Immutable$static$$tag_toJSON];
         if (fn != null) {
           return fn(x);
         } else {
@@ -740,7 +827,7 @@
     function $$toJSON$$toJSON_object(type, x) {
       var o = {};
 
-      o[$$static$$tag_toJSON_type] = type;
+      o[$$$Immutable$static$$tag_toJSON_type] = type;
 
       o.keys   = [];
       o.values = [];
@@ -758,7 +845,7 @@
     function $$toJSON$$toJSON_array(type, x) {
       var o = {};
 
-      o[$$static$$tag_toJSON_type] = type;
+      o[$$$Immutable$static$$tag_toJSON_type] = type;
 
       o.values = [];
 
@@ -797,7 +884,7 @@
     }
     function $$toJS$$toJS(x) {
       if ($$util$$isObject(x)) {
-        var fn = x[$$static$$tag_toJS];
+        var fn = x[$$$Immutable$static$$tag_toJS];
         if (fn != null) {
           return fn(x);
         } else {
@@ -845,8 +932,8 @@
     $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
     $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
 
-    if ($$static$$Symbol_iterator !== null) {
-      $$Base$$MutableBase[$$static$$Symbol_iterator] = $$Base$$ImmutableBase[$$static$$Symbol_iterator] = function () {
+    if ($$$Immutable$static$$Symbol_iterator !== null) {
+      $$Base$$MutableBase[$$$Immutable$static$$Symbol_iterator] = $$Base$$ImmutableBase[$$$Immutable$static$$Symbol_iterator] = function () {
         return $$iter$$iter(this);
       };
     }
@@ -870,18 +957,18 @@
 
     $$ImmutableTuple$$ImmutableTuple.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableTuple$$ImmutableTuple.prototype[$$static$$tag_hash] = $$hash$$hash_array("Tuple");
-    $$ImmutableTuple$$ImmutableTuple.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableTuple$$ImmutableTuple.prototype[$$$Immutable$static$$tag_hash] = $$hash$$hash_array("Tuple");
+    $$ImmutableTuple$$ImmutableTuple.prototype[$$$Immutable$static$$tag_toJS] = $$toJS$$toJS_array;
 
-    $$static$$fromJSON_registry["Tuple"] = function (x) {
+    $$$Immutable$static$$fromJSON_registry["Tuple"] = function (x) {
       return $$ImmutableTuple$$Tuple($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableTuple$$ImmutableTuple.prototype[$$static$$tag_toJSON] = function (x) {
+    $$ImmutableTuple$$ImmutableTuple.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("Tuple", x);
     };
 
-    $$ImmutableTuple$$ImmutableTuple.prototype[$$static$$tag_iter] = function () {
+    $$ImmutableTuple$$ImmutableTuple.prototype[$$$Immutable$static$$tag_iter] = function () {
       return $$iter$$iter(this.values);
     };
 
@@ -904,7 +991,7 @@
 
       if ($$Ordered$$nth_has(index, len)) {
         var values = this.values;
-        var array  = $$Array$$modify(values, index, f);
+        var array  = $$$Immutable$Array$$modify(values, index, f);
         if (array === values) {
           return this;
         } else {
@@ -1028,14 +1115,14 @@
         return "" + x;
 
       } else {
-        var hasher = x[$$static$$tag_hash];
+        var hasher = x[$$$Immutable$static$$tag_hash];
         if (hasher != null) {
           return hasher(x);
 
         } else {
           var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
 
-          Object.defineProperty(x, $$static$$tag_hash, {
+          Object.defineProperty(x, $$$Immutable$static$$tag_hash, {
             configurable: false,
             enumerable: false,
             writable: false,
@@ -1162,10 +1249,10 @@
     }
 
     function $$AVL$$concat(x, y) {
-      if (x === $$static$$nil) {
+      if (x === $$$Immutable$static$$nil) {
         return y;
 
-      } else if (y === $$static$$nil) {
+      } else if (y === $$$Immutable$static$$nil) {
         return x;
 
       // TODO what if the depths are the same?
@@ -1180,7 +1267,7 @@
     }
 
     function $$AVL$$insert_min(node, new_node) {
-      if (node === $$static$$nil) {
+      if (node === $$$Immutable$static$$nil) {
         return new_node;
       } else {
         // TODO do we need to use balanced_node ?
@@ -1189,7 +1276,7 @@
     }
 
     function $$AVL$$insert_max(node, new_node) {
-      if (node === $$static$$nil) {
+      if (node === $$$Immutable$static$$nil) {
         return new_node;
       } else {
         // TODO do we need to use balanced_node ?
@@ -1200,7 +1287,7 @@
     function $$AVL$$iter_tree(node) {
       var parents = [];
 
-      while (node !== $$static$$nil) {
+      while (node !== $$$Immutable$static$$nil) {
         parents.push(node);
         node = node.left;
       }
@@ -1212,7 +1299,7 @@
 
             node = parent.right;
 
-            while (node !== $$static$$nil) {
+            while (node !== $$$Immutable$static$$nil) {
               parents.push(node);
               node = node.left;
             }
@@ -1235,7 +1322,7 @@
     }
 
     function $$Sorted$$key_get(node, sort, hash) {
-      while (node !== $$static$$nil) {
+      while (node !== $$$Immutable$static$$nil) {
         var order = sort(hash, node.hash);
         if (order === 0) {
           break;
@@ -1252,7 +1339,7 @@
     }
 
     function $$Sorted$$key_set(node, sort, hash, new_node) {
-      if (node === $$static$$nil) {
+      if (node === $$$Immutable$static$$nil) {
         return new_node;
 
       } else {
@@ -1283,7 +1370,7 @@
     }
 
     function $$Sorted$$key_modify(node, sort, hash, key, f) {
-      if (node === $$static$$nil) {
+      if (node === $$$Immutable$static$$nil) {
         throw new Error("Key " + key + " not found");
 
       } else {
@@ -1315,7 +1402,7 @@
     }
 
     function $$Sorted$$key_remove(node, sort, hash) {
-      if (node === $$static$$nil) {
+      if (node === $$$Immutable$static$$nil) {
         return node;
 
       } else {
@@ -1346,11 +1433,11 @@
     }
 
     function $$Sorted$$sorted_isEmpty() {
-      return this.root === $$static$$nil;
+      return this.root === $$$Immutable$static$$nil;
     }
 
     function $$Sorted$$sorted_has(key) {
-      return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$static$$nil;
+      return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$$Immutable$static$$nil;
     }
 
     function $$Sorted$$sorted_remove(f) {
@@ -1422,19 +1509,19 @@
 
     $$ImmutableDict$$ImmutableDict.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$static$$tag_toJS] = $$toJS$$toJS_object;
+    $$ImmutableDict$$ImmutableDict.prototype[$$$Immutable$static$$tag_toJS] = $$toJS$$toJS_object;
     $$ImmutableDict$$ImmutableDict.prototype.isEmpty = $$Sorted$$sorted_isEmpty;
     $$ImmutableDict$$ImmutableDict.prototype.has = $$Sorted$$sorted_has;
     $$ImmutableDict$$ImmutableDict.prototype.remove = $$Sorted$$sorted_remove($$ImmutableDict$$ImmutableDict);
     $$ImmutableDict$$ImmutableDict.prototype.merge = $$Sorted$$sorted_merge;
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$static$$tag_iter] = function () {
+    $$ImmutableDict$$ImmutableDict.prototype[$$$Immutable$static$$tag_iter] = function () {
       return $$iter$$map_iter($$AVL$$iter_tree(this.root), function (node) {
         return $$ImmutableTuple$$unsafe_Tuple([node.key, node.value]);
       });
     };
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$static$$tag_hash] = function (x) {
+    $$ImmutableDict$$ImmutableDict.prototype[$$$Immutable$static$$tag_hash] = function (x) {
       if (x.hash === null) {
         // We don't use equal, for increased speed
         if ($$ImmutableDict$$isDict(x) && !$$ImmutableDict$$isSortedDict(x)) {
@@ -1447,11 +1534,11 @@
       return x.hash;
     };
 
-    $$static$$fromJSON_registry["Dict"] = function (x) {
+    $$$Immutable$static$$fromJSON_registry["Dict"] = function (x) {
       return $$ImmutableDict$$Dict($$toJSON$$fromJSON_object(x));
     };
 
-    $$ImmutableDict$$ImmutableDict.prototype[$$static$$tag_toJSON] = function (x) {
+    $$ImmutableDict$$ImmutableDict.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
       if ($$ImmutableDict$$isDict(x) && !$$ImmutableDict$$isSortedDict(x)) {
         return $$toJSON$$toJSON_object("Dict", x);
       } else {
@@ -1460,12 +1547,12 @@
     };
 
     $$ImmutableDict$$ImmutableDict.prototype.removeAll = function () {
-      return new $$ImmutableDict$$ImmutableDict($$static$$nil, this.sort, this.hash_fn);
+      return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, this.sort, this.hash_fn);
     };
 
     $$ImmutableDict$$ImmutableDict.prototype.get = function (key, def) {
       var node = $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key));
-      if (node === $$static$$nil) {
+      if (node === $$$Immutable$static$$nil) {
         if (arguments.length === 2) {
           return def;
         } else {
@@ -1483,7 +1570,7 @@
       var sort = this.sort;
       var hash_fn = this.hash_fn;
       var hash = hash_fn(key);
-      var node = $$Sorted$$key_set(root, sort, hash, new $$ImmutableDict$$KeyNode($$static$$nil, $$static$$nil, hash, key, value));
+      var node = $$Sorted$$key_set(root, sort, hash, new $$ImmutableDict$$KeyNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, hash, key, value));
       if (node === root) {
         return this;
       } else {
@@ -1518,10 +1605,10 @@
         if ($$ImmutableDict$$isSortedDict(obj) && obj.sort === sort) {
           return obj;
         } else {
-          return new $$ImmutableDict$$ImmutableDict($$static$$nil, sort, $$util$$identity).merge(obj);
+          return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, sort, $$util$$identity).merge(obj);
         }
       } else {
-        return new $$ImmutableDict$$ImmutableDict($$static$$nil, sort, $$util$$identity);
+        return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, sort, $$util$$identity);
       }
     }
 
@@ -1530,10 +1617,10 @@
         if ($$ImmutableDict$$isDict(obj) && !$$ImmutableDict$$isSortedDict(obj)) {
           return obj;
         } else {
-          return new $$ImmutableDict$$ImmutableDict($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).merge(obj);
+          return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).merge(obj);
         }
       } else {
-        return new $$ImmutableDict$$ImmutableDict($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+        return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
       }
     }
 
@@ -1571,22 +1658,22 @@
 
     $$ImmutableSet$$ImmutableSet.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableSet$$ImmutableSet.prototype[$$$Immutable$static$$tag_toJS] = $$toJS$$toJS_array;
     $$ImmutableSet$$ImmutableSet.prototype.isEmpty = $$Sorted$$sorted_isEmpty;
     $$ImmutableSet$$ImmutableSet.prototype.has = $$Sorted$$sorted_has;
     $$ImmutableSet$$ImmutableSet.prototype.remove = $$Sorted$$sorted_remove($$ImmutableSet$$ImmutableSet);
 
-    $$static$$fromJSON_registry["Set"] = function (x) {
+    $$$Immutable$static$$fromJSON_registry["Set"] = function (x) {
       return $$ImmutableSet$$Set($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$static$$tag_iter] = function () {
+    $$ImmutableSet$$ImmutableSet.prototype[$$$Immutable$static$$tag_iter] = function () {
       return $$iter$$map_iter($$AVL$$iter_tree(this.root), function (node) {
         return node.key;
       });
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$static$$tag_toJSON] = function (x) {
+    $$ImmutableSet$$ImmutableSet.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
       if ($$ImmutableSet$$isSet(x) && !$$ImmutableSet$$isSortedSet(x)) {
         return $$toJSON$$toJSON_array("Set", x);
       } else {
@@ -1594,7 +1681,7 @@
       }
     };
 
-    $$ImmutableSet$$ImmutableSet.prototype[$$static$$tag_hash] = function (x) {
+    $$ImmutableSet$$ImmutableSet.prototype[$$$Immutable$static$$tag_hash] = function (x) {
       if (x.hash === null) {
         var a = $$iter$$map(x, function (value) {
           return $$hash$$hash(value);
@@ -1613,7 +1700,7 @@
     };
 
     $$ImmutableSet$$ImmutableSet.prototype.removeAll = function () {
-      return new $$ImmutableSet$$ImmutableSet($$static$$nil, this.sort, this.hash_fn);
+      return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, this.sort, this.hash_fn);
     };
 
     $$ImmutableSet$$ImmutableSet.prototype.add = function (key) {
@@ -1621,7 +1708,7 @@
       var sort = this.sort;
       var hash_fn = this.hash_fn;
       var hash = hash_fn(key);
-      var node = $$Sorted$$key_set(root, sort, hash, new $$ImmutableSet$$SetNode($$static$$nil, $$static$$nil, hash, key));
+      var node = $$Sorted$$key_set(root, sort, hash, new $$ImmutableSet$$SetNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, hash, key));
       if (node === root) {
         return this;
       } else {
@@ -1692,10 +1779,10 @@
         if ($$ImmutableSet$$isSortedSet(array) && array.sort === sort) {
           return array;
         } else {
-          return new $$ImmutableSet$$ImmutableSet($$static$$nil, sort, $$util$$identity).union(array);
+          return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, sort, $$util$$identity).union(array);
         }
       } else {
-        return new $$ImmutableSet$$ImmutableSet($$static$$nil, sort, $$util$$identity);
+        return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, sort, $$util$$identity);
       }
     }
 
@@ -1704,21 +1791,21 @@
         if ($$ImmutableSet$$isSet(array) && !$$ImmutableSet$$isSortedSet(array)) {
           return array;
         } else {
-          return new $$ImmutableSet$$ImmutableSet($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).union(array);
+          return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).union(array);
         }
       } else {
-        return new $$ImmutableSet$$ImmutableSet($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+        return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
       }
     }
-    function $$Cons$$Cons(car, cdr) {
+    function $$$Immutable$Cons$$Cons(car, cdr) {
       this.car = car;
       this.cdr = cdr;
     }
 
-    function $$Cons$$iter_cons(x) {
+    function $$$Immutable$Cons$$iter_cons(x) {
       return {
         next: function () {
-          if (x === $$static$$nil) {
+          if (x === $$$Immutable$static$$nil) {
             return { done: true };
           } else {
             var value = x.car;
@@ -1729,8 +1816,8 @@
       };
     }
 
-    function $$Cons$$each_cons(x, f) {
-      while (x !== $$static$$nil) {
+    function $$$Immutable$Cons$$each_cons(x, f) {
+      while (x !== $$$Immutable$static$$nil) {
         f(x.car);
         x = x.cdr;
       }
@@ -1764,7 +1851,7 @@
         var right = $$ImmutableList$$slices_to_tree1(slices, pivot + 1, max);
         return new $$ImmutableList$$ArrayNode(left, right, slices[pivot]);
       } else {
-        return $$static$$nil;
+        return $$$Immutable$static$$nil;
       }
     }
 
@@ -1851,8 +1938,8 @@
 
     function $$ImmutableList$$nth_insert(node, index, value) {
       // TODO is this necessary ?
-      if (node === $$static$$nil) {
-        return new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, [value]);
+      if (node === $$$Immutable$static$$nil) {
+        return new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, [value]);
 
       } else {
         var left    = node.left;
@@ -1870,7 +1957,7 @@
           var len   = array.length;
           // TODO test this
           if (index <= len) {
-            array = $$Array$$insert(array, index, value);
+            array = $$$Immutable$Array$$insert(array, index, value);
 
             // TODO this fails when array_limit is 1
             if (len === $$ImmutableList$$array_limit) {
@@ -1879,9 +1966,9 @@
               var aright = array.slice(pivot);
 
               if (left.depth < right.depth) {
-                return new $$ImmutableList$$ArrayNode($$AVL$$insert_max(left, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, aleft)), right, aright);
+                return new $$ImmutableList$$ArrayNode($$AVL$$insert_max(left, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, aleft)), right, aright);
               } else {
-                return new $$ImmutableList$$ArrayNode(left, $$AVL$$insert_min(right, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, aright)), aleft);
+                return new $$ImmutableList$$ArrayNode(left, $$AVL$$insert_min(right, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, aright)), aleft);
               }
 
             } else {
@@ -1916,7 +2003,7 @@
         var len   = array.length;
         // TODO test this
         if (index < len) {
-          var new_array = $$Array$$modify(array, index, f);
+          var new_array = $$$Immutable$Array$$modify(array, index, f);
           if (new_array === array) {
             return node;
           } else {
@@ -1951,7 +2038,7 @@
         // TODO test this
         if (index < len) {
           // TODO use `array.length === 1` so we can skip the call to `array_remove`
-          array = $$Array$$remove(array, index);
+          array = $$$Immutable$Array$$remove(array, index);
 
           if (array.length === 0) {
             return $$AVL$$concat(left, right);
@@ -1967,7 +2054,7 @@
     }
 
     function $$ImmutableList$$nth_slice(slices, node, from, to) {
-      if (node !== $$static$$nil) {
+      if (node !== $$$Immutable$static$$nil) {
         var left = node.left;
         var size = left.size;
 
@@ -2001,31 +2088,31 @@
 
     $$ImmutableList$$ImmutableList.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableList$$ImmutableList.prototype[$$static$$tag_hash] = $$hash$$hash_array("List");
-    $$ImmutableList$$ImmutableList.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_hash] = $$hash$$hash_array("List");
+    $$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_toJS] = $$toJS$$toJS_array;
     $$ImmutableList$$ImmutableList.prototype.has = $$Ordered$$ordered_has;
 
-    $$static$$fromJSON_registry["List"] = function (x) {
+    $$$Immutable$static$$fromJSON_registry["List"] = function (x) {
       return $$ImmutableList$$List($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$static$$tag_toJSON] = function (x) {
+    $$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("List", x);
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$static$$tag_iter] = function () {
+    $$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_iter] = function () {
       var tree = $$iter$$mapcat_iter($$AVL$$iter_tree(this.root), function (node) {
         return $$iter$$iter(node.array);
       });
-      return $$iter$$concat_iter(tree, $$iter$$reverse_iter($$Cons$$iter_cons(this.tail)));
+      return $$iter$$concat_iter(tree, $$iter$$reverse_iter($$$Immutable$Cons$$iter_cons(this.tail)));
     };
 
     $$ImmutableList$$ImmutableList.prototype.isEmpty = function () {
-      return this.root === $$static$$nil && this.tail === $$static$$nil;
+      return this.root === $$$Immutable$static$$nil && this.tail === $$$Immutable$static$$nil;
     };
 
     $$ImmutableList$$ImmutableList.prototype.removeAll = function () {
-      return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0);
+      return new $$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
     };
 
     $$ImmutableList$$ImmutableList.prototype.size = function () {
@@ -2072,11 +2159,11 @@
       var tail_size = this.tail_size;
       if (index === len) {
         if (tail_size === $$ImmutableList$$array_limit) {
-          var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, $$ImmutableList$$stack_to_array(tail, tail_size)));
-          return new $$ImmutableList$$ImmutableList(node, new $$Cons$$Cons(value, $$static$$nil), 1);
+          var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, $$ImmutableList$$stack_to_array(tail, tail_size)));
+          return new $$ImmutableList$$ImmutableList(node, new $$$Immutable$Cons$$Cons(value, $$$Immutable$static$$nil), 1);
 
         } else {
-          return new $$ImmutableList$$ImmutableList(root, new $$Cons$$Cons(value, tail), tail_size + 1);
+          return new $$ImmutableList$$ImmutableList(root, new $$$Immutable$Cons$$Cons(value, tail), tail_size + 1);
         }
 
       } else if ($$Ordered$$nth_has(index, len)) {
@@ -2086,9 +2173,9 @@
           return new $$ImmutableList$$ImmutableList($$ImmutableList$$nth_insert(root, index, value), tail, tail_size);
 
         } else {
-          var array = $$Array$$insert($$ImmutableList$$stack_to_array(tail, tail_size), index - size, value);
-          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, array));
-          return new $$ImmutableList$$ImmutableList(node, $$static$$nil, 0);
+          var array = $$$Immutable$Array$$insert($$ImmutableList$$stack_to_array(tail, tail_size), index - size, value);
+          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, array));
+          return new $$ImmutableList$$ImmutableList(node, $$$Immutable$static$$nil, 0);
         }
 
       } else {
@@ -2111,7 +2198,7 @@
       var tail      = this.tail;
       var tail_size = this.tail_size;
 
-      if (tail !== $$static$$nil && index === len - 1) {
+      if (tail !== $$$Immutable$static$$nil && index === len - 1) {
         return new $$ImmutableList$$ImmutableList(root, tail.cdr, tail_size - 1);
 
       } else if ($$Ordered$$nth_has(index, len)) {
@@ -2120,9 +2207,9 @@
           return new $$ImmutableList$$ImmutableList($$ImmutableList$$nth_remove(root, index), tail, tail_size);
 
         } else {
-          var array = $$Array$$remove($$ImmutableList$$stack_to_array(tail, tail_size), index - size);
-          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, array));
-          return new $$ImmutableList$$ImmutableList(node, $$static$$nil, 0);
+          var array = $$$Immutable$Array$$remove($$ImmutableList$$stack_to_array(tail, tail_size), index - size);
+          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, array));
+          return new $$ImmutableList$$ImmutableList(node, $$$Immutable$static$$nil, 0);
         }
 
       } else {
@@ -2143,12 +2230,12 @@
         var tail_size = this.tail_size;
         var size = root.size;
 
-        if (tail !== $$static$$nil && index === len - 1) {
+        if (tail !== $$$Immutable$static$$nil && index === len - 1) {
           var value = f(tail.car);
           if (value === tail.car) {
             return this;
           } else {
-            return new $$ImmutableList$$ImmutableList(root, new $$Cons$$Cons(value, tail.cdr), tail_size);
+            return new $$ImmutableList$$ImmutableList(root, new $$$Immutable$Cons$$Cons(value, tail.cdr), tail_size);
           }
 
         } else if (index < size) {
@@ -2161,12 +2248,12 @@
 
         } else {
           var stack = $$ImmutableList$$stack_to_array(tail, tail_size);
-          var array = $$Array$$modify(stack, index - size, f);
+          var array = $$$Immutable$Array$$modify(stack, index - size, f);
           if (array === stack) {
             return this;
           } else {
-            var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, array));
-            return new $$ImmutableList$$ImmutableList(node, $$static$$nil, 0);
+            var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, array));
+            return new $$ImmutableList$$ImmutableList(node, $$$Immutable$static$$nil, 0);
           }
         }
 
@@ -2200,7 +2287,7 @@
 
       } else if ($$Ordered$$nth_has(from, len)) {
         if (from === to) {
-          return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0);
+          return new $$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
 
         // TODO code duplication with nth_has ?
         } else if (to > 0 && to <= len) {
@@ -2218,7 +2305,7 @@
             $$ImmutableList$$add_slice(slices, $$ImmutableList$$array_slice(stack, from - size, to - size));
           }
 
-          return new $$ImmutableList$$ImmutableList($$ImmutableList$$slices_to_tree(slices), $$static$$nil, 0);
+          return new $$ImmutableList$$ImmutableList($$ImmutableList$$slices_to_tree(slices), $$$Immutable$static$$nil, 0);
 
         } else {
           throw new Error("Index " + to + " is not valid");
@@ -2237,15 +2324,15 @@
         var rroot = right.root;
         var rtail = right.tail;
 
-        if (rroot === $$static$$nil && rtail === $$static$$nil) {
+        if (rroot === $$$Immutable$static$$nil && rtail === $$$Immutable$static$$nil) {
           return this;
 
-        } else if (lroot === $$static$$nil && ltail === $$static$$nil) {
+        } else if (lroot === $$$Immutable$static$$nil && ltail === $$$Immutable$static$$nil) {
           return right;
 
         } else {
-          if (ltail !== $$static$$nil) {
-            lroot = $$AVL$$insert_max(lroot, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, $$ImmutableList$$stack_to_array(ltail, this.tail_size)));
+          if (ltail !== $$$Immutable$static$$nil) {
+            lroot = $$AVL$$insert_max(lroot, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, $$ImmutableList$$stack_to_array(ltail, this.tail_size)));
           }
 
           var node = $$AVL$$concat(lroot, rroot);
@@ -2268,10 +2355,10 @@
         if (array instanceof $$ImmutableList$$ImmutableList) {
           return array;
         } else {
-          return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0).concat(array);
+          return new $$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0).concat(array);
         }
       } else {
-        return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0);
+        return new $$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
       }
     }
     function $$ImmutableQueue$$ImmutableQueue(left, right, len) {
@@ -2283,29 +2370,29 @@
 
     $$ImmutableQueue$$ImmutableQueue.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$static$$tag_hash] = $$hash$$hash_array("Queue");
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$$Immutable$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$$Immutable$static$$tag_hash] = $$hash$$hash_array("Queue");
     $$ImmutableQueue$$ImmutableQueue.prototype.size = $$Sorted$$stack_size;
     $$ImmutableQueue$$ImmutableQueue.prototype.concat = $$Sorted$$stack_concat;
 
-    $$static$$fromJSON_registry["Queue"] = function (x) {
+    $$$Immutable$static$$fromJSON_registry["Queue"] = function (x) {
       return $$ImmutableQueue$$Queue($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$static$$tag_toJSON] = function (x) {
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("Queue", x);
     };
 
     $$ImmutableQueue$$ImmutableQueue.prototype.isEmpty = function () {
-      return this.left === $$static$$nil && this.right === $$static$$nil;
+      return this.left === $$$Immutable$static$$nil && this.right === $$$Immutable$static$$nil;
     };
 
     $$ImmutableQueue$$ImmutableQueue.prototype.removeAll = function () {
-      return new $$ImmutableQueue$$ImmutableQueue($$static$$nil, $$static$$nil, 0);
+      return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
     };
 
-    $$ImmutableQueue$$ImmutableQueue.prototype[$$static$$tag_iter] = function () {
-      return $$iter$$concat_iter($$Cons$$iter_cons(this.left), $$iter$$reverse_iter($$Cons$$iter_cons(this.right)));
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$$Immutable$static$$tag_iter] = function () {
+      return $$iter$$concat_iter($$$Immutable$Cons$$iter_cons(this.left), $$iter$$reverse_iter($$$Immutable$Cons$$iter_cons(this.right)));
     };
 
     $$ImmutableQueue$$ImmutableQueue.prototype.peek = function (def) {
@@ -2322,9 +2409,9 @@
 
     $$ImmutableQueue$$ImmutableQueue.prototype.push = function (value) {
       if (this.isEmpty()) {
-        return new $$ImmutableQueue$$ImmutableQueue(new $$Cons$$Cons(value, this.left), this.right, this.len + 1);
+        return new $$ImmutableQueue$$ImmutableQueue(new $$$Immutable$Cons$$Cons(value, this.left), this.right, this.len + 1);
       } else {
-        return new $$ImmutableQueue$$ImmutableQueue(this.left, new $$Cons$$Cons(value, this.right), this.len + 1);
+        return new $$ImmutableQueue$$ImmutableQueue(this.left, new $$$Immutable$Cons$$Cons(value, this.right), this.len + 1);
       }
     };
 
@@ -2333,16 +2420,16 @@
         throw new Error("Cannot pop from an empty queue");
       } else {
         var left = this.left.cdr;
-        if (left === $$static$$nil) {
-          var right = $$static$$nil;
+        if (left === $$$Immutable$static$$nil) {
+          var right = $$$Immutable$static$$nil;
 
           // TODO a little gross
           // TODO replace with foldl ?
-          $$Cons$$each_cons(this.right, function (x) {
-            right = new $$Cons$$Cons(x, right);
+          $$$Immutable$Cons$$each_cons(this.right, function (x) {
+            right = new $$$Immutable$Cons$$Cons(x, right);
           });
 
-          return new $$ImmutableQueue$$ImmutableQueue(right, $$static$$nil, this.len - 1);
+          return new $$ImmutableQueue$$ImmutableQueue(right, $$$Immutable$static$$nil, this.len - 1);
         } else {
           return new $$ImmutableQueue$$ImmutableQueue(left, this.right, this.len - 1);
         }
@@ -2359,10 +2446,10 @@
         if (x instanceof $$ImmutableQueue$$ImmutableQueue) {
           return x;
         } else {
-          return new $$ImmutableQueue$$ImmutableQueue($$static$$nil, $$static$$nil, 0).concat(x);
+          return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0).concat(x);
         }
       } else {
-        return new $$ImmutableQueue$$ImmutableQueue($$static$$nil, $$static$$nil, 0);
+        return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
       }
     }
     function $$ImmutableStack$$ImmutableStack(root, len) {
@@ -2373,26 +2460,26 @@
 
     $$ImmutableStack$$ImmutableStack.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableStack$$ImmutableStack.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
-    $$ImmutableStack$$ImmutableStack.prototype[$$static$$tag_hash] = $$hash$$hash_array("Stack");
+    $$ImmutableStack$$ImmutableStack.prototype[$$$Immutable$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableStack$$ImmutableStack.prototype[$$$Immutable$static$$tag_hash] = $$hash$$hash_array("Stack");
     $$ImmutableStack$$ImmutableStack.prototype.isEmpty = $$Sorted$$sorted_isEmpty;
     $$ImmutableStack$$ImmutableStack.prototype.size = $$Sorted$$stack_size;
     $$ImmutableStack$$ImmutableStack.prototype.concat = $$Sorted$$stack_concat;
 
-    $$static$$fromJSON_registry["Stack"] = function (x) {
+    $$$Immutable$static$$fromJSON_registry["Stack"] = function (x) {
       return $$ImmutableStack$$Stack($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableStack$$ImmutableStack.prototype[$$static$$tag_iter] = function () {
-      return $$iter$$reverse_iter($$Cons$$iter_cons(this.root));
+    $$ImmutableStack$$ImmutableStack.prototype[$$$Immutable$static$$tag_iter] = function () {
+      return $$iter$$reverse_iter($$$Immutable$Cons$$iter_cons(this.root));
     };
 
-    $$ImmutableStack$$ImmutableStack.prototype[$$static$$tag_toJSON] = function (x) {
+    $$ImmutableStack$$ImmutableStack.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("Stack", x);
     };
 
     $$ImmutableStack$$ImmutableStack.prototype.removeAll = function () {
-      return new $$ImmutableStack$$ImmutableStack($$static$$nil, 0);
+      return new $$ImmutableStack$$ImmutableStack($$$Immutable$static$$nil, 0);
     };
 
     $$ImmutableStack$$ImmutableStack.prototype.peek = function (def) {
@@ -2408,7 +2495,7 @@
     };
 
     $$ImmutableStack$$ImmutableStack.prototype.push = function (value) {
-      return new $$ImmutableStack$$ImmutableStack(new $$Cons$$Cons(value, this.root), this.len + 1);
+      return new $$ImmutableStack$$ImmutableStack(new $$$Immutable$Cons$$Cons(value, this.root), this.len + 1);
     };
 
     $$ImmutableStack$$ImmutableStack.prototype.pop = function () {
@@ -2429,10 +2516,10 @@
         if (x instanceof $$ImmutableStack$$ImmutableStack) {
           return x;
         } else {
-          return new $$ImmutableStack$$ImmutableStack($$static$$nil, 0).concat(x);
+          return new $$ImmutableStack$$ImmutableStack($$$Immutable$static$$nil, 0).concat(x);
         }
       } else {
-        return new $$ImmutableStack$$ImmutableStack($$static$$nil, 0);
+        return new $$ImmutableStack$$ImmutableStack($$$Immutable$static$$nil, 0);
       }
     }
 
@@ -2452,17 +2539,17 @@
     $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$Base$$ImmutableBase);
 
     $$ImmutableRecord$$ImmutableRecord.prototype.update = $$Sorted$$sorted_merge;
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$static$$tag_toJS] = $$toJS$$toJS_object;
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$$Immutable$static$$tag_toJS] = $$toJS$$toJS_object;
 
-    $$static$$fromJSON_registry["Record"] = function (x) {
+    $$$Immutable$static$$fromJSON_registry["Record"] = function (x) {
       return $$ImmutableRecord$$Record($$toJSON$$fromJSON_object(x));
     };
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$static$$tag_toJSON] = function (x) {
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_object("Record", x);
     };
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$static$$tag_hash] = function (x) {
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$$Immutable$static$$tag_hash] = function (x) {
       if (x.hash === null) {
         x.hash = "(Record" + $$hash$$hash_dict(x, "  ") + ")";
       }
@@ -2470,7 +2557,7 @@
       return x.hash;
     };
 
-    $$ImmutableRecord$$ImmutableRecord.prototype[$$static$$tag_iter] = function () {
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$$Immutable$static$$tag_iter] = function () {
       var keys   = this.keys;
       var values = this.values;
 
@@ -2511,7 +2598,7 @@
 
       } else {
         var values = this.values;
-        var array  = $$Array$$modify(values, index, f);
+        var array  = $$$Immutable$Array$$modify(values, index, f);
         if (array === values) {
           return this;
         } else {
@@ -2556,7 +2643,7 @@
 
     $$MutableRef$$MutableRef.prototype = Object.create($$Base$$MutableBase);
 
-    $$MutableRef$$MutableRef.prototype[$$static$$tag_hash] = function (x) {
+    $$MutableRef$$MutableRef.prototype[$$$Immutable$static$$tag_hash] = function (x) {
       return "(Ref " + $$hash$$hash(x._id) + ")";
     };
 
@@ -2707,7 +2794,1153 @@
       exports.all = $$iter$$all;
       exports.find = $$iter$$find;
       exports.partition = $$iter$$partition;
+      exports.range = $$iter$$range;
+      exports.take = $$iter$$take;
     });
+    var $$List$$immutablejs = require("immutable");
+    var $$List$$mori        = require("mori");
+
+    function $$List$$cons_push(x, i) {
+      return new $$$Immutable$Cons$$Cons(i, x);
+    }
+
+
+    /*var fs = require("fs");
+    var vm = require("vm");
+    var path = require("path");
+
+    var elm_path = path.join(__dirname, "../Elm-0.13/elm-runtime.js");
+    var elm_bench_path = path.join(__dirname, "./build/List.js");
+    vm.runInThisContext(fs.readFileSync(elm_path));
+    vm.runInThisContext(fs.readFileSync(elm_bench_path));
+
+    var worker = Elm.worker(Elm.Benchmark);
+
+    var elm = {
+      insert:     worker.ports.insert,
+      insertInit: worker.ports.insertInit
+    };*/
+
+
+    //var counter = +process.argv[2];
+
+    function $$List$$array_has(i, len) {
+      return i >= 0 && i < len;
+    }
+
+    function $$List$$array_get(array, i, def) {
+      var len = array.length;
+
+      if (i < 0) {
+        i += len;
+      }
+
+      if ($$List$$array_has(i, len)) {
+        return array[i];
+      } else if (arguments.length === 3) {
+        return def;
+      } else {
+        throw new Error("Invalid index: " + i);
+      }
+    }
+
+    function $$List$$array_insert(array, value, i) {
+      if (arguments.length === 2) {
+        i = -1;
+      }
+
+      var len = array.length;
+
+      if (i < 0) {
+        i += (len + 1);
+      }
+
+      if (i >= 0 && i <= len) {
+        return $$$Immutable$Array$$insert(array, i, value);
+      } else {
+        throw new Error("Invalid index: " + i);
+      }
+    }
+
+    function $$List$$array_modify(array, i, f) {
+      var len = array.length;
+
+      if (i < 0) {
+        i += len;
+      }
+
+      if ($$List$$array_has(i, len)) {
+        return $$$Immutable$Array$$modify(array, i, f);
+      } else {
+        throw new Error("Invalid index: " + i);
+      }
+    }
+
+    function $$List$$array_remove(array, i) {
+      if (arguments.length === 1) {
+        i = -1;
+      }
+
+      var len = array.length;
+
+      if (i < 0) {
+        i += len;
+      }
+
+      if ($$List$$array_has(i, len)) {
+        return $$$Immutable$Array$$remove(array, i);
+      } else {
+        throw new Error("Invalid index: " + i);
+      }
+    }
+
+    function $$List$$array_slice(array, from, to) {
+      var len = array.length;
+
+      if (from == null) {
+        from = 0;
+      }
+      if (to == null) {
+        to = len;
+      }
+
+      if (from < 0) {
+        from += len;
+      }
+      if (to < 0) {
+        to += len;
+      }
+
+      if (from === 0 && to === len) {
+        return array;
+
+      } else if (from > to) {
+        throw new Error("Index " + from + " is greater than index " + to);
+
+      } else if ($$List$$array_has(from, len)) {
+        if (from === to) {
+          return [];
+
+        // TODO code duplication with array_has ?
+        } else if (to > 0 && to <= len) {
+          return array.slice(from, to);
+
+        } else {
+          throw new Error("Index " + to + " is not valid");
+        }
+
+      } else {
+        throw new Error("Index " + from + " is not valid");
+      }
+    }
+
+    function $$List$$array_concat(array, other) {
+      if (array.length === 0) {
+        return other;
+      } else if (other.length === 0) {
+        return array;
+      } else {
+        return array.concat(other);
+      }
+    }
+
+
+    function $$List$$run(counter) {
+      $$Benchmark$$.group("List with " + counter + " values", function () {
+        $$Benchmark$$.group("Inserting at the end", function () {
+          $$Benchmark$$.time("JavaScript Array", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+          });
+
+          $$Benchmark$$.time("JavaScript Array Copying", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable-js List", function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+          });
+
+          $$Benchmark$$.time("Mori Vector", function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable List", function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+          });
+
+          /*benchmark.time("Immutable List (push)", function () {
+            var a = List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+          });*/
+
+          /*benchmark.time("Stack (reversed Cons)", function () {
+            var a = nil;
+
+            for (var i = 0; i < counter; ++i) {
+              a = cons_push(a, i);
+            }
+          });*/
+
+          /*benchmark.time("Elm Array", function () {
+            elm.insert(counter);
+          });
+
+          benchmark.time("Elm Array (initialize)", function () {
+            elm.insertInit(counter);
+          });*/
+        });
+
+
+        $$Benchmark$$.group("Inserting at the start", function () {
+          $$Benchmark$$.time("JavaScript Array", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.unshift(i);
+            }
+          });
+
+          $$Benchmark$$.time("JavaScript Array Copying", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i, 0);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable-js List", function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.unshift(i);
+            }
+          });
+
+          $$Benchmark$$.message("Mori Vector");
+
+          /*benchmark.time("Mori List", function () {
+            var a = mori.list();
+
+            for (var i = 0; i < counter; ++i) {
+              a = mori.conj(a, i);
+            }
+          });*/
+
+          $$Benchmark$$.time("Immutable List", function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i, 0);
+            }
+          });
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Inserting at random", function () {
+          $$Benchmark$$.time("JavaScript Array", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              var pivot = Math.floor(Math.random() * a.length);
+              a.splice(pivot, 0, i);
+            }
+          });
+
+          $$Benchmark$$.time("JavaScript Array Copying", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              var pivot = Math.floor(Math.random() * a.length);
+              a = $$List$$array_insert(a, i, pivot);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable-js List", function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              var pivot = Math.floor(Math.random() * a.size);
+              a = a.splice(pivot, 0, i);
+            }
+          });
+
+          $$Benchmark$$.message("Mori Vector");
+
+          $$Benchmark$$.time("Immutable List", function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              var pivot = Math.floor(Math.random() * a.size());
+              a = a.insert(i, pivot);
+            }
+          });
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Retrieving at the end", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a[a.length - 1];
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_get(a, -1);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.last();
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              // `mori.last` is O(n)
+              $$List$$mori.get(a, $$List$$mori.count(a) - 1);
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.get(-1);
+            });
+          })();
+
+          //var elm_array = elm.makeList(counter);
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Retrieving at the start", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a[0];
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_get(a, 0);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.first();
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.get(a, 0);
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.get(0);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Retrieving at random", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              var pivot = Math.floor(Math.random() * a.length);
+              a[pivot];
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              var pivot = Math.floor(Math.random() * a.length);
+              $$List$$array_get(a, pivot);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var pivot = Math.floor(Math.random() * a.size);
+              a.get(pivot);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              var pivot = Math.floor(Math.random() * $$List$$mori.count(a));
+              $$List$$mori.get(a, pivot);
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var pivot = Math.floor(Math.random() * a.size());
+              a.get(pivot);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Removing at the end", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = $$List$$array_remove(b);
+              }
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.pop();
+              }
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = $$List$$mori.pop(b);
+              }
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.remove();
+              }
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Removing at the start", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = $$List$$array_remove(b, 0);
+              }
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.shift();
+              }
+            });
+          })();
+
+          $$Benchmark$$.message("Mori Vector");
+
+          /*;(function () {
+            var a = mori.list();
+
+            for (var i = 0; i < counter; ++i) {
+              a = mori.conj(a, i);
+            }
+
+            benchmark.time("Mori List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = mori.pop(b);
+              }
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.remove(0);
+              }
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Removing at random", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                var pivot = Math.floor(Math.random() * b.length);
+                b = $$List$$array_remove(b, pivot);
+              }
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                var pivot = Math.floor(Math.random() * b.size);
+                b = b.splice(pivot, 1);
+              }
+            });
+          })();
+
+          $$Benchmark$$.message("Mori Vector");
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                var pivot = Math.floor(Math.random() * b.size());
+                b = b.remove(pivot);
+              }
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Modifying at the end", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_modify(a, -1, function () {
+                return -50;
+              });
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.set(-1, -50);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.assoc(a, $$List$$mori.count(a) - 1, -50);
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.modify(-1, function () {
+                return -50;
+              });
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Modifying at the start", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_modify(a, 0, function () {
+                return -50;
+              });
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.set(0, -50);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.assoc(a, 0, -50);
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.modify(0, function () {
+                return -50;
+              });
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Modifying at random", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              var pivot = Math.floor(Math.random() * a.length);
+              $$List$$array_modify(a, pivot, function () {
+                return -50;
+              });
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var pivot = Math.floor(Math.random() * a.size);
+              a.set(pivot, -50);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              var pivot = Math.floor(Math.random() * $$List$$mori.count(a));
+              $$List$$mori.assoc(a, pivot, -50);
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var pivot = Math.floor(Math.random() * a.size());
+              a.modify(pivot, function () {
+                return -50;
+              });
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Concatenating", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a.concat(a);
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_concat(a, a);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.concat(a);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.concat(a, a);
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.concat(a);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Slicing small", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a.slice(1, 2);
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_slice(a, 1, 2);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.slice(1, 2);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.subvec(a, 1, 2);
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.slice(1, 2);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Slicing medium", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a.slice(1, Math.floor(a.length / 2));
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_slice(a, 1, Math.floor(a.length / 2));
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.slice(1, Math.floor(a.size / 2));
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.subvec(a, 1, Math.floor($$List$$mori.count(a) / 2));
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.slice(1, Math.floor(a.size() / 2));
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Slicing large", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a.slice(1);
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_slice(a, 1);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.slice(1);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.subvec(a, 1);
+            });
+          })();
+
+          ;(function () {
+            var a = $$ImmutableList$$List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.slice(1);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+      });
+    }
     function $$Header$$header() {
       $$Benchmark$$.group("Information", function () {
         $$Benchmark$$.group("Node.js", function () {
@@ -2736,398 +3969,18 @@
         });*/
       });
     }
-    var src$Benchmark$Record$$immutablejs = require("immutable");
-    var src$Benchmark$Record$$mori        = require("mori");
 
     $$Header$$header();
-
-    function src$Benchmark$Record$$copy(input) {
-      var output = {};
-
-      for (var s in input) {
-        output[s] = input[s];
-      }
-
-      return output;
-    }
-
-    function src$Benchmark$Record$$random(input) {
-      return input[Math.floor(Math.random() * input.length)];
-    }
-
-    function src$Benchmark$Record$$run(counter) {
-      var only_keys = [];
-      var keys = [];
-      var record_keys = {};
-      var mori_keys = [];
-
-      for (var i = 0; i < counter; ++i) {
-        only_keys.push("foo" + i);
-        record_keys["foo" + i] = i;
-        keys.push(["foo" + i, i]);
-        mori_keys.push("foo" + i, i);
-      }
-
-      var ImmutableJSRecord = src$Benchmark$Record$$immutablejs.Record(record_keys);
-
-      $$Benchmark$$.group("Record with " + counter + " keys", function () {
-        $$Benchmark$$.group("Creating", function () {
-          $$Benchmark$$.message("JavaScript Object");
-
-          $$Benchmark$$.time("JavaScript Object Copying", function () {
-            src$Benchmark$Record$$copy(record_keys);
-          });
-
-          $$Benchmark$$.time("Immutable-js Map", function () {
-            src$Benchmark$Record$$immutablejs.Map(keys);
-          });
-
-          $$Benchmark$$.time("Immutable-js Record", function () {
-            new ImmutableJSRecord(record_keys);
-          });
-
-          $$Benchmark$$.time("Mori Hash Map", function () {
-            src$Benchmark$Record$$mori.hash_map.apply(null, mori_keys);
-          });
-
-          $$Benchmark$$.time("Mori Sorted Map", function () {
-            src$Benchmark$Record$$mori.sorted_map.apply(null, mori_keys);
-          });
-
-          $$Benchmark$$.time("Immutable Dict", function () {
-            $$ImmutableDict$$Dict(keys);
-          });
-
-          $$Benchmark$$.time("Immutable SortedDict", function () {
-            $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
-          });
-
-          $$Benchmark$$.time("Immutable Record", function () {
-            $$ImmutableRecord$$Record(keys);
-          });
-        });
-
-
-        $$Benchmark$$.group("get first", function () {
-          $$Benchmark$$.message("JavaScript Object");
-
-          ;(function () {
-            var o = record_keys;
-
-            $$Benchmark$$.time("JavaScript Object Copying", function () {
-              o["foo0"];
-            });
-
-            $$Benchmark$$.time("JavaScript Object Copying (prop)", function () {
-              o.foo0;
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$immutablejs.Map(keys);
-
-            $$Benchmark$$.time("Immutable-js Map", function () {
-              o.get("foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = new ImmutableJSRecord(record_keys);
-
-            $$Benchmark$$.time("Immutable-js Record", function () {
-              o.get("foo0");
-            });
-
-            $$Benchmark$$.time("Immutable-js Record (prop)", function () {
-              o.foo0;
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$mori.hash_map.apply(null, mori_keys);
-
-            $$Benchmark$$.time("Mori Hash Map", function () {
-              src$Benchmark$Record$$mori.get(o, "foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$mori.sorted_map.apply(null, mori_keys);
-
-            $$Benchmark$$.time("Mori Sorted Map", function () {
-              src$Benchmark$Record$$mori.get(o, "foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableDict$$Dict(keys);
-
-            $$Benchmark$$.time("Immutable Dict", function () {
-              o.get("foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
-
-            $$Benchmark$$.time("Immutable SortedDict", function () {
-              o.get("foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableRecord$$Record(keys);
-
-            $$Benchmark$$.time("Immutable Record", function () {
-              o.get("foo0");
-            });
-          })();
-        });
-
-
-        $$Benchmark$$.group("get random", function () {
-          $$Benchmark$$.message("JavaScript Object");
-
-          ;(function () {
-            var o = record_keys;
-
-            $$Benchmark$$.time("JavaScript Object Copying", function () {
-              o[src$Benchmark$Record$$random(only_keys)];
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$immutablejs.Map(keys);
-
-            $$Benchmark$$.time("Immutable-js Map", function () {
-              o.get(src$Benchmark$Record$$random(only_keys));
-            });
-          })();
-
-          ;(function () {
-            var o = new ImmutableJSRecord(record_keys);
-
-            $$Benchmark$$.time("Immutable-js Record", function () {
-              o.get(src$Benchmark$Record$$random(only_keys));
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$mori.hash_map.apply(null, mori_keys);
-
-            $$Benchmark$$.time("Mori Hash Map", function () {
-              src$Benchmark$Record$$mori.get(o, src$Benchmark$Record$$random(only_keys));
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$mori.sorted_map.apply(null, mori_keys);
-
-            $$Benchmark$$.time("Mori Sorted Map", function () {
-              src$Benchmark$Record$$mori.get(o, src$Benchmark$Record$$random(only_keys));
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableDict$$Dict(keys);
-
-            $$Benchmark$$.time("Immutable Dict", function () {
-              o.get(src$Benchmark$Record$$random(only_keys));
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
-
-            $$Benchmark$$.time("Immutable SortedDict", function () {
-              o.get(src$Benchmark$Record$$random(only_keys));
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableRecord$$Record(keys);
-
-            $$Benchmark$$.time("Immutable Record", function () {
-              o.get(src$Benchmark$Record$$random(only_keys));
-            });
-          })();
-        });
-
-
-        $$Benchmark$$.group("set first", function () {
-          ;(function () {
-            var o = src$Benchmark$Record$$copy(record_keys);
-
-            $$Benchmark$$.time("JavaScript Object", function () {
-              o["foo0"] = -1;
-            });
-
-            $$Benchmark$$.time("JavaScript Object (prop)", function () {
-              o.foo0 = -1;
-            });
-          })();
-
-          ;(function () {
-            var o = record_keys;
-
-            $$Benchmark$$.time("JavaScript Object Copying", function () {
-              var x = src$Benchmark$Record$$copy(o);
-              x["foo0"] = -1;
-            });
-
-            $$Benchmark$$.time("JavaScript Object Copying (prop)", function () {
-              var x = src$Benchmark$Record$$copy(o);
-              x.foo0 = -1;
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$immutablejs.Map(keys);
-
-            $$Benchmark$$.time("Immutable-js Map", function () {
-              o.set("foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = new ImmutableJSRecord(record_keys);
-
-            $$Benchmark$$.time("Immutable-js Record", function () {
-              o.set("foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$mori.hash_map.apply(null, mori_keys);
-
-            $$Benchmark$$.time("Mori Hash Map", function () {
-              src$Benchmark$Record$$mori.assoc(o, "foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$mori.sorted_map.apply(null, mori_keys);
-
-            $$Benchmark$$.time("Mori Sorted Map", function () {
-              src$Benchmark$Record$$mori.assoc(o, "foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableDict$$Dict(keys);
-
-            $$Benchmark$$.time("Immutable Dict", function () {
-              o.set("foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
-
-            $$Benchmark$$.time("Immutable SortedDict", function () {
-              o.set("foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableRecord$$Record(keys);
-
-            $$Benchmark$$.time("Immutable Record", function () {
-              o.set("foo0", -1);
-            });
-          })();
-        });
-
-
-        $$Benchmark$$.group("set random", function () {
-          ;(function () {
-            var o = src$Benchmark$Record$$copy(record_keys);
-
-            $$Benchmark$$.time("JavaScript Object", function () {
-              o[src$Benchmark$Record$$random(only_keys)] = -1;
-            });
-          })();
-
-          ;(function () {
-            var o = record_keys;
-
-            $$Benchmark$$.time("JavaScript Object Copying", function () {
-              var x = src$Benchmark$Record$$copy(o);
-              x[src$Benchmark$Record$$random(only_keys)] = -1;
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$immutablejs.Map(keys);
-
-            $$Benchmark$$.time("Immutable-js Map", function () {
-              o.set(src$Benchmark$Record$$random(only_keys), -1);
-            });
-          })();
-
-          ;(function () {
-            var o = new ImmutableJSRecord(record_keys);
-
-            $$Benchmark$$.time("Immutable-js Record", function () {
-              o.set(src$Benchmark$Record$$random(only_keys), -1);
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$mori.hash_map.apply(null, mori_keys);
-
-            $$Benchmark$$.time("Mori Hash Map", function () {
-              src$Benchmark$Record$$mori.assoc(o, src$Benchmark$Record$$random(only_keys), -1);
-            });
-          })();
-
-          ;(function () {
-            var o = src$Benchmark$Record$$mori.sorted_map.apply(null, mori_keys);
-
-            $$Benchmark$$.time("Mori Sorted Map", function () {
-              src$Benchmark$Record$$mori.assoc(o, src$Benchmark$Record$$random(only_keys), -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableDict$$Dict(keys);
-
-            $$Benchmark$$.time("Immutable Dict", function () {
-              o.set(src$Benchmark$Record$$random(only_keys), -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
-
-            $$Benchmark$$.time("Immutable SortedDict", function () {
-              o.set(src$Benchmark$Record$$random(only_keys), -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$ImmutableRecord$$Record(keys);
-
-            $$Benchmark$$.time("Immutable Record", function () {
-              o.set(src$Benchmark$Record$$random(only_keys), -1);
-            });
-          })();
-        });
-      });
-    }
-
-
-    src$Benchmark$Record$$run(1);
-    //run(2);
-    //run(3);
-    //run(4);
-    //run(5);
-    src$Benchmark$Record$$run(10);
-    src$Benchmark$Record$$run(100);
-    src$Benchmark$Record$$run(1000);
-    src$Benchmark$Record$$run(10000);
-    //run(100000);
-    //run(1000000);
+    $$List$$.run(10);
+    $$List$$.run(100);
+    $$List$$.run(1000);
+    $$List$$.run(10000);
+
+    $$Header$$header();
+    $$List$$.run(10);
+    $$List$$.run(100);
+    $$List$$.run(1000);
+    $$List$$.run(10000);
 
     $$Benchmark$$.run();
 }).call(this);

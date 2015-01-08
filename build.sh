@@ -1,7 +1,7 @@
 #! /bin/sh
 
 compile-modules convert --output build/Immutable.js --format bundle src/Immutable/Immutable.js &&
-compile-modules convert --output build/Benchmark.js --format bundle src/Benchmark/Record.js &&
+compile-modules convert --output build/Benchmark.js --format bundle src/Benchmark/run.js &&
 compile-modules convert --output build/Test.js --format bundle src/Test/Test.js &&
 
 rm build/Immutable.js.map &&
