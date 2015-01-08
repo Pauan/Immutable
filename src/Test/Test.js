@@ -3,7 +3,7 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, Tuple, isTuple,
          each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
-         isIterable } from "../Immutable/Immutable";
+         isIterable, any, all, find } from "../Immutable/Immutable";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
 
@@ -2643,15 +2643,39 @@ test("keep", function () {
   assert(deepEqual(toArray(x), [4, 5]));
 });
 
+test("any", function () {
+  assert(any([], function (x) { return x > 3 }) === false);
+  assert(any([1, 2, 3], function (x) { return x > 3 }) === false);
+  assert(any([1, 2, 3, 4], function (x) { return x > 3 }) === true);
+});
+
+test("all", function () {
+  assert(all([], function (x) { return x < 3 }) === true);
+  assert(all([1, 2], function (x) { return x < 3 }) === true);
+  assert(all([1, 2, 3], function (x) { return x < 3 }) === false);
+});
+
 test("findIndex", function () {
   var x = findIndex([1, 2, 3, 4, 5], function (x) { return x > 3 });
   assert(x === 3);
 
   assert_raises(function () {
     findIndex([1, 2, 3, 4, 5], function (x) { return x > 5 });
-  }, "findIndex did not find anything");
+  }, "Did not find anything");
 
   var x = findIndex([1, 2, 3, 4, 5], function (x) { return x > 5 }, 500);
+  assert(x === 500);
+});
+
+test("find", function () {
+  var x = find([1, 2, 3, 4, 5], function (x) { return x > 3 });
+  assert(x === 4);
+
+  assert_raises(function () {
+    find([1, 2, 3, 4, 5], function (x) { return x > 5 });
+  }, "Did not find anything");
+
+  var x = find([1, 2, 3, 4, 5], function (x) { return x > 5 }, 500);
   assert(x === 500);
 });
 

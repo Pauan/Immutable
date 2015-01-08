@@ -37,6 +37,7 @@ export function iter(x) {
   if ((fn = x[tag_iter]) != null) {
     return fn.call(x);
 
+  // TODO should ES6 Iterables have precedence over `tag_iter` ?
   } else if (Symbol_iterator !== null && (fn = x[Symbol_iterator]) != null) {
     return fn.call(x);
 
@@ -120,6 +121,50 @@ export function concat_iter(x, y) {
       }
     }
   };
+}
+
+export function any(x, f) {
+  var iterator = iter(x);
+
+  for (;;) {
+    var info = iterator.next();
+    if (info.done) {
+      return false;
+    } else if (f(info.value)) {
+      return true;
+    }
+  }
+}
+
+export function all(x, f) {
+  var iterator = iter(x);
+
+  for (;;) {
+    var info = iterator.next();
+    if (info.done) {
+      return true;
+    } else if (!f(info.value)) {
+      return false;
+    }
+  }
+}
+
+export function find(x, f, def) {
+  var iterator = iter(x);
+
+  for (;;) {
+    var info = iterator.next();
+    if (info.done) {
+      if (arguments.length === 3) {
+        return def;
+      } else {
+        throw new Error("Did not find anything");
+      }
+
+    } else if (f(info.value)) {
+      return info.value;
+    }
+  }
 }
 
 export function zip(x, def) {
@@ -292,7 +337,7 @@ export function findIndex(x, f, def) {
       if (arguments.length === 3) {
         return def;
       } else {
-        throw new Error("findIndex did not find anything");
+        throw new Error("Did not find anything");
       }
 
     } else if (f(info.value)) {

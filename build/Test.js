@@ -158,6 +158,7 @@
       if ((fn = x[$$$Immutable$static$$tag_iter]) != null) {
         return fn.call(x);
 
+      // TODO should ES6 Iterables have precedence over `tag_iter` ?
       } else if ($$$Immutable$static$$Symbol_iterator !== null && (fn = x[$$$Immutable$static$$Symbol_iterator]) != null) {
         return fn.call(x);
 
@@ -241,6 +242,50 @@
           }
         }
       };
+    }
+
+    function $$iter$$any(x, f) {
+      var iterator = $$iter$$iter(x);
+
+      for (;;) {
+        var info = iterator.next();
+        if (info.done) {
+          return false;
+        } else if (f(info.value)) {
+          return true;
+        }
+      }
+    }
+
+    function $$iter$$all(x, f) {
+      var iterator = $$iter$$iter(x);
+
+      for (;;) {
+        var info = iterator.next();
+        if (info.done) {
+          return true;
+        } else if (!f(info.value)) {
+          return false;
+        }
+      }
+    }
+
+    function $$iter$$find(x, f, def) {
+      var iterator = $$iter$$iter(x);
+
+      for (;;) {
+        var info = iterator.next();
+        if (info.done) {
+          if (arguments.length === 3) {
+            return def;
+          } else {
+            throw new Error("Did not find anything");
+          }
+
+        } else if (f(info.value)) {
+          return info.value;
+        }
+      }
     }
 
     function $$iter$$zip(x, def) {
@@ -412,7 +457,7 @@
           if (arguments.length === 3) {
             return def;
           } else {
-            throw new Error("findIndex did not find anything");
+            throw new Error("Did not find anything");
           }
 
         } else if (f(info.value)) {
@@ -2465,6 +2510,9 @@
       exports.join = $$iter$$join;
       exports.zip = $$iter$$zip;
       exports.toArray = $$iter$$toArray;
+      exports.any = $$iter$$any;
+      exports.all = $$iter$$all;
+      exports.find = $$iter$$find;
     });
     function $$assert$$assert(x) {
       if (arguments.length !== 1) {
@@ -5111,15 +5159,39 @@
       $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [4, 5]));
     });
 
+    src$Test$Test$$test("any", function () {
+      $$assert$$assert($$iter$$any([], function (x) { return x > 3 }) === false);
+      $$assert$$assert($$iter$$any([1, 2, 3], function (x) { return x > 3 }) === false);
+      $$assert$$assert($$iter$$any([1, 2, 3, 4], function (x) { return x > 3 }) === true);
+    });
+
+    src$Test$Test$$test("all", function () {
+      $$assert$$assert($$iter$$all([], function (x) { return x < 3 }) === true);
+      $$assert$$assert($$iter$$all([1, 2], function (x) { return x < 3 }) === true);
+      $$assert$$assert($$iter$$all([1, 2, 3], function (x) { return x < 3 }) === false);
+    });
+
     src$Test$Test$$test("findIndex", function () {
       var x = $$iter$$findIndex([1, 2, 3, 4, 5], function (x) { return x > 3 });
       $$assert$$assert(x === 3);
 
       src$Test$Test$$assert_raises(function () {
         $$iter$$findIndex([1, 2, 3, 4, 5], function (x) { return x > 5 });
-      }, "findIndex did not find anything");
+      }, "Did not find anything");
 
       var x = $$iter$$findIndex([1, 2, 3, 4, 5], function (x) { return x > 5 }, 500);
+      $$assert$$assert(x === 500);
+    });
+
+    src$Test$Test$$test("find", function () {
+      var x = $$iter$$find([1, 2, 3, 4, 5], function (x) { return x > 3 });
+      $$assert$$assert(x === 4);
+
+      src$Test$Test$$assert_raises(function () {
+        $$iter$$find([1, 2, 3, 4, 5], function (x) { return x > 5 });
+      }, "Did not find anything");
+
+      var x = $$iter$$find([1, 2, 3, 4, 5], function (x) { return x > 5 }, 500);
       $$assert$$assert(x === 500);
     });
 

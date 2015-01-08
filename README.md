@@ -43,9 +43,9 @@ Quick overview
 
   * `get` `set` `modify`
 
-----
+* `Iterable`
 
-* `each` `findIndex` `foldl` `foldr` `join` `keep` `map` `reverse` `zip`
+  * `all` `any` `each` `find` `findIndex` `foldl` `foldr` `join` `keep` `map` `reverse` `zip`
 
 ----
 

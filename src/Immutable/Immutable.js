@@ -14,7 +14,8 @@ import { isRecord, Record } from "./ImmutableRecord";
 import { deref, Ref, isRef } from "./MutableRef";
 import { isTag, isUUIDTag, Tag, UUIDTag } from "./Tag";
 import { each, map, keep, findIndex, reverse, foldl,
-         foldr, join, zip, toArray, isIterable } from "./iter";
+         foldr, join, zip, toArray, isIterable,
+         any, all, find } from "./iter";
 
 export { toJS, simpleSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
@@ -25,7 +26,7 @@ export { toJS, simpleSort, toJSON, fromJSON,
          deref, Ref, isRef,
          isTag, isUUIDTag, Tag, UUIDTag,
          each, map, keep, findIndex, reverse, foldl,
-         foldr, join, zip, toArray, isIterable };
+         foldr, join, zip, toArray, isIterable, any, all, find };
 
 
 // TODO support -0 and 0 ?
@@ -136,4 +137,7 @@ export function fromJS(x) {
   exports.join = join;
   exports.zip = zip;
   exports.toArray = toArray;
+  exports.any = any;
+  exports.all = all;
+  exports.find = find;
 });

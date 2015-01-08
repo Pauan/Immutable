@@ -38,11 +38,26 @@
          // returns [[1, 4, 7], [2, 5, 0], [3, 6, 0]]
          zip([[1, 2, 3], [4, 5, 6], [7]], 0);
 
+     ----
+
      You can undo a zip by simply using [::zip] a second time:
 
          // returns [[1, 4], [2, 5], [3, 6]]
          var x = zip([[1, 2, 3], [4, 5, 6]]);
 
          // returns [[1, 2, 3], [4, 5, 6]]
+         zip(x);
+
+     ----
+
+     Using [::zip], it's easy to collect all the keys/values
+     of a [::Dict] or [::Record]:
+
+         var x = Record({
+           foo: 1,
+           bar: 2
+         });
+
+         // returns [["foo", "bar"], [1, 2]]
          zip(x);
  */

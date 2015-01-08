@@ -1,0 +1,29 @@
+/**
+   @function find
+   @param {::Iterable} [x]
+   @param {Function} [fn]
+   @param {optional Any} [default]
+   @return {Any}
+   @summary Applies `fn` to each value in `x` and returns
+            the value where `fn` first returns `true`.
+   @desc
+     If `fn` never returns `true`:
+
+     * If `default` is provided, it is returned.
+     * Otherwise it throws an error.
+
+         // returns 2
+         find([1, 2, 3], function (x) {
+           return x === 2;
+         });
+
+         // throws an error
+         find([1, 2, 3], function (x) {
+           return x === 4;
+         });
+
+         // returns 50
+         find([1, 2, 3], function (x) {
+           return x === 4;
+         }, 50);
+ */

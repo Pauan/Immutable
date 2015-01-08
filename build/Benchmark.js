@@ -277,6 +277,7 @@
       if ((fn = x[$$static$$tag_iter]) != null) {
         return fn.call(x);
 
+      // TODO should ES6 Iterables have precedence over `tag_iter` ?
       } else if ($$static$$Symbol_iterator !== null && (fn = x[$$static$$Symbol_iterator]) != null) {
         return fn.call(x);
 
@@ -360,6 +361,50 @@
           }
         }
       };
+    }
+
+    function $$iter$$any(x, f) {
+      var iterator = $$iter$$iter(x);
+
+      for (;;) {
+        var info = iterator.next();
+        if (info.done) {
+          return false;
+        } else if (f(info.value)) {
+          return true;
+        }
+      }
+    }
+
+    function $$iter$$all(x, f) {
+      var iterator = $$iter$$iter(x);
+
+      for (;;) {
+        var info = iterator.next();
+        if (info.done) {
+          return true;
+        } else if (!f(info.value)) {
+          return false;
+        }
+      }
+    }
+
+    function $$iter$$find(x, f, def) {
+      var iterator = $$iter$$iter(x);
+
+      for (;;) {
+        var info = iterator.next();
+        if (info.done) {
+          if (arguments.length === 3) {
+            return def;
+          } else {
+            throw new Error("Did not find anything");
+          }
+
+        } else if (f(info.value)) {
+          return info.value;
+        }
+      }
     }
 
     function $$iter$$zip(x, def) {
@@ -531,7 +576,7 @@
           if (arguments.length === 3) {
             return def;
           } else {
-            throw new Error("findIndex did not find anything");
+            throw new Error("Did not find anything");
           }
 
         } else if (f(info.value)) {
@@ -2584,6 +2629,9 @@
       exports.join = $$iter$$join;
       exports.zip = $$iter$$zip;
       exports.toArray = $$iter$$toArray;
+      exports.any = $$iter$$any;
+      exports.all = $$iter$$all;
+      exports.find = $$iter$$find;
     });
     function $$Header$$header() {
       $$Benchmark$$.group("Information", function () {

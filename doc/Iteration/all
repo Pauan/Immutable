@@ -1,0 +1,14 @@
+/**
+   @function all
+   @param {::Iterable} [x]
+   @param {Function} [fn]
+   @return {Boolean}
+   @summary Returns `true` if `fn` returns `true` for all
+            of the values in `x`
+   @desc
+     This function calls `fn` for each value in `x`, and
+     if `fn` returns `false`, it will return `false`.
+
+     If `fn` never returns `false`, then this function returns
+     `true`.
+ */
