@@ -62,6 +62,18 @@
 
      ----
 
+     [::Tuple] are treated as equal if they have
+     the same values in the same order:
+
+         equal(Tuple([1]),
+               Tuple([1])); // true
+
+     This takes `O(n)` time, except the results
+     are cached so that afterwards it takes `O(1)`
+     time.
+
+     ----
+
      [::Queue] are treated as equal if they have
      the same values in the same order:
 

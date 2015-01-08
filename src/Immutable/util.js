@@ -1,3 +1,6 @@
+// TODO circular import
+import { isTuple } from "./ImmutableTuple";
+
 export function isObject(x) {
   return Object(x) === x;
 }
@@ -40,7 +43,15 @@ export function destructure_pair(x, f) {
     } else {
       throw new Error("Expected array with 2 elements but got " + x.length + " " + plural(x.length, "element"));
     }
+
+  } else if (isTuple(x)) {
+    if (x.size() === 2) {
+      return f(x.get(0), x.get(1));
+    } else {
+      throw new Error("Expected Tuple with 2 elements but got " + x.size() + " " + plural(x.size(), "element"));
+    }
+
   } else {
-    throw new Error("Expected array but got: " + x);
+    throw new Error("Expected array or Tuple but got: " + x);
   }
 }

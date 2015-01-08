@@ -6,7 +6,7 @@
    @desc
      Strings, numbers, booleans, null, undefined, symbols, frozen
      objects, [::Dict], [::List], [::Queue], [::Record], [::Set],
-     [::Stack], and [::Tag] are immutable.
+     [::Stack], [::Tuple], and [::Tag] are immutable.
 
      Everything else is mutable.
  */

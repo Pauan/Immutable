@@ -1,0 +1,67 @@
+/**
+   @class Tuple
+   @summary An immutable fixed-size ordered sequence of values
+   @desc
+     A [::Tuple] is much faster and lighter-weight than a [::List],
+     but in exchange for that they are a fixed size: you cannot insert
+     or remove values from a [::Tuple].
+
+   @function Tuple
+   @param {optional sequence::Sequence} [seq]
+   @desc
+     The values from `seq` will be inserted into
+     the tuple, in the same order as `seq`.
+
+     This takes `O(n)` time, unless `seq` is already a
+     [::Tuple], in which case it takes `O(1)` time.
+
+     ----
+
+     Duplicate values are allowed, and duplicates don't
+     have to be in the same order.
+
+     The values in the tuple can have whatever order you
+     want, but they are not sorted. If you want the values
+     to be sorted, use a [::SortedSet] instead.
+
+   @function Tuple.size
+   @return {Integer} The number of values in the tuple
+   @summary Returns the number of values in the tuple
+   @desc
+     This function runs in `O(1)` time.
+
+   @function Tuple.get
+   @param {Integer} [index] Index within the tuple
+   @return {Any} The value in the tuple at `index`
+   @summary Returns the value in the tuple at `index`
+   @desc
+     This function runs in `O(1)` time.
+
+     If `index` is not in the tuple, an error is thrown.
+
+   @function Tuple.modify
+   @param {Integer} [index] The index to modify in the tuple
+   @param {Function} [fn] The function which will modify the value at `index`
+   @return {::Tuple} A new tuple with the value at `index` modified by `fn`
+   @summary Returns a new tuple with the value at `index` modified by `fn`
+   @desc
+     This function runs in `O(n)` time.
+
+     This does not modify the tuple, it returns a new tuple.
+
+     ----
+
+     This function calls `fn` with the value at `index`, and
+     whatever `fn` returns will be used as the new value at
+     `index`:
+
+         var tuple = Tuple([1, 2, 3]);
+
+         // This returns the tuple [11, 2, 3]
+         tuple.modify(0, function (x) { return x + 10 });
+
+         // This returns the tuple [1, 12, 3]
+         tuple.modify(1, function (x) { return x + 10 });
+
+     If `index` is not in the tuple, an error is thrown.
+*/

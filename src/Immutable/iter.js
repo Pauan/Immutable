@@ -2,7 +2,7 @@ import { isJSLiteral } from "./util";
 import { tag_iter, Symbol_iterator } from "./static";
 
 // TODO circular import
-import { List } from "./ImmutableList";
+import { unsafe_Tuple } from "./ImmutableTuple";
 
 function iter_array(array) {
   var i = 0;
@@ -126,26 +126,26 @@ export function zip(x, def) {
             return { done: true };
 
           } else {
-            var out  = List();
+            var out  = [];
             var seen = false;
 
             for (var i = 0, l = args.length; i < l; ++i) {
               var info = args[i].next();
               if (info.done) {
                 if (hasDefault) {
-                  out = out.insert(def);
+                  out.push(def);
                 } else {
                   seen = false;
                   break;
                 }
               } else {
                 seen = true;
-                out = out.insert(info.value);
+                out.push(info.value);
               }
             }
 
             if (seen) {
-              return { value: out };
+              return { value: unsafe_Tuple(out) };
 
             } else {
               isDone = true;

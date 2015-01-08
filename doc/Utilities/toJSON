@@ -2,12 +2,12 @@
    @function toJSON
    @param {Any} [x]
    @return {Any}
-   @summary Converts a [::Dict], [::Set], [::List],
-            [::Queue], [::Stack], or [::Record] to JSON
+   @summary Converts a [::Dict], [::Set], [::List], [::Queue],
+            [::Stack], [::Tuple], or [::Record] to JSON
    @desc
      Most things are returned as-is, except [::Dict], [::Set],
-     [::List], [::Queue], [::Stack], and [::Record] are
-     converted into a specially-marked JSON object.
+     [::List], [::Queue], [::Stack], [::Tuple], and [::Record]
+     are converted into a specially-marked JSON object.
 
      This conversion takes `O(n)` time.
 

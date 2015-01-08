@@ -6,8 +6,8 @@
    @param {optional sequence::Sequence|Object} [obj]
    @desc
      If `obj` is a [sequence::Sequence], the values must
-     be arrays of `[key, value]`, which will be added to
-     the dict.
+     be arrays or Tuples of `[key, value]`, which will be
+     added to the dict.
 
      If `obj` is a JavaScript literal like `{ foo: 1 }`,
      then the keys/values will be added to the dict.
@@ -159,7 +159,8 @@
      If a key from `other` already exists in this dict, it is overwritten.
 
      `other` must be either a JavaScript object literal, or a
-     [sequence::Sequence] where each value is an array of `[key, value]`
+     [sequence::Sequence] where each value is an array or Tuple
+     of `[key, value]`.
 
      You can use this to merge two [::Dict]:
 

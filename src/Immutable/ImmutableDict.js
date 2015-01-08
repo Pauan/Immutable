@@ -4,6 +4,7 @@ import { simpleSort, sorted_isEmpty, sorted_has, key_get, key_set, key_modify,
 import { hash, hash_dict } from "./hash";
 import { toJS_object } from "./toJS";
 import { toJSON_object, fromJSON_object } from "./toJSON";
+import { unsafe_Tuple } from "./ImmutableTuple";
 import { ImmutableBase } from "./Base";
 import { map_iter } from "./iter";
 import { identity } from "./util";
@@ -53,7 +54,7 @@ ImmutableDict.prototype.merge = sorted_merge;
 
 ImmutableDict.prototype[tag_iter] = function () {
   return map_iter(iter_tree(this.root), function (node) {
-    return [node.key, node.value];
+    return unsafe_Tuple([node.key, node.value]);
   });
 };
 

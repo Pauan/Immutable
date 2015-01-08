@@ -7,6 +7,7 @@ import { simpleSort } from "./Sorted";
 import { SortedDict, Dict, isDict, isSortedDict } from "./ImmutableDict";
 import { SortedSet, Set, isSet, isSortedSet } from "./ImmutableSet";
 import { isList, List } from "./ImmutableList";
+import { isTuple, Tuple } from "./ImmutableTuple";
 import { isQueue, Queue } from "./ImmutableQueue";
 import { isStack, Stack } from "./ImmutableStack";
 import { isRecord, Record } from "./ImmutableRecord";
@@ -18,6 +19,7 @@ export { toJS, simpleSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
          SortedSet, Set, isSet, isSortedSet,
          isList, List, isQueue, Queue,
+         isTuple, Tuple,
          isStack, Stack, isRecord, Record,
          deref, Ref, isRef,
          isTag, isUUIDTag, Tag, UUIDTag,
@@ -36,6 +38,7 @@ export function isImmutable(x) {
            isDict(x)  ||
            isSet(x)   ||
            isList(x)  ||
+           isTuple(x) ||
            isQueue(x) ||
            isStack(x) ||
            isRecord(x);
@@ -97,6 +100,7 @@ export function fromJS(x) {
   exports.isSortedSet = isSortedSet;
   exports.isList = isList;
   exports.isQueue = isQueue;
+  exports.isTuple = isTuple;
   exports.isStack = isStack;
   exports.isImmutable = isImmutable;
   exports.SortedDict = SortedDict;
@@ -104,6 +108,7 @@ export function fromJS(x) {
   exports.Dict = Dict;
   exports.Set = Set;
   exports.List = List;
+  exports.Tuple = Tuple;
   exports.Queue = Queue;
   exports.Stack = Stack;
   exports.simpleSort = simpleSort;

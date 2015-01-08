@@ -1,7 +1,7 @@
 import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
-         deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, each } from "../Immutable/Immutable";
+         deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, each, Tuple, isTuple } from "../Immutable/Immutable";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
 
@@ -163,6 +163,15 @@ function test_each(constructor, input) {
   assert(deepEqual(a, input));
 }
 
+function test_each_dict(constructor, input) {
+  var a = [];
+  each(constructor(input), function (x) {
+    assert(isTuple(x));
+    a.push(x.values);
+  });
+  assert(deepEqual(a, input));
+}
+
 
 function verify_json_equal(x) {
   var y = toJSON(x);
@@ -277,6 +286,15 @@ function verify_list(tree, array) {
   return tree;
 }
 
+function verify_tuple(tuple, array) {
+  assert(isTuple(tuple));
+
+  assert(deepEqual(tuple.values, array));
+  assert(deepEqual(toJS(tuple), array));
+
+  return tuple;
+}
+
 function verify_queue(queue, array) {
   assert(isQueue(queue));
 
@@ -353,10 +371,15 @@ context("Dict", function () {
     assert(equal(dict_foo, x));
 
     verify_dict(Dict([["foo", 2]]), { foo: 2 });
+    verify_dict(Dict([Tuple(["foo", 2])]), { foo: 2 });
+
+    assert_raises(function () {
+      Dict([List(["foo", 2])]);
+    }, "Expected array or Tuple but got: (List\n  \"foo\"\n  2)");
 
     assert_raises(function () {
       Dict([{}]);
-    }, "Expected array but got: [object Object]");
+    }, "Expected array or Tuple but got: [object Object]");
 
     assert_raises(function () {
       Dict([[]]);
@@ -369,6 +392,18 @@ context("Dict", function () {
     assert_raises(function () {
       Dict([["foo", 2, 3]]);
     }, "Expected array with 2 elements but got 3 elements");
+
+    assert_raises(function () {
+      Dict([Tuple([])]);
+    }, "Expected Tuple with 2 elements but got 0 elements");
+
+    assert_raises(function () {
+      Dict([Tuple(["foo"])]);
+    }, "Expected Tuple with 2 elements but got 1 element");
+
+    assert_raises(function () {
+      Dict([Tuple(["foo", 2, 3])]);
+    }, "Expected Tuple with 2 elements but got 3 elements");
   });
 
   test("isEmpty", function () {
@@ -454,10 +489,15 @@ context("Dict", function () {
     verify_dict(Dict({ foo: 1 }).merge({ bar: 2 }), { foo: 1, bar: 2 });
 
     verify_dict(Dict().merge([["foo", 2]]), { foo: 2 });
+    verify_dict(Dict().merge([Tuple(["foo", 2])]), { foo: 2 });
+
+    assert_raises(function () {
+      Dict().merge([List(["foo", 2])]);
+    }, "Expected array or Tuple but got: (List\n  \"foo\"\n  2)");
 
     assert_raises(function () {
       Dict().merge([{}]);
-    }, "Expected array but got: [object Object]");
+    }, "Expected array or Tuple but got: [object Object]");
 
     assert_raises(function () {
       Dict().merge([[]]);
@@ -470,6 +510,18 @@ context("Dict", function () {
     assert_raises(function () {
       Dict().merge([["foo", 2, 3]]);
     }, "Expected array with 2 elements but got 3 elements");
+
+    assert_raises(function () {
+      Dict().merge([Tuple([])]);
+    }, "Expected Tuple with 2 elements but got 0 elements");
+
+    assert_raises(function () {
+      Dict().merge([Tuple(["foo"])]);
+    }, "Expected Tuple with 2 elements but got 1 element");
+
+    assert_raises(function () {
+      Dict().merge([Tuple(["foo", 2, 3])]);
+    }, "Expected Tuple with 2 elements but got 3 elements");
   });
 
   test("complex keys", function () {
@@ -633,10 +685,10 @@ context("Dict", function () {
   });
 
   test("each", function () {
-    test_each(Dict, []);
+    test_each_dict(Dict, []);
 
     var corge = Dict({ corge: 3 });
-    test_each(Dict, [["bar", 2], ["foo", 1], ["qux", corge]]);
+    test_each_dict(Dict, [["bar", 2], ["foo", 1], ["qux", corge]]);
   });
 
   test("toString", function () {
@@ -1261,6 +1313,7 @@ context("List", function () {
     assert(equal(five_list, five_list));
 
     assert(equal(List([1, 2, 3]), List([1, 2, 3])));
+    assert(!equal(List([1, 2, 3]), List([1, 2, 3, 4])));
     assert(!equal(List([1, 2, 3]), List([1, 2, 4])));
     assert(!equal(List([1, 2, 3]), List([1, 3, 2])));
 
@@ -1377,6 +1430,174 @@ context("List", function () {
 
     var a = random_list(200);
     assert.equal(toArray(zip(List(a))), toArray(zip(a)));
+  });*/
+});
+
+
+context("Tuple", function () {
+  var empty_tuple = Tuple();
+  var five_tuple  = Tuple([1, 2, 3, 4, 5]);
+
+  test("isTuple", function () {
+    assert(!isTuple(List()));
+    assert(isTuple(Tuple()));
+  });
+
+  test("verify", function () {
+    verify_tuple(empty_tuple, []);
+    verify_tuple(five_tuple, [1, 2, 3, 4, 5]);
+  });
+
+  test("init", function () {
+    verify_tuple(Tuple([1, 2, 3]), [1, 2, 3]);
+  });
+
+  test("size", function () {
+    assert(empty_tuple.size() === 0);
+    assert(five_tuple.size() === 5);
+  });
+
+  test("get", function () {
+    assert_raises(function () {
+      empty_tuple.get(0);
+    }, "Index 0 is not valid");
+
+    assert_raises(function () {
+      empty_tuple.get(-1);
+    }, "Index -1 is not valid");
+
+    assert(five_tuple.get(0) === 1);
+    assert(five_tuple.get(4) === 5);
+
+    assert_raises(function () {
+      five_tuple.get(-1);
+    }, "Index -1 is not valid");
+
+    assert_raises(function () {
+      five_tuple.get(-2)
+    }, "Index -2 is not valid");
+  });
+
+  test("modify", function () {
+    var ran = false;
+
+    assert_raises(function () {
+      empty_tuple.modify(0, function () { ran = true; });
+    }, "Index 0 is not valid");
+
+    assert_raises(function () {
+      empty_tuple.modify(-1, function () { ran = true; });
+    }, "Index -1 is not valid");
+
+    assert(ran === false);
+
+
+    var ran = false;
+
+    verify_tuple(five_tuple.modify(0, function (x) {
+      ran = true;
+      assert(x === 1);
+      return x + 100;
+    }), [101, 2, 3, 4, 5]);
+
+    assert(ran === true);
+
+    verify_tuple(five_tuple.modify(1, function (x) { return x + 100 }), [1, 102, 3, 4, 5]);
+
+    assert_raises(function () {
+      five_tuple.modify(-1, function (x) { return x + 100 })
+    }, "Index -1 is not valid");
+
+    assert_raises(function () {
+      five_tuple.modify(-2, function (x) { return x + 100 })
+    }, "Index -2 is not valid");
+  });
+
+  test("=== when not modified", function () {
+    assert(Tuple(five_tuple) === five_tuple);
+
+    var tuple1 = Tuple([Tuple([])]);
+
+    assert(tuple1.modify(0, function () {
+      return Tuple([]);
+    }) !== tuple1);
+
+    assert(five_tuple.modify(0, function () {
+      return 1;
+    }) === five_tuple);
+
+    assert(five_tuple.modify(0, function () {
+      return 2;
+    }) !== five_tuple);
+
+    assert(five_tuple.modify(1, function () {
+      return 2;
+    }) === five_tuple);
+
+    assert(five_tuple.modify(1, function () {
+      return 3;
+    }) !== five_tuple);
+
+    assert(five_tuple.modify(4, function () {
+      return 5;
+    }) === five_tuple);
+
+    assert(five_tuple.modify(4, function () {
+      return 6;
+    }) !== five_tuple);
+  });
+
+  test("equal", function () {
+    assert(equal(empty_tuple, empty_tuple));
+    assert(equal(five_tuple, five_tuple));
+
+    assert(equal(Tuple([1, 2, 3]), Tuple([1, 2, 3])));
+    assert(!equal(Tuple([1, 2, 3]), Tuple([1, 2, 3, 4])));
+    assert(!equal(Tuple([1, 2, 3]), Tuple([1, 2, 4])));
+    assert(!equal(Tuple([1, 2, 3]), Tuple([1, 3, 2])));
+
+    assert(equal(Tuple([1, 2, 3, 4, 5]), five_tuple));
+    assert(equal(five_tuple, Tuple([1, 2, 3, 4, 5])));
+
+    assert(equal(Tuple([Tuple([1, 2, 3])]), Tuple([Tuple([1, 2, 3])])));
+  });
+
+  test("toJS", function () {
+    assert(deepEqual(toJS(empty_tuple), []));
+    assert(deepEqual(toJS(five_tuple), [1, 2, 3, 4, 5]));
+    assert(deepEqual(toJS(Tuple([1, 2, Tuple([3])])), [1, 2, [3]]));
+  });
+
+  test("toJSON", function () {
+    verify_json(empty_tuple, []);
+    verify_json(five_tuple, [1, 2, 3, 4, 5]);
+    verify_json(Tuple([4, 5, Tuple([1, 2, 3])]), [4, 5, [1, 2, 3]]);
+  });
+
+  test("each", function () {
+    test_each(Tuple, []);
+
+    var x = Tuple([4]);
+    test_each(Tuple, [1, 2, 3, x]);
+
+    var expected = random_list(200);
+    test_each(Tuple, expected);
+  });
+
+  test("toString", function () {
+    assert("" + empty_tuple === "(Tuple)");
+    assert("" + Tuple([1, 2, 3]) === "(Tuple\n  1\n  2\n  3)");
+    assert("" + Tuple([1, Tuple([2]), 3]) === "(Tuple\n  1\n  (Tuple\n    2)\n  3)");
+  });
+
+  // TODO
+  /*test("zip", function () {
+    assert.equal(toArray(zip(Tuple())), toArray(zip([])));
+
+    assert.equal(toArray(zip(Tuple([1, 2, 3, 4, 5]))), [[1], [2], [3], [4], [5]]);
+
+    var a = random_list(200);
+    assert.equal(toArray(zip(Tuple(a))), toArray(zip(a)));
   });*/
 });
 
@@ -1696,9 +1917,15 @@ context("Record", function () {
 
     verify_record(Record([["foo", 2]]), { foo: 2 });
 
+    verify_record(Record([Tuple(["foo", 2])]), { foo: 2 });
+
+    assert_raises(function () {
+      Record([List(["foo", 2])]);
+    }, "Expected array or Tuple but got: (List\n  \"foo\"\n  2)");
+
     assert_raises(function () {
       Record([{}]);
-    }, "Expected array but got: [object Object]");
+    }, "Expected array or Tuple but got: [object Object]");
 
     assert_raises(function () {
       Record([[]]);
@@ -1711,6 +1938,18 @@ context("Record", function () {
     assert_raises(function () {
       Record([["foo", 2, 3]]);
     }, "Expected array with 2 elements but got 3 elements");
+
+    assert_raises(function () {
+      Record([Tuple([])]);
+    }, "Expected Tuple with 2 elements but got 0 elements");
+
+    assert_raises(function () {
+      Record([Tuple(["foo"])]);
+    }, "Expected Tuple with 2 elements but got 1 element");
+
+    assert_raises(function () {
+      Record([Tuple(["foo", 2, 3])]);
+    }, "Expected Tuple with 2 elements but got 3 elements");
   });
 
   test("get", function () {
@@ -1772,10 +2011,15 @@ context("Record", function () {
 
 
     verify_record(Record([["foo", 2]]).update([["foo", 3]]), { foo: 3 });
+    verify_record(Record([["foo", 2]]).update([Tuple(["foo", 3])]), { foo: 3 });
+
+    assert_raises(function () {
+      Record([["foo", 2]]).update([List(["foo", 3])]);
+    }, "Expected array or Tuple but got: (List\n  \"foo\"\n  3)");
 
     assert_raises(function () {
       Record([["foo", 2]]).update([{}]);
-    }, "Expected array but got: [object Object]");
+    }, "Expected array or Tuple but got: [object Object]");
 
     assert_raises(function () {
       Record([["foo", 2]]).update([[]]);
@@ -1788,6 +2032,18 @@ context("Record", function () {
     assert_raises(function () {
       Record([["foo", 2]]).update([["foo", 2, 3]]);
     }, "Expected array with 2 elements but got 3 elements");
+
+    assert_raises(function () {
+      Record([["foo", 2]]).update([Tuple([])]);
+    }, "Expected Tuple with 2 elements but got 0 elements");
+
+    assert_raises(function () {
+      Record([["foo", 2]]).update([Tuple(["foo"])]);
+    }, "Expected Tuple with 2 elements but got 1 element");
+
+    assert_raises(function () {
+      Record([["foo", 2]]).update([Tuple(["foo", 2, 3])]);
+    }, "Expected Tuple with 2 elements but got 3 elements");
   });
 
   test("complex keys", function () {
@@ -1865,10 +2121,13 @@ context("Record", function () {
   });
 
   test("each", function () {
-    test_each(Record, []);
-    test_each(Record, [["foo", 2]]);
-    test_each(Record, [["foo", 2], ["bar", 3]]);
-    test_each(Record, [["bar", 3], ["foo", 2]]);
+    test_each_dict(Record, []);
+    test_each_dict(Record, [["foo", 2]]);
+    test_each_dict(Record, [["foo", 2], ["bar", 3]]);
+    test_each_dict(Record, [["bar", 3], ["foo", 2]]);
+
+    var corge = Record({ corge: 3 });
+    test_each_dict(Record, [["foo", 1], ["qux", corge], ["bar", 2]]);
   });
 
   // TODO
@@ -2173,6 +2432,7 @@ test("isImmutable", function () {
   assert(isImmutable(SortedDict(simpleSort)));
   assert(isImmutable(SortedSet(simpleSort)));
   assert(isImmutable(Tag()));
+  assert(isImmutable(Tuple()));
   assert(isImmutable(UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
 
   var Foo = Record({});

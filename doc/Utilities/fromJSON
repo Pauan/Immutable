@@ -3,12 +3,12 @@
    @param {Any} [x]
    @return {Any}
    @summary Converts specially marked JSON to a [::Dict],
-            [::Set], [::List], [::Queue], [::Stack], or
-            [::Record]
+            [::Set], [::List], [::Queue], [::Stack], [::Tuple],
+            or [::Record]
    @desc
      Most things are returned as-is, except specially marked
      JSON is converted into a [::Dict], [::Set], [::List],
-     [::Queue], [::Stack], or [::Record].
+     [::Queue], [::Stack], [::Tuple], or [::Record].
 
      This conversion takes `O(n)` time.
 

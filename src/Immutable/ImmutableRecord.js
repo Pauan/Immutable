@@ -3,6 +3,7 @@ import { hash, hash_dict } from "./hash";
 import { toJSON_object, fromJSON_object } from "./toJSON";
 import { toJS_object } from "./toJS";
 import { ImmutableBase } from "./Base";
+import { unsafe_Tuple } from "./ImmutableTuple";
 import { iter_object, map, iter, each } from "./iter";
 import { destructure_pair } from "./util";
 import { sorted_merge } from "./Sorted";
@@ -50,7 +51,7 @@ ImmutableRecord.prototype[tag_iter] = function () {
   return iter(map(iter_object(keys), function (_array) {
     // TODO should this use destructure_pair ?
     return destructure_pair(_array, function (s, index) {
-      return [s, values[index]];
+      return unsafe_Tuple([s, values[index]]);
     });
   }));
 };
