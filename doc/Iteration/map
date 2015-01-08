@@ -1,0 +1,23 @@
+/**
+   @function map
+   @param {::Iterable} [x]
+   @param {Function} [fn]
+   @return {::Iterable}
+   @summary Returns a new [::Iterable] which is the same as `x`,
+            but with `fn` applied to each value
+   @desc
+     This function returns an [::Iterable], which is lazy:
+     it only generates the values as needed.
+
+     If you want an array, use [::toArray].
+
+     ----
+
+     This function calls `fn` for each value in `x`, and
+     whatever the function returns is used as the new value:
+
+         // returns [21, 22, 23]
+         map([1, 2, 3], function (x) {
+           return x + 20;
+         });
+ */

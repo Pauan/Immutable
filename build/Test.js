@@ -142,6 +142,16 @@
       };
     }
 
+    function $$iter$$isIterable(x) {
+      if ($$util$$isObject(x)) {
+        return x[$$$Immutable$static$$tag_iter] != null ||
+               ($$$Immutable$static$$Symbol_iterator !== null && x[$$$Immutable$static$$Symbol_iterator]) ||
+               Array.isArray(x);
+      } else {
+        return typeof x === "string" && !$$Tag$$isTag(x);
+      }
+    }
+
     function $$iter$$iter(x) {
       var fn;
 
@@ -155,7 +165,7 @@
         return $$iter$$iter_array(x);
 
       // TODO this isn't quite correct
-      } else if (typeof x === "string") {
+      } else if (typeof x === "string" && !$$Tag$$isTag(x)) {
         return $$iter$$iter_array(x);
 
       } else {
@@ -742,6 +752,7 @@
         if (x.size() === 2) {
           return f(x.get(0), x.get(1));
         } else {
+          // TODO code duplication
           throw new Error("Expected Tuple with 2 elements but got " + x.size() + " " + $$util$$plural(x.size(), "element"));
         }
 
@@ -2425,6 +2436,7 @@
       exports.isImmutable = $$$Immutable$Immutable$$isImmutable;
       exports.SortedDict = $$ImmutableDict$$SortedDict;
       exports.SortedSet = $$ImmutableSet$$SortedSet;
+      exports.isIterable = $$iter$$isIterable;
       exports.Dict = $$ImmutableDict$$Dict;
       exports.Set = $$ImmutableSet$$Set;
       exports.List = $$ImmutableList$$List;
@@ -4879,6 +4891,7 @@
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable([]));
       $$assert$$assert(!$$$Immutable$Immutable$$isImmutable($$MutableRef$$Ref(5)));
 
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable(null));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable(5));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable("foo"));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable(Object.freeze({})));
@@ -4895,6 +4908,30 @@
 
       var Foo = $$ImmutableRecord$$Record({});
       $$assert$$assert($$$Immutable$Immutable$$isImmutable(Foo));
+    });
+
+    src$Test$Test$$test("isIterable", function () {
+      $$assert$$assert(!$$iter$$isIterable({}));
+      $$assert$$assert(!$$iter$$isIterable($$MutableRef$$Ref(5)));
+      $$assert$$assert(!$$iter$$isIterable(5));
+      $$assert$$assert(!$$iter$$isIterable(null));
+      $$assert$$assert(!$$iter$$isIterable(Object.freeze({})));
+      $$assert$$assert(!$$iter$$isIterable($$Tag$$Tag()));
+      $$assert$$assert(!$$iter$$isIterable($$Tag$$UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
+
+      $$assert$$assert($$iter$$isIterable([]));
+      $$assert$$assert($$iter$$isIterable("foo"));
+      $$assert$$assert($$iter$$isIterable($$ImmutableDict$$Dict()));
+      $$assert$$assert($$iter$$isIterable($$ImmutableSet$$Set()));
+      $$assert$$assert($$iter$$isIterable($$ImmutableList$$List()));
+      $$assert$$assert($$iter$$isIterable($$ImmutableQueue$$Queue()));
+      $$assert$$assert($$iter$$isIterable($$ImmutableStack$$Stack()));
+      $$assert$$assert($$iter$$isIterable($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
+      $$assert$$assert($$iter$$isIterable($$ImmutableSet$$SortedSet($$Sorted$$simpleSort)));
+      $$assert$$assert($$iter$$isIterable($$ImmutableTuple$$Tuple()));
+
+      var Foo = $$ImmutableRecord$$Record({});
+      $$assert$$assert($$iter$$isIterable(Foo));
     });
 
     src$Test$Test$$test("toJS", function () {
@@ -4988,6 +5025,254 @@
 
       $$assert$$assert($$MutableRef$$deref($$MutableRef$$Ref(5)) === 5);
       $$assert$$assert($$MutableRef$$deref($$MutableRef$$Ref(x)) === x);
+    });
+
+
+    src$Test$Test$$test("each", function () {
+      var ran = false;
+
+      src$Test$Test$$assert_raises(function () {
+        $$iter$$each($$Tag$$Tag(), function (x) {
+          ran = true;
+        });
+      }, "Cannot iter: (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 12)");
+
+      $$assert$$assert(ran === false);
+
+
+      var ran = false;
+      $$iter$$each([], function (x) {
+        ran = true;
+      });
+      $$assert$$assert(ran === false);
+
+      var a = [];
+
+      $$iter$$each([1, 2, 3], function (x) {
+        a.push(x);
+      });
+
+      $$assert$$assert(src$Test$Test$$deepEqual(a, [1, 2, 3]));
+
+
+      var a = [];
+
+      $$iter$$each("foo", function (x) {
+        a.push(x);
+      });
+
+      $$assert$$assert(src$Test$Test$$deepEqual(a, ["f", "o", "o"]));
+
+
+      var a = [];
+
+      $$iter$$each($$ImmutableTuple$$Tuple([1, 2, 3]), function (x) {
+        a.push(x);
+      });
+
+      $$assert$$assert(src$Test$Test$$deepEqual(a, [1, 2, 3]));
+
+
+      var a = [];
+
+      $$iter$$each($$ImmutableRecord$$Record([["foo", 1], ["bar", 2]]), function (x) {
+        $$assert$$assert($$ImmutableTuple$$isTuple(x));
+        a.push($$toJS$$toJS(x));
+      });
+
+      $$assert$$assert(src$Test$Test$$deepEqual(a, [["foo", 1], ["bar", 2]]));
+    });
+
+    src$Test$Test$$test("map", function () {
+      var x = $$iter$$map([], function (x) { return x + 10 });
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), []));
+
+      var x = $$iter$$map([1, 2, 3], function (x) { return x + 10 });
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [11, 12, 13]));
+
+      var x = $$iter$$map($$ImmutableTuple$$Tuple([1, 2, 3]), function (x) { return x + 10 });
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [11, 12, 13]));
+
+      var x = $$iter$$map($$ImmutableRecord$$Record([["foo", 1], ["bar", 2]]), function (x) { return [x.get(0), x.get(1) + 10] });
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["foo", 11], ["bar", 12]]));
+    });
+
+    src$Test$Test$$test("keep", function () {
+      var x = $$iter$$keep([], function (x) { return x > 3 });
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), []));
+
+      var x = $$iter$$keep([1, 2, 3, 4, 5], function (x) { return x > 3 });
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [4, 5]));
+    });
+
+    src$Test$Test$$test("findIndex", function () {
+      var x = $$iter$$findIndex([1, 2, 3, 4, 5], function (x) { return x > 3 });
+      $$assert$$assert(x === 3);
+
+      src$Test$Test$$assert_raises(function () {
+        $$iter$$findIndex([1, 2, 3, 4, 5], function (x) { return x > 5 });
+      }, "findIndex did not find anything");
+
+      var x = $$iter$$findIndex([1, 2, 3, 4, 5], function (x) { return x > 5 }, 500);
+      $$assert$$assert(x === 500);
+    });
+
+    src$Test$Test$$test("reverse", function () {
+      var x = $$iter$$reverse([]);
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), []));
+
+      var x = $$iter$$reverse([1, 2, 3]);
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [3, 2, 1]));
+
+      var x = $$iter$$reverse($$ImmutableTuple$$Tuple([1, 2, 3]));
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [3, 2, 1]));
+
+      var x = $$iter$$reverse($$iter$$map($$ImmutableRecord$$Record([["foo", 1], ["bar", 2]]), function (x) {
+        $$assert$$assert($$ImmutableTuple$$isTuple(x));
+        return $$iter$$toArray(x);
+      }));
+      $$assert$$assert(!Array.isArray(x));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["bar", 2], ["foo", 1]]));
+    });
+
+    src$Test$Test$$test("foldl", function () {
+      var init = "0";
+      var ran = false;
+      var out = $$iter$$foldl(["1", "2", "3"], init, function (x, y) {
+        $$assert$$assert(x === init);
+        $$assert$$assert(y === "1" || y === "2" || y === "3");
+        ran = true;
+        init = "(" + x + " " + y + ")";
+        return init;
+      });
+      $$assert$$assert(out === init);
+      $$assert$$assert(out === "(((0 1) 2) 3)");
+      $$assert$$assert(ran === true);
+
+
+      var init = 0;
+      var ran = false;
+      var out = $$iter$$foldl([], init, function (x, y) {
+        ran = true;
+      });
+
+      $$assert$$assert(out === init);
+      $$assert$$assert(ran === false);
+    });
+
+    src$Test$Test$$test("foldr", function () {
+      var init = "0";
+      var ran = false;
+      var out = $$iter$$foldr(["1", "2", "3"], init, function (x, y) {
+        $$assert$$assert(y === init);
+        $$assert$$assert(x === "1" || x === "2" || x === "3");
+        ran = true;
+        init = "(" + x + " " + y + ")";
+        return init;
+      });
+      $$assert$$assert(out === init);
+      $$assert$$assert(out === "(1 (2 (3 0)))");
+      $$assert$$assert(ran === true);
+
+
+      var init = 0;
+      var ran = false;
+      var out = $$iter$$foldr([], init, function (x, y) {
+        ran = true;
+      });
+
+      $$assert$$assert(out === init);
+      $$assert$$assert(ran === false);
+    });
+
+    src$Test$Test$$test("join", function () {
+      $$assert$$assert($$iter$$join([]) === "");
+      $$assert$$assert($$iter$$join([], " ") === "");
+      $$assert$$assert($$iter$$join([1, 2, 3]) === "123");
+      $$assert$$assert($$iter$$join("123") === "123");
+      $$assert$$assert($$iter$$join($$ImmutableTuple$$Tuple([1, 2, 3])) === "123");
+      $$assert$$assert($$iter$$join([1, 2, 3], " ") === "1 2 3");
+      $$assert$$assert($$iter$$join("123", " ") === "1 2 3");
+      $$assert$$assert($$iter$$join("123", " --- ") === "1 --- 2 --- 3");
+    });
+
+    src$Test$Test$$test("zip", function () {
+      function mapper(x) {
+        $$assert$$assert(!Array.isArray(x));
+
+        x = $$iter$$map(x, function (x) {
+          $$assert$$assert($$ImmutableTuple$$isTuple(x));
+          return $$iter$$toArray(x);
+        });
+
+        $$assert$$assert(!Array.isArray(x));
+
+        return x;
+      }
+
+      var x = mapper($$iter$$zip([[1, 2, 3], [4, 5, 6], [7, 8, 9]]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+      var x = mapper($$iter$$zip($$ImmutableList$$List([$$ImmutableList$$List([1, 2, 3]), $$ImmutableList$$List([4, 5, 6]), $$ImmutableList$$List([7, 8, 9])])));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+      var x = mapper($$iter$$zip($$ImmutableTuple$$Tuple([$$ImmutableTuple$$Tuple([1, 2, 3]), $$ImmutableTuple$$Tuple([4, 5, 6]), $$ImmutableTuple$$Tuple([7, 8, 9])])));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+
+      var x = mapper($$iter$$zip([[1, 2, 3, 0], [4, 5, 6], [7, 8, 9]]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+      var x = mapper($$iter$$zip([[1, 2, 3], [4, 5, 6, 0], [7, 8, 9]]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+      var x = mapper($$iter$$zip([[1, 2, 3], [4, 5, 6], [7, 8, 9, 0]]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+      var x = mapper($$iter$$zip([[1, 2, 3, 0], [4, 5, 6], [7, 8, 9, 0]]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+      var x = mapper($$iter$$zip([[1, 2, 3, 0], [4, 5, 6, 0], [7, 8, 9]]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+
+      var x = mapper($$iter$$zip([[1, 2, 3, 0], [4, 5, 6], [7, 8, 9]], 50));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [0, 50, 50]]));
+
+      var x = mapper($$iter$$zip([[1, 2, 3], [4, 5, 6, 0], [7, 8, 9]], 50));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [50, 0, 50]]));
+
+      var x = mapper($$iter$$zip([[1, 2, 3], [4, 5, 6], [7, 8, 9, 0]], 50));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [50, 50, 0]]));
+
+      var x = mapper($$iter$$zip([[1, 2, 3, 0], [4, 5, 6], [7, 8, 9, 0]], 50));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [0, 50, 0]]));
+
+      var x = mapper($$iter$$zip([[1, 2, 3, 0], [4, 5, 6, 0], [7, 8, 9]], 50));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [0, 0, 50]]));
+    });
+
+    src$Test$Test$$test("toArray", function () {
+      var x = [1, 2, 3, 4, 5];
+      $$assert$$assert($$iter$$toArray(x) === x);
+
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray("foo"), ["f", "o", "o"]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$ImmutableTuple$$Tuple([1, 2, 3])), [1, 2, 3]));
+
+      var x = $$iter$$map($$ImmutableRecord$$Record([["foo", 1], ["bar", 2]]), function (x) {
+        $$assert$$assert($$ImmutableTuple$$isTuple(x));
+        return $$iter$$toArray(x);
+      });
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["foo", 1], ["bar", 2]]));
     });
 
 

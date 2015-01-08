@@ -48,6 +48,7 @@ export function destructure_pair(x, f) {
     if (x.size() === 2) {
       return f(x.get(0), x.get(1));
     } else {
+      // TODO code duplication
       throw new Error("Expected Tuple with 2 elements but got " + x.size() + " " + plural(x.size(), "element"));
     }
 

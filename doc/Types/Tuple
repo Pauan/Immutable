@@ -7,7 +7,7 @@
      or remove values from a [::Tuple].
 
    @function Tuple
-   @param {optional sequence::Sequence} [seq]
+   @param {optional ::Iterable} [seq]
    @desc
      The values from `seq` will be inserted into
      the tuple, in the same order as `seq`.

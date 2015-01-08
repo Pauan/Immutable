@@ -3,12 +3,12 @@
    @summary An immutable unordered sequence of values, without duplicates
 
    @function Set
-   @param {optional sequence::Sequence} [seq]
+   @param {optional ::Iterable} [seq]
    @desc
      The values from `seq` will be inserted into the set,
      without duplicates.
 
-     This takes `O(n)` time, unless `seq` is already a
+     This takes `O(log2(n) * m)` time, unless `seq` is already a
      [::Set], in which case it takes `O(1)` time.
 
      ----
@@ -107,7 +107,7 @@
      This does not modify the set, it returns a new set.
 
    @function Set.union
-   @param {sequence::Sequence} [other] Sequence of values to union with this set
+   @param {::Iterable} [other] Iterable of values to union with this set
    @return {::Set} A new set which is the union of this set and `other`
    @summary Returns a new set which is the union of this set and `other`
    @desc
@@ -120,10 +120,10 @@
 
      This is a standard [set union](http://en.wikipedia.org/wiki/Union_%28set_theory%29).
 
-     `other` can be any [sequence::Sequence] of values.
+     `other` can be any [::Iterable] of values.
 
    @function Set.intersect
-   @param {sequence::Sequence} [other] Sequence of values to intersect with this set
+   @param {::Iterable} [other] Iterable of values to intersect with this set
    @return {::Set} A new set which is the intersection of this set and `other`
    @summary Returns a new set which is the intersection of this set and `other`
    @desc
@@ -136,10 +136,10 @@
 
      This is a standard [set intersection](http://en.wikipedia.org/wiki/Intersection_%28set_theory%29).
 
-     `other` can be any [sequence::Sequence] of values.
+     `other` can be any [::Iterable] of values.
 
    @function Set.disjoint
-   @param {sequence::Sequence} [other] Sequence of values to disjoint with this set
+   @param {::Iterable} [other] Iterable of values to disjoint with this set
    @return {::Set} A new set which is disjoint with this set and `other`
    @summary Returns a new set which is disjoint with this set and `other`
    @desc
@@ -154,10 +154,10 @@
      This is also called the [symmetric difference](http://en.wikipedia.org/wiki/Symmetric_difference)
      of the two sets.
 
-     `other` can be any [sequence::Sequence] of values.
+     `other` can be any [::Iterable] of values.
 
    @function Set.subtract
-   @param {sequence::Sequence} [other] Sequence of values to subtract from this set
+   @param {::Iterable} [other] Iterable of values to subtract from this set
    @return {::Set} A new set which is this set subtracted by `other`
    @summary Returns a new set which is this set subtracted by `other`
    @desc
@@ -170,5 +170,5 @@
 
      This is also called the [relative complement](http://en.wikipedia.org/wiki/Complement_%28set_theory%29) of the two sets.
 
-     `other` can be any [sequence::Sequence] of values.
+     `other` can be any [::Iterable] of values.
  */

@@ -7,9 +7,9 @@
      for keys, and you cannot add or remove keys from a [::Record].
 
    @function Record
-   @param {optional sequence::Sequence|Object} [obj]
+   @param {optional Object | ::Iterable} [obj]
    @desc
-     If `obj` is a [sequence::Sequence], the values must
+     If `obj` is an [::Iterable], the values must
      be arrays or Tuples of `[key, value]`, which will be
      added to the record.
 
@@ -71,7 +71,7 @@
      If `key` is not in the record, it will throw an error.
 
    @function Record.update
-   @param {sequence::Sequence} [other] Sequence of keys/values to update in this record
+   @param {::Iterable} [other] Iterable of keys/values to update in this record
    @return {::Record} A new record with the keys/values of this record updated with `other`
    @summary Returns a new record with the keys/values of this record updated with `other`
    @desc
@@ -86,8 +86,8 @@
 
      If a key from `other` does not exist in this record, an error is thrown.
 
-     `other` must be either a JavaScript object literal, or a
-     [sequence::Sequence] where each value is an array or Tuple
+     `other` must be either a JavaScript object literal, or an
+     [::Iterable] where each value is an array or Tuple
      of `[key, value]`.
 
      You can use this to update a [::Record] with another [::Record]:

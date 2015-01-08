@@ -45,6 +45,10 @@ Quick overview
 
 ----
 
+* `each` `findIndex` `foldl` `foldr` `join` `keep` `map` `reverse` `zip`
+
+----
+
 `Dict` and `Set` can have anything as keys, including mutable objects and immutable objects (`Dict`, `Set`, `List`, etc.)
 
 You can also use `SortedDict` and `SortedSet` to define your own custom sorting.
@@ -89,6 +93,32 @@ You can also losslessly convert to/from JSON, allowing for sending Immutable obj
     var record = Record({ foo: 1 });
     var json   = toJSON(record);
     var record = fromJSON(json);
+
+----
+
+All data types accept an [ECMAScript 6 Iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/The_Iterator_protocol) and can be used as an ECMAScript 6 Iterable:
+
+    var tuple = Tuple([1, 2, 3]);
+
+    // 1
+    // 2
+    // 3
+    for (var x of tuple) {
+      console.log(x);
+    }
+
+In addition, the various iteration functions (each, map, zip, etc.) accept and return Iterables:
+
+    var tuple2 = map(tuple, function (x) {
+      return x + 20;
+    });
+
+    // 21
+    // 22
+    // 23
+    for (var x of tuple2) {
+      console.log(x);
+    }
 
 
 For developers

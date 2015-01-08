@@ -261,6 +261,16 @@
       };
     }
 
+    function $$iter$$isIterable(x) {
+      if ($$util$$isObject(x)) {
+        return x[$$static$$tag_iter] != null ||
+               ($$static$$Symbol_iterator !== null && x[$$static$$Symbol_iterator]) ||
+               Array.isArray(x);
+      } else {
+        return typeof x === "string" && !$$Tag$$isTag(x);
+      }
+    }
+
     function $$iter$$iter(x) {
       var fn;
 
@@ -274,7 +284,7 @@
         return $$iter$$iter_array(x);
 
       // TODO this isn't quite correct
-      } else if (typeof x === "string") {
+      } else if (typeof x === "string" && !$$Tag$$isTag(x)) {
         return $$iter$$iter_array(x);
 
       } else {
@@ -861,6 +871,7 @@
         if (x.size() === 2) {
           return f(x.get(0), x.get(1));
         } else {
+          // TODO code duplication
           throw new Error("Expected Tuple with 2 elements but got " + x.size() + " " + $$util$$plural(x.size(), "element"));
         }
 
@@ -2544,6 +2555,7 @@
       exports.isImmutable = $$$Immutable$Immutable$$isImmutable;
       exports.SortedDict = $$ImmutableDict$$SortedDict;
       exports.SortedSet = $$ImmutableSet$$SortedSet;
+      exports.isIterable = $$iter$$isIterable;
       exports.Dict = $$ImmutableDict$$Dict;
       exports.Set = $$ImmutableSet$$Set;
       exports.List = $$ImmutableList$$List;

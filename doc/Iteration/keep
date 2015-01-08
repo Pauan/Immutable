@@ -1,0 +1,24 @@
+/**
+   @function keep
+   @param {::Iterable} [x]
+   @param {Function} [fn]
+   @return {::Iterable}
+   @summary Returns a new [::Iterable] which contains
+            the values where `fn` returns `true`
+   @desc
+     This function returns an [::Iterable], which is lazy:
+     it only generates the values as needed.
+
+     If you want an array, use [::toArray].
+
+     ----
+
+     This function calls `fn` for each value in `x`, and
+     if `fn` returns `true`, it will keep the value, otherwise
+     it doesn't:
+
+         // returns [1, 2, 3]
+         keep([1, 2, 3, 4, 5], function (x) {
+           return x < 4;
+         });
+ */

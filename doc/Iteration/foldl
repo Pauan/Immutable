@@ -1,0 +1,22 @@
+/**
+   @function foldl
+   @param {::Iterable} [x]
+   @param {Any} [init]
+   @param {Function} [fn]
+   @return {Any}
+   @summary Accumulates a value by applying `fn` to each value in `x`
+   @desc
+     For each value in `x`, this function calls `fn` with two
+     arguments: `init` and the value in `x`. Whatever `fn`
+     returns becomes the new `init`. Lastly, it returns `init`:
+
+         // returns 15
+         foldl([1, 2, 3, 4, 5], 0, function (x, y) {
+           return x + y;
+         });
+
+         // returns "(((((0 1) 2) 3) 4) 5)"
+         foldl([1, 2, 3, 4, 5], 0, function (x, y) {
+           return "(" + x + " " + y + ")";
+         });
+ */

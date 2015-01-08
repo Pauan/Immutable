@@ -1,5 +1,8 @@
-import { isJSLiteral } from "./util";
+import { isObject, isJSLiteral } from "./util";
 import { tag_iter, Symbol_iterator } from "./static";
+
+// TODO circular import ?
+import { isTag } from "./Tag";
 
 // TODO circular import
 import { unsafe_Tuple } from "./ImmutableTuple";
@@ -18,6 +21,16 @@ function iter_array(array) {
   };
 }
 
+export function isIterable(x) {
+  if (isObject(x)) {
+    return x[tag_iter] != null ||
+           (Symbol_iterator !== null && x[Symbol_iterator]) ||
+           Array.isArray(x);
+  } else {
+    return typeof x === "string" && !isTag(x);
+  }
+}
+
 export function iter(x) {
   var fn;
 
@@ -31,7 +44,7 @@ export function iter(x) {
     return iter_array(x);
 
   // TODO this isn't quite correct
-  } else if (typeof x === "string") {
+  } else if (typeof x === "string" && !isTag(x)) {
     return iter_array(x);
 
   } else {
@@ -304,6 +317,7 @@ export function map(x, f) {
   });
 }
 
+// TODO what if `x` is an Array ?
 export function reverse(x) {
   return make_seq(function () {
     return reverse_iter(iter(x));

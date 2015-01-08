@@ -1,0 +1,25 @@
+/**
+   @function foldr
+   @param {::Iterable} [x]
+   @param {Any} [init]
+   @param {Function} [fn]
+   @return {Any}
+   @summary Accumulates a value by applying `fn` to each value in `x`
+   @desc
+     For each value in `x`, this function calls `fn` with two
+     arguments: the value in `x`, and `init`. Whatever `fn`
+     returns becomes the new `init`. Lastly, it returns `init`:
+
+         // returns 15
+         foldr([1, 2, 3, 4, 5], 0, function (x, y) {
+           return x + y;
+         });
+
+         // returns "(1 (2 (3 (4 (5 0)))))"
+         foldr([1, 2, 3, 4, 5], 0, function (x, y) {
+           return "(" + x + " " + y + ")";
+         });
+
+     This function requires `O(n)` space, because it must
+     reach the end of `x` before it can call `fn`.
+ */

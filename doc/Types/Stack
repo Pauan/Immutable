@@ -4,7 +4,7 @@
             efficiently add and remove from the end
 
    @function Stack
-   @param {optional sequence::Sequence} [seq]
+   @param {optional ::Iterable} [seq]
    @desc
      The values from `seq` will be inserted into
      the stack, in the same order as `seq`.
@@ -75,7 +75,7 @@
      If the stack is empty, an error is thrown.
 
    @function Stack.concat
-   @param {sequence::Sequence} [other] The [sequence::Sequence] to append to this stack
+   @param {::Iterable} [other] The [::Iterable] to append to this stack
    @return {::Stack} A new stack with all the values of this stack followed
                      by all the values of `other`.
    @summary Returns a new stack with all the values of this stack followed

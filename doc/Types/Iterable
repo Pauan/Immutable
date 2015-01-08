@@ -1,0 +1,17 @@
+/**
+   @class Iterable
+   @summary Anything that can be iterated
+   @desc
+     If something is [::Iterable], it can be used by the iteration functions
+     like [::each], [::map], [::zip], etc.
+
+     These things are Iterable:
+
+     * JavaScript Array
+
+     * JavaScript String
+
+     * ECMAScript 6 Iterable
+
+     * [::Dict], [::List], [::Queue], [::Record], [::Set], [::Stack], and [::Tuple]
+ */

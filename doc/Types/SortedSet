@@ -1,7 +1,7 @@
 /**
    @function SortedSet
    @param {Function} [sort] Function that determines the sort order
-   @param {optional sequence::Sequence} [seq]
+   @param {optional ::Iterable} [seq]
    @return {::Set} A set where the values are sorted by `sort`
    @summary Returns a [::Set] where the values are sorted by `sort`
    @desc

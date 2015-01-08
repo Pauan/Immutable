@@ -1,7 +1,9 @@
 import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
-         deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, each, Tuple, isTuple } from "../Immutable/Immutable";
+         deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, Tuple, isTuple,
+         each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
+         isIterable } from "../Immutable/Immutable";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
 
@@ -2421,6 +2423,7 @@ test("isImmutable", function () {
   assert(!isImmutable([]));
   assert(!isImmutable(Ref(5)));
 
+  assert(isImmutable(null));
   assert(isImmutable(5));
   assert(isImmutable("foo"));
   assert(isImmutable(Object.freeze({})));
@@ -2437,6 +2440,30 @@ test("isImmutable", function () {
 
   var Foo = Record({});
   assert(isImmutable(Foo));
+});
+
+test("isIterable", function () {
+  assert(!isIterable({}));
+  assert(!isIterable(Ref(5)));
+  assert(!isIterable(5));
+  assert(!isIterable(null));
+  assert(!isIterable(Object.freeze({})));
+  assert(!isIterable(Tag()));
+  assert(!isIterable(UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
+
+  assert(isIterable([]));
+  assert(isIterable("foo"));
+  assert(isIterable(Dict()));
+  assert(isIterable(Set()));
+  assert(isIterable(List()));
+  assert(isIterable(Queue()));
+  assert(isIterable(Stack()));
+  assert(isIterable(SortedDict(simpleSort)));
+  assert(isIterable(SortedSet(simpleSort)));
+  assert(isIterable(Tuple()));
+
+  var Foo = Record({});
+  assert(isIterable(Foo));
 });
 
 test("toJS", function () {
@@ -2530,6 +2557,254 @@ test("deref", function () {
 
   assert(deref(Ref(5)) === 5);
   assert(deref(Ref(x)) === x);
+});
+
+
+test("each", function () {
+  var ran = false;
+
+  assert_raises(function () {
+    each(Tag(), function (x) {
+      ran = true;
+    });
+  }, "Cannot iter: (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 12)");
+
+  assert(ran === false);
+
+
+  var ran = false;
+  each([], function (x) {
+    ran = true;
+  });
+  assert(ran === false);
+
+  var a = [];
+
+  each([1, 2, 3], function (x) {
+    a.push(x);
+  });
+
+  assert(deepEqual(a, [1, 2, 3]));
+
+
+  var a = [];
+
+  each("foo", function (x) {
+    a.push(x);
+  });
+
+  assert(deepEqual(a, ["f", "o", "o"]));
+
+
+  var a = [];
+
+  each(Tuple([1, 2, 3]), function (x) {
+    a.push(x);
+  });
+
+  assert(deepEqual(a, [1, 2, 3]));
+
+
+  var a = [];
+
+  each(Record([["foo", 1], ["bar", 2]]), function (x) {
+    assert(isTuple(x));
+    a.push(toJS(x));
+  });
+
+  assert(deepEqual(a, [["foo", 1], ["bar", 2]]));
+});
+
+test("map", function () {
+  var x = map([], function (x) { return x + 10 });
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), []));
+
+  var x = map([1, 2, 3], function (x) { return x + 10 });
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), [11, 12, 13]));
+
+  var x = map(Tuple([1, 2, 3]), function (x) { return x + 10 });
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), [11, 12, 13]));
+
+  var x = map(Record([["foo", 1], ["bar", 2]]), function (x) { return [x.get(0), x.get(1) + 10] });
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), [["foo", 11], ["bar", 12]]));
+});
+
+test("keep", function () {
+  var x = keep([], function (x) { return x > 3 });
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), []));
+
+  var x = keep([1, 2, 3, 4, 5], function (x) { return x > 3 });
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), [4, 5]));
+});
+
+test("findIndex", function () {
+  var x = findIndex([1, 2, 3, 4, 5], function (x) { return x > 3 });
+  assert(x === 3);
+
+  assert_raises(function () {
+    findIndex([1, 2, 3, 4, 5], function (x) { return x > 5 });
+  }, "findIndex did not find anything");
+
+  var x = findIndex([1, 2, 3, 4, 5], function (x) { return x > 5 }, 500);
+  assert(x === 500);
+});
+
+test("reverse", function () {
+  var x = reverse([]);
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), []));
+
+  var x = reverse([1, 2, 3]);
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), [3, 2, 1]));
+
+  var x = reverse(Tuple([1, 2, 3]));
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), [3, 2, 1]));
+
+  var x = reverse(map(Record([["foo", 1], ["bar", 2]]), function (x) {
+    assert(isTuple(x));
+    return toArray(x);
+  }));
+  assert(!Array.isArray(x));
+  assert(deepEqual(toArray(x), [["bar", 2], ["foo", 1]]));
+});
+
+test("foldl", function () {
+  var init = "0";
+  var ran = false;
+  var out = foldl(["1", "2", "3"], init, function (x, y) {
+    assert(x === init);
+    assert(y === "1" || y === "2" || y === "3");
+    ran = true;
+    init = "(" + x + " " + y + ")";
+    return init;
+  });
+  assert(out === init);
+  assert(out === "(((0 1) 2) 3)");
+  assert(ran === true);
+
+
+  var init = 0;
+  var ran = false;
+  var out = foldl([], init, function (x, y) {
+    ran = true;
+  });
+
+  assert(out === init);
+  assert(ran === false);
+});
+
+test("foldr", function () {
+  var init = "0";
+  var ran = false;
+  var out = foldr(["1", "2", "3"], init, function (x, y) {
+    assert(y === init);
+    assert(x === "1" || x === "2" || x === "3");
+    ran = true;
+    init = "(" + x + " " + y + ")";
+    return init;
+  });
+  assert(out === init);
+  assert(out === "(1 (2 (3 0)))");
+  assert(ran === true);
+
+
+  var init = 0;
+  var ran = false;
+  var out = foldr([], init, function (x, y) {
+    ran = true;
+  });
+
+  assert(out === init);
+  assert(ran === false);
+});
+
+test("join", function () {
+  assert(join([]) === "");
+  assert(join([], " ") === "");
+  assert(join([1, 2, 3]) === "123");
+  assert(join("123") === "123");
+  assert(join(Tuple([1, 2, 3])) === "123");
+  assert(join([1, 2, 3], " ") === "1 2 3");
+  assert(join("123", " ") === "1 2 3");
+  assert(join("123", " --- ") === "1 --- 2 --- 3");
+});
+
+test("zip", function () {
+  function mapper(x) {
+    assert(!Array.isArray(x));
+
+    x = map(x, function (x) {
+      assert(isTuple(x));
+      return toArray(x);
+    });
+
+    assert(!Array.isArray(x));
+
+    return x;
+  }
+
+  var x = mapper(zip([[1, 2, 3], [4, 5, 6], [7, 8, 9]]));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+  var x = mapper(zip(List([List([1, 2, 3]), List([4, 5, 6]), List([7, 8, 9])])));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+  var x = mapper(zip(Tuple([Tuple([1, 2, 3]), Tuple([4, 5, 6]), Tuple([7, 8, 9])])));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+
+  var x = mapper(zip([[1, 2, 3, 0], [4, 5, 6], [7, 8, 9]]));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+  var x = mapper(zip([[1, 2, 3], [4, 5, 6, 0], [7, 8, 9]]));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+  var x = mapper(zip([[1, 2, 3], [4, 5, 6], [7, 8, 9, 0]]));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+  var x = mapper(zip([[1, 2, 3, 0], [4, 5, 6], [7, 8, 9, 0]]));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+  var x = mapper(zip([[1, 2, 3, 0], [4, 5, 6, 0], [7, 8, 9]]));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
+
+
+  var x = mapper(zip([[1, 2, 3, 0], [4, 5, 6], [7, 8, 9]], 50));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [0, 50, 50]]));
+
+  var x = mapper(zip([[1, 2, 3], [4, 5, 6, 0], [7, 8, 9]], 50));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [50, 0, 50]]));
+
+  var x = mapper(zip([[1, 2, 3], [4, 5, 6], [7, 8, 9, 0]], 50));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [50, 50, 0]]));
+
+  var x = mapper(zip([[1, 2, 3, 0], [4, 5, 6], [7, 8, 9, 0]], 50));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [0, 50, 0]]));
+
+  var x = mapper(zip([[1, 2, 3, 0], [4, 5, 6, 0], [7, 8, 9]], 50));
+  assert(deepEqual(toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9], [0, 0, 50]]));
+});
+
+test("toArray", function () {
+  var x = [1, 2, 3, 4, 5];
+  assert(toArray(x) === x);
+
+  assert(deepEqual(toArray("foo"), ["f", "o", "o"]));
+  assert(deepEqual(toArray(Tuple([1, 2, 3])), [1, 2, 3]));
+
+  var x = map(Record([["foo", 1], ["bar", 2]]), function (x) {
+    assert(isTuple(x));
+    return toArray(x);
+  });
+  assert(deepEqual(toArray(x), [["foo", 1], ["bar", 2]]));
 });
 
 

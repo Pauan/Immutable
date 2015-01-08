@@ -1,0 +1,20 @@
+/**
+   @function reverse
+   @param {::Iterable} [x]
+   @return {::Iterable}
+   @summary Returns a new [::Iterable] which contains
+            all the values of `x`, but in reversed order
+   @desc
+     This function returns an [::Iterable].
+
+     If you want an array, use [::toArray].
+
+     ----
+
+     This function is *not* lazy: it requires `O(n)` space,
+     because it must reach the end of `x` before it can
+     return anything.
+
+         // returns [3, 2, 1]
+         reverse([1, 2, 3]);
+ */

@@ -4,7 +4,7 @@
             efficiently add to the end and remove from the front
 
    @function Queue
-   @param {optional sequence::Sequence} [seq]
+   @param {optional ::Iterable} [seq]
    @desc
      The values from `seq` will be inserted into
      the queue, in the same order as `seq`.
@@ -75,7 +75,7 @@
      If the queue is empty, an error is thrown.
 
    @function Queue.concat
-   @param {sequence::Sequence} [other] The [sequence::Sequence] to append to this queue
+   @param {::Iterable} [other] The [::Iterable] to append to this queue
    @return {::Queue} A new queue with all the values of this queue followed
                      by all the values of `other`.
    @summary Returns a new queue with all the values of this queue followed

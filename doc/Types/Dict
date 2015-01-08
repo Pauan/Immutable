@@ -3,9 +3,9 @@
    @summary An immutable dictionary mapping keys to values
 
    @function Dict
-   @param {optional sequence::Sequence|Object} [obj]
+   @param {optional Object | ::Iterable} [obj]
    @desc
-     If `obj` is a [sequence::Sequence], the values must
+     If `obj` is an [::Iterable], the values must
      be arrays or Tuples of `[key, value]`, which will be
      added to the dict.
 
@@ -145,7 +145,7 @@
          dict.modify("bar", function (x) { return x + 10 });
 
    @function Dict.merge
-   @param {sequence::Sequence} [other] Sequence of keys/values to add to this dict
+   @param {Object | ::Iterable} [other] Iterable of keys/values to add to this dict
    @return {::Dict} A new dict with all the keys/values of `other` added to this dict
    @summary Returns a new dict with all the keys/values of `other` added to this dict
    @desc
@@ -158,8 +158,8 @@
 
      If a key from `other` already exists in this dict, it is overwritten.
 
-     `other` must be either a JavaScript object literal, or a
-     [sequence::Sequence] where each value is an array or Tuple
+     `other` must be either a JavaScript object literal, or an
+     [::Iterable] where each value is an array or Tuple
      of `[key, value]`.
 
      You can use this to merge two [::Dict]:

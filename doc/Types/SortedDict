@@ -1,7 +1,7 @@
 /**
    @function SortedDict
    @param {Function} [sort] Function that determines the sort order
-   @param {optional sequence::Sequence|Object} [obj]
+   @param {optional Object | ::Iterable} [obj]
    @return {::Dict} A dictionary where the keys are sorted by `sort`
    @summary Returns a [::Dict] where the keys are sorted by `sort`
    @desc
