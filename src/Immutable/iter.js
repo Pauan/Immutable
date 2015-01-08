@@ -7,6 +7,9 @@ import { isTag } from "./Tag";
 // TODO circular import
 import { unsafe_Tuple } from "./ImmutableTuple";
 
+// TODO move into "./static.js" ?
+var empty = {};
+
 function iter_array(array) {
   var i = 0;
 
@@ -107,7 +110,7 @@ export function concat_iter(x, y) {
             if (info.done) {
               y_done = true;
             } else {
-              return info;
+              return { value: info.value };
             }
           }
         } else {
@@ -115,7 +118,7 @@ export function concat_iter(x, y) {
           if (info.done) {
             x_done = true;
           } else {
-            return info;
+            return { value: info.value };
           }
         }
       }
@@ -165,6 +168,78 @@ export function find(x, f, def) {
       return info.value;
     }
   }
+}
+
+export function partition(x, f) {
+  var yes_buffer = [];
+  var no_buffer  = [];
+
+  var iterator = empty;
+  var done     = false;
+
+  return unsafe_Tuple([
+    make_seq(function () {
+      if (iterator === empty) {
+        iterator = iter(x);
+      }
+
+      return {
+        next: function () {
+          for (;;) {
+            if (yes_buffer.length) {
+              return yes_buffer.shift();
+
+            } else if (done) {
+              return { done: true };
+
+            } else {
+              var info = iterator.next();
+              if (info.done) {
+                done = true;
+
+              } else if (f(info.value)) {
+                return { value: info.value };
+
+              } else {
+                no_buffer.push({ value: info.value });
+              }
+            }
+          }
+        }
+      };
+    }),
+
+    make_seq(function () {
+      if (iterator === empty) {
+        iterator = iter(x);
+      }
+
+      return {
+        next: function () {
+          for (;;) {
+            if (no_buffer.length) {
+              return no_buffer.shift();
+
+            } else if (done) {
+              return { done: true };
+
+            } else {
+              var info = iterator.next();
+              if (info.done) {
+                done = true;
+
+              } else if (f(info.value)) {
+                yes_buffer.push({ value: info.value });
+
+              } else {
+                return { value: info.value };
+              }
+            }
+          }
+        }
+      };
+    })
+  ]);
 }
 
 export function zip(x, def) {
@@ -265,7 +340,7 @@ export function toArray(x) {
 }
 
 export function join(x, separator) {
-  if (separator == null) {
+  if (arguments.length === 1) {
     separator = "";
   }
 
@@ -279,7 +354,7 @@ export function join(x, separator) {
 
 export function mapcat_iter(iterator, f) {
   var done = false;
-  var sub  = null;
+  var sub  = empty;
 
   return {
     next: function () {
@@ -287,7 +362,7 @@ export function mapcat_iter(iterator, f) {
         if (done) {
           return { done: true };
 
-        } else if (sub === null) {
+        } else if (sub === empty) {
           var info = iterator.next();
           // TODO what if it has a value too?
           if (info.done) {
@@ -299,9 +374,9 @@ export function mapcat_iter(iterator, f) {
         } else {
           var info = sub.next();
           if (info.done) {
-            sub = null;
+            sub = empty;
           } else {
-            return info;
+            return { value: info.value };
           }
         }
       }
@@ -378,10 +453,9 @@ export function keep(x, f) {
           var info = iterator.next();
           // TODO what if it has a value too?
           if (info.done) {
-            // TODO just return `info` ?
             return { done: true };
           } else if (f(info.value)) {
-            return info;
+            return { value: info.value };
           }
         }
       }

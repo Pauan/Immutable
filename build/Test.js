@@ -128,6 +128,9 @@
     $$$Immutable$static$$nil.depth      = 0;
     $$$Immutable$static$$nil.size       = 0;
 
+    // TODO move into "./static.js" ?
+    var $$iter$$empty = {};
+
     function $$iter$$iter_array(array) {
       var i = 0;
 
@@ -228,7 +231,7 @@
                 if (info.done) {
                   y_done = true;
                 } else {
-                  return info;
+                  return { value: info.value };
                 }
               }
             } else {
@@ -236,7 +239,7 @@
               if (info.done) {
                 x_done = true;
               } else {
-                return info;
+                return { value: info.value };
               }
             }
           }
@@ -286,6 +289,78 @@
           return info.value;
         }
       }
+    }
+
+    function $$iter$$partition(x, f) {
+      var yes_buffer = [];
+      var no_buffer  = [];
+
+      var iterator = $$iter$$empty;
+      var done     = false;
+
+      return $$ImmutableTuple$$unsafe_Tuple([
+        $$iter$$make_seq(function () {
+          if (iterator === $$iter$$empty) {
+            iterator = $$iter$$iter(x);
+          }
+
+          return {
+            next: function () {
+              for (;;) {
+                if (yes_buffer.length) {
+                  return yes_buffer.shift();
+
+                } else if (done) {
+                  return { done: true };
+
+                } else {
+                  var info = iterator.next();
+                  if (info.done) {
+                    done = true;
+
+                  } else if (f(info.value)) {
+                    return { value: info.value };
+
+                  } else {
+                    no_buffer.push({ value: info.value });
+                  }
+                }
+              }
+            }
+          };
+        }),
+
+        $$iter$$make_seq(function () {
+          if (iterator === $$iter$$empty) {
+            iterator = $$iter$$iter(x);
+          }
+
+          return {
+            next: function () {
+              for (;;) {
+                if (no_buffer.length) {
+                  return no_buffer.shift();
+
+                } else if (done) {
+                  return { done: true };
+
+                } else {
+                  var info = iterator.next();
+                  if (info.done) {
+                    done = true;
+
+                  } else if (f(info.value)) {
+                    yes_buffer.push({ value: info.value });
+
+                  } else {
+                    return { value: info.value };
+                  }
+                }
+              }
+            }
+          };
+        })
+      ]);
     }
 
     function $$iter$$zip(x, def) {
@@ -386,7 +461,7 @@
     }
 
     function $$iter$$join(x, separator) {
-      if (separator == null) {
+      if (arguments.length === 1) {
         separator = "";
       }
 
@@ -400,7 +475,7 @@
 
     function $$iter$$mapcat_iter(iterator, f) {
       var done = false;
-      var sub  = null;
+      var sub  = $$iter$$empty;
 
       return {
         next: function () {
@@ -408,7 +483,7 @@
             if (done) {
               return { done: true };
 
-            } else if (sub === null) {
+            } else if (sub === $$iter$$empty) {
               var info = iterator.next();
               // TODO what if it has a value too?
               if (info.done) {
@@ -420,9 +495,9 @@
             } else {
               var info = sub.next();
               if (info.done) {
-                sub = null;
+                sub = $$iter$$empty;
               } else {
-                return info;
+                return { value: info.value };
               }
             }
           }
@@ -490,10 +565,9 @@
               var info = iterator.next();
               // TODO what if it has a value too?
               if (info.done) {
-                // TODO just return `info` ?
                 return { done: true };
               } else if (f(info.value)) {
-                return info;
+                return { value: info.value };
               }
             }
           }
@@ -2513,6 +2587,7 @@
       exports.any = $$iter$$any;
       exports.all = $$iter$$all;
       exports.find = $$iter$$find;
+      exports.partition = $$iter$$partition;
     });
     function $$assert$$assert(x) {
       if (arguments.length !== 1) {
@@ -5169,6 +5244,59 @@
       $$assert$$assert($$iter$$all([], function (x) { return x < 3 }) === true);
       $$assert$$assert($$iter$$all([1, 2], function (x) { return x < 3 }) === true);
       $$assert$$assert($$iter$$all([1, 2, 3], function (x) { return x < 3 }) === false);
+    });
+
+    src$Test$Test$$test("partition", function () {
+      var x = $$iter$$partition([], function (x) {
+        return x < 5;
+      });
+
+      $$assert$$assert($$ImmutableTuple$$isTuple(x));
+      var yes = x.get(0);
+      var no  = x.get(1);
+      $$assert$$assert(!Array.isArray(yes));
+      $$assert$$assert(!Array.isArray(no));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(yes), []));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(no), []));
+
+
+      var x = $$iter$$partition([1, 2, 3, 4, 5, 6, 7, 8, 9, 0], function (x) {
+        return x < 5;
+      });
+
+      $$assert$$assert($$ImmutableTuple$$isTuple(x));
+      var yes = x.get(0);
+      var no  = x.get(1);
+      $$assert$$assert(!Array.isArray(yes));
+      $$assert$$assert(!Array.isArray(no));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(yes), [1, 2, 3, 4, 0]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(no), [5, 6, 7, 8, 9]));
+
+
+      var x = $$iter$$partition([1, 2, 3, 4], function (x) {
+        return x < 5;
+      });
+
+      $$assert$$assert($$ImmutableTuple$$isTuple(x));
+      var yes = x.get(0);
+      var no  = x.get(1);
+      $$assert$$assert(!Array.isArray(yes));
+      $$assert$$assert(!Array.isArray(no));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(yes), [1, 2, 3, 4]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(no), []));
+
+
+      var x = $$iter$$partition([5, 6, 7, 8, 9], function (x) {
+        return x < 5;
+      });
+
+      $$assert$$assert($$ImmutableTuple$$isTuple(x));
+      var yes = x.get(0);
+      var no  = x.get(1);
+      $$assert$$assert(!Array.isArray(yes));
+      $$assert$$assert(!Array.isArray(no));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(yes), []));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(no), [5, 6, 7, 8, 9]));
     });
 
     src$Test$Test$$test("findIndex", function () {

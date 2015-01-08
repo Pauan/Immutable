@@ -247,6 +247,9 @@
     $$static$$nil.depth      = 0;
     $$static$$nil.size       = 0;
 
+    // TODO move into "./static.js" ?
+    var $$iter$$empty = {};
+
     function $$iter$$iter_array(array) {
       var i = 0;
 
@@ -347,7 +350,7 @@
                 if (info.done) {
                   y_done = true;
                 } else {
-                  return info;
+                  return { value: info.value };
                 }
               }
             } else {
@@ -355,7 +358,7 @@
               if (info.done) {
                 x_done = true;
               } else {
-                return info;
+                return { value: info.value };
               }
             }
           }
@@ -405,6 +408,78 @@
           return info.value;
         }
       }
+    }
+
+    function $$iter$$partition(x, f) {
+      var yes_buffer = [];
+      var no_buffer  = [];
+
+      var iterator = $$iter$$empty;
+      var done     = false;
+
+      return $$ImmutableTuple$$unsafe_Tuple([
+        $$iter$$make_seq(function () {
+          if (iterator === $$iter$$empty) {
+            iterator = $$iter$$iter(x);
+          }
+
+          return {
+            next: function () {
+              for (;;) {
+                if (yes_buffer.length) {
+                  return yes_buffer.shift();
+
+                } else if (done) {
+                  return { done: true };
+
+                } else {
+                  var info = iterator.next();
+                  if (info.done) {
+                    done = true;
+
+                  } else if (f(info.value)) {
+                    return { value: info.value };
+
+                  } else {
+                    no_buffer.push({ value: info.value });
+                  }
+                }
+              }
+            }
+          };
+        }),
+
+        $$iter$$make_seq(function () {
+          if (iterator === $$iter$$empty) {
+            iterator = $$iter$$iter(x);
+          }
+
+          return {
+            next: function () {
+              for (;;) {
+                if (no_buffer.length) {
+                  return no_buffer.shift();
+
+                } else if (done) {
+                  return { done: true };
+
+                } else {
+                  var info = iterator.next();
+                  if (info.done) {
+                    done = true;
+
+                  } else if (f(info.value)) {
+                    yes_buffer.push({ value: info.value });
+
+                  } else {
+                    return { value: info.value };
+                  }
+                }
+              }
+            }
+          };
+        })
+      ]);
     }
 
     function $$iter$$zip(x, def) {
@@ -505,7 +580,7 @@
     }
 
     function $$iter$$join(x, separator) {
-      if (separator == null) {
+      if (arguments.length === 1) {
         separator = "";
       }
 
@@ -519,7 +594,7 @@
 
     function $$iter$$mapcat_iter(iterator, f) {
       var done = false;
-      var sub  = null;
+      var sub  = $$iter$$empty;
 
       return {
         next: function () {
@@ -527,7 +602,7 @@
             if (done) {
               return { done: true };
 
-            } else if (sub === null) {
+            } else if (sub === $$iter$$empty) {
               var info = iterator.next();
               // TODO what if it has a value too?
               if (info.done) {
@@ -539,9 +614,9 @@
             } else {
               var info = sub.next();
               if (info.done) {
-                sub = null;
+                sub = $$iter$$empty;
               } else {
-                return info;
+                return { value: info.value };
               }
             }
           }
@@ -609,10 +684,9 @@
               var info = iterator.next();
               // TODO what if it has a value too?
               if (info.done) {
-                // TODO just return `info` ?
                 return { done: true };
               } else if (f(info.value)) {
-                return info;
+                return { value: info.value };
               }
             }
           }
@@ -2632,6 +2706,7 @@
       exports.any = $$iter$$any;
       exports.all = $$iter$$all;
       exports.find = $$iter$$find;
+      exports.partition = $$iter$$partition;
     });
     function $$Header$$header() {
       $$Benchmark$$.group("Information", function () {

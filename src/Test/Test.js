@@ -3,7 +3,7 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, Tuple, isTuple,
          each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
-         isIterable, any, all, find } from "../Immutable/Immutable";
+         isIterable, any, all, find, partition } from "../Immutable/Immutable";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
 
@@ -2653,6 +2653,59 @@ test("all", function () {
   assert(all([], function (x) { return x < 3 }) === true);
   assert(all([1, 2], function (x) { return x < 3 }) === true);
   assert(all([1, 2, 3], function (x) { return x < 3 }) === false);
+});
+
+test("partition", function () {
+  var x = partition([], function (x) {
+    return x < 5;
+  });
+
+  assert(isTuple(x));
+  var yes = x.get(0);
+  var no  = x.get(1);
+  assert(!Array.isArray(yes));
+  assert(!Array.isArray(no));
+  assert(deepEqual(toArray(yes), []));
+  assert(deepEqual(toArray(no), []));
+
+
+  var x = partition([1, 2, 3, 4, 5, 6, 7, 8, 9, 0], function (x) {
+    return x < 5;
+  });
+
+  assert(isTuple(x));
+  var yes = x.get(0);
+  var no  = x.get(1);
+  assert(!Array.isArray(yes));
+  assert(!Array.isArray(no));
+  assert(deepEqual(toArray(yes), [1, 2, 3, 4, 0]));
+  assert(deepEqual(toArray(no), [5, 6, 7, 8, 9]));
+
+
+  var x = partition([1, 2, 3, 4], function (x) {
+    return x < 5;
+  });
+
+  assert(isTuple(x));
+  var yes = x.get(0);
+  var no  = x.get(1);
+  assert(!Array.isArray(yes));
+  assert(!Array.isArray(no));
+  assert(deepEqual(toArray(yes), [1, 2, 3, 4]));
+  assert(deepEqual(toArray(no), []));
+
+
+  var x = partition([5, 6, 7, 8, 9], function (x) {
+    return x < 5;
+  });
+
+  assert(isTuple(x));
+  var yes = x.get(0);
+  var no  = x.get(1);
+  assert(!Array.isArray(yes));
+  assert(!Array.isArray(no));
+  assert(deepEqual(toArray(yes), []));
+  assert(deepEqual(toArray(no), [5, 6, 7, 8, 9]));
 });
 
 test("findIndex", function () {

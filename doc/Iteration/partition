@@ -1,0 +1,31 @@
+/**
+   @function partition
+   @param {::Iterable} [x]
+   @param {Function} [fn]
+   @return {::Tuple}
+   @summary Returns a [::Tuple] with two [::Iterable]: the first
+            contains the values of `x` for which `fn` returns
+            `true`, and the second contains the values of `x` for
+            which `fn` returns `false`
+   @desc
+     This function returns a [::Tuple] which contains [::Iterable],
+     which are lazy: they only generate the values as needed.
+
+     If you want an array, use [::toArray].
+
+     ----
+
+     This function calls `fn` for each value in `x`, and
+     if the function returns `true` then the value will be
+     in the first iterable, otherwise it will be in the second:
+
+         var _tuple = partition([1, 2, 3, 4, 5, 6, 7, 8, 9, 0], function (x) {
+           return x < 5;
+         });
+
+         // returns [1, 2, 3, 4, 0]
+         var yes = _tuple.get(0);
+
+         // returns [5, 6, 7, 8, 9]
+         var no  = _tuple.get(1);
+ */
