@@ -4,9 +4,6 @@ var mori        = require("mori");
 import * as benchmark from "./Benchmark";
 // TODO
 import { Record, Dict, SortedDict, simpleSort } from "../Immutable/Immutable";
-import { header } from "./Header";
-
-header();
 
 function copy(input) {
   var output = {};
@@ -22,7 +19,7 @@ function random(input) {
   return input[Math.floor(Math.random() * input.length)];
 }
 
-function run(counter) {
+export function run(counter) {
   var only_keys = [];
   var keys = [];
   var record_keys = {};
@@ -382,18 +379,3 @@ function run(counter) {
     });
   });
 }
-
-
-run(1);
-//run(2);
-//run(3);
-//run(4);
-//run(5);
-run(10);
-run(100);
-run(1000);
-run(10000);
-//run(100000);
-//run(1000000);
-
-benchmark.run();

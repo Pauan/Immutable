@@ -22,6 +22,11 @@
             get run() {
                 return $$List$$run;
             }
+        },
+        $$Record$$ = {
+            get run() {
+                return $$Record$$run;
+            }
         };
 
     var $$Benchmark$$Benchmark = require("benchmark");
@@ -3941,7 +3946,385 @@
         });
       });
     }
-    function $$Header$$header() {
+    var $$Record$$immutablejs = require("immutable");
+    var $$Record$$mori        = require("mori");
+
+    function $$Record$$copy(input) {
+      var output = {};
+
+      for (var s in input) {
+        output[s] = input[s];
+      }
+
+      return output;
+    }
+
+    function $$Record$$random(input) {
+      return input[Math.floor(Math.random() * input.length)];
+    }
+
+    function $$Record$$run(counter) {
+      var only_keys = [];
+      var keys = [];
+      var record_keys = {};
+      var mori_keys = [];
+
+      for (var i = 0; i < counter; ++i) {
+        only_keys.push("foo" + i);
+        record_keys["foo" + i] = i;
+        keys.push(["foo" + i, i]);
+        mori_keys.push("foo" + i, i);
+      }
+
+      var ImmutableJSRecord = $$Record$$immutablejs.Record(record_keys);
+
+      $$Benchmark$$.group("Record with " + counter + " keys", function () {
+        $$Benchmark$$.group("Creating", function () {
+          $$Benchmark$$.message("JavaScript Object");
+
+          $$Benchmark$$.time("JavaScript Object Copying", function () {
+            $$Record$$copy(record_keys);
+          });
+
+          $$Benchmark$$.time("Immutable-js Map", function () {
+            $$Record$$immutablejs.Map(keys);
+          });
+
+          $$Benchmark$$.time("Immutable-js Record", function () {
+            new ImmutableJSRecord(record_keys);
+          });
+
+          $$Benchmark$$.time("Mori Hash Map", function () {
+            $$Record$$mori.hash_map.apply(null, mori_keys);
+          });
+
+          $$Benchmark$$.time("Mori Sorted Map", function () {
+            $$Record$$mori.sorted_map.apply(null, mori_keys);
+          });
+
+          $$Benchmark$$.time("Immutable Dict", function () {
+            $$ImmutableDict$$Dict(keys);
+          });
+
+          $$Benchmark$$.time("Immutable SortedDict", function () {
+            $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
+          });
+
+          $$Benchmark$$.time("Immutable Record", function () {
+            $$ImmutableRecord$$Record(keys);
+          });
+        });
+
+
+        $$Benchmark$$.group("get first", function () {
+          $$Benchmark$$.message("JavaScript Object");
+
+          ;(function () {
+            var o = record_keys;
+
+            $$Benchmark$$.time("JavaScript Object Copying", function () {
+              o["foo0"];
+            });
+
+            $$Benchmark$$.time("JavaScript Object Copying (prop)", function () {
+              o.foo0;
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$immutablejs.Map(keys);
+
+            $$Benchmark$$.time("Immutable-js Map", function () {
+              o.get("foo0");
+            });
+          })();
+
+          ;(function () {
+            var o = new ImmutableJSRecord(record_keys);
+
+            $$Benchmark$$.time("Immutable-js Record", function () {
+              o.get("foo0");
+            });
+
+            $$Benchmark$$.time("Immutable-js Record (prop)", function () {
+              o.foo0;
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$mori.hash_map.apply(null, mori_keys);
+
+            $$Benchmark$$.time("Mori Hash Map", function () {
+              $$Record$$mori.get(o, "foo0");
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$mori.sorted_map.apply(null, mori_keys);
+
+            $$Benchmark$$.time("Mori Sorted Map", function () {
+              $$Record$$mori.get(o, "foo0");
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableDict$$Dict(keys);
+
+            $$Benchmark$$.time("Immutable Dict", function () {
+              o.get("foo0");
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
+
+            $$Benchmark$$.time("Immutable SortedDict", function () {
+              o.get("foo0");
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableRecord$$Record(keys);
+
+            $$Benchmark$$.time("Immutable Record", function () {
+              o.get("foo0");
+            });
+          })();
+        });
+
+
+        $$Benchmark$$.group("get random", function () {
+          $$Benchmark$$.message("JavaScript Object");
+
+          ;(function () {
+            var o = record_keys;
+
+            $$Benchmark$$.time("JavaScript Object Copying", function () {
+              o[$$Record$$random(only_keys)];
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$immutablejs.Map(keys);
+
+            $$Benchmark$$.time("Immutable-js Map", function () {
+              o.get($$Record$$random(only_keys));
+            });
+          })();
+
+          ;(function () {
+            var o = new ImmutableJSRecord(record_keys);
+
+            $$Benchmark$$.time("Immutable-js Record", function () {
+              o.get($$Record$$random(only_keys));
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$mori.hash_map.apply(null, mori_keys);
+
+            $$Benchmark$$.time("Mori Hash Map", function () {
+              $$Record$$mori.get(o, $$Record$$random(only_keys));
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$mori.sorted_map.apply(null, mori_keys);
+
+            $$Benchmark$$.time("Mori Sorted Map", function () {
+              $$Record$$mori.get(o, $$Record$$random(only_keys));
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableDict$$Dict(keys);
+
+            $$Benchmark$$.time("Immutable Dict", function () {
+              o.get($$Record$$random(only_keys));
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
+
+            $$Benchmark$$.time("Immutable SortedDict", function () {
+              o.get($$Record$$random(only_keys));
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableRecord$$Record(keys);
+
+            $$Benchmark$$.time("Immutable Record", function () {
+              o.get($$Record$$random(only_keys));
+            });
+          })();
+        });
+
+
+        $$Benchmark$$.group("set first", function () {
+          ;(function () {
+            var o = $$Record$$copy(record_keys);
+
+            $$Benchmark$$.time("JavaScript Object", function () {
+              o["foo0"] = -1;
+            });
+
+            $$Benchmark$$.time("JavaScript Object (prop)", function () {
+              o.foo0 = -1;
+            });
+          })();
+
+          ;(function () {
+            var o = record_keys;
+
+            $$Benchmark$$.time("JavaScript Object Copying", function () {
+              var x = $$Record$$copy(o);
+              x["foo0"] = -1;
+            });
+
+            $$Benchmark$$.time("JavaScript Object Copying (prop)", function () {
+              var x = $$Record$$copy(o);
+              x.foo0 = -1;
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$immutablejs.Map(keys);
+
+            $$Benchmark$$.time("Immutable-js Map", function () {
+              o.set("foo0", -1);
+            });
+          })();
+
+          ;(function () {
+            var o = new ImmutableJSRecord(record_keys);
+
+            $$Benchmark$$.time("Immutable-js Record", function () {
+              o.set("foo0", -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$mori.hash_map.apply(null, mori_keys);
+
+            $$Benchmark$$.time("Mori Hash Map", function () {
+              $$Record$$mori.assoc(o, "foo0", -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$mori.sorted_map.apply(null, mori_keys);
+
+            $$Benchmark$$.time("Mori Sorted Map", function () {
+              $$Record$$mori.assoc(o, "foo0", -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableDict$$Dict(keys);
+
+            $$Benchmark$$.time("Immutable Dict", function () {
+              o.set("foo0", -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
+
+            $$Benchmark$$.time("Immutable SortedDict", function () {
+              o.set("foo0", -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableRecord$$Record(keys);
+
+            $$Benchmark$$.time("Immutable Record", function () {
+              o.set("foo0", -1);
+            });
+          })();
+        });
+
+
+        $$Benchmark$$.group("set random", function () {
+          ;(function () {
+            var o = $$Record$$copy(record_keys);
+
+            $$Benchmark$$.time("JavaScript Object", function () {
+              o[$$Record$$random(only_keys)] = -1;
+            });
+          })();
+
+          ;(function () {
+            var o = record_keys;
+
+            $$Benchmark$$.time("JavaScript Object Copying", function () {
+              var x = $$Record$$copy(o);
+              x[$$Record$$random(only_keys)] = -1;
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$immutablejs.Map(keys);
+
+            $$Benchmark$$.time("Immutable-js Map", function () {
+              o.set($$Record$$random(only_keys), -1);
+            });
+          })();
+
+          ;(function () {
+            var o = new ImmutableJSRecord(record_keys);
+
+            $$Benchmark$$.time("Immutable-js Record", function () {
+              o.set($$Record$$random(only_keys), -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$mori.hash_map.apply(null, mori_keys);
+
+            $$Benchmark$$.time("Mori Hash Map", function () {
+              $$Record$$mori.assoc(o, $$Record$$random(only_keys), -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$Record$$mori.sorted_map.apply(null, mori_keys);
+
+            $$Benchmark$$.time("Mori Sorted Map", function () {
+              $$Record$$mori.assoc(o, $$Record$$random(only_keys), -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableDict$$Dict(keys);
+
+            $$Benchmark$$.time("Immutable Dict", function () {
+              o.set($$Record$$random(only_keys), -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, keys);
+
+            $$Benchmark$$.time("Immutable SortedDict", function () {
+              o.set($$Record$$random(only_keys), -1);
+            });
+          })();
+
+          ;(function () {
+            var o = $$ImmutableRecord$$Record(keys);
+
+            $$Benchmark$$.time("Immutable Record", function () {
+              o.set($$Record$$random(only_keys), -1);
+            });
+          })();
+        });
+      });
+    }
+
+    function src$Benchmark$run$$header() {
       $$Benchmark$$.group("Information", function () {
         $$Benchmark$$.group("Node.js", function () {
           $$Benchmark$$.message("URL: http://nodejs.org/");
@@ -3961,7 +4344,7 @@
         });
         $$Benchmark$$.group("Immutable", function () {
           $$Benchmark$$.message("URL: https://github.com/Pauan/Immutable");
-          $$Benchmark$$.message("Version: 3.0.0");
+          $$Benchmark$$.message("Version: 4.0.0");
         });
         /*benchmark.group("Elm", function () {
           benchmark.message("URL: http://elm-lang.org/");
@@ -3970,17 +4353,18 @@
       });
     }
 
-    $$Header$$header();
-    $$List$$.run(10);
-    $$List$$.run(100);
-    $$List$$.run(1000);
-    $$List$$.run(10000);
 
-    $$Header$$header();
-    $$List$$.run(10);
-    $$List$$.run(100);
-    $$List$$.run(1000);
-    $$List$$.run(10000);
+    /*header();
+    list.run(10);
+    list.run(100);
+    list.run(1000);*/
+
+    src$Benchmark$run$$header();
+    $$Record$$.run(1);
+    $$Record$$.run(10);
+    $$Record$$.run(100);
+    $$Record$$.run(1000);
+    $$Record$$.run(10000);
 
     $$Benchmark$$.run();
 }).call(this);
