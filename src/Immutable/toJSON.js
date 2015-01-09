@@ -1,15 +1,7 @@
-import { isTag, isUUIDTag/*, isSymbol, Symbol_keyFor, Symbol_for*/ } from "./Tag";
+import { isTag, isUUIDTag } from "./Tag";
 import { isObject, destructure_pair } from "./util";
 import { each } from "./iter";
 import { tag_toJSON, tag_toJSON_type, fromJSON_registry } from "./static";
-
-/*fromJSON_registry["Symbol.for"] = function (x) {
-  if (Symbol_for !== null) {
-    return Symbol_for(x.value);
-  } else {
-    throw new Error("Cannot convert Symbol from JSON: Symbol.for is not defined");
-  }
-};*/
 
 export function fromJSON(x) {
   if (isObject(x)) {
@@ -49,16 +41,6 @@ export function toJSON(x) {
     } else {
       throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
     }
-  /*} else if (isSymbol(x)) {
-    var key;
-    if (Symbol_keyFor !== null && (key = Symbol_keyFor(x)) != null) {
-      var o = {};
-      o[tag_toJSON_type] = "Symbol.for";
-      o.key = key;
-      return o;
-    } else {
-      throw new Error("Cannot convert Symbol to JSON, use Symbol.for or UUIDTag instead");
-    }*/
   } else {
     return x;
   }

@@ -825,16 +825,6 @@
         } else {
           throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
         }
-      /*} else if (isSymbol(x)) {
-        var key;
-        if (Symbol_keyFor !== null && (key = Symbol_keyFor(x)) != null) {
-          var o = {};
-          o[tag_toJSON_type] = "Symbol.for";
-          o.key = key;
-          return o;
-        } else {
-          throw new Error("Cannot convert Symbol to JSON, use Symbol.for or UUIDTag instead");
-        }*/
       } else {
         return x;
       }
@@ -1155,18 +1145,34 @@
           return hasher(x);
 
         } else {
-          var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
+          if (Object.isExtensible(x)) {
+            var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
 
-          Object.defineProperty(x, $$$Immutable$static$$tag_hash, {
-            configurable: false,
-            enumerable: false,
-            writable: false,
-            value: function () {
-              return id;
-            }
-          });
+            Object.defineProperty(x, $$$Immutable$static$$tag_hash, {
+              configurable: false,
+              enumerable: false,
+              writable: false,
+              value: function () {
+                return id;
+              }
+            });
 
-          return id;
+            return id;
+
+          /*
+          // TODO slow
+          } else if (Object.isFrozen(x)) {
+            // TODO Object.getOwnPropertySymbols ? Reflect.ownKeys ?
+            // .sort(simpleSort)
+            var items = Object.getOwnPropertyNames(x).map(function (key) {
+              return [key, x[key]];
+            });
+            // .replace(/\n/g, "\n        ")
+            return "(Frozen " + hash(Object.getPrototypeOf(x)) + hash_dict(items, "  ") + ")";*/
+
+          } else {
+            throw new Error("Cannot use a non-extensible object as a key: " + x);
+          }
         }
       }
     }

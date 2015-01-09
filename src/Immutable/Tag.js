@@ -8,28 +8,13 @@ var is_tag_regexp = new RegExp("^\\(Tag " + tag_uuid + " [0-9]+\\)$");
 
 var is_uuid_tag_regexp = new RegExp("^\\(UUIDTag " + uuid + "\\)$");
 
-/*var is_symbol_regexp = new RegExp("^\\(Symbol " + Symbol_uuid + " [0-9]+\\)$");
-var is_symbol_for_regexp = new RegExp("^\\(Symbol.for " + Symbol_uuid + " [\s\S]+\\)$");*/
-
 export var Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
                                ? Symbol.iterator
                                : null);
 
-/*export var Symbol_for = (typeof Symbol !== "undefined" && typeof Symbol.for !== "undefined"
-                          ? Symbol.for
-                          : null);*/
-
 export var Symbol_keyFor = (typeof Symbol !== "undefined" && typeof Symbol.keyFor !== "undefined"
                              ? Symbol.keyFor
                              : null);
-
-/*export function isSymbol(x) {
-  var type = typeof x;
-  return type === "symbol" ||
-         // TODO hack needed to make the shim work
-         (type === "string" &&
-          is_symbol_regexp.test(x));
-}*/
 
 // TODO this doesn't test variants
 export function isUUID(x) {

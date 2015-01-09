@@ -407,6 +407,25 @@ context("Dict", function () {
     assert_raises(function () {
       Dict([Tuple(["foo", 2, 3])]);
     }, "Expected Tuple with 2 elements but got 3 elements");
+
+    var x = {};
+    var mapped = map(Dict([[x, 1]]), function (x) {
+      assert(isTuple(x));
+      return toArray(x);
+    });
+    assert(deepEqual(toArray(mapped), [[x, 1]]));
+
+    assert_raises(function () {
+      Dict([[Object.preventExtensions({ foo: 1 }), 1]]);
+    }, "Cannot use a non-extensible object as a key: [object Object]");
+
+    assert_raises(function () {
+      Dict([[Object.seal({ foo: 1 }), 1]]);
+    }, "Cannot use a non-extensible object as a key: [object Object]");
+
+    assert_raises(function () {
+      Dict([[Object.freeze({ foo: 1 }), 1]]);
+    }, "Cannot use a non-extensible object as a key: [object Object]");
   });
 
   test("isEmpty", function () {
@@ -696,9 +715,12 @@ context("Dict", function () {
 
   test("toString", function () {
     assert("" + Dict() === "(Dict)");
-    assert("" + SortedDict(simpleSort) === "(SortedDict (Mutable 3))");
-    assert("" + SortedDict(simpleSort, { foo: 1 }) === "(SortedDict (Mutable 3)\n  \"foo\" = 1)");
-    assert("" + SortedDict(simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 3)\n  \"bar\" = 2\n  \"foo\" = 1)");
+    assert("" + SortedDict(simpleSort) === "(SortedDict (Mutable 4))");
+    assert("" + SortedDict(simpleSort, { foo: 1 }) === "(SortedDict (Mutable 4)\n  \"foo\" = 1)");
+    assert("" + SortedDict(simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 4)\n  \"bar\" = 2\n  \"foo\" = 1)");
+
+    assert("" + Dict([[{}, 1]]) === "(Dict\n  (Mutable 6) = 1)");
+    assert("" + Dict([[{}, 1]]) === "(Dict\n  (Mutable 7) = 1)");
 
     assert("" + Dict({ foo: 1 }) === "(Dict\n  \"foo\" = 1)");
     assert("" + Dict({ foo: 1, bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\" = 1)");
@@ -1005,10 +1027,12 @@ context("Set", function () {
 
   test("toString", function () {
     assert("" + Set() === "(Set)");
-    assert("" + SortedSet(simpleSort) === "(SortedSet (Mutable 3))");
+    assert("" + SortedSet(simpleSort) === "(SortedSet (Mutable 4))");
     assert("" + Set([1, 2, 3, 4, 5]) === "(Set\n  1\n  2\n  3\n  4\n  5)");
-    assert("" + SortedSet(simpleSort, [1, 2, 3, 4, 5]) === "(SortedSet (Mutable 3)\n  1\n  2\n  3\n  4\n  5)");
+    assert("" + SortedSet(simpleSort, [1, 2, 3, 4, 5]) === "(SortedSet (Mutable 4)\n  1\n  2\n  3\n  4\n  5)");
     assert("" + Set([Set([1, 2, 3])]) === "(Set\n  (Set\n    1\n    2\n    3))");
+    assert("" + Set([{}]) === "(Set\n  (Mutable 10))");
+    assert("" + Set([{}]) === "(Set\n  (Mutable 11))");
   });
 
   // TODO

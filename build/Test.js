@@ -727,16 +727,6 @@
         } else {
           throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
         }
-      /*} else if (isSymbol(x)) {
-        var key;
-        if (Symbol_keyFor !== null && (key = Symbol_keyFor(x)) != null) {
-          var o = {};
-          o[tag_toJSON_type] = "Symbol.for";
-          o.key = key;
-          return o;
-        } else {
-          throw new Error("Cannot convert Symbol to JSON, use Symbol.for or UUIDTag instead");
-        }*/
       } else {
         return x;
       }
@@ -1057,18 +1047,34 @@
           return hasher(x);
 
         } else {
-          var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
+          if (Object.isExtensible(x)) {
+            var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
 
-          Object.defineProperty(x, $$$Immutable$static$$tag_hash, {
-            configurable: false,
-            enumerable: false,
-            writable: false,
-            value: function () {
-              return id;
-            }
-          });
+            Object.defineProperty(x, $$$Immutable$static$$tag_hash, {
+              configurable: false,
+              enumerable: false,
+              writable: false,
+              value: function () {
+                return id;
+              }
+            });
 
-          return id;
+            return id;
+
+          /*
+          // TODO slow
+          } else if (Object.isFrozen(x)) {
+            // TODO Object.getOwnPropertySymbols ? Reflect.ownKeys ?
+            // .sort(simpleSort)
+            var items = Object.getOwnPropertyNames(x).map(function (key) {
+              return [key, x[key]];
+            });
+            // .replace(/\n/g, "\n        ")
+            return "(Frozen " + hash(Object.getPrototypeOf(x)) + hash_dict(items, "  ") + ")";*/
+
+          } else {
+            throw new Error("Cannot use a non-extensible object as a key: " + x);
+          }
         }
       }
     }
@@ -3148,6 +3154,25 @@
         src$Test$Test$$assert_raises(function () {
           $$ImmutableDict$$Dict([$$ImmutableTuple$$Tuple(["foo", 2, 3])]);
         }, "Expected Tuple with 2 elements but got 3 elements");
+
+        var x = {};
+        var mapped = $$iter$$map($$ImmutableDict$$Dict([[x, 1]]), function (x) {
+          $$assert$$assert($$ImmutableTuple$$isTuple(x));
+          return $$iter$$toArray(x);
+        });
+        $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(mapped), [[x, 1]]));
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableDict$$Dict([[Object.preventExtensions({ foo: 1 }), 1]]);
+        }, "Cannot use a non-extensible object as a key: [object Object]");
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableDict$$Dict([[Object.seal({ foo: 1 }), 1]]);
+        }, "Cannot use a non-extensible object as a key: [object Object]");
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableDict$$Dict([[Object.freeze({ foo: 1 }), 1]]);
+        }, "Cannot use a non-extensible object as a key: [object Object]");
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -3437,9 +3462,12 @@
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + $$ImmutableDict$$Dict() === "(Dict)");
-        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort) === "(SortedDict (Mutable 3))");
-        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 }) === "(SortedDict (Mutable 3)\n  \"foo\" = 1)");
-        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 3)\n  \"bar\" = 2\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort) === "(SortedDict (Mutable 4))");
+        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 }) === "(SortedDict (Mutable 4)\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 4)\n  \"bar\" = 2\n  \"foo\" = 1)");
+
+        $$assert$$assert("" + $$ImmutableDict$$Dict([[{}, 1]]) === "(Dict\n  (Mutable 6) = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict([[{}, 1]]) === "(Dict\n  (Mutable 7) = 1)");
 
         $$assert$$assert("" + $$ImmutableDict$$Dict({ foo: 1 }) === "(Dict\n  \"foo\" = 1)");
         $$assert$$assert("" + $$ImmutableDict$$Dict({ foo: 1, bar: 2 }) === "(Dict\n  \"bar\" = 2\n  \"foo\" = 1)");
@@ -3746,10 +3774,12 @@
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + $$ImmutableSet$$Set() === "(Set)");
-        $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$simpleSort) === "(SortedSet (Mutable 3))");
+        $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$simpleSort) === "(SortedSet (Mutable 4))");
         $$assert$$assert("" + $$ImmutableSet$$Set([1, 2, 3, 4, 5]) === "(Set\n  1\n  2\n  3\n  4\n  5)");
-        $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3, 4, 5]) === "(SortedSet (Mutable 3)\n  1\n  2\n  3\n  4\n  5)");
+        $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, [1, 2, 3, 4, 5]) === "(SortedSet (Mutable 4)\n  1\n  2\n  3\n  4\n  5)");
         $$assert$$assert("" + $$ImmutableSet$$Set([$$ImmutableSet$$Set([1, 2, 3])]) === "(Set\n  (Set\n    1\n    2\n    3))");
+        $$assert$$assert("" + $$ImmutableSet$$Set([{}]) === "(Set\n  (Mutable 10))");
+        $$assert$$assert("" + $$ImmutableSet$$Set([{}]) === "(Set\n  (Mutable 11))");
       });
 
       // TODO
