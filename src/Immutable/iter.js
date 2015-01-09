@@ -1,5 +1,6 @@
 import { isObject, isJSLiteral } from "./util";
-import { tag_iter, Symbol_iterator } from "./static";
+import { tag_iter } from "./static";
+import { Symbol_iterator } from "./Tag";
 
 // TODO circular import ?
 import { isTag } from "./Tag";

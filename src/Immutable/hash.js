@@ -1,9 +1,12 @@
-import { isTag } from "./Tag";
+import { isTag, Symbol_keyFor } from "./Tag";
 import { pad_right, repeat, destructure_pair } from "./util";
 import { map, each, join } from "./iter";
 import { tag_hash } from "./static";
 
 var mutable_hash_id = 0;
+
+var Symbol_id = 0;
+var Symbol_registry = {};
 
 export function hash_string(x) {
   return "\"" + x.replace(/[\\\"\n]/g, function (s) {
@@ -13,6 +16,19 @@ export function hash_string(x) {
       return "\\" + s;
     }
   }) + "\"";
+}
+
+export function hash_symbol(x) {
+  var key;
+  if (Symbol_keyFor !== null && (key = Symbol_keyFor(x)) != null) {
+    return "(Symbol.for " + hash(key) + ")";
+  } else {
+    key = Symbol_registry[x];
+    if (key == null) {
+      key = Symbol_registry[x] = (++Symbol_id);
+    }
+    return "(Symbol " + key + ")";
+  }
 }
 
 export function hash(x) {
@@ -30,6 +46,9 @@ export function hash(x) {
              type === "undefined" ||
              x === null) {
     return "" + x;
+
+  } else if (type === "symbol") {
+    return hash_symbol(x);
 
   } else {
     var hasher = x[tag_hash];

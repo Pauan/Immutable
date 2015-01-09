@@ -1,9 +1,5 @@
 import { UUIDTag } from "./Tag";
 
-export var Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
-                               ? Symbol.iterator
-                               : null);
-
 export var tag_hash        = UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
 export var tag_iter        = UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
 export var tag_toJS        = UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");

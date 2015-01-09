@@ -139,17 +139,22 @@
 
     var $$Tag$$is_uuid_tag_regexp = new RegExp("^\\(UUIDTag " + $$Tag$$uuid + "\\)$");
 
+    var $$Tag$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
+                                   ? Symbol.iterator
+                                   : null);
+
+    var $$Tag$$Symbol_keyFor = (typeof Symbol !== "undefined" && typeof Symbol.keyFor !== "undefined"
+                                 ? Symbol.keyFor
+                                 : null);
+
     function $$Tag$$isUUID(x) {
       return typeof x === "string" && $$Tag$$uuid_regexp.test(x);
     }
 
     function $$Tag$$isTag(x) {
-      var type = typeof x;
-             // TODO documentation for this
-      return type === "symbol" ||
-             (type === "string" &&
-              ($$Tag$$is_tag_regexp.test(x) ||
-               $$Tag$$is_uuid_tag_regexp.test(x)));
+      return typeof x === "string" &&
+             ($$Tag$$is_tag_regexp.test(x) ||
+              $$Tag$$is_uuid_tag_regexp.test(x));
     }
 
     function $$Tag$$isUUIDTag(x) {
@@ -241,10 +246,6 @@
 
       return out;
     }
-    var $$$Immutable$static$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
-                                   ? Symbol.iterator
-                                   : null);
-
     var $$$Immutable$static$$tag_hash        = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
     var $$$Immutable$static$$tag_iter        = $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
     var $$$Immutable$static$$tag_toJS        = $$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
@@ -277,7 +278,7 @@
     function $$iter$$isIterable(x) {
       if ($$util$$isObject(x)) {
         return x[$$$Immutable$static$$tag_iter] != null ||
-               ($$$Immutable$static$$Symbol_iterator !== null && x[$$$Immutable$static$$Symbol_iterator]) ||
+               ($$Tag$$Symbol_iterator !== null && x[$$Tag$$Symbol_iterator]) ||
                Array.isArray(x);
       } else {
         return typeof x === "string" && !$$Tag$$isTag(x);
@@ -291,7 +292,7 @@
         return fn.call(x);
 
       // TODO should ES6 Iterables have precedence over `tag_iter` ?
-      } else if ($$$Immutable$static$$Symbol_iterator !== null && (fn = x[$$$Immutable$static$$Symbol_iterator]) != null) {
+      } else if ($$Tag$$Symbol_iterator !== null && (fn = x[$$Tag$$Symbol_iterator]) != null) {
         return fn.call(x);
 
       } else if (Array.isArray(x)) {
@@ -311,8 +312,8 @@
 
       o[$$$Immutable$static$$tag_iter] = f;
 
-      if ($$$Immutable$static$$Symbol_iterator !== null) {
-        o[$$$Immutable$static$$Symbol_iterator] = f;
+      if ($$Tag$$Symbol_iterator !== null) {
+        o[$$Tag$$Symbol_iterator] = f;
       }
 
       return o;
@@ -824,6 +825,16 @@
         } else {
           throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
         }
+      /*} else if (isSymbol(x)) {
+        var key;
+        if (Symbol_keyFor !== null && (key = Symbol_keyFor(x)) != null) {
+          var o = {};
+          o[tag_toJSON_type] = "Symbol.for";
+          o.key = key;
+          return o;
+        } else {
+          throw new Error("Cannot convert Symbol to JSON, use Symbol.for or UUIDTag instead");
+        }*/
       } else {
         return x;
       }
@@ -937,8 +948,8 @@
     $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
     $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
 
-    if ($$$Immutable$static$$Symbol_iterator !== null) {
-      $$Base$$MutableBase[$$$Immutable$static$$Symbol_iterator] = $$Base$$ImmutableBase[$$$Immutable$static$$Symbol_iterator] = function () {
+    if ($$Tag$$Symbol_iterator !== null) {
+      $$Base$$MutableBase[$$Tag$$Symbol_iterator] = $$Base$$ImmutableBase[$$Tag$$Symbol_iterator] = function () {
         return $$iter$$iter(this);
       };
     }
@@ -1093,6 +1104,9 @@
 
     var $$hash$$mutable_hash_id = 0;
 
+    var $$hash$$Symbol_id = 0;
+    var $$hash$$Symbol_registry = {};
+
     function $$hash$$hash_string(x) {
       return "\"" + x.replace(/[\\\"\n]/g, function (s) {
         if (s === "\n") {
@@ -1101,6 +1115,19 @@
           return "\\" + s;
         }
       }) + "\"";
+    }
+
+    function $$hash$$hash_symbol(x) {
+      var key;
+      if ($$Tag$$Symbol_keyFor !== null && (key = $$Tag$$Symbol_keyFor(x)) != null) {
+        return "(Symbol.for " + $$hash$$hash(key) + ")";
+      } else {
+        key = $$hash$$Symbol_registry[x];
+        if (key == null) {
+          key = $$hash$$Symbol_registry[x] = (++$$hash$$Symbol_id);
+        }
+        return "(Symbol " + key + ")";
+      }
     }
 
     function $$hash$$hash(x) {
@@ -1118,6 +1145,9 @@
                  type === "undefined" ||
                  x === null) {
         return "" + x;
+
+      } else if (type === "symbol") {
+        return $$hash$$hash_symbol(x);
 
       } else {
         var hasher = x[$$$Immutable$static$$tag_hash];

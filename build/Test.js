@@ -1,43 +1,48 @@
 (function() {
     "use strict";
-    var $$Tag$$tag_uuid = "48de6fff-9d11-472d-a76f-ed77a59a5cbc";
-    var $$Tag$$tag_id = 0;
+    var $$$Immutable$Tag$$tag_uuid = "48de6fff-9d11-472d-a76f-ed77a59a5cbc";
+    var $$$Immutable$Tag$$tag_id = 0;
 
-    var $$Tag$$uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-    var $$Tag$$uuid_regexp = new RegExp("^" + $$Tag$$uuid + "$");
+    var $$$Immutable$Tag$$uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+    var $$$Immutable$Tag$$uuid_regexp = new RegExp("^" + $$$Immutable$Tag$$uuid + "$");
 
-    var $$Tag$$is_tag_regexp = new RegExp("^\\(Tag " + $$Tag$$tag_uuid + " [0-9]+\\)$");
+    var $$$Immutable$Tag$$is_tag_regexp = new RegExp("^\\(Tag " + $$$Immutable$Tag$$tag_uuid + " [0-9]+\\)$");
 
-    var $$Tag$$is_uuid_tag_regexp = new RegExp("^\\(UUIDTag " + $$Tag$$uuid + "\\)$");
+    var $$$Immutable$Tag$$is_uuid_tag_regexp = new RegExp("^\\(UUIDTag " + $$$Immutable$Tag$$uuid + "\\)$");
 
-    function $$Tag$$isUUID(x) {
-      return typeof x === "string" && $$Tag$$uuid_regexp.test(x);
+    var $$$Immutable$Tag$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
+                                   ? Symbol.iterator
+                                   : null);
+
+    var $$$Immutable$Tag$$Symbol_keyFor = (typeof Symbol !== "undefined" && typeof Symbol.keyFor !== "undefined"
+                                 ? Symbol.keyFor
+                                 : null);
+
+    function $$$Immutable$Tag$$isUUID(x) {
+      return typeof x === "string" && $$$Immutable$Tag$$uuid_regexp.test(x);
     }
 
-    function $$Tag$$isTag(x) {
-      var type = typeof x;
-             // TODO documentation for this
-      return type === "symbol" ||
-             (type === "string" &&
-              ($$Tag$$is_tag_regexp.test(x) ||
-               $$Tag$$is_uuid_tag_regexp.test(x)));
+    function $$$Immutable$Tag$$isTag(x) {
+      return typeof x === "string" &&
+             ($$$Immutable$Tag$$is_tag_regexp.test(x) ||
+              $$$Immutable$Tag$$is_uuid_tag_regexp.test(x));
     }
 
-    function $$Tag$$isUUIDTag(x) {
-      return typeof x === "string" && $$Tag$$is_uuid_tag_regexp.test(x);
+    function $$$Immutable$Tag$$isUUIDTag(x) {
+      return typeof x === "string" && $$$Immutable$Tag$$is_uuid_tag_regexp.test(x);
     }
 
-    function $$Tag$$Tag() {
+    function $$$Immutable$Tag$$Tag() {
       if (arguments.length === 0) {
-        return "(Tag " + $$Tag$$tag_uuid + " " + (++$$Tag$$tag_id) + ")";
+        return "(Tag " + $$$Immutable$Tag$$tag_uuid + " " + (++$$$Immutable$Tag$$tag_id) + ")";
       } else {
         throw new Error("Expected 0 arguments but got " + arguments.length);
       }
     }
 
-    function $$Tag$$UUIDTag(id) {
+    function $$$Immutable$Tag$$UUIDTag(id) {
       if (arguments.length === 1) {
-        if ($$Tag$$isUUID(id)) {
+        if ($$$Immutable$Tag$$isUUID(id)) {
           return "(UUIDTag " + id + ")";
         } else {
           throw new Error("Expected a lower-case UUID, but got: " + id);
@@ -46,6 +51,37 @@
       } else {
         throw new Error("Expected 1 argument but got " + arguments.length);
       }
+    }
+
+    if (typeof global.Symbol === "undefined") {
+      global.Symbol = {
+        iterator: $$$Immutable$Tag$$UUIDTag("4d6d99dc-20e8-4db1-8acd-c05c1121326e")
+      };
+
+      /*var id = 0;
+      var registry = {};
+
+      global.Symbol = function () {
+        return "(Symbol " + Symbol_uuid + " " + (++id) + ")";
+      };
+
+      global.Symbol.for = function (s) {
+        if (typeof s !== "string") {
+          throw new Error("Must be string");
+        }
+
+        var x = registry[x];
+        if (x == null) {
+          x = registry[s] = global.Symbol();
+        }
+        return x;
+      };
+
+      global.Symbol.keyFor = function (x) {
+        return registry[s];
+      };
+
+      global.Symbol.iterator = global.Symbol();*/
     }
     function $$Array$$copy(array) {
       var len = array.length;
@@ -112,15 +148,11 @@
 
       return out;
     }
-    var $$$Immutable$static$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
-                                   ? Symbol.iterator
-                                   : null);
-
-    var $$$Immutable$static$$tag_hash        = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
-    var $$$Immutable$static$$tag_iter        = $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
-    var $$$Immutable$static$$tag_toJS        = $$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
-    var $$$Immutable$static$$tag_toJSON_type = $$Tag$$UUIDTag("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37");
-    var $$$Immutable$static$$tag_toJSON      = $$Tag$$UUIDTag("99e14916-bc99-4c48-81aa-299cf1ad6de3");
+    var $$$Immutable$static$$tag_hash        = $$$Immutable$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
+    var $$$Immutable$static$$tag_iter        = $$$Immutable$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
+    var $$$Immutable$static$$tag_toJS        = $$$Immutable$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
+    var $$$Immutable$static$$tag_toJSON_type = $$$Immutable$Tag$$UUIDTag("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37");
+    var $$$Immutable$static$$tag_toJSON      = $$$Immutable$Tag$$UUIDTag("99e14916-bc99-4c48-81aa-299cf1ad6de3");
 
     var $$$Immutable$static$$fromJSON_registry = {};
 
@@ -148,10 +180,10 @@
     function $$iter$$isIterable(x) {
       if ($$util$$isObject(x)) {
         return x[$$$Immutable$static$$tag_iter] != null ||
-               ($$$Immutable$static$$Symbol_iterator !== null && x[$$$Immutable$static$$Symbol_iterator]) ||
+               ($$$Immutable$Tag$$Symbol_iterator !== null && x[$$$Immutable$Tag$$Symbol_iterator]) ||
                Array.isArray(x);
       } else {
-        return typeof x === "string" && !$$Tag$$isTag(x);
+        return typeof x === "string" && !$$$Immutable$Tag$$isTag(x);
       }
     }
 
@@ -162,14 +194,14 @@
         return fn.call(x);
 
       // TODO should ES6 Iterables have precedence over `tag_iter` ?
-      } else if ($$$Immutable$static$$Symbol_iterator !== null && (fn = x[$$$Immutable$static$$Symbol_iterator]) != null) {
+      } else if ($$$Immutable$Tag$$Symbol_iterator !== null && (fn = x[$$$Immutable$Tag$$Symbol_iterator]) != null) {
         return fn.call(x);
 
       } else if (Array.isArray(x)) {
         return $$iter$$iter_array(x);
 
       // TODO this isn't quite correct
-      } else if (typeof x === "string" && !$$Tag$$isTag(x)) {
+      } else if (typeof x === "string" && !$$$Immutable$Tag$$isTag(x)) {
         return $$iter$$iter_array(x);
 
       } else {
@@ -182,8 +214,8 @@
 
       o[$$$Immutable$static$$tag_iter] = f;
 
-      if ($$$Immutable$static$$Symbol_iterator !== null) {
-        o[$$$Immutable$static$$Symbol_iterator] = f;
+      if ($$$Immutable$Tag$$Symbol_iterator !== null) {
+        o[$$$Immutable$Tag$$Symbol_iterator] = f;
       }
 
       return o;
@@ -670,8 +702,8 @@
         } else {
           return x;
         }
-      } else if ($$Tag$$isTag(x)) {
-        if ($$Tag$$isUUIDTag(x)) {
+      } else if ($$$Immutable$Tag$$isTag(x)) {
+        if ($$$Immutable$Tag$$isUUIDTag(x)) {
           return x;
         } else {
           throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
@@ -689,12 +721,22 @@
         } else {
           return x;
         }
-      } else if ($$Tag$$isTag(x)) {
-        if ($$Tag$$isUUIDTag(x)) {
+      } else if ($$$Immutable$Tag$$isTag(x)) {
+        if ($$$Immutable$Tag$$isUUIDTag(x)) {
           return x;
         } else {
           throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
         }
+      /*} else if (isSymbol(x)) {
+        var key;
+        if (Symbol_keyFor !== null && (key = Symbol_keyFor(x)) != null) {
+          var o = {};
+          o[tag_toJSON_type] = "Symbol.for";
+          o.key = key;
+          return o;
+        } else {
+          throw new Error("Cannot convert Symbol to JSON, use Symbol.for or UUIDTag instead");
+        }*/
       } else {
         return x;
       }
@@ -808,8 +850,8 @@
     $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
     $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
 
-    if ($$$Immutable$static$$Symbol_iterator !== null) {
-      $$Base$$MutableBase[$$$Immutable$static$$Symbol_iterator] = $$Base$$ImmutableBase[$$$Immutable$static$$Symbol_iterator] = function () {
+    if ($$$Immutable$Tag$$Symbol_iterator !== null) {
+      $$Base$$MutableBase[$$$Immutable$Tag$$Symbol_iterator] = $$Base$$ImmutableBase[$$$Immutable$Tag$$Symbol_iterator] = function () {
         return $$iter$$iter(this);
       };
     }
@@ -964,6 +1006,9 @@
 
     var $$hash$$mutable_hash_id = 0;
 
+    var $$hash$$Symbol_id = 0;
+    var $$hash$$Symbol_registry = {};
+
     function $$hash$$hash_string(x) {
       return "\"" + x.replace(/[\\\"\n]/g, function (s) {
         if (s === "\n") {
@@ -974,11 +1019,24 @@
       }) + "\"";
     }
 
+    function $$hash$$hash_symbol(x) {
+      var key;
+      if ($$$Immutable$Tag$$Symbol_keyFor !== null && (key = $$$Immutable$Tag$$Symbol_keyFor(x)) != null) {
+        return "(Symbol.for " + $$hash$$hash(key) + ")";
+      } else {
+        key = $$hash$$Symbol_registry[x];
+        if (key == null) {
+          key = $$hash$$Symbol_registry[x] = (++$$hash$$Symbol_id);
+        }
+        return "(Symbol " + key + ")";
+      }
+    }
+
     function $$hash$$hash(x) {
       var type = typeof x;
       // TODO this is probably pretty inefficient
       if (type === "string") {
-        if ($$Tag$$isTag(x)) {
+        if ($$$Immutable$Tag$$isTag(x)) {
           return x;
         } else {
           return $$hash$$hash_string(x);
@@ -989,6 +1047,9 @@
                  type === "undefined" ||
                  x === null) {
         return "" + x;
+
+      } else if (type === "symbol") {
+        return $$hash$$hash_symbol(x);
 
       } else {
         var hasher = x[$$$Immutable$static$$tag_hash];
@@ -2658,10 +2719,10 @@
       exports.deref = $$MutableRef$$deref;
       exports.Ref = $$MutableRef$$Ref;
       exports.isRef = $$MutableRef$$isRef;
-      exports.isTag = $$Tag$$isTag;
-      exports.isUUIDTag = $$Tag$$isUUIDTag;
-      exports.Tag = $$Tag$$Tag;
-      exports.UUIDTag = $$Tag$$UUIDTag;
+      exports.isTag = $$$Immutable$Tag$$isTag;
+      exports.isUUIDTag = $$$Immutable$Tag$$isUUIDTag;
+      exports.Tag = $$$Immutable$Tag$$Tag;
+      exports.UUIDTag = $$$Immutable$Tag$$UUIDTag;
       exports.each = $$iter$$each;
       exports.map = $$iter$$map;
       exports.keep = $$iter$$keep;
@@ -4945,55 +5006,55 @@
 
 
     src$Test$Test$$context("Tag", function () {
-      var tag1 = $$Tag$$Tag();
-      var tag2 = $$Tag$$Tag();
-      var uuid_tag1 = $$Tag$$UUIDTag("dc353abd-d920-4c17-b911-55bd1c78c06f");
-      var uuid_tag2 = $$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4");
+      var tag1 = $$$Immutable$Tag$$Tag();
+      var tag2 = $$$Immutable$Tag$$Tag();
+      var uuid_tag1 = $$$Immutable$Tag$$UUIDTag("dc353abd-d920-4c17-b911-55bd1c78c06f");
+      var uuid_tag2 = $$$Immutable$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4");
 
       src$Test$Test$$test("isTag", function () {
-        $$assert$$assert(!$$Tag$$isTag("foo"));
-        $$assert$$assert(!$$Tag$$isTag($$ImmutableDict$$Dict()));
-        $$assert$$assert($$Tag$$isTag(tag1));
-        $$assert$$assert($$Tag$$isTag(tag2));
-        $$assert$$assert($$Tag$$isTag(uuid_tag1));
-        $$assert$$assert($$Tag$$isTag(uuid_tag2));
+        $$assert$$assert(!$$$Immutable$Tag$$isTag("foo"));
+        $$assert$$assert(!$$$Immutable$Tag$$isTag($$ImmutableDict$$Dict()));
+        $$assert$$assert($$$Immutable$Tag$$isTag(tag1));
+        $$assert$$assert($$$Immutable$Tag$$isTag(tag2));
+        $$assert$$assert($$$Immutable$Tag$$isTag(uuid_tag1));
+        $$assert$$assert($$$Immutable$Tag$$isTag(uuid_tag2));
 
-        $$assert$$assert(!$$Tag$$isUUIDTag("foo"));
-        $$assert$$assert(!$$Tag$$isUUIDTag($$ImmutableDict$$Dict()));
-        $$assert$$assert(!$$Tag$$isUUIDTag(tag1));
-        $$assert$$assert(!$$Tag$$isUUIDTag(tag2));
-        $$assert$$assert($$Tag$$isUUIDTag(uuid_tag1));
-        $$assert$$assert($$Tag$$isUUIDTag(uuid_tag2));
+        $$assert$$assert(!$$$Immutable$Tag$$isUUIDTag("foo"));
+        $$assert$$assert(!$$$Immutable$Tag$$isUUIDTag($$ImmutableDict$$Dict()));
+        $$assert$$assert(!$$$Immutable$Tag$$isUUIDTag(tag1));
+        $$assert$$assert(!$$$Immutable$Tag$$isUUIDTag(tag2));
+        $$assert$$assert($$$Immutable$Tag$$isUUIDTag(uuid_tag1));
+        $$assert$$assert($$$Immutable$Tag$$isUUIDTag(uuid_tag2));
       });
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + tag1 === "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)");
         $$assert$$assert("" + tag2 === "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)");
-        $$assert$$assert("" + $$Tag$$Tag() === "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 3)");
+        $$assert$$assert("" + $$$Immutable$Tag$$Tag() === "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 3)");
         $$assert$$assert("" + uuid_tag1 === "(UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f)");
         $$assert$$assert("" + uuid_tag2 === "(UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4)");
-        $$assert$$assert("" + $$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4") === "(UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4)");
+        $$assert$$assert("" + $$$Immutable$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4") === "(UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4)");
       });
 
       src$Test$Test$$test("init", function () {
         src$Test$Test$$assert_raises(function () {
-          $$Tag$$Tag(1);
+          $$$Immutable$Tag$$Tag(1);
         }, "Expected 0 arguments but got 1");
 
         src$Test$Test$$assert_raises(function () {
-          $$Tag$$Tag(1, 2);
+          $$$Immutable$Tag$$Tag(1, 2);
         }, "Expected 0 arguments but got 2");
 
         src$Test$Test$$assert_raises(function () {
-          $$Tag$$UUIDTag();
+          $$$Immutable$Tag$$UUIDTag();
         }, "Expected 1 argument but got 0");
 
         src$Test$Test$$assert_raises(function () {
-          $$Tag$$UUIDTag(1, 2);
+          $$$Immutable$Tag$$UUIDTag(1, 2);
         }, "Expected 1 argument but got 2");
 
         src$Test$Test$$assert_raises(function () {
-          $$Tag$$UUIDTag("foo");
+          $$$Immutable$Tag$$UUIDTag("foo");
         }, "Expected a lower-case UUID, but got: foo");
       });
 
@@ -5007,10 +5068,10 @@
         $$assert$$assert($$$Immutable$Immutable$$equal(uuid_tag1, uuid_tag1));
         $$assert$$assert($$$Immutable$Immutable$$equal(uuid_tag2, uuid_tag2));
 
-        $$assert$$assert($$$Immutable$Immutable$$equal(uuid_tag2, $$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4")));
+        $$assert$$assert($$$Immutable$Immutable$$equal(uuid_tag2, $$$Immutable$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4")));
 
-        $$assert$$assert(!$$$Immutable$Immutable$$equal($$Tag$$Tag(), $$Tag$$Tag()));
-        $$assert$$assert(!$$$Immutable$Immutable$$equal(tag1, $$Tag$$Tag()));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal($$$Immutable$Tag$$Tag(), $$$Immutable$Tag$$Tag()));
+        $$assert$$assert(!$$$Immutable$Immutable$$equal(tag1, $$$Immutable$Tag$$Tag()));
       });
 
       src$Test$Test$$test("===", function () {
@@ -5023,10 +5084,10 @@
         $$assert$$assert(uuid_tag1 === uuid_tag1);
         $$assert$$assert(uuid_tag2 === uuid_tag2);
 
-        $$assert$$assert(uuid_tag2 === $$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4"));
+        $$assert$$assert(uuid_tag2 === $$$Immutable$Tag$$UUIDTag("2a95bab0-ae96-4f07-b7a5-227fe3d394d4"));
 
-        $$assert$$assert($$Tag$$Tag() !== $$Tag$$Tag());
-        $$assert$$assert(tag1 !== $$Tag$$Tag());
+        $$assert$$assert($$$Immutable$Tag$$Tag() !== $$$Immutable$Tag$$Tag());
+        $$assert$$assert(tag1 !== $$$Immutable$Tag$$Tag());
       });
 
       src$Test$Test$$test("Dict", function () {
@@ -5124,9 +5185,9 @@
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableStack$$Stack()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$SortedSet($$Sorted$$simpleSort)));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$Tag$$Tag()));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Tag$$Tag()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableTuple$$Tuple()));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$Tag$$UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$Tag$$UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
 
       var Foo = $$ImmutableRecord$$Record({});
       $$assert$$assert($$$Immutable$Immutable$$isImmutable(Foo));
@@ -5138,8 +5199,8 @@
       $$assert$$assert(!$$iter$$isIterable(5));
       $$assert$$assert(!$$iter$$isIterable(null));
       $$assert$$assert(!$$iter$$isIterable(Object.freeze({})));
-      $$assert$$assert(!$$iter$$isIterable($$Tag$$Tag()));
-      $$assert$$assert(!$$iter$$isIterable($$Tag$$UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
+      $$assert$$assert(!$$iter$$isIterable($$$Immutable$Tag$$Tag()));
+      $$assert$$assert(!$$iter$$isIterable($$$Immutable$Tag$$UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
 
       $$assert$$assert($$iter$$isIterable([]));
       $$assert$$assert($$iter$$isIterable("foo"));
@@ -5254,7 +5315,7 @@
       var ran = false;
 
       src$Test$Test$$assert_raises(function () {
-        $$iter$$each($$Tag$$Tag(), function (x) {
+        $$iter$$each($$$Immutable$Tag$$Tag(), function (x) {
           ran = true;
         });
       }, "Cannot iter: (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 12)");

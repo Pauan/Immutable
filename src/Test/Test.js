@@ -1,3 +1,4 @@
+import "./shim";
 import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
