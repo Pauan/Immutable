@@ -1919,6 +1919,15 @@ context("Record", function () {
 
     verify_record(Record([["foo", 2]]), { foo: 2 });
 
+    verify_record(Record([["foo", 2], ["foo", 3]]), { foo: 3 });
+    verify_record(Record([["bar", 1], ["foo", 2], ["qux", 4], ["foo", 3], ["corge", 5]]), { bar: 1, foo: 3, qux: 4, corge: 5 });
+
+    var x = map(Record([["bar", 1], ["foo", 2], ["qux", 4], ["foo", 3], ["corge", 5]]), function (x) {
+      assert(isTuple(x));
+      return toArray(x);
+    });
+    assert(deepEqual(toArray(x), [["bar", 1], ["foo", 3], ["qux", 4], ["corge", 5]]));
+
     verify_record(Record([Tuple(["foo", 2])]), { foo: 2 });
 
     assert_raises(function () {

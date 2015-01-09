@@ -2500,7 +2500,13 @@
           $$iter$$each($$iter$$iter_object(obj), function (_array) {
             $$util$$destructure_pair(_array, function (key, value) {
               $$ImmutableRecord$$checkKey(key);
-              keys[key] = values.push(value) - 1;
+
+              var index = keys[key];
+              if (index == null) {
+                keys[key] = values.push(value) - 1;
+              } else {
+                values[index] = value;
+              }
             });
           });
         }
@@ -4593,6 +4599,15 @@
 
 
         src$Test$Test$$verify_record($$ImmutableRecord$$Record([["foo", 2]]), { foo: 2 });
+
+        src$Test$Test$$verify_record($$ImmutableRecord$$Record([["foo", 2], ["foo", 3]]), { foo: 3 });
+        src$Test$Test$$verify_record($$ImmutableRecord$$Record([["bar", 1], ["foo", 2], ["qux", 4], ["foo", 3], ["corge", 5]]), { bar: 1, foo: 3, qux: 4, corge: 5 });
+
+        var x = $$iter$$map($$ImmutableRecord$$Record([["bar", 1], ["foo", 2], ["qux", 4], ["foo", 3], ["corge", 5]]), function (x) {
+          $$assert$$assert($$ImmutableTuple$$isTuple(x));
+          return $$iter$$toArray(x);
+        });
+        $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["bar", 1], ["foo", 3], ["qux", 4], ["corge", 5]]));
 
         src$Test$Test$$verify_record($$ImmutableRecord$$Record([$$ImmutableTuple$$Tuple(["foo", 2])]), { foo: 2 });
 

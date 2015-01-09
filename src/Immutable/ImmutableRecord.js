@@ -110,7 +110,13 @@ export function Record(obj) {
       each(iter_object(obj), function (_array) {
         destructure_pair(_array, function (key, value) {
           checkKey(key);
-          keys[key] = values.push(value) - 1;
+
+          var index = keys[key];
+          if (index == null) {
+            keys[key] = values.push(value) - 1;
+          } else {
+            values[index] = value;
+          }
         });
       });
     }
