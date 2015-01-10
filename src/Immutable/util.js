@@ -1,6 +1,19 @@
 // TODO circular import
 import { isTuple } from "./ImmutableTuple";
 
+// The built-in NaN auto-coerces
+export function isNaN(x) {
+  return x !== x;
+}
+
+// The built-in isFinite auto-coerces
+export function isFinite(x) {
+  return typeof x === "number" &&
+         x !== Infinity &&
+         x !== -Infinity &&
+         !isNaN(x);
+}
+
 export function isObject(x) {
   return Object(x) === x;
 }

@@ -5,11 +5,32 @@
    @summary Converts a [::Dict], [::Set], [::List], [::Queue],
             [::Stack], [::Tuple], or [::Record] to JSON
    @desc
-     Most things are returned as-is, except [::Dict], [::Set],
-     [::List], [::Queue], [::Stack], [::Tuple], and [::Record]
-     are converted into a specially-marked JSON object.
+     This function has the following behavior:
 
-     This conversion takes `O(n)` time.
+     * JavaScript object literals are deeply copied, with
+       [::toJSON] run on all the values.
+
+       This copying takes `O(n)` time.
+
+     * JavaScript arrays are deeply copied, with [::toJSON]
+       run on all the values.
+
+       This copying takes `O(n)` time.
+
+     * `null`, booleans, strings, and [::UUIDTag] are returned
+       as-is.
+
+     * Numbers are returned as-is, except `NaN`, `Infinity`,
+       and `-Infinity` throw an error.
+
+     * [::Dict], [::Set], [::List], [::Queue], [::Stack],
+       [::Tuple], and [::Record] are converted into
+       specially marked JSON objects, with [::toJSON]
+       run on all the keys/values.
+
+       This conversion takes `O(n)` time.
+
+     * Everything else throws an error.
 
      ----
 

@@ -690,7 +690,19 @@
     }
 
     function $$toJSON$$fromJSON(x) {
-      if ($$util$$isObject(x)) {
+      var type = typeof x;
+
+      if ($$$Immutable$Tag$$isTag(x)) {
+        if ($$$Immutable$Tag$$isUUIDTag(x)) {
+          return x;
+        } else {
+          throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
+        }
+
+      } else if (type === "string" || type === "boolean" || x === null || $$util$$isFinite(x)) {
+        return x;
+
+      } else if ($$util$$isObject(x)) {
         var type = x[$$$Immutable$static$$tag_toJSON_type];
         if (type != null) {
           var register = $$$Immutable$static$$fromJSON_registry[type];
@@ -699,36 +711,64 @@
           } else {
             throw new Error("Cannot handle type " + type);
           }
+
+        } else if (Array.isArray(x)) {
+          return x.map($$toJSON$$fromJSON);
+
+        } else if ($$util$$isJSLiteral(x)) {
+          var out = {};
+          // TODO is Object.keys correct here ?
+          Object.keys(x).forEach(function (key) {
+                // TODO unit tests for this
+            out[$$toJSON$$fromJSON(key)] = $$toJSON$$fromJSON(x[key]);
+          });
+          return out;
+
         } else {
-          return x;
+          throw new Error("Cannot convert from JSON: " + x);
         }
-      } else if ($$$Immutable$Tag$$isTag(x)) {
-        if ($$$Immutable$Tag$$isUUIDTag(x)) {
-          return x;
-        } else {
-          throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
-        }
+
       } else {
-        return x;
+        throw new Error("Cannot convert from JSON: " + x);
       }
     }
 
     function $$toJSON$$toJSON(x) {
-      if ($$util$$isObject(x)) {
-        var fn = x[$$$Immutable$static$$tag_toJSON];
-        if (fn != null) {
-          return fn(x);
-        } else {
-          return x;
-        }
-      } else if ($$$Immutable$Tag$$isTag(x)) {
+      var type = typeof x;
+
+      if ($$$Immutable$Tag$$isTag(x)) {
         if ($$$Immutable$Tag$$isUUIDTag(x)) {
           return x;
         } else {
           throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
         }
-      } else {
+
+      } else if (type === "string" || type === "boolean" || x === null || $$util$$isFinite(x)) {
         return x;
+
+      } else if ($$util$$isObject(x)) {
+        var fn = x[$$$Immutable$static$$tag_toJSON];
+        if (fn != null) {
+          return fn(x);
+
+        } else if (Array.isArray(x)) {
+          return x.map($$toJSON$$toJSON);
+
+        } else if ($$util$$isJSLiteral(x)) {
+          var out = {};
+          // TODO is Object.keys correct here ?
+          Object.keys(x).forEach(function (key) {
+                // TODO unit tests for this
+            out[$$toJSON$$toJSON(key)] = $$toJSON$$toJSON(x[key]);
+          });
+          return out;
+
+        } else {
+          throw new Error("Cannot convert to JSON: " + x);
+        }
+
+      } else {
+        throw new Error("Cannot convert to JSON: " + x);
       }
     }
 
@@ -837,8 +877,13 @@
       return $$hash$$hash(this);
     }
 
+    function $$Base$$_toJSON() {
+      return $$toJSON$$toJSON(this);
+    }
+
     $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
     $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
+    $$Base$$MutableBase.toJSON   = $$Base$$ImmutableBase.toJSON   = $$Base$$_toJSON;
 
     if ($$$Immutable$Tag$$Symbol_iterator !== null) {
       $$Base$$MutableBase[$$$Immutable$Tag$$Symbol_iterator] = $$Base$$ImmutableBase[$$$Immutable$Tag$$Symbol_iterator] = function () {
@@ -938,6 +983,17 @@
         return new $$ImmutableTuple$$ImmutableTuple([]);
       }
     }
+    function $$util$$isNaN(x) {
+      return x !== x;
+    }
+
+    function $$util$$isFinite(x) {
+      return typeof x === "number" &&
+             x !== Infinity &&
+             x !== -Infinity &&
+             !$$util$$isNaN(x);
+    }
+
     function $$util$$isObject(x) {
       return Object(x) === x;
     }
@@ -1060,17 +1116,6 @@
             });
 
             return id;
-
-          /*
-          // TODO slow
-          } else if (Object.isFrozen(x)) {
-            // TODO Object.getOwnPropertySymbols ? Reflect.ownKeys ?
-            // .sort(simpleSort)
-            var items = Object.getOwnPropertyNames(x).map(function (key) {
-              return [key, x[key]];
-            });
-            // .replace(/\n/g, "\n        ")
-            return "(Frozen " + hash(Object.getPrototypeOf(x)) + hash_dict(items, "  ") + ")";*/
 
           } else {
             throw new Error("Cannot use a non-extensible object as a key: " + x);
@@ -5291,43 +5336,131 @@
     });
 
     src$Test$Test$$test("toJSON", function () {
-      var x = {};
-      $$assert$$assert($$toJSON$$toJSON(x) === x);
+      var x = { foo: 1 };
+      $$assert$$assert($$toJSON$$toJSON(x) !== x);
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$toJSON(x), { foo: 1 }));
 
-      var x = [];
-      $$assert$$assert($$toJSON$$toJSON(x) === x);
-
-      var x = new Date();
-      $$assert$$assert($$toJSON$$toJSON(x) === x);
-
-      var x = /foo/;
-      $$assert$$assert($$toJSON$$toJSON(x) === x);
+      var x = [5];
+      $$assert$$assert($$toJSON$$toJSON(x) !== x);
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$toJSON(x), [5]));
 
       $$assert$$assert($$toJSON$$toJSON("foo") === "foo");
       $$assert$$assert($$toJSON$$toJSON(5) === 5);
+      $$assert$$assert($$toJSON$$toJSON(5.5) === 5.5);
+      $$assert$$assert($$toJSON$$toJSON(true) === true);
+      $$assert$$assert($$toJSON$$toJSON(null) === null);
 
-      var x = $$MutableRef$$Ref(5);
-      $$assert$$assert($$toJSON$$toJSON(x) === x);
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$toJSON(new Date(2000, 0, 1));
+      }, "Cannot convert to JSON: Sat Jan 01 2000 00:00:00 GMT-1000 (HST)");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$toJSON(/foo/);
+      }, "Cannot convert to JSON: /foo/");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$toJSON(NaN);
+      }, "Cannot convert to JSON: NaN");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$toJSON(Infinity);
+      }, "Cannot convert to JSON: Infinity");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$toJSON(-Infinity);
+      }, "Cannot convert to JSON: -Infinity");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$toJSON(undefined);
+      }, "Cannot convert to JSON: undefined");
+
+      src$Test$Test$$assert_raises(function () {
+        function Foo() {
+          this.foo = 1;
+        }
+        var x = new Foo();
+        $$toJSON$$toJSON(x);
+      }, "Cannot convert to JSON: [object Object]");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$toJSON($$MutableRef$$Ref(5));
+      }, "Cannot convert to JSON: (Ref 16)");
+
+
+      var x = {
+        test: [$$ImmutableTuple$$Tuple([1, 2, 3]), $$ImmutableRecord$$Record({ foo: 1, bar: 2 })]
+      };
+      $$assert$$assert($$toJSON$$toJSON(x) !== x);
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$toJSON(x), {
+        test: [$$toJSON$$toJSON($$ImmutableTuple$$Tuple([1, 2, 3])), $$toJSON$$toJSON($$ImmutableRecord$$Record({ foo: 1, bar: 2 }))]
+      }));
+
+      $$assert$$assert(JSON.stringify($$ImmutableRecord$$Record({ foo: 1})) === '{"(UUIDTag 89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37)":"Record","keys":["foo"],"values":[1]}');
+      $$assert$$assert(src$Test$Test$$deepEqual(JSON.stringify($$ImmutableRecord$$Record({ foo: 1})),
+                       JSON.stringify($$toJSON$$toJSON($$ImmutableRecord$$Record({ foo: 1 })))));
     });
 
     src$Test$Test$$test("fromJSON", function () {
-      var x = {};
-      $$assert$$assert($$toJSON$$fromJSON(x) === x);
+      var x = { foo: 1 };
+      $$assert$$assert($$toJSON$$fromJSON(x) !== x);
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$fromJSON(x), { foo: 1 }));
 
-      var x = [];
-      $$assert$$assert($$toJSON$$fromJSON(x) === x);
-
-      var x = new Date();
-      $$assert$$assert($$toJSON$$fromJSON(x) === x);
-
-      var x = /foo/;
-      $$assert$$assert($$toJSON$$fromJSON(x) === x);
+      var x = [5];
+      $$assert$$assert($$toJSON$$fromJSON(x) !== x);
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$fromJSON(x), [5]));
 
       $$assert$$assert($$toJSON$$fromJSON("foo") === "foo");
       $$assert$$assert($$toJSON$$fromJSON(5) === 5);
+      $$assert$$assert($$toJSON$$fromJSON(5.5) === 5.5);
+      $$assert$$assert($$toJSON$$fromJSON(true) === true);
+      $$assert$$assert($$toJSON$$fromJSON(null) === null);
 
-      var x = $$MutableRef$$Ref(5);
-      $$assert$$assert($$toJSON$$fromJSON(x) === x);
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$fromJSON(new Date(2000, 0, 1));
+      }, "Cannot convert from JSON: Sat Jan 01 2000 00:00:00 GMT-1000 (HST)");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$fromJSON(/foo/);
+      }, "Cannot convert from JSON: /foo/");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$fromJSON(NaN);
+      }, "Cannot convert from JSON: NaN");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$fromJSON(Infinity);
+      }, "Cannot convert from JSON: Infinity");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$fromJSON(-Infinity);
+      }, "Cannot convert from JSON: -Infinity");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$fromJSON(undefined);
+      }, "Cannot convert from JSON: undefined");
+
+      src$Test$Test$$assert_raises(function () {
+        function Foo() {
+          this.foo = 1;
+        }
+        var x = new Foo();
+        $$toJSON$$fromJSON(x);
+      }, "Cannot convert from JSON: [object Object]");
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$fromJSON($$MutableRef$$Ref(5));
+      }, "Cannot convert from JSON: (Ref 17)");
+
+
+      var x = $$toJSON$$toJSON({
+        test: [$$ImmutableTuple$$Tuple([1, 2, 3]), $$ImmutableRecord$$Record({ foo: 1, bar: 2 })]
+      });
+      $$assert$$assert($$toJSON$$fromJSON(x) !== x);
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$fromJSON(x), {
+        test: [$$ImmutableTuple$$Tuple([1, 2, 3]), $$ImmutableRecord$$Record({ foo: 1, bar: 2 })]
+      }));
+      $$assert$$assert($$$Immutable$Immutable$$equal($$toJSON$$fromJSON(x.test[0]), $$ImmutableTuple$$Tuple([1, 2, 3])));
+      $$assert$$assert($$$Immutable$Immutable$$equal($$toJSON$$fromJSON(x.test[1]), $$ImmutableRecord$$Record({ foo: 1, bar: 2 })));
     });
 
     src$Test$Test$$test("deref", function () {

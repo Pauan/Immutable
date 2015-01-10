@@ -70,17 +70,6 @@ export function hash(x) {
 
         return id;
 
-      /*
-      // TODO slow
-      } else if (Object.isFrozen(x)) {
-        // TODO Object.getOwnPropertySymbols ? Reflect.ownKeys ?
-        // .sort(simpleSort)
-        var items = Object.getOwnPropertyNames(x).map(function (key) {
-          return [key, x[key]];
-        });
-        // .replace(/\n/g, "\n        ")
-        return "(Frozen " + hash(Object.getPrototypeOf(x)) + hash_dict(items, "  ") + ")";*/
-
       } else {
         throw new Error("Cannot use a non-extensible object as a key: " + x);
       }

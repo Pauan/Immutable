@@ -1,10 +1,22 @@
 import { isTag, isUUIDTag } from "./Tag";
-import { isObject, destructure_pair } from "./util";
+import { isObject, isJSLiteral, isFinite, destructure_pair } from "./util";
 import { each } from "./iter";
 import { tag_toJSON, tag_toJSON_type, fromJSON_registry } from "./static";
 
 export function fromJSON(x) {
-  if (isObject(x)) {
+  var type = typeof x;
+
+  if (isTag(x)) {
+    if (isUUIDTag(x)) {
+      return x;
+    } else {
+      throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
+    }
+
+  } else if (type === "string" || type === "boolean" || x === null || isFinite(x)) {
+    return x;
+
+  } else if (isObject(x)) {
     var type = x[tag_toJSON_type];
     if (type != null) {
       var register = fromJSON_registry[type];
@@ -13,36 +25,64 @@ export function fromJSON(x) {
       } else {
         throw new Error("Cannot handle type " + type);
       }
+
+    } else if (Array.isArray(x)) {
+      return x.map(fromJSON);
+
+    } else if (isJSLiteral(x)) {
+      var out = {};
+      // TODO is Object.keys correct here ?
+      Object.keys(x).forEach(function (key) {
+            // TODO unit tests for this
+        out[fromJSON(key)] = fromJSON(x[key]);
+      });
+      return out;
+
     } else {
-      return x;
+      throw new Error("Cannot convert from JSON: " + x);
     }
-  } else if (isTag(x)) {
-    if (isUUIDTag(x)) {
-      return x;
-    } else {
-      throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
-    }
+
   } else {
-    return x;
+    throw new Error("Cannot convert from JSON: " + x);
   }
 }
 
 export function toJSON(x) {
-  if (isObject(x)) {
-    var fn = x[tag_toJSON];
-    if (fn != null) {
-      return fn(x);
-    } else {
-      return x;
-    }
-  } else if (isTag(x)) {
+  var type = typeof x;
+
+  if (isTag(x)) {
     if (isUUIDTag(x)) {
       return x;
     } else {
       throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
     }
-  } else {
+
+  } else if (type === "string" || type === "boolean" || x === null || isFinite(x)) {
     return x;
+
+  } else if (isObject(x)) {
+    var fn = x[tag_toJSON];
+    if (fn != null) {
+      return fn(x);
+
+    } else if (Array.isArray(x)) {
+      return x.map(toJSON);
+
+    } else if (isJSLiteral(x)) {
+      var out = {};
+      // TODO is Object.keys correct here ?
+      Object.keys(x).forEach(function (key) {
+            // TODO unit tests for this
+        out[toJSON(key)] = toJSON(x[key]);
+      });
+      return out;
+
+    } else {
+      throw new Error("Cannot convert to JSON: " + x);
+    }
+
+  } else {
+    throw new Error("Cannot convert to JSON: " + x);
   }
 }
 

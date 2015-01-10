@@ -6,11 +6,32 @@
             [::Set], [::List], [::Queue], [::Stack], [::Tuple],
             or [::Record]
    @desc
-     Most things are returned as-is, except specially marked
-     JSON is converted into a [::Dict], [::Set], [::List],
-     [::Queue], [::Stack], [::Tuple], or [::Record].
+     This function has the following behavior:
 
-     This conversion takes `O(n)` time.
+     * JavaScript object literals are deeply copied, with
+       [::fromJSON] run on all the values.
+
+       This copying takes `O(n)` time.
+
+     * JavaScript arrays are deeply copied, with [::fromJSON]
+       run on all the values.
+
+       This copying takes `O(n)` time.
+
+     * `null`, booleans, strings, and [::UUIDTag] are returned
+       as-is.
+
+     * Numbers are returned as-is, except `NaN`, `Infinity`,
+       and `-Infinity` throw an error.
+
+     * Specially marked JSON objects are converted into a
+       [::Dict], [::Set], [::List], [::Queue], [::Stack],
+       [::Tuple], or [::Record], with [::fromJSON]
+       run on all the keys/values.
+
+       This conversion takes `O(n)` time.
+
+     * Everything else throws an error.
 
      ----
 

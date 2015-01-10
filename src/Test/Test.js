@@ -2544,43 +2544,131 @@ test("fromJS", function () {
 });
 
 test("toJSON", function () {
-  var x = {};
-  assert(toJSON(x) === x);
+  var x = { foo: 1 };
+  assert(toJSON(x) !== x);
+  assert(deepEqual(toJSON(x), { foo: 1 }));
 
-  var x = [];
-  assert(toJSON(x) === x);
-
-  var x = new Date();
-  assert(toJSON(x) === x);
-
-  var x = /foo/;
-  assert(toJSON(x) === x);
+  var x = [5];
+  assert(toJSON(x) !== x);
+  assert(deepEqual(toJSON(x), [5]));
 
   assert(toJSON("foo") === "foo");
   assert(toJSON(5) === 5);
+  assert(toJSON(5.5) === 5.5);
+  assert(toJSON(true) === true);
+  assert(toJSON(null) === null);
 
-  var x = Ref(5);
-  assert(toJSON(x) === x);
+  assert_raises(function () {
+    toJSON(new Date(2000, 0, 1));
+  }, "Cannot convert to JSON: Sat Jan 01 2000 00:00:00 GMT-1000 (HST)");
+
+  assert_raises(function () {
+    toJSON(/foo/);
+  }, "Cannot convert to JSON: /foo/");
+
+  assert_raises(function () {
+    toJSON(NaN);
+  }, "Cannot convert to JSON: NaN");
+
+  assert_raises(function () {
+    toJSON(Infinity);
+  }, "Cannot convert to JSON: Infinity");
+
+  assert_raises(function () {
+    toJSON(-Infinity);
+  }, "Cannot convert to JSON: -Infinity");
+
+  assert_raises(function () {
+    toJSON(undefined);
+  }, "Cannot convert to JSON: undefined");
+
+  assert_raises(function () {
+    function Foo() {
+      this.foo = 1;
+    }
+    var x = new Foo();
+    toJSON(x);
+  }, "Cannot convert to JSON: [object Object]");
+
+  assert_raises(function () {
+    toJSON(Ref(5));
+  }, "Cannot convert to JSON: (Ref 16)");
+
+
+  var x = {
+    test: [Tuple([1, 2, 3]), Record({ foo: 1, bar: 2 })]
+  };
+  assert(toJSON(x) !== x);
+  assert(deepEqual(toJSON(x), {
+    test: [toJSON(Tuple([1, 2, 3])), toJSON(Record({ foo: 1, bar: 2 }))]
+  }));
+
+  assert(JSON.stringify(Record({ foo: 1})) === '{"(UUIDTag 89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37)":"Record","keys":["foo"],"values":[1]}');
+  assert(deepEqual(JSON.stringify(Record({ foo: 1})),
+                   JSON.stringify(toJSON(Record({ foo: 1 })))));
 });
 
 test("fromJSON", function () {
-  var x = {};
-  assert(fromJSON(x) === x);
+  var x = { foo: 1 };
+  assert(fromJSON(x) !== x);
+  assert(deepEqual(fromJSON(x), { foo: 1 }));
 
-  var x = [];
-  assert(fromJSON(x) === x);
-
-  var x = new Date();
-  assert(fromJSON(x) === x);
-
-  var x = /foo/;
-  assert(fromJSON(x) === x);
+  var x = [5];
+  assert(fromJSON(x) !== x);
+  assert(deepEqual(fromJSON(x), [5]));
 
   assert(fromJSON("foo") === "foo");
   assert(fromJSON(5) === 5);
+  assert(fromJSON(5.5) === 5.5);
+  assert(fromJSON(true) === true);
+  assert(fromJSON(null) === null);
 
-  var x = Ref(5);
-  assert(fromJSON(x) === x);
+  assert_raises(function () {
+    fromJSON(new Date(2000, 0, 1));
+  }, "Cannot convert from JSON: Sat Jan 01 2000 00:00:00 GMT-1000 (HST)");
+
+  assert_raises(function () {
+    fromJSON(/foo/);
+  }, "Cannot convert from JSON: /foo/");
+
+  assert_raises(function () {
+    fromJSON(NaN);
+  }, "Cannot convert from JSON: NaN");
+
+  assert_raises(function () {
+    fromJSON(Infinity);
+  }, "Cannot convert from JSON: Infinity");
+
+  assert_raises(function () {
+    fromJSON(-Infinity);
+  }, "Cannot convert from JSON: -Infinity");
+
+  assert_raises(function () {
+    fromJSON(undefined);
+  }, "Cannot convert from JSON: undefined");
+
+  assert_raises(function () {
+    function Foo() {
+      this.foo = 1;
+    }
+    var x = new Foo();
+    fromJSON(x);
+  }, "Cannot convert from JSON: [object Object]");
+
+  assert_raises(function () {
+    fromJSON(Ref(5));
+  }, "Cannot convert from JSON: (Ref 17)");
+
+
+  var x = toJSON({
+    test: [Tuple([1, 2, 3]), Record({ foo: 1, bar: 2 })]
+  });
+  assert(fromJSON(x) !== x);
+  assert(deepEqual(fromJSON(x), {
+    test: [Tuple([1, 2, 3]), Record({ foo: 1, bar: 2 })]
+  }));
+  assert(equal(fromJSON(x.test[0]), Tuple([1, 2, 3])));
+  assert(equal(fromJSON(x.test[1]), Record({ foo: 1, bar: 2 })));
 });
 
 test("deref", function () {

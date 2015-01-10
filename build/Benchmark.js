@@ -788,7 +788,19 @@
     }
 
     function $$toJSON$$fromJSON(x) {
-      if ($$util$$isObject(x)) {
+      var type = typeof x;
+
+      if ($$Tag$$isTag(x)) {
+        if ($$Tag$$isUUIDTag(x)) {
+          return x;
+        } else {
+          throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
+        }
+
+      } else if (type === "string" || type === "boolean" || x === null || $$util$$isFinite(x)) {
+        return x;
+
+      } else if ($$util$$isObject(x)) {
         var type = x[$$$Immutable$static$$tag_toJSON_type];
         if (type != null) {
           var register = $$$Immutable$static$$fromJSON_registry[type];
@@ -797,36 +809,64 @@
           } else {
             throw new Error("Cannot handle type " + type);
           }
+
+        } else if (Array.isArray(x)) {
+          return x.map($$toJSON$$fromJSON);
+
+        } else if ($$util$$isJSLiteral(x)) {
+          var out = {};
+          // TODO is Object.keys correct here ?
+          Object.keys(x).forEach(function (key) {
+                // TODO unit tests for this
+            out[$$toJSON$$fromJSON(key)] = $$toJSON$$fromJSON(x[key]);
+          });
+          return out;
+
         } else {
-          return x;
+          throw new Error("Cannot convert from JSON: " + x);
         }
-      } else if ($$Tag$$isTag(x)) {
-        if ($$Tag$$isUUIDTag(x)) {
-          return x;
-        } else {
-          throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
-        }
+
       } else {
-        return x;
+        throw new Error("Cannot convert from JSON: " + x);
       }
     }
 
     function $$toJSON$$toJSON(x) {
-      if ($$util$$isObject(x)) {
-        var fn = x[$$$Immutable$static$$tag_toJSON];
-        if (fn != null) {
-          return fn(x);
-        } else {
-          return x;
-        }
-      } else if ($$Tag$$isTag(x)) {
+      var type = typeof x;
+
+      if ($$Tag$$isTag(x)) {
         if ($$Tag$$isUUIDTag(x)) {
           return x;
         } else {
           throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
         }
-      } else {
+
+      } else if (type === "string" || type === "boolean" || x === null || $$util$$isFinite(x)) {
         return x;
+
+      } else if ($$util$$isObject(x)) {
+        var fn = x[$$$Immutable$static$$tag_toJSON];
+        if (fn != null) {
+          return fn(x);
+
+        } else if (Array.isArray(x)) {
+          return x.map($$toJSON$$toJSON);
+
+        } else if ($$util$$isJSLiteral(x)) {
+          var out = {};
+          // TODO is Object.keys correct here ?
+          Object.keys(x).forEach(function (key) {
+                // TODO unit tests for this
+            out[$$toJSON$$toJSON(key)] = $$toJSON$$toJSON(x[key]);
+          });
+          return out;
+
+        } else {
+          throw new Error("Cannot convert to JSON: " + x);
+        }
+
+      } else {
+        throw new Error("Cannot convert to JSON: " + x);
       }
     }
 
@@ -935,8 +975,13 @@
       return $$hash$$hash(this);
     }
 
+    function $$Base$$_toJSON() {
+      return $$toJSON$$toJSON(this);
+    }
+
     $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
     $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
+    $$Base$$MutableBase.toJSON   = $$Base$$ImmutableBase.toJSON   = $$Base$$_toJSON;
 
     if ($$Tag$$Symbol_iterator !== null) {
       $$Base$$MutableBase[$$Tag$$Symbol_iterator] = $$Base$$ImmutableBase[$$Tag$$Symbol_iterator] = function () {
@@ -1036,6 +1081,17 @@
         return new $$ImmutableTuple$$ImmutableTuple([]);
       }
     }
+    function $$util$$isNaN(x) {
+      return x !== x;
+    }
+
+    function $$util$$isFinite(x) {
+      return typeof x === "number" &&
+             x !== Infinity &&
+             x !== -Infinity &&
+             !$$util$$isNaN(x);
+    }
+
     function $$util$$isObject(x) {
       return Object(x) === x;
     }
@@ -1158,17 +1214,6 @@
             });
 
             return id;
-
-          /*
-          // TODO slow
-          } else if (Object.isFrozen(x)) {
-            // TODO Object.getOwnPropertySymbols ? Reflect.ownKeys ?
-            // .sort(simpleSort)
-            var items = Object.getOwnPropertyNames(x).map(function (key) {
-              return [key, x[key]];
-            });
-            // .replace(/\n/g, "\n        ")
-            return "(Frozen " + hash(Object.getPrototypeOf(x)) + hash_dict(items, "  ") + ")";*/
 
           } else {
             throw new Error("Cannot use a non-extensible object as a key: " + x);
