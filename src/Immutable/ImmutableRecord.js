@@ -4,9 +4,9 @@ import { toJSON_object, fromJSON_object } from "./toJSON";
 import { toJS_object } from "./toJS";
 import { ImmutableBase } from "./Base";
 import { unsafe_Tuple } from "./ImmutableTuple";
-import { iter_object, map, iter, each } from "./iter";
+import { iter_object, map, iter, each, toArray } from "./iter";
 import { destructure_pair } from "./util";
-import { sorted_merge } from "./Sorted";
+import { simpleSort, sorted_merge } from "./Sorted";
 import { tag_hash, tag_toJSON, fromJSON_registry, tag_toJS, tag_iter } from "./static";
 
 function checkKey(key) {
@@ -107,17 +107,29 @@ export function Record(obj) {
       return obj;
 
     } else {
-      each(iter_object(obj), function (_array) {
-        destructure_pair(_array, function (key, value) {
+      var mapped = map(iter_object(obj), function (_array) {
+        return destructure_pair(_array, function (key, value) {
           checkKey(key);
-
-          var index = keys[key];
-          if (index == null) {
-            keys[key] = values.push(value) - 1;
-          } else {
-            values[index] = value;
-          }
+          return [key, value];
         });
+      });
+
+      // TODO "sort" function in "iter.js" ?
+      // TODO can this be made any faster/more efficient ?
+      var sorted = toArray(mapped).sort(function (x, y) {
+        return simpleSort(x[0], y[0]);
+      });
+
+      each(sorted, function (_array) {
+        var key   = _array[0];
+        var value = _array[1];
+
+        var index = keys[key];
+        if (index == null) {
+          keys[key] = values.push(value) - 1;
+        } else {
+          values[index] = value;
+        }
       });
     }
   }

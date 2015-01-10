@@ -16,11 +16,17 @@
      If `obj` is a JavaScript literal like `{ foo: 1 }`,
      then the keys/values will be added to the record.
 
-     In either case, the keys must be strings or [::Tag],
-     and they will be in the same order as `obj`.
+     In either case, the keys must be strings or [::Tag].
 
-     This takes `O(n)` time, unless `obj` is already
-     a [::Record], in which case it takes `O(1)` time.
+     This takes `O(n + (n * log2(n)) + n)` time, unless `obj`
+     is already a [::Record], in which case it takes `O(1)`
+     time.
+
+     ----
+
+     You *should not* rely upon the order of the keys in
+     a [::Record]. If you need a specific key order, use
+     a [::SortedDict] instead.
 
    @function Record.get
    @param {Any} [key] The key to search for in the record

@@ -2609,17 +2609,29 @@
           return obj;
 
         } else {
-          $$iter$$each($$iter$$iter_object(obj), function (_array) {
-            $$util$$destructure_pair(_array, function (key, value) {
+          var mapped = $$iter$$map($$iter$$iter_object(obj), function (_array) {
+            return $$util$$destructure_pair(_array, function (key, value) {
               $$ImmutableRecord$$checkKey(key);
-
-              var index = keys[key];
-              if (index == null) {
-                keys[key] = values.push(value) - 1;
-              } else {
-                values[index] = value;
-              }
+              return [key, value];
             });
+          });
+
+          // TODO "sort" function in "iter.js" ?
+          // TODO can this be made any faster/more efficient ?
+          var sorted = $$iter$$toArray(mapped).sort(function (x, y) {
+            return $$Sorted$$simpleSort(x[0], y[0]);
+          });
+
+          $$iter$$each(sorted, function (_array) {
+            var key   = _array[0];
+            var value = _array[1];
+
+            var index = keys[key];
+            if (index == null) {
+              keys[key] = values.push(value) - 1;
+            } else {
+              values[index] = value;
+            }
           });
         }
       }
@@ -2958,13 +2970,13 @@
       $$assert$$assert(src$Test$Test$$deepEqual(a, input));
     }
 
-    function src$Test$Test$$test_each_dict(constructor, input) {
+    function src$Test$Test$$test_each_dict(input, expected) {
       var a = [];
-      $$iter$$each(constructor(input), function (x) {
+      $$iter$$each(input, function (x) {
         $$assert$$assert($$ImmutableTuple$$isTuple(x));
         a.push(x.values);
       });
-      $$assert$$assert(src$Test$Test$$deepEqual(a, input));
+      $$assert$$assert(src$Test$Test$$deepEqual(a, expected));
     }
 
 
@@ -3499,10 +3511,10 @@
       });
 
       src$Test$Test$$test("each", function () {
-        src$Test$Test$$test_each_dict($$ImmutableDict$$Dict, []);
+        src$Test$Test$$test_each_dict($$ImmutableDict$$Dict([]), []);
 
         var corge = $$ImmutableDict$$Dict({ corge: 3 });
-        src$Test$Test$$test_each_dict($$ImmutableDict$$Dict, [["bar", 2], ["foo", 1], ["qux", corge]]);
+        src$Test$Test$$test_each_dict($$ImmutableDict$$Dict([["foo", 1], ["qux", corge], ["bar", 2]]), [["bar", 2], ["foo", 1], ["qux", corge]]);
       });
 
       src$Test$Test$$test("toString", function () {
@@ -4713,14 +4725,14 @@
         $$assert$$assert("" + Foo === "(Record\n  \"foo\" = 1)");
         $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: 2 }) === "(Record\n  \"foo\" = 2)");
         $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: 1 }) === "(Record\n  \"foo\" = 1)");
-        $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: 1, bar: 2 }) === "(Record\n  \"foo\" = 1\n  \"bar\" = 2)");
-        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foo\nbar\nqux": 1, bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = 1\n  \"bar\" = 2)");
-        $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: $$ImmutableRecord$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
-        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foo\nbar\nqux": $$ImmutableRecord$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: 1, bar: 2 }) === "(Record\n  \"bar\" = 2\n  \"foo\" = 1)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foo\nbar\nqux": 1, bar: 2 }) === "(Record\n  \"bar\" = 2\n  \"foo\n   bar\n   qux\" = 1)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ foo: $$ImmutableRecord$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"bar\" = 2\n  \"foo\" = (Record\n            \"qux\" = 3))");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foo\nbar\nqux": $$ImmutableRecord$$Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"bar\" = 2\n  \"foo\n   bar\n   qux\" = (Record\n            \"qux\" = 3))");
 
-        $$assert$$assert("" + $$ImmutableRecord$$Record({ foobarquxcorgenou: 1, bar: 2 }) === "(Record\n  \"foobarquxcorgenou\" = 1\n  \"bar\"               = 2)");
-        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Record\n  \"foobar\n   quxcorgenou\" = 1\n  \"bar\"         = 2)");
-        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Record\n  \"foo\n   bar\n   qux\"            = 1\n  \"barquxcorgenou\" = 2)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ foobarquxcorgenou: 1, bar: 2 }) === "(Record\n  \"bar\"               = 2\n  \"foobarquxcorgenou\" = 1)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Record\n  \"bar\"         = 2\n  \"foobar\n   quxcorgenou\" = 1)");
+        $$assert$$assert("" + $$ImmutableRecord$$Record({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Record\n  \"barquxcorgenou\" = 2\n  \"foo\n   bar\n   qux\"            = 1)");
       });
 
       src$Test$Test$$test("init", function () {
@@ -4743,7 +4755,7 @@
           $$assert$$assert($$ImmutableTuple$$isTuple(x));
           return $$iter$$toArray(x);
         });
-        $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["bar", 1], ["foo", 3], ["qux", 4], ["corge", 5]]));
+        $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["bar", 1], ["corge", 5], ["foo", 3], ["qux", 4]]));
 
         src$Test$Test$$verify_record($$ImmutableRecord$$Record([$$ImmutableTuple$$Tuple(["foo", 2])]), { foo: 2 });
 
@@ -4933,6 +4945,8 @@
         $$assert$$assert($$$Immutable$Immutable$$equal(Foo, $$ImmutableRecord$$Record({ foo: 1 })));
         $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableRecord$$Record({ foo: 2 }), $$ImmutableRecord$$Record({ foo: 2 })));
         $$assert$$assert(!$$$Immutable$Immutable$$equal($$ImmutableRecord$$Record({ foo: 2 }), $$ImmutableRecord$$Record({ foo: 3 })));
+
+        $$assert$$assert($$$Immutable$Immutable$$equal($$ImmutableRecord$$Record([["foo", 1], ["bar", 2]]), $$ImmutableRecord$$Record([["bar", 2], ["foo", 1]])));
       });
 
       src$Test$Test$$test("toJS", function () {
@@ -4949,13 +4963,13 @@
       });
 
       src$Test$Test$$test("each", function () {
-        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record, []);
-        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record, [["foo", 2]]);
-        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record, [["foo", 2], ["bar", 3]]);
-        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record, [["bar", 3], ["foo", 2]]);
+        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([]), []);
+        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([["foo", 2]]), [["foo", 2]]);
+        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([["foo", 2], ["bar", 3]]), [["bar", 3], ["foo", 2]]);
+        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([["bar", 3], ["foo", 2]]), [["bar", 3], ["foo", 2]]);
 
         var corge = $$ImmutableRecord$$Record({ corge: 3 });
-        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record, [["foo", 1], ["qux", corge], ["bar", 2]]);
+        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([["foo", 1], ["qux", corge], ["bar", 2]]), [["bar", 2], ["foo", 1], ["qux", corge]]);
       });
 
       // TODO
@@ -5195,7 +5209,7 @@
         $$assert$$assert(x.get(uuid_tag1) === 3);
         $$assert$$assert(x.get(uuid_tag2) === 4);
 
-        $$assert$$assert("" + x === "(Record\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4)");
+        $$assert$$assert("" + x === "(Record\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3)");
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(x), {
           "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)": 1,
           "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)": 2,
@@ -5526,7 +5540,7 @@
         a.push($$toJS$$toJS(x));
       });
 
-      $$assert$$assert(src$Test$Test$$deepEqual(a, [["foo", 1], ["bar", 2]]));
+      $$assert$$assert(src$Test$Test$$deepEqual(a, [["bar", 2], ["foo", 1]]));
     });
 
     src$Test$Test$$test("map", function () {
@@ -5544,7 +5558,7 @@
 
       var x = $$iter$$map($$ImmutableRecord$$Record([["foo", 1], ["bar", 2]]), function (x) { return [x.get(0), x.get(1) + 10] });
       $$assert$$assert(!Array.isArray(x));
-      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["foo", 11], ["bar", 12]]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["bar", 12], ["foo", 11]]));
     });
 
     src$Test$Test$$test("keep", function () {
@@ -5659,12 +5673,12 @@
       $$assert$$assert(!Array.isArray(x));
       $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [3, 2, 1]));
 
-      var x = $$iter$$reverse($$iter$$map($$ImmutableRecord$$Record([["foo", 1], ["bar", 2]]), function (x) {
+      var x = $$iter$$reverse($$iter$$map($$ImmutableRecord$$Record([["bar", 2], ["foo", 1]]), function (x) {
         $$assert$$assert($$ImmutableTuple$$isTuple(x));
         return $$iter$$toArray(x);
       }));
       $$assert$$assert(!Array.isArray(x));
-      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["bar", 2], ["foo", 1]]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["foo", 1], ["bar", 2]]));
     });
 
     src$Test$Test$$test("foldl", function () {
@@ -5795,7 +5809,7 @@
         $$assert$$assert($$ImmutableTuple$$isTuple(x));
         return $$iter$$toArray(x);
       });
-      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["foo", 1], ["bar", 2]]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [["bar", 2], ["foo", 1]]));
     });
 
     src$Test$Test$$test("take", function () {

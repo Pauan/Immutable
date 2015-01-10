@@ -17,8 +17,9 @@
 
      ----
 
-     The keys are in unsorted order, so you cannot rely upon
-     the order. If you need to maintain key order, use a [::SortedDict].
+     You *should not* rely upon the order of the keys in
+     a [::Dict]. If you need a specific key order, use
+     a [::SortedDict] instead.
 
      Mutable objects can be used as keys, and they are treated as
      equal only if they are exactly the same object:

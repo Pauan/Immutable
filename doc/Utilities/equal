@@ -99,7 +99,7 @@
      ----
 
      [::Record] are treated as equal if they have
-     the same keys/values, in the same order:
+     the same keys/values:
 
          equal(Record({ foo: 1 }),
                Record({ foo: 1 })); // true

@@ -166,13 +166,13 @@ function test_each(constructor, input) {
   assert(deepEqual(a, input));
 }
 
-function test_each_dict(constructor, input) {
+function test_each_dict(input, expected) {
   var a = [];
-  each(constructor(input), function (x) {
+  each(input, function (x) {
     assert(isTuple(x));
     a.push(x.values);
   });
-  assert(deepEqual(a, input));
+  assert(deepEqual(a, expected));
 }
 
 
@@ -707,10 +707,10 @@ context("Dict", function () {
   });
 
   test("each", function () {
-    test_each_dict(Dict, []);
+    test_each_dict(Dict([]), []);
 
     var corge = Dict({ corge: 3 });
-    test_each_dict(Dict, [["bar", 2], ["foo", 1], ["qux", corge]]);
+    test_each_dict(Dict([["foo", 1], ["qux", corge], ["bar", 2]]), [["bar", 2], ["foo", 1], ["qux", corge]]);
   });
 
   test("toString", function () {
@@ -1921,14 +1921,14 @@ context("Record", function () {
     assert("" + Foo === "(Record\n  \"foo\" = 1)");
     assert("" + Record({ foo: 2 }) === "(Record\n  \"foo\" = 2)");
     assert("" + Record({ foo: 1 }) === "(Record\n  \"foo\" = 1)");
-    assert("" + Record({ foo: 1, bar: 2 }) === "(Record\n  \"foo\" = 1\n  \"bar\" = 2)");
-    assert("" + Record({ "foo\nbar\nqux": 1, bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = 1\n  \"bar\" = 2)");
-    assert("" + Record({ foo: Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
-    assert("" + Record({ "foo\nbar\nqux": Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"foo\n   bar\n   qux\" = (Record\n            \"qux\" = 3)\n  \"bar\" = 2)");
+    assert("" + Record({ foo: 1, bar: 2 }) === "(Record\n  \"bar\" = 2\n  \"foo\" = 1)");
+    assert("" + Record({ "foo\nbar\nqux": 1, bar: 2 }) === "(Record\n  \"bar\" = 2\n  \"foo\n   bar\n   qux\" = 1)");
+    assert("" + Record({ foo: Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"bar\" = 2\n  \"foo\" = (Record\n            \"qux\" = 3))");
+    assert("" + Record({ "foo\nbar\nqux": Record({ qux: 3 }), bar: 2 }) === "(Record\n  \"bar\" = 2\n  \"foo\n   bar\n   qux\" = (Record\n            \"qux\" = 3))");
 
-    assert("" + Record({ foobarquxcorgenou: 1, bar: 2 }) === "(Record\n  \"foobarquxcorgenou\" = 1\n  \"bar\"               = 2)");
-    assert("" + Record({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Record\n  \"foobar\n   quxcorgenou\" = 1\n  \"bar\"         = 2)");
-    assert("" + Record({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Record\n  \"foo\n   bar\n   qux\"            = 1\n  \"barquxcorgenou\" = 2)");
+    assert("" + Record({ foobarquxcorgenou: 1, bar: 2 }) === "(Record\n  \"bar\"               = 2\n  \"foobarquxcorgenou\" = 1)");
+    assert("" + Record({ "foobar\nquxcorgenou": 1, bar: 2 }) === "(Record\n  \"bar\"         = 2\n  \"foobar\n   quxcorgenou\" = 1)");
+    assert("" + Record({ "foo\nbar\nqux": 1, "barquxcorgenou": 2 }) === "(Record\n  \"barquxcorgenou\" = 2\n  \"foo\n   bar\n   qux\"            = 1)");
   });
 
   test("init", function () {
@@ -1951,7 +1951,7 @@ context("Record", function () {
       assert(isTuple(x));
       return toArray(x);
     });
-    assert(deepEqual(toArray(x), [["bar", 1], ["foo", 3], ["qux", 4], ["corge", 5]]));
+    assert(deepEqual(toArray(x), [["bar", 1], ["corge", 5], ["foo", 3], ["qux", 4]]));
 
     verify_record(Record([Tuple(["foo", 2])]), { foo: 2 });
 
@@ -2141,6 +2141,8 @@ context("Record", function () {
     assert(equal(Foo, Record({ foo: 1 })));
     assert(equal(Record({ foo: 2 }), Record({ foo: 2 })));
     assert(!equal(Record({ foo: 2 }), Record({ foo: 3 })));
+
+    assert(equal(Record([["foo", 1], ["bar", 2]]), Record([["bar", 2], ["foo", 1]])));
   });
 
   test("toJS", function () {
@@ -2157,13 +2159,13 @@ context("Record", function () {
   });
 
   test("each", function () {
-    test_each_dict(Record, []);
-    test_each_dict(Record, [["foo", 2]]);
-    test_each_dict(Record, [["foo", 2], ["bar", 3]]);
-    test_each_dict(Record, [["bar", 3], ["foo", 2]]);
+    test_each_dict(Record([]), []);
+    test_each_dict(Record([["foo", 2]]), [["foo", 2]]);
+    test_each_dict(Record([["foo", 2], ["bar", 3]]), [["bar", 3], ["foo", 2]]);
+    test_each_dict(Record([["bar", 3], ["foo", 2]]), [["bar", 3], ["foo", 2]]);
 
     var corge = Record({ corge: 3 });
-    test_each_dict(Record, [["foo", 1], ["qux", corge], ["bar", 2]]);
+    test_each_dict(Record([["foo", 1], ["qux", corge], ["bar", 2]]), [["bar", 2], ["foo", 1], ["qux", corge]]);
   });
 
   // TODO
@@ -2403,7 +2405,7 @@ context("Tag", function () {
     assert(x.get(uuid_tag1) === 3);
     assert(x.get(uuid_tag2) === 4);
 
-    assert("" + x === "(Record\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4)");
+    assert("" + x === "(Record\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)   = 1\n  (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)   = 2\n  (UUIDTag 2a95bab0-ae96-4f07-b7a5-227fe3d394d4) = 4\n  (UUIDTag dc353abd-d920-4c17-b911-55bd1c78c06f) = 3)");
     assert(deepEqual(toJS(x), {
       "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 1)": 1,
       "(Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 2)": 2,
@@ -2734,7 +2736,7 @@ test("each", function () {
     a.push(toJS(x));
   });
 
-  assert(deepEqual(a, [["foo", 1], ["bar", 2]]));
+  assert(deepEqual(a, [["bar", 2], ["foo", 1]]));
 });
 
 test("map", function () {
@@ -2752,7 +2754,7 @@ test("map", function () {
 
   var x = map(Record([["foo", 1], ["bar", 2]]), function (x) { return [x.get(0), x.get(1) + 10] });
   assert(!Array.isArray(x));
-  assert(deepEqual(toArray(x), [["foo", 11], ["bar", 12]]));
+  assert(deepEqual(toArray(x), [["bar", 12], ["foo", 11]]));
 });
 
 test("keep", function () {
@@ -2867,12 +2869,12 @@ test("reverse", function () {
   assert(!Array.isArray(x));
   assert(deepEqual(toArray(x), [3, 2, 1]));
 
-  var x = reverse(map(Record([["foo", 1], ["bar", 2]]), function (x) {
+  var x = reverse(map(Record([["bar", 2], ["foo", 1]]), function (x) {
     assert(isTuple(x));
     return toArray(x);
   }));
   assert(!Array.isArray(x));
-  assert(deepEqual(toArray(x), [["bar", 2], ["foo", 1]]));
+  assert(deepEqual(toArray(x), [["foo", 1], ["bar", 2]]));
 });
 
 test("foldl", function () {
@@ -3003,7 +3005,7 @@ test("toArray", function () {
     assert(isTuple(x));
     return toArray(x);
   });
-  assert(deepEqual(toArray(x), [["foo", 1], ["bar", 2]]));
+  assert(deepEqual(toArray(x), [["bar", 2], ["foo", 1]]));
 });
 
 test("take", function () {

@@ -2707,17 +2707,29 @@
           return obj;
 
         } else {
-          $$iter$$each($$iter$$iter_object(obj), function (_array) {
-            $$util$$destructure_pair(_array, function (key, value) {
+          var mapped = $$iter$$map($$iter$$iter_object(obj), function (_array) {
+            return $$util$$destructure_pair(_array, function (key, value) {
               $$ImmutableRecord$$checkKey(key);
-
-              var index = keys[key];
-              if (index == null) {
-                keys[key] = values.push(value) - 1;
-              } else {
-                values[index] = value;
-              }
+              return [key, value];
             });
+          });
+
+          // TODO "sort" function in "iter.js" ?
+          // TODO can this be made any faster/more efficient ?
+          var sorted = $$iter$$toArray(mapped).sort(function (x, y) {
+            return $$Sorted$$simpleSort(x[0], y[0]);
+          });
+
+          $$iter$$each(sorted, function (_array) {
+            var key   = _array[0];
+            var value = _array[1];
+
+            var index = keys[key];
+            if (index == null) {
+              keys[key] = values.push(value) - 1;
+            } else {
+              values[index] = value;
+            }
           });
         }
       }
