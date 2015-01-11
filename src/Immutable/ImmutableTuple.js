@@ -60,6 +60,13 @@ ImmutableTuple.prototype.modify = function (index, f) {
   }
 };
 
+// TODO a bit of code duplication
+ImmutableTuple.prototype.set = function (index, value) {
+  return this.modify(index, function () {
+    return value;
+  });
+};
+
 export function isTuple(x) {
   return x instanceof ImmutableTuple;
 }

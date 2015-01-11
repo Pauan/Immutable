@@ -1549,6 +1549,13 @@
       }
     };
 
+    // TODO a bit of code duplication
+    $$ImmutableList$$ImmutableList.prototype.set = function (index, value) {
+      return this.modify(index, function () {
+        return value;
+      });
+    };
+
     $$ImmutableList$$ImmutableList.prototype.slice = function (from, to) {
       var len = this.size();
 
@@ -2092,6 +2099,13 @@
       } else {
         throw new Error("Index " + index + " is not valid");
       }
+    };
+
+    // TODO a bit of code duplication
+    $$ImmutableTuple$$ImmutableTuple.prototype.set = function (index, value) {
+      return this.modify(index, function () {
+        return value;
+      });
     };
 
     function $$ImmutableTuple$$isTuple(x) {

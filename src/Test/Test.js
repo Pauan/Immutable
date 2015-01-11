@@ -1114,6 +1114,21 @@ context("List", function () {
     assert(five_list.get(-2, 50) === 4);
   });
 
+  test("set", function () {
+    assert_raises(function () {
+      empty_list.set(0, 50);
+    }, "Index 0 is not valid");
+
+    assert_raises(function () {
+      empty_list.set(-1, 50);
+    }, "Index -1 is not valid");
+
+    verify_list(five_list.set(0, 50), [50, 2, 3, 4, 5]);
+    verify_list(five_list.set(4, 50), [1, 2, 3, 4, 50]);
+    verify_list(five_list.set(-1, 50), [1, 2, 3, 4, 50]);
+    verify_list(five_list.set(-2, 50), [1, 2, 3, 50, 5]);
+  });
+
   test("insert", function () {
     assert_raises(function () {
       empty_list.insert(5, 1);
@@ -1315,6 +1330,9 @@ context("List", function () {
     assert(five_list.slice(1, 5) !== five_list);
     assert(five_list.slice(0, 4) !== five_list);
 
+    assert(five_list.set(0, 1) === five_list);
+    assert(five_list.set(0, 2) !== five_list);
+
     var list1 = List([List([])]);
 
     assert(list1.modify(0, function () {
@@ -1512,7 +1530,28 @@ context("Tuple", function () {
     }, "Index -1 is not valid");
 
     assert_raises(function () {
-      five_tuple.get(-2)
+      five_tuple.get(-2);
+    }, "Index -2 is not valid");
+  });
+
+  test("set", function () {
+    verify_tuple(five_tuple.set(0, 50), [50, 2, 3, 4, 5]);
+    verify_tuple(five_tuple.set(4, 50), [1, 2, 3, 4, 50]);
+
+    assert_raises(function () {
+      empty_tuple.set(0, 50);
+    }, "Index 0 is not valid");
+
+    assert_raises(function () {
+      empty_tuple.set(-1, 50);
+    }, "Index -1 is not valid");
+
+    assert_raises(function () {
+      five_tuple.set(-1, 50);
+    }, "Index -1 is not valid");
+
+    assert_raises(function () {
+      five_tuple.set(-2, 50);
     }, "Index -2 is not valid");
   });
 
@@ -1555,6 +1594,9 @@ context("Tuple", function () {
     assert(Tuple(five_tuple) === five_tuple);
 
     var tuple1 = Tuple([Tuple([])]);
+
+    assert(five_tuple.set(0, 1) === five_tuple);
+    assert(five_tuple.set(0, 2) !== five_tuple);
 
     assert(tuple1.modify(0, function () {
       return Tuple([]);

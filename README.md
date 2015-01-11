@@ -21,7 +21,7 @@ Quick overview
 
 * `List`
 
-  * `isEmpty` `size` `has` `get` `insert` `remove` `removeAll` `modify` `slice` `concat`
+  * `isEmpty` `size` `has` `get` `set` `insert` `remove` `removeAll` `modify` `slice` `concat`
 
 * `Queue`
 
@@ -33,7 +33,7 @@ Quick overview
 
 * `Tuple`
 
-  * `size` `get` `modify`
+  * `size` `get` `set` `modify`
 
 * `Record`
 

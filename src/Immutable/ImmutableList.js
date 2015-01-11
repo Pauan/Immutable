@@ -450,6 +450,13 @@ ImmutableList.prototype.modify = function (index, f) {
   }
 };
 
+// TODO a bit of code duplication
+ImmutableList.prototype.set = function (index, value) {
+  return this.modify(index, function () {
+    return value;
+  });
+};
+
 ImmutableList.prototype.slice = function (from, to) {
   var len = this.size();
 

@@ -1451,6 +1451,13 @@
       }
     };
 
+    // TODO a bit of code duplication
+    $$ImmutableList$$ImmutableList.prototype.set = function (index, value) {
+      return this.modify(index, function () {
+        return value;
+      });
+    };
+
     $$ImmutableList$$ImmutableList.prototype.slice = function (from, to) {
       var len = this.size();
 
@@ -1994,6 +2001,13 @@
       } else {
         throw new Error("Index " + index + " is not valid");
       }
+    };
+
+    // TODO a bit of code duplication
+    $$ImmutableTuple$$ImmutableTuple.prototype.set = function (index, value) {
+      return this.modify(index, function () {
+        return value;
+      });
     };
 
     function $$ImmutableTuple$$isTuple(x) {
@@ -3935,6 +3949,21 @@
         $$assert$$assert(five_list.get(-2, 50) === 4);
       });
 
+      src$Test$Test$$test("set", function () {
+        src$Test$Test$$assert_raises(function () {
+          empty_list.set(0, 50);
+        }, "Index 0 is not valid");
+
+        src$Test$Test$$assert_raises(function () {
+          empty_list.set(-1, 50);
+        }, "Index -1 is not valid");
+
+        src$Test$Test$$verify_list(five_list.set(0, 50), [50, 2, 3, 4, 5]);
+        src$Test$Test$$verify_list(five_list.set(4, 50), [1, 2, 3, 4, 50]);
+        src$Test$Test$$verify_list(five_list.set(-1, 50), [1, 2, 3, 4, 50]);
+        src$Test$Test$$verify_list(five_list.set(-2, 50), [1, 2, 3, 50, 5]);
+      });
+
       src$Test$Test$$test("insert", function () {
         src$Test$Test$$assert_raises(function () {
           empty_list.insert(5, 1);
@@ -4136,6 +4165,9 @@
         $$assert$$assert(five_list.slice(1, 5) !== five_list);
         $$assert$$assert(five_list.slice(0, 4) !== five_list);
 
+        $$assert$$assert(five_list.set(0, 1) === five_list);
+        $$assert$$assert(five_list.set(0, 2) !== five_list);
+
         var list1 = $$ImmutableList$$List([$$ImmutableList$$List([])]);
 
         $$assert$$assert(list1.modify(0, function () {
@@ -4333,7 +4365,28 @@
         }, "Index -1 is not valid");
 
         src$Test$Test$$assert_raises(function () {
-          five_tuple.get(-2)
+          five_tuple.get(-2);
+        }, "Index -2 is not valid");
+      });
+
+      src$Test$Test$$test("set", function () {
+        src$Test$Test$$verify_tuple(five_tuple.set(0, 50), [50, 2, 3, 4, 5]);
+        src$Test$Test$$verify_tuple(five_tuple.set(4, 50), [1, 2, 3, 4, 50]);
+
+        src$Test$Test$$assert_raises(function () {
+          empty_tuple.set(0, 50);
+        }, "Index 0 is not valid");
+
+        src$Test$Test$$assert_raises(function () {
+          empty_tuple.set(-1, 50);
+        }, "Index -1 is not valid");
+
+        src$Test$Test$$assert_raises(function () {
+          five_tuple.set(-1, 50);
+        }, "Index -1 is not valid");
+
+        src$Test$Test$$assert_raises(function () {
+          five_tuple.set(-2, 50);
         }, "Index -2 is not valid");
       });
 
@@ -4376,6 +4429,9 @@
         $$assert$$assert($$ImmutableTuple$$Tuple(five_tuple) === five_tuple);
 
         var tuple1 = $$ImmutableTuple$$Tuple([$$ImmutableTuple$$Tuple([])]);
+
+        $$assert$$assert(five_tuple.set(0, 1) === five_tuple);
+        $$assert$$assert(five_tuple.set(0, 2) !== five_tuple);
 
         $$assert$$assert(tuple1.modify(0, function () {
           return $$ImmutableTuple$$Tuple([]);

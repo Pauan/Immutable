@@ -39,6 +39,28 @@
 
      If `index` is not in the tuple, an error is thrown.
 
+   @function Tuple.set
+   @param {Integer} [index] The index to set in the tuple
+   @param {Any} [value] The value to set at `index`
+   @return {::Tuple} A new tuple with the value at `index` set to `value`
+   @summary Returns a new tuple with the value at `index` set to `value`
+   @desc
+     This function runs in `O(n)` time.
+
+     This does not modify the tuple, it returns a new tuple.
+
+     ----
+
+         var tuple = Tuple([1, 2, 3]);
+
+         // This returns the tuple [50, 2, 3]
+         tuple.set(0, 50);
+
+         // This returns the tuple [1, 50, 3]
+         tuple.set(1, 50);
+
+     If `index` is not in the tuple, an error is thrown.
+
    @function Tuple.modify
    @param {Integer} [index] The index to modify in the tuple
    @param {Function} [fn] The function which will modify the value at `index`
