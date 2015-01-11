@@ -18,14 +18,13 @@ export function isObject(x) {
   return Object(x) === x;
 }
 
+export function isProto(x, proto) {
+  return isObject(x) && Object.getPrototypeOf(x) === proto;
+}
+
 export function isJSLiteral(x) {
-  if (isObject(x)) {
-    var proto = Object.getPrototypeOf(x);
-    // TODO this won't work cross-realm
-    return proto === null || proto === Object.prototype;
-  } else {
-    return false;
-  }
+  // TODO this won't work cross-realm
+  return isProto(x, Object.prototype);
 }
 
 export function repeat(s, i) {

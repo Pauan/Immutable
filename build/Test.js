@@ -1006,14 +1006,13 @@
       return Object(x) === x;
     }
 
+    function $$util$$isProto(x, proto) {
+      return $$util$$isObject(x) && Object.getPrototypeOf(x) === proto;
+    }
+
     function $$util$$isJSLiteral(x) {
-      if ($$util$$isObject(x)) {
-        var proto = Object.getPrototypeOf(x);
-        // TODO this won't work cross-realm
-        return proto === null || proto === Object.prototype;
-      } else {
-        return false;
-      }
+      // TODO this won't work cross-realm
+      return $$util$$isProto(x, Object.prototype);
     }
 
     function $$util$$repeat(s, i) {
@@ -3189,6 +3188,10 @@
         src$Test$Test$$verify_dict($$ImmutableDict$$Dict([$$ImmutableTuple$$Tuple(["foo", 2])]), { foo: 2 });
 
         src$Test$Test$$assert_raises(function () {
+          $$ImmutableDict$$Dict(Object.create(null));
+        }, "Cannot convert object to primitive value");
+
+        src$Test$Test$$assert_raises(function () {
           $$ImmutableDict$$Dict([$$ImmutableList$$List(["foo", 2])]);
         }, "Expected array or Tuple but got: (List\n  \"foo\"\n  2)");
 
@@ -3324,6 +3327,10 @@
 
         src$Test$Test$$verify_dict($$ImmutableDict$$Dict().merge([["foo", 2]]), { foo: 2 });
         src$Test$Test$$verify_dict($$ImmutableDict$$Dict().merge([$$ImmutableTuple$$Tuple(["foo", 2])]), { foo: 2 });
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableDict$$Dict().merge(Object.create(null));
+        }, "Cannot convert object to primitive value");
 
         src$Test$Test$$assert_raises(function () {
           $$ImmutableDict$$Dict().merge([$$ImmutableList$$List(["foo", 2])]);
@@ -4749,6 +4756,10 @@
         $$assert$$assert($$$Immutable$Immutable$$equal(x, Foo));
         $$assert$$assert($$$Immutable$Immutable$$equal(Foo, x));
 
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableRecord$$Record(Object.create(null));
+        }, "Cannot convert object to primitive value");
+
         src$Test$Test$$verify_record($$ImmutableRecord$$Record({ foo: 2 }), { foo: 2 });
 
         src$Test$Test$$verify_record($$ImmutableRecord$$Record(), {});
@@ -4860,6 +4871,10 @@
 
         src$Test$Test$$verify_record($$ImmutableRecord$$Record([["foo", 2]]).update([["foo", 3]]), { foo: 3 });
         src$Test$Test$$verify_record($$ImmutableRecord$$Record([["foo", 2]]).update([$$ImmutableTuple$$Tuple(["foo", 3])]), { foo: 3 });
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableRecord$$Record().update(Object.create(null));
+        }, "Cannot convert object to primitive value");
 
         src$Test$Test$$assert_raises(function () {
           $$ImmutableRecord$$Record([["foo", 2]]).update([$$ImmutableList$$List(["foo", 3])]);
@@ -4975,6 +4990,7 @@
         src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([["foo", 2]]), [["foo", 2]]);
         src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([["foo", 2], ["bar", 3]]), [["bar", 3], ["foo", 2]]);
         src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([["bar", 3], ["foo", 2]]), [["bar", 3], ["foo", 2]]);
+        src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([["2", 1], ["1", 2]]), [["1", 2], ["2", 1]]);
 
         var corge = $$ImmutableRecord$$Record({ corge: 3 });
         src$Test$Test$$test_each_dict($$ImmutableRecord$$Record([["foo", 1], ["qux", corge], ["bar", 2]]), [["bar", 2], ["foo", 1], ["qux", corge]]);
@@ -5318,6 +5334,9 @@
       var x = {};
       $$assert$$assert($$toJS$$toJS(x) === x);
 
+      var x = Object.create(null);
+      $$assert$$assert($$toJS$$toJS(x) === x);
+
       var x = [];
       $$assert$$assert($$toJS$$toJS(x) === x);
 
@@ -5344,6 +5363,9 @@
       src$Test$Test$$verify_dict($$$Immutable$Immutable$$fromJS({ foo: { bar: 1 } }).get("foo"), { bar: 1 });
       src$Test$Test$$verify_list($$$Immutable$Immutable$$fromJS([1, [2], 3]).get(1), [2]);
 
+      var x = Object.create(null);
+      $$assert$$assert($$$Immutable$Immutable$$fromJS(x) === x);
+
       var x = new Date();
       $$assert$$assert($$$Immutable$Immutable$$fromJS(x) === x);
 
@@ -5361,6 +5383,10 @@
       var x = { foo: 1 };
       $$assert$$assert($$toJSON$$toJSON(x) !== x);
       $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$toJSON(x), { foo: 1 }));
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$toJSON(Object.create(null));
+      }, "Cannot convert object to primitive value");
 
       var x = [5];
       $$assert$$assert($$toJSON$$toJSON(x) !== x);
@@ -5452,6 +5478,10 @@
       var x = { foo: 1 };
       $$assert$$assert($$toJSON$$fromJSON(x) !== x);
       $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$fromJSON(x), { foo: 1 }));
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$fromJSON(Object.create(null));
+      }, "Cannot convert object to primitive value");
 
       var x = [5];
       $$assert$$assert($$toJSON$$fromJSON(x) !== x);

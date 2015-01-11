@@ -377,6 +377,10 @@ context("Dict", function () {
     verify_dict(Dict([Tuple(["foo", 2])]), { foo: 2 });
 
     assert_raises(function () {
+      Dict(Object.create(null));
+    }, "Cannot convert object to primitive value");
+
+    assert_raises(function () {
       Dict([List(["foo", 2])]);
     }, "Expected array or Tuple but got: (List\n  \"foo\"\n  2)");
 
@@ -512,6 +516,10 @@ context("Dict", function () {
 
     verify_dict(Dict().merge([["foo", 2]]), { foo: 2 });
     verify_dict(Dict().merge([Tuple(["foo", 2])]), { foo: 2 });
+
+    assert_raises(function () {
+      Dict().merge(Object.create(null));
+    }, "Cannot convert object to primitive value");
 
     assert_raises(function () {
       Dict().merge([List(["foo", 2])]);
@@ -1937,6 +1945,10 @@ context("Record", function () {
     assert(equal(x, Foo));
     assert(equal(Foo, x));
 
+    assert_raises(function () {
+      Record(Object.create(null));
+    }, "Cannot convert object to primitive value");
+
     verify_record(Record({ foo: 2 }), { foo: 2 });
 
     verify_record(Record(), {});
@@ -2048,6 +2060,10 @@ context("Record", function () {
 
     verify_record(Record([["foo", 2]]).update([["foo", 3]]), { foo: 3 });
     verify_record(Record([["foo", 2]]).update([Tuple(["foo", 3])]), { foo: 3 });
+
+    assert_raises(function () {
+      Record().update(Object.create(null));
+    }, "Cannot convert object to primitive value");
 
     assert_raises(function () {
       Record([["foo", 2]]).update([List(["foo", 3])]);
@@ -2163,6 +2179,7 @@ context("Record", function () {
     test_each_dict(Record([["foo", 2]]), [["foo", 2]]);
     test_each_dict(Record([["foo", 2], ["bar", 3]]), [["bar", 3], ["foo", 2]]);
     test_each_dict(Record([["bar", 3], ["foo", 2]]), [["bar", 3], ["foo", 2]]);
+    test_each_dict(Record([["2", 1], ["1", 2]]), [["1", 2], ["2", 1]]);
 
     var corge = Record({ corge: 3 });
     test_each_dict(Record([["foo", 1], ["qux", corge], ["bar", 2]]), [["bar", 2], ["foo", 1], ["qux", corge]]);
@@ -2506,6 +2523,9 @@ test("toJS", function () {
   var x = {};
   assert(toJS(x) === x);
 
+  var x = Object.create(null);
+  assert(toJS(x) === x);
+
   var x = [];
   assert(toJS(x) === x);
 
@@ -2532,6 +2552,9 @@ test("fromJS", function () {
   verify_dict(fromJS({ foo: { bar: 1 } }).get("foo"), { bar: 1 });
   verify_list(fromJS([1, [2], 3]).get(1), [2]);
 
+  var x = Object.create(null);
+  assert(fromJS(x) === x);
+
   var x = new Date();
   assert(fromJS(x) === x);
 
@@ -2549,6 +2572,10 @@ test("toJSON", function () {
   var x = { foo: 1 };
   assert(toJSON(x) !== x);
   assert(deepEqual(toJSON(x), { foo: 1 }));
+
+  assert_raises(function () {
+    toJSON(Object.create(null));
+  }, "Cannot convert object to primitive value");
 
   var x = [5];
   assert(toJSON(x) !== x);
@@ -2640,6 +2667,10 @@ test("fromJSON", function () {
   var x = { foo: 1 };
   assert(fromJSON(x) !== x);
   assert(deepEqual(fromJSON(x), { foo: 1 }));
+
+  assert_raises(function () {
+    fromJSON(Object.create(null));
+  }, "Cannot convert object to primitive value");
 
   var x = [5];
   assert(fromJSON(x) !== x);

@@ -1104,14 +1104,13 @@
       return Object(x) === x;
     }
 
+    function $$util$$isProto(x, proto) {
+      return $$util$$isObject(x) && Object.getPrototypeOf(x) === proto;
+    }
+
     function $$util$$isJSLiteral(x) {
-      if ($$util$$isObject(x)) {
-        var proto = Object.getPrototypeOf(x);
-        // TODO this won't work cross-realm
-        return proto === null || proto === Object.prototype;
-      } else {
-        return false;
-      }
+      // TODO this won't work cross-realm
+      return $$util$$isProto(x, Object.prototype);
     }
 
     function $$util$$repeat(s, i) {
