@@ -849,6 +849,11 @@
         if (fn != null) {
           return fn(x);
 
+        // TODO isFunction ?
+        // TODO should this be before or after tag_toJSON ?
+        } else if (typeof x.toJSON === "function") {
+          return $$toJSON$$toJSON(x.toJSON());
+
         } else if (Array.isArray(x)) {
           return x.map($$toJSON$$toJSON);
 
@@ -975,13 +980,16 @@
       return $$hash$$hash(this);
     }
 
+    // TODO Infinite cycle detection ?
     function $$Base$$_toJSON() {
       return $$toJSON$$toJSON(this);
     }
 
     $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
     $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
-    $$Base$$MutableBase.toJSON   = $$Base$$ImmutableBase.toJSON   = $$Base$$_toJSON;
+
+    // Mutable things cannot be converted to JSON
+    $$Base$$ImmutableBase.toJSON = $$Base$$_toJSON;
 
     if ($$Tag$$Symbol_iterator !== null) {
       $$Base$$MutableBase[$$Tag$$Symbol_iterator] = $$Base$$ImmutableBase[$$Tag$$Symbol_iterator] = function () {

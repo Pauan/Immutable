@@ -2560,9 +2560,9 @@ test("toJSON", function () {
   assert(toJSON(true) === true);
   assert(toJSON(null) === null);
 
-  assert_raises(function () {
-    toJSON(new Date(2000, 0, 1));
-  }, "Cannot convert to JSON: Sat Jan 01 2000 00:00:00 GMT-1000 (HST)");
+  var x = new Date(2000, 0, 1);
+  assert(toJSON(x) !== x);
+  assert(deepEqual(toJSON(x), "2000-01-01T10:00:00.000Z"));
 
   assert_raises(function () {
     toJSON(/foo/);
@@ -2595,6 +2595,32 @@ test("toJSON", function () {
   assert_raises(function () {
     toJSON(Ref(5));
   }, "Cannot convert to JSON: (Ref 16)");
+
+
+  var x = {};
+  x.toJSON = function () {
+    return "foo";
+  };
+
+  assert(toJSON(x) !== x);
+  assert(deepEqual(toJSON(x), "foo"));
+
+
+  var x = {};
+  x.toJSON = function () {
+    return function () {
+    };
+  };
+
+  assert_raises(function () {
+    toJSON(x);
+  }, "Cannot convert to JSON: function () {\n        }");
+
+
+  var x = {};
+  x.toJSON = 5;
+  assert(toJSON(x) !== x);
+  assert(deepEqual(toJSON(x), { toJSON: 5 }));
 
 
   var x = {

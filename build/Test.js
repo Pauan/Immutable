@@ -751,6 +751,11 @@
         if (fn != null) {
           return fn(x);
 
+        // TODO isFunction ?
+        // TODO should this be before or after tag_toJSON ?
+        } else if (typeof x.toJSON === "function") {
+          return $$toJSON$$toJSON(x.toJSON());
+
         } else if (Array.isArray(x)) {
           return x.map($$toJSON$$toJSON);
 
@@ -877,13 +882,16 @@
       return $$hash$$hash(this);
     }
 
+    // TODO Infinite cycle detection ?
     function $$Base$$_toJSON() {
       return $$toJSON$$toJSON(this);
     }
 
     $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
     $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
-    $$Base$$MutableBase.toJSON   = $$Base$$ImmutableBase.toJSON   = $$Base$$_toJSON;
+
+    // Mutable things cannot be converted to JSON
+    $$Base$$ImmutableBase.toJSON = $$Base$$_toJSON;
 
     if ($$$Immutable$Tag$$Symbol_iterator !== null) {
       $$Base$$MutableBase[$$$Immutable$Tag$$Symbol_iterator] = $$Base$$ImmutableBase[$$$Immutable$Tag$$Symbol_iterator] = function () {
@@ -5364,9 +5372,9 @@
       $$assert$$assert($$toJSON$$toJSON(true) === true);
       $$assert$$assert($$toJSON$$toJSON(null) === null);
 
-      src$Test$Test$$assert_raises(function () {
-        $$toJSON$$toJSON(new Date(2000, 0, 1));
-      }, "Cannot convert to JSON: Sat Jan 01 2000 00:00:00 GMT-1000 (HST)");
+      var x = new Date(2000, 0, 1);
+      $$assert$$assert($$toJSON$$toJSON(x) !== x);
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$toJSON(x), "2000-01-01T10:00:00.000Z"));
 
       src$Test$Test$$assert_raises(function () {
         $$toJSON$$toJSON(/foo/);
@@ -5399,6 +5407,32 @@
       src$Test$Test$$assert_raises(function () {
         $$toJSON$$toJSON($$MutableRef$$Ref(5));
       }, "Cannot convert to JSON: (Ref 16)");
+
+
+      var x = {};
+      x.toJSON = function () {
+        return "foo";
+      };
+
+      $$assert$$assert($$toJSON$$toJSON(x) !== x);
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$toJSON(x), "foo"));
+
+
+      var x = {};
+      x.toJSON = function () {
+        return function () {
+        };
+      };
+
+      src$Test$Test$$assert_raises(function () {
+        $$toJSON$$toJSON(x);
+      }, "Cannot convert to JSON: function () {\n        }");
+
+
+      var x = {};
+      x.toJSON = 5;
+      $$assert$$assert($$toJSON$$toJSON(x) !== x);
+      $$assert$$assert(src$Test$Test$$deepEqual($$toJSON$$toJSON(x), { toJSON: 5 }));
 
 
       var x = {

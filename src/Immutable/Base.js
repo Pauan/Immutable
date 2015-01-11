@@ -12,13 +12,16 @@ function toString() {
   return hash(this);
 }
 
+// TODO Infinite cycle detection ?
 function _toJSON() {
   return toJSON(this);
 }
 
 MutableBase.toString = ImmutableBase.toString = toString;
 MutableBase.inspect  = ImmutableBase.inspect  = toString;
-MutableBase.toJSON   = ImmutableBase.toJSON   = _toJSON;
+
+// Mutable things cannot be converted to JSON
+ImmutableBase.toJSON = _toJSON;
 
 if (Symbol_iterator !== null) {
   MutableBase[Symbol_iterator] = ImmutableBase[Symbol_iterator] = function () {

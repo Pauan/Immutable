@@ -65,6 +65,11 @@ export function toJSON(x) {
     if (fn != null) {
       return fn(x);
 
+    // TODO isFunction ?
+    // TODO should this be before or after tag_toJSON ?
+    } else if (typeof x.toJSON === "function") {
+      return toJSON(x.toJSON());
+
     } else if (Array.isArray(x)) {
       return x.map(toJSON);
 

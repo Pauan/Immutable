@@ -8,14 +8,17 @@
      This function has the following behavior:
 
      * JavaScript object literals are deeply copied, with
-       [::toJSON] run on all the values.
+       [::toJSON] called on all the keys/values.
 
        This copying takes `O(n)` time.
 
      * JavaScript arrays are deeply copied, with [::toJSON]
-       run on all the values.
+       called on all the values.
 
        This copying takes `O(n)` time.
+
+     * If an object has a `toJSON` method, it will be called,
+       with [::toJSON] called on whatever it returns.
 
      * `null`, booleans, strings, and [::UUIDTag] are returned
        as-is.
@@ -26,7 +29,7 @@
      * [::Dict], [::Set], [::List], [::Queue], [::Stack],
        [::Tuple], and [::Record] are converted into
        specially marked JSON objects, with [::toJSON]
-       run on all the keys/values.
+       called on all the keys/values.
 
        This conversion takes `O(n)` time.
 
