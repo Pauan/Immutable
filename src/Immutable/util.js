@@ -18,13 +18,9 @@ export function isObject(x) {
   return Object(x) === x;
 }
 
-export function isProto(x, proto) {
-  return isObject(x) && Object.getPrototypeOf(x) === proto;
-}
-
 export function isJSLiteral(x) {
   // TODO this won't work cross-realm
-  return isProto(x, Object.prototype);
+  return isObject(x) && Object.getPrototypeOf(x) === Object.prototype;
 }
 
 export function repeat(s, i) {

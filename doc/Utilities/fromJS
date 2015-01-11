@@ -4,12 +4,23 @@
    @return {Any}
    @summary Converts a JavaScript object into its Immutable equivalent
    @desc
-     Most things are returned as-is, except:
+     This function has the following behavior:
 
-     * JavaScript object literals are converted into a [::Dict].
-     * JavaScript arrays are converted into a [::List].
+     * JavaScript object literals are deeply converted
+       into a [::Dict], with [::fromJS] called on all
+       the keys/values.
 
-     This conversion takes `O(n)` time.
+       This conversion takes `O(n)` time.
+
+     * JavaScript arrays are deeply converted into a
+       [::List], with [::fromJS] called on all the
+       values.
+
+       This conversion takes `O(n)` time.
+
+     * Everything else is returned as-is.
+
+     ----
 
      This is useful if you like using [::Dict] or [::List],
      but you want to use a library that gives you ordinary

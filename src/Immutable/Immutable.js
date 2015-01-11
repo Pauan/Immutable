@@ -1,7 +1,7 @@
 import { hash } from "./hash";
-import { isObject, isJSLiteral } from "./util";
+import { isObject } from "./util";
 
-import { toJS } from "./toJS";
+import { toJS, fromJS } from "./toJS";
 import { toJSON, fromJSON } from "./toJSON";
 import { simpleSort } from "./Sorted";
 import { SortedDict, Dict, isDict, isSortedDict } from "./ImmutableDict";
@@ -17,7 +17,7 @@ import { each, map, keep, findIndex, reverse, foldl,
          foldr, join, zip, toArray, isIterable,
          any, all, find, partition, range, take } from "./iter";
 
-export { toJS, simpleSort, toJSON, fromJSON,
+export { toJS, fromJS, simpleSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
          SortedSet, Set, isSet, isSortedSet,
          isList, List, isQueue, Queue,
@@ -55,31 +55,6 @@ export function isImmutable(x) {
            type === "boolean" ||
            type === "symbol"  ||
            x == null;
-  }
-}
-
-export function fromJS(x) {
-  if (Array.isArray(x)) {
-    var out = List();
-
-    for (var i = 0, l = x.length; i < l; ++i) {
-      out = out.insert(fromJS(x[i]));
-    }
-
-    return out;
-
-  } else if (isJSLiteral(x)) {
-    var out = Dict();
-
-    // TODO should this only include own properties ...?
-    for (var s in x) {
-      out = out.set(s, fromJS(x[s]));
-    }
-
-    return out;
-
-  } else {
-    return x;
   }
 }
 

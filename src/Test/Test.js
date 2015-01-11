@@ -1,3 +1,6 @@
+var time_start = Date.now();
+
+
 import "./shim";
 import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          SortedSet, SortedDict, isDict, isSet, isList, isSortedDict, isSortedSet,
@@ -2520,14 +2523,16 @@ test("isIterable", function () {
 });
 
 test("toJS", function () {
-  var x = {};
-  assert(toJS(x) === x);
+  var x = { foo: 1 };
+  assert(toJS(x) !== x);
+  assert(deepEqual(toJS(x), { foo: 1 }));
 
   var x = Object.create(null);
   assert(toJS(x) === x);
 
-  var x = [];
-  assert(toJS(x) === x);
+  var x = [5];
+  assert(toJS(x) !== x);
+  assert(deepEqual(toJS(x), [5]));
 
   var x = new Date();
   assert(toJS(x) === x);
@@ -2540,6 +2545,20 @@ test("toJS", function () {
 
   var x = Ref(5);
   assert(toJS(x) === x);
+
+  function Foo() {
+    this.bar = {};
+  }
+  var x = new Foo();
+  assert(toJS(x) === x);
+  assert(deepEqual(toJS(x), new Foo()));
+
+
+  var x = {
+    foo: [Tuple([Set([1]), 2, 3]), Record({ foo: List([1]), bar: 2 })]
+  };
+  assert(toJS(x) !== x);
+  assert(deepEqual(toJS(x), { foo: [[[1], 2, 3], { foo: [1], bar: 2 }] }));
 });
 
 test("fromJS", function () {
@@ -2566,6 +2585,13 @@ test("fromJS", function () {
 
   var x = Ref(5);
   assert(fromJS(x) === x);
+
+  function Foo() {
+    this.bar = {};
+  }
+  var x = new Foo();
+  assert(fromJS(x) === x);
+  assert(deepEqual(fromJS(x), new Foo()));
 });
 
 test("toJSON", function () {
@@ -3103,4 +3129,6 @@ test("range", function () {
 });
 
 
-console.log("SUCCEEDED: " + TESTS_SUCCEEDED + ", FAILED: " + TESTS_FAILED);
+var time_end = Date.now();
+
+console.log("SUCCEEDED: " + TESTS_SUCCEEDED + ", FAILED: " + TESTS_FAILED + ", TOOK: " + (time_end - time_start) + "ms");
