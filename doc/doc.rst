@@ -521,6 +521,140 @@ Table of Contents
 
 ----
 
+.. _isDict:
+
+* ::
+
+    isDict(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a Dict_ or SortedDict_.
+
+----
+
+.. _isImmutable:
+
+* ::
+
+    isImmutable(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a string, number, boolean,
+  null, undefined, symbol, frozen object, Dict_, List_, Queue_,
+  Record_, Set_, Stack_, Tuple_, or Tag_.
+
+  It returns :js:`false` for everything else.
+
+----
+
+.. _isIterable:
+
+* ::
+
+    isIterable(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is Iterable_.
+
+----
+
+.. _isList:
+
+* ::
+
+    isList(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a List_.
+
+----
+
+.. _isQueue:
+
+* ::
+
+    isQueue(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a Queue_.
+
+----
+
+.. _isRecord:
+
+* ::
+
+    isRecord(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a Record_.
+
+----
+
+.. _isRef:
+
+* ::
+
+    isRef(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a Ref_.
+
+----
+
+.. _isSet:
+
+* ::
+
+    isSet(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a Set_ or SortedSet_.
+
+----
+
+.. _isSortedDict:
+
+* ::
+
+    isSortedDict(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a SortedDict_.
+
+----
+
+.. _isSortedSet:
+
+* ::
+
+    isSortedSet(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a SortedSet_.
+
+----
+
+.. _isStack:
+
+* ::
+
+    isStack(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a Stack_.
+
+----
+
+.. _isTag:
+
+* ::
+
+    isTag(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a Tag_ or UUIDTag_.
+
+----
+
+.. _isUUIDTag:
+
+* ::
+
+    isUUIDTag(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a UUIDTag_.
+
+----
+
 .. _join:
 
 * ::
@@ -802,8 +936,8 @@ Table of Contents
   * If ``x`` is an Iterable_, it is converted into a JavaScript Array
     and returned.
 
-  This is useful because most iteration functions do not return
-  arrays, they return Iterable_\ s.
+  This is useful because most iteration functions return
+  Iterable_\ s, not arrays.
 
   Examples:
 
@@ -853,14 +987,14 @@ Table of Contents
 
   You can think of it as being similar to a `real-world zipper <http://en.wikipedia.org/wiki/Zipper>`_.
 
-  It stops when it reaches the end of the shortest iterable:
+  It stops when it reaches the end of the smallest iterable:
 
   .. code:: javascript
 
     // returns [[1, 4, 7]]
     zip([[1, 2, 3], [4, 5, 6], [7]]);
 
-  If you provide a second argument, it will be used to fill
+  But if you provide a second argument, it will be used to fill
   in the missing spots:
 
   .. code:: javascript
@@ -888,5 +1022,5 @@ Table of Contents
       bar: 2
     });
 
-    // returns [["foo", "bar"], [1, 2]]
+    // returns [["bar", "foo"], [2, 1]]
     zip(x);
