@@ -1,1 +1,2829 @@
-(function(){"use strict";function t(t){for(var r=t.length,n=Array(r),e=0;r>e;++e)n[e]=t[e];return n}function r(t,r,n){for(var e=t.length+1,o=Array(e),i=0;r>i;)o[i]=t[i],++i;for(o[i]=n,++i;e>i;)o[i]=t[i-1],++i;return o}function n(r,n,e){var o=r[n],i=e(o);if(o===i)return r;var u=t(r);return u[n]=i,u}function e(t,r){for(var n=t.length-1,e=Array(n),o=0;r>o;)e[o]=t[o],++o;for(;n>o;)e[o]=t[o+1],++o;return e}function o(t){return"string"==typeof t&&_n.test(t)}function i(t){return"string"==typeof t&&(jn.test(t)||In.test(t))}function u(t){return"string"==typeof t&&In.test(t)}function f(){if(0===arguments.length)return"(Tag "+zn+" "+ ++On+")";throw Error("Expected 0 arguments but got "+arguments.length)}function a(t){if(1===arguments.length){if(o(t))return"(UUIDTag "+t+")";throw Error("Expected a lower-case UUID, but got: "+t)}throw Error("Expected 1 argument but got "+arguments.length)}function s(t,r){return t===r||L(t)===L(r)}function h(t){var r=0;return{next:function(){return r<t.length?{value:t[r++]}:{done:!0}}}}function c(t){return Wr(t)?null!=t[Jn]||null!==Tn&&null!=t[Tn]||Array.isArray(t):"string"==typeof t&&!i(t)}function l(t){var r;if(null!=(r=t[Jn]))return r.call(t);if(null!==Tn&&null!=(r=t[Tn]))return r.call(t);if(Array.isArray(t))return h(t);if("string"!=typeof t||i(t))throw Error("Cannot iter: "+t);return h(t)}function p(t){function r(){return t()}var n={};return n[Jn]=r,null!==Tn&&(n[Tn]=r),n}function v(t,r){for(;;){var n=t.next();if(n.done)break;r(n.value)}}function y(t,r){return{next:function(){var n=t.next();return n.done?{done:!0}:{value:r(n.value)}}}}function g(t,r){var n=!1,e=!1;return{next:function(){for(;;)if(n){if(e)return{done:!0};var o=r.next();if(!o.done)return{value:o.value};e=!0}else{var o=t.next();if(!o.done)return{value:o.value};n=!0}}}}function d(t,r){for(var n=l(t);;){var e=n.next();if(e.done)return!1;if(r(e.value))return!0}}function w(t,r){for(var n=l(t);;){var e=n.next();if(e.done)return!0;if(!r(e.value))return!1}}function m(t,r,n){for(var e=l(t);;){var o=e.next();if(o.done){if(3===arguments.length)return n;throw Error("Did not find anything")}if(r(o.value))return o.value}}function b(t,r){var n=[],e=[],o=Qn,i=!1;return Br([p(function(){return o===Qn&&(o=l(t)),{next:function(){for(;;){if(n.length)return n.shift();if(i)return{done:!0};var t=o.next();if(t.done)i=!0;else{if(r(t.value))return{value:t.value};e.push({value:t.value})}}}}}),p(function(){return o===Qn&&(o=l(t)),{next:function(){for(;;){if(e.length)return e.shift();if(i)return{done:!0};var t=o.next();if(t.done)i=!0;else{if(!r(t.value))return{value:t.value};n.push({value:t.value})}}}}})])}function E(t,r){var n=2===arguments.length;return p(function(){var e=z(t).map(function(t){return l(t)}),o=!1;return{next:function(){for(;;){if(o)return{done:!0};for(var t=[],i=!1,u=0,f=e.length;f>u;++u){var a=e[u].next();if(a.done){if(!n){i=!1;break}t.push(r)}else i=!0,t.push(a.value)}if(i)return{value:Br(t)};o=!0}}}})}function x(t){var r=[];v(t,function(t){r.push(t)});var n=r.length;return{next:function(){return n?{value:r[--n]}:{done:!0}}}}function S(t,r,n){return j(t,function(t){r=n(r,t)}),r}function k(t,r,n){return S(U(t),r,function(t,r){return n(r,t)})}function z(t){if(Array.isArray(t))return t;var r=[];return j(t,function(t){r.push(t)}),r}function O(t,r){return 1===arguments.length&&(r=""),"string"==typeof t&&""===r?t:z(t).join(r)}function A(t,r){var n=!1,e=Qn;return{next:function(){for(;;){if(n)return{done:!0};if(e===Qn){var o=t.next();o.done?n=!0:e=r(o.value)}else{var o=e.next();if(!o.done)return{value:o.value};e=Qn}}}}}function _(t){return Xr(t)?J(Object.keys(t),function(r){return[r,t[r]]}):t}function j(t,r){v(l(t),r)}function I(t,r,n){for(var e=l(t),o=0;;){var i=e.next();if(i.done){if(3===arguments.length)return n;throw Error("Did not find anything")}if(r(i.value))return o;++o}}function T(t,r,n){return 3===arguments.length?I(t,function(t){return s(t,r)},n):I(t,function(t){return s(t,r)})}function C(t,r){if(Math.round(r)!==r)throw Error("Count must be an integer");if(0>r)throw Error("Count cannot be negative");return p(function(){var n=l(t);return{next:function(){for(;;){if(0>r)throw Error("Invalid count");if(0===r)return{done:!0};var t=n.next();if(!t.done)return--r,{value:t.value};r=0}}}})}function D(t,r,n){if(arguments.length<1&&(t=0),arguments.length<2&&(r=1/0),arguments.length<3&&(n=1),0>n)throw Error("Step cannot be negative");return p(function(){if(r>t)var e=function(){if(r>t){var e=t;return t+=n,{value:e}}return{done:!0}};else var e=function(){if(t>r){var e=t;return t-=n,{value:e}}return{done:!0}};return{next:e}})}function J(t,r){return p(function(){return y(l(t),r)})}function U(t){return p(function(){return x(l(t))})}function N(t,r){return p(function(){var n=l(t);return{next:function(){for(;;){var t=n.next();if(t.done)return{done:!0};if(r(t.value))return{value:t.value}}}}})}function R(t){return'"'+t.replace(/[\\\"\n]/g,function(t){return"\n"===t?t+" ":"\\"+t})+'"'}function M(t){var r;return null!==Cn&&null!=(r=Cn(t))?"(Symbol.for "+L(r)+")":(r=Fn[t],null==r&&(r=Fn[t]=++qn),"(Symbol "+r+")")}function L(t){var r=typeof t;if("string"===r)return i(t)?t:R(t);if("number"===r||"boolean"===r||"undefined"===r||null===t)return""+t;if("symbol"===r)return M(t);var n=t[Dn];if(null!=n)return n(t);if(Object.isExtensible(t)){var e="(Mutable "+ ++Kn+")";return Object.defineProperty(t,Dn,{configurable:!1,enumerable:!1,writable:!1,value:function(){return e}}),e}throw Error("Cannot use a non-extensible object as a key: "+t)}function Q(t,r){var n=0,e=[];j(t,function(t){nn(t,function(t,r){t=L(t),r=L(r),t=t.split(/\n/),j(t,function(t){n=Math.max(n,t.length)}),e.push({key:t,value:r})})});var r="  ";return e=J(e,function(t){var r=t.key.length-1;t.key[r]=Zr(t.key[r],n," ");var e=O(t.key,"\n"),o=t.value.replace(/\n/g,"\n"+Yr(" ",n+3));return e+" = "+o}),q(e,r)}function K(t){return function(r){if(null===r.hash){var n=J(r,function(t){return L(t)});r.hash="("+t+q(n,"  ")+")"}return r.hash}}function q(t,r){var n="\n"+r;return O(J(t,function(t){return n+t.replace(/\n/g,n)}))}function F(t){var r=typeof t;if(i(t)){if(u(t))return t;throw Error("Cannot convert Tag from JSON, use UUIDTag instead: "+t)}if("string"===r||"boolean"===r||null===t||Vr(t))return t;if(Wr(t)){var r=t[Nn];if(null!=r){var n=Mn[r];if(null!=n)return n(t);throw Error("Cannot handle type "+r)}if(Array.isArray(t))return t.map(F);if(Xr(t)){var e={};return Object.keys(t).forEach(function(r){e[F(r)]=F(t[r])}),e}throw Error("Cannot convert from JSON: "+t)}throw Error("Cannot convert from JSON: "+t)}function $(t){var r=typeof t;if(i(t)){if(u(t))return t;throw Error("Cannot convert Tag to JSON, use UUIDTag instead: "+t)}if("string"===r||"boolean"===r||null===t||Vr(t))return t;if(Wr(t)){var n=t[Rn];if(null!=n)return n(t);if("function"==typeof t.toJSON)return $(t.toJSON());if(Array.isArray(t))return t.map($);if(Xr(t)){var e={};return Object.keys(t).forEach(function(r){e[$(r)]=$(t[r])}),e}throw Error("Cannot convert to JSON: "+t)}throw Error("Cannot convert to JSON: "+t)}function P(t,r){var n={};return n[Nn]=t,n.keys=[],n.values=[],j(r,function(t){nn(t,function(t,r){n.keys.push($(t)),n.values.push($(r))})}),n}function B(t,r){var n={};return n[Nn]=t,n.values=[],j(r,function(t){n.values.push($(t))}),n}function G(t){for(var r=t.keys,n=t.values,e=r.length,o=Array(e),i=0;e>i;++i)o[i]=[F(r[i]),F(n[i])];return o}function H(t){for(var r=t.values,n=r.length,e=Array(n),o=0;n>o;++o)e[o]=F(r[o]);return e}function V(t,r){return t>r?t:r}function W(t,r,n){var e=r.depth,o=n.depth;if(e>o+1){var i=r.left,u=r.right;return u.depth>i.depth?u.copy(r.copy(i,u.left),t.copy(u.right,n)):r.copy(i,t.copy(u,n))}if(o>e+1){var f=n.right,a=n.left;return a.depth>f.depth?a.copy(t.copy(r,a.left),n.copy(a.right,f)):n.copy(t.copy(r,a),f)}return t.copy(r,n)}function X(t,r){if(t===Ln)return r;if(r===Ln)return t;if(t.depth<r.depth){var n=X(t,r.left);return W(r,n,r.right)}var e=X(t.right,r);return W(t,t.left,e)}function Y(t,r){return t===Ln?r:W(t,Y(t.left,r),t.right)}function Z(t,r){return t===Ln?r:W(t,t.left,Z(t.right,r))}function tr(t){for(var r=[];t!==Ln;)r.push(t),t=t.left;return{next:function(){if(r.length){var n=r.pop();for(t=n.right;t!==Ln;)r.push(t),t=t.left;return{value:n}}return{done:!0}}}}function rr(){return L(this)}function nr(){return $(this)}function er(t,r){return t>=0&&r>t}function or(t){var r=this.size();return 0>t&&(t+=r),er(t,r)}function ir(t,r){this.car=t,this.cdr=r}function ur(t){return{next:function(){if(t===Ln)return{done:!0};var r=t.car;return t=t.cdr,{value:r}}}}function fr(t,r){for(;t!==Ln;)r(t.car),t=t.cdr}function ar(t,r){if(t.length){var n=t[t.length-1];n.length+r.length<=Bn?t[t.length-1]=n.concat(r):t.push(r)}else t.push(r)}function sr(t,r,n){if(n>r){var e=Hn((r+n)/2),o=sr(t,r,e),i=sr(t,e+1,n);return new vr(o,i,t[e])}return Ln}function hr(t){return sr(t,0,t.length)}function cr(t,r,n){0>r&&(r=0);var e=t.length;return n>e&&(n=e),0===r&&n===e?t:t.slice(r,n)}function lr(t,r){for(var n=Array(r);r--;)n[r]=t.car,t=t.cdr;return n}function pr(t,r,n){for(;--r!==n;)t=t.cdr;return t.car}function vr(t,r,n){this.left=t,this.right=r,this.array=n,this.size=t.size+r.size+n.length,this.depth=V(t.depth,r.depth)+1}function yr(t,r){for(;;){var n=t.left,e=n.size;if(e>r)t=n;else{r-=e;var o=t.array,i=o.length;if(i>r)return o[r];r-=i,t=t.right}}}function gr(t,n,e){if(t===Ln)return new vr(Ln,Ln,[e]);var o=t.left,i=t.right,u=o.size;if(u>n){var f=gr(o,n,e);return W(t,f,i)}n-=u;var a=t.array,s=a.length;if(s>=n){if(a=r(a,n,e),s===Bn){var h=Gn(a.length/2),c=a.slice(0,h),l=a.slice(h);return o.depth<i.depth?new vr(Z(o,new vr(Ln,Ln,c)),i,l):new vr(o,Y(i,new vr(Ln,Ln,l)),c)}return new vr(o,i,a)}var f=gr(i,n-s,e);return W(t,o,f)}function dr(t,r,e){var o=t.left,i=t.right,u=o.size;if(u>r){var f=dr(o,r,e);return f===o?t:t.copy(f,i)}r-=u;var a=t.array,s=a.length;if(s>r){var h=n(a,r,e);return h===a?t:new vr(o,i,h)}var f=dr(i,r-s,e);return f===i?t:t.copy(o,f)}function wr(t,r){var n=t.left,o=t.right,i=n.size;if(i>r){var u=wr(n,r);return W(t,u,o)}r-=i;var f=t.array,a=f.length;if(a>r)return f=e(f,r),0===f.length?X(n,o):new vr(n,o,f);var u=wr(o,r-a);return W(t,n,u)}function mr(t,r,n,e){if(r!==Ln){var o=r.left,i=o.size;i>n&&mr(t,o,n,e);var u=r.array,f=u.length;n-=i,e-=i,f>n&&e>0&&ar(t,cr(u,n,e)),e>f&&mr(t,r.right,n-f,e-f)}}function br(t,r,n){this.root=t,this.tail=r,this.tail_size=n,this.hash=null}function Er(t){return t instanceof br}function xr(t){return null!=t?t instanceof br?t:new br(Ln,Ln,0).concat(t):new br(Ln,Ln,0)}function Sr(t,r){return t===r?0:r>t?-1:1}function kr(t,r,n){for(;t!==Ln;){var e=r(n,t.hash);if(0===e)break;t=0>e?t.left:t.right}return t}function zr(t,r,n,e){if(t===Ln)return e;var o=t.left,i=t.right,u=r(n,t.hash);if(0===u)return t.modify(e);if(0>u){var f=zr(o,r,n,e);return f===o?t:W(t,f,i)}var f=zr(i,r,n,e);return f===i?t:W(t,o,f)}function Or(t,r,n,e,o){if(t===Ln)throw Error("Key "+e+" not found");var i=t.left,u=t.right,f=r(n,t.hash);if(0===f)return t.modify({key:e,hash:n,value:o(t.value)});if(0>f){var a=Or(i,r,n,e,o);return a===i?t:W(t,a,u)}var a=Or(u,r,n,e,o);return a===u?t:W(t,i,a)}function Ar(t,r,n){if(t===Ln)return t;var e=t.left,o=t.right,i=r(n,t.hash);if(0===i)return X(e,o);if(0>i){var u=Ar(e,r,n);return u===e?t:W(t,u,o)}var u=Ar(o,r,n);return u===o?t:W(t,e,u)}function _r(){return this.root===Ln}function jr(t){return kr(this.root,this.sort,this.hash_fn(t))!==Ln}function Ir(t){return function(r){var n=this.root,e=this.sort,o=this.hash_fn,i=Ar(n,e,o(r));return i===n?this:new t(i,e,o)}}function Tr(t){return S(_(t),this,function(t,r){return nn(r,function(r,n){return t.set(r,n)})})}function Cr(){return this.len}function Dr(t){return S(t,this,function(t,r){return t.push(r)})}function Jr(t,r,n,e,o){this.left=t,this.right=r,this.hash=n,this.key=e,this.value=o,this.depth=V(t.depth,r.depth)+1}function Ur(t,r,n){this.root=t,this.sort=r,this.hash_fn=n,this.hash=null}function Nr(t){return t instanceof Ur}function Rr(t){return Nr(t)&&t.hash_fn===tn}function Mr(t,r){return null!=r?Rr(r)&&r.sort===t?r:new Ur(Ln,t,tn).merge(r):new Ur(Ln,t,tn)}function Lr(t){return null!=t?Nr(t)&&!Rr(t)?t:new Ur(Ln,Sr,L).merge(t):new Ur(Ln,Sr,L)}function Qr(t){if(Array.isArray(t)){for(var r=xr(),n=0,e=t.length;e>n;++n)r=r.insert(Qr(t[n]));return r}if(Xr(t)){var r=Lr();return Object.keys(t).forEach(function(n){r=r.set(Qr(n),Qr(t[n]))}),r}return t}function Kr(t){if(Wr(t)){var r=t[Un];if(null!=r)return r(t);if(Array.isArray(t))return t.map(Kr);if(Xr(t)){var n={};return Object.keys(t).forEach(function(r){n[Kr(r)]=Kr(t[r])}),n}return t}return t}function qr(t){var r={};return j(t,function(t){nn(t,function(t,n){if("string"!=typeof t)throw Error("Cannot convert to JavaScript: expected key to be string or Tag but got "+t);r[t]=Kr(n)})}),r}function Fr(t){var r=[];return j(t,function(t){r.push(Kr(t))}),r}function $r(t){this.values=t,this.hash=null}function Pr(t){return t instanceof $r}function Br(t){return new $r(t)}function Gr(t){if(null!=t){if(Pr(t))return t;var r=[];return j(t,function(t){r.push(t)}),new $r(r)}return new $r([])}function Hr(t){return t!==t}function Vr(t){return"number"==typeof t&&1/0!==t&&t!==-1/0&&!Hr(t)}function Wr(t){return Object(t)===t}function Xr(t){return Wr(t)&&Object.getPrototypeOf(t)===Object.prototype}function Yr(t,r){return Array(r+1).join(t)}function Zr(t,r,n){var e=Math.max(0,r-t.length);return t+Yr(n,e)}function tn(t){return t}function rn(t,r){return 1===t?r:r+"s"}function nn(t,r){if(Array.isArray(t)){if(2===t.length)return r(t[0],t[1]);throw Error("Expected array with 2 elements but got "+t.length+" "+rn(t.length,"element"))}if(Pr(t)){if(2===t.size())return r(t.get(0),t.get(1));throw Error("Expected Tuple with 2 elements but got "+t.size()+" "+rn(t.size(),"element"))}throw Error("Expected array or Tuple but got: "+t)}function en(t,r,n,e){this.left=t,this.right=r,this.hash=n,this.key=e,this.depth=V(t.depth,r.depth)+1}function on(t,r,n){this.root=t,this.sort=r,this.hash_fn=n,this.hash=null}function un(t){return t instanceof on}function fn(t){return un(t)&&t.hash_fn===tn}function an(t,r){return null!=r?fn(r)&&r.sort===t?r:new on(Ln,t,tn).union(r):new on(Ln,t,tn)}function sn(t){return null!=t?un(t)&&!fn(t)?t:new on(Ln,Sr,L).union(t):new on(Ln,Sr,L)}function hn(t,r,n){this.left=t,this.right=r,this.len=n,this.hash=null}function cn(t){return t instanceof hn}function ln(t){return null!=t?t instanceof hn?t:new hn(Ln,Ln,0).concat(t):new hn(Ln,Ln,0)}function pn(t,r){this.root=t,this.len=r,this.hash=null}function vn(t){return t instanceof pn}function yn(t){return null!=t?t instanceof pn?t:new pn(Ln,0).concat(t):new pn(Ln,0)}function gn(t){if("string"!=typeof t)throw Error("Expected key to be a string or Tag but got "+t)}function dn(t,r){this.keys=t,this.values=r,this.hash=null}function wn(t){return t instanceof dn}function mn(t){var r={},n=[];if(null!=t){if(wn(t))return t;var e=J(_(t),function(t){return nn(t,function(t,r){return gn(t),[t,r]})}),o=z(e).sort(function(t,r){return Sr(t[0],r[0])});j(o,function(t){var e=t[0],o=t[1],i=r[e];null==i?r[e]=n.push(o)-1:n[i]=o})}return new dn(r,n)}function bn(t,r){this._id=++Vn,this._value=t,this._onchange=r}function En(t){return xn(t)?t.get():t}function xn(t){return t instanceof bn}function Sn(t,r){if(arguments.length<1||arguments.length>2)throw Error("Expected 1 to 2 arguments but got "+arguments.length);return new bn(t,r)}function kn(t){if(Wr(t))return Object.isFrozen(t)||Nr(t)||un(t)||Er(t)||Pr(t)||cn(t)||vn(t)||wn(t);var r=typeof t;return"string"===r||"number"===r||"boolean"===r||"symbol"===r||null==t}var zn="48de6fff-9d11-472d-a76f-ed77a59a5cbc",On=0,An="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",_n=RegExp("^"+An+"$"),jn=RegExp("^\\(Tag "+zn+" [0-9]+\\)$"),In=RegExp("^\\(UUIDTag "+An+"\\)$"),Tn="undefined"!=typeof Symbol&&void 0!==Symbol.iterator?Symbol.iterator:null,Cn="undefined"!=typeof Symbol&&void 0!==Symbol.keyFor?Symbol.keyFor:null,Dn=a("e1c3818d-4c4f-4703-980a-00969e4ca900"),Jn=a("6199065c-b518-4cb3-8b41-ab70a9769ec3"),Un=a("1b75a273-16bd-4248-be8a-e4b5e8c4b523"),Nn=a("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37"),Rn=a("99e14916-bc99-4c48-81aa-299cf1ad6de3"),Mn={},Ln={};Ln.depth=0,Ln.size=0;var Qn={},Kn=0,qn=0,Fn={},$n={},Pn={};$n.toString=Pn.toString=rr,$n.inspect=Pn.inspect=rr,Pn.toJSON=nr,null!==Tn&&($n[Tn]=Pn[Tn]=function(){return l(this)});var Bn=125,Gn=Math.ceil,Hn=Math.floor;vr.prototype.copy=function(t,r){return new vr(t,r,this.array)},br.prototype=Object.create(Pn),br.prototype[Dn]=K("List"),br.prototype[Un]=Fr,br.prototype.has=or,Mn.List=function(t){return xr(H(t))},br.prototype[Rn]=function(t){return B("List",t)},br.prototype[Jn]=function(){var t=A(tr(this.root),function(t){return l(t.array)});return g(t,x(ur(this.tail)))},br.prototype.isEmpty=function(){return this.root===Ln&&this.tail===Ln},br.prototype.removeAll=function(){return new br(Ln,Ln,0)},br.prototype.size=function(){return this.root.size+this.tail_size},br.prototype.get=function(t,r){var n=this.size();if(0>t&&(t+=n),er(t,n)){var e=this.root,o=e.size;return o>t?yr(e,t):pr(this.tail,this.tail_size,t-o)}if(2===arguments.length)return r;throw Error("Index "+t+" is not valid")},br.prototype.insert=function(t,n){1===arguments.length&&(n=-1);var e=this.size();0>n&&(n+=e+1);var o=this.root,i=this.tail,u=this.tail_size;if(n===e){if(u===Bn){var f=Z(o,new vr(Ln,Ln,lr(i,u)));return new br(f,new ir(t,Ln),1)}return new br(o,new ir(t,i),u+1)}if(er(n,e)){var a=o.size;if(a>n)return new br(gr(o,n,t),i,u);var s=r(lr(i,u),n-a,t),f=Z(o,new vr(Ln,Ln,s));return new br(f,Ln,0)}throw Error("Index "+n+" is not valid")},br.prototype.remove=function(t){0===arguments.length&&(t=-1);var r=this.size();0>t&&(t+=r);var n=this.root,o=this.tail,i=this.tail_size;if(o!==Ln&&t===r-1)return new br(n,o.cdr,i-1);if(er(t,r)){var u=n.size;if(u>t)return new br(wr(n,t),o,i);var f=e(lr(o,i),t-u),a=Z(n,new vr(Ln,Ln,f));return new br(a,Ln,0)}throw Error("Index "+t+" is not valid")},br.prototype.modify=function(t,r){var e=this.size();if(0>t&&(t+=e),er(t,e)){var o=this.root,i=this.tail,u=this.tail_size,f=o.size;if(i!==Ln&&t===e-1){var a=r(i.car);return a===i.car?this:new br(o,new ir(a,i.cdr),u)}if(f>t){var s=dr(o,t,r);return s===o?this:new br(s,i,u)}var h=lr(i,u),c=n(h,t-f,r);if(c===h)return this;var s=Z(o,new vr(Ln,Ln,c));return new br(s,Ln,0)}throw Error("Index "+t+" is not valid")},br.prototype.set=function(t,r){return this.modify(t,function(){return r})},br.prototype.slice=function(t,r){var n=this.size();if(null==t&&(t=0),null==r&&(r=n),0>t&&(t+=n),0>r&&(r+=n),0===t&&r===n)return this;if(t>r)throw Error("Index "+t+" is greater than index "+r);if(er(t,n)){if(t===r)return new br(Ln,Ln,0);if(r>0&&n>=r){var e=this.root,o=e.size,i=[];if(o>=t&&mr(i,e,t,r),r>o){var u=lr(this.tail,this.tail_size);ar(i,cr(u,t-o,r-o))}return new br(hr(i),Ln,0)}throw Error("Index "+r+" is not valid")}throw Error("Index "+t+" is not valid")},br.prototype.concat=function(t){if(t instanceof br){var r=this.root,n=this.tail,e=t.root,o=t.tail;if(e===Ln&&o===Ln)return this;if(r===Ln&&n===Ln)return t;n!==Ln&&(r=Z(r,new vr(Ln,Ln,lr(n,this.tail_size))));var i=X(r,e);return new br(i,o,t.tail_size)}return S(t,this,function(t,r){return t.insert(r)})},Jr.prototype.copy=function(t,r){return new Jr(t,r,this.hash,this.key,this.value)},Jr.prototype.modify=function(t){var r=t.hash,n=t.key,e=t.value;return this.hash===r&&this.key===n&&this.value===e?this:new Jr(this.left,this.right,r,n,e)},Ur.prototype=Object.create(Pn),Ur.prototype[Un]=qr,Ur.prototype.isEmpty=_r,Ur.prototype.has=jr,Ur.prototype.remove=Ir(Ur),Ur.prototype.merge=Tr,Ur.prototype[Jn]=function(){return y(tr(this.root),function(t){return Br([t.key,t.value])})},Ur.prototype[Dn]=function(t){return null===t.hash&&(t.hash=Nr(t)&&!Rr(t)?"(Dict"+Q(t,"  ")+")":"(SortedDict "+L(t.sort)+Q(t,"  ")+")"),t.hash},Mn.Dict=function(t){return Lr(G(t))},Ur.prototype[Rn]=function(t){if(Nr(t)&&!Rr(t))return P("Dict",t);throw Error("Cannot convert SortedDict to JSON")},Ur.prototype.removeAll=function(){return new Ur(Ln,this.sort,this.hash_fn)},Ur.prototype.get=function(t,r){var n=kr(this.root,this.sort,this.hash_fn(t));if(n===Ln){if(2===arguments.length)return r;throw Error("Key "+t+" not found")}return n.value},Ur.prototype.set=function(t,r){var n=this.root,e=this.sort,o=this.hash_fn,i=o(t),u=zr(n,e,i,new Jr(Ln,Ln,i,t,r));return u===n?this:new Ur(u,e,o)},Ur.prototype.modify=function(t,r){var n=this.root,e=this.sort,o=this.hash_fn,i=Or(n,e,o(t),t,r);return i===n?this:new Ur(i,e,o)},$r.prototype=Object.create(Pn),$r.prototype[Dn]=K("Tuple"),$r.prototype[Un]=Fr,Mn.Tuple=function(t){return Gr(H(t))},$r.prototype[Rn]=function(t){return B("Tuple",t)},$r.prototype[Jn]=function(){return l(this.values)},$r.prototype.size=function(){return this.values.length},$r.prototype.get=function(t){var r=this.size();if(er(t,r))return this.values[t];throw Error("Index "+t+" is not valid")},$r.prototype.modify=function(t,r){var e=this.size();if(er(t,e)){var o=this.values,i=n(o,t,r);return i===o?this:new $r(i)}throw Error("Index "+t+" is not valid")},$r.prototype.set=function(t,r){return this.modify(t,function(){return r})},en.prototype.copy=function(t,r){return new en(t,r,this.hash,this.key)},en.prototype.modify=function(t){var r=t.hash,n=t.key;return this.hash===r&&this.key===n?this:new en(this.left,this.right,r,n)},on.prototype=Object.create(Pn),on.prototype[Un]=Fr,on.prototype.isEmpty=_r,on.prototype.has=jr,on.prototype.remove=Ir(on),Mn.Set=function(t){return sn(H(t))},on.prototype[Jn]=function(){return y(tr(this.root),function(t){return t.key})},on.prototype[Rn]=function(t){if(un(t)&&!fn(t))return B("Set",t);throw Error("Cannot convert SortedSet to JSON")},on.prototype[Dn]=function(t){if(null===t.hash){var r=J(t,function(t){return L(t)}),n="  ";t.hash=un(t)&&!fn(t)?"(Set"+q(r,n)+")":"(SortedSet "+L(t.sort)+q(r,n)+")"}return t.hash},on.prototype.removeAll=function(){return new on(Ln,this.sort,this.hash_fn)},on.prototype.add=function(t){var r=this.root,n=this.sort,e=this.hash_fn,o=e(t),i=zr(r,n,o,new en(Ln,Ln,o,t));return i===r?this:new on(i,n,e)},on.prototype.union=function(t){return S(t,this,function(t,r){return t.add(r)})},on.prototype.intersect=function(t){var r=this;if(r.isEmpty())return r;var n=r.removeAll();return S(t,n,function(t,n){return r.has(n)?t.add(n):t})},on.prototype.disjoint=function(t){var r=this;return S(t,r,function(t,n){return r.has(n)?t.remove(n):t.add(n)})},on.prototype.subtract=function(t){return this.isEmpty()?this:S(t,this,function(t,r){return t.remove(r)})},hn.prototype=Object.create(Pn),hn.prototype[Un]=Fr,hn.prototype[Dn]=K("Queue"),hn.prototype.size=Cr,hn.prototype.concat=Dr,Mn.Queue=function(t){return ln(H(t))},hn.prototype[Rn]=function(t){return B("Queue",t)},hn.prototype.isEmpty=function(){return this.left===Ln&&this.right===Ln},hn.prototype.removeAll=function(){return new hn(Ln,Ln,0)},hn.prototype[Jn]=function(){return g(ur(this.left),x(ur(this.right)))},hn.prototype.peek=function(t){if(this.isEmpty()){if(1===arguments.length)return t;throw Error("Cannot peek from an empty queue")}return this.left.car},hn.prototype.push=function(t){return this.isEmpty()?new hn(new ir(t,this.left),this.right,this.len+1):new hn(this.left,new ir(t,this.right),this.len+1)},hn.prototype.pop=function(){if(this.isEmpty())throw Error("Cannot pop from an empty queue");var t=this.left.cdr;if(t===Ln){var r=Ln;return fr(this.right,function(t){r=new ir(t,r)}),new hn(r,Ln,this.len-1)}return new hn(t,this.right,this.len-1)},pn.prototype=Object.create(Pn),pn.prototype[Un]=Fr,pn.prototype[Dn]=K("Stack"),pn.prototype.isEmpty=_r,pn.prototype.size=Cr,pn.prototype.concat=Dr,Mn.Stack=function(t){return yn(H(t))},pn.prototype[Jn]=function(){return x(ur(this.root))},pn.prototype[Rn]=function(t){return B("Stack",t)},pn.prototype.removeAll=function(){return new pn(Ln,0)},pn.prototype.peek=function(t){if(this.isEmpty()){if(1===arguments.length)return t;throw Error("Cannot peek from an empty stack")}return this.root.car},pn.prototype.push=function(t){return new pn(new ir(t,this.root),this.len+1)},pn.prototype.pop=function(){if(this.isEmpty())throw Error("Cannot pop from an empty stack");return new pn(this.root.cdr,this.len-1)},dn.prototype=Object.create(Pn),dn.prototype.update=Tr,dn.prototype[Un]=qr,Mn.Record=function(t){return mn(G(t))},dn.prototype[Rn]=function(t){return P("Record",t)},dn.prototype[Dn]=function(t){return null===t.hash&&(t.hash="(Record"+Q(t,"  ")+")"),t.hash},dn.prototype[Jn]=function(){var t=this.keys,r=this.values;return l(J(_(t),function(t){return nn(t,function(t,n){return Br([t,r[n]])})}))},dn.prototype.get=function(t){gn(t);var r=this.keys[t];if(null==r)throw Error("Key "+t+" not found");return this.values[r]},dn.prototype.set=function(t,r){return this.modify(t,function(){return r})},dn.prototype.modify=function(t,r){gn(t);var e=this.keys,o=e[t];if(null==o)throw Error("Key "+t+" not found");var i=this.values,u=n(i,o,r);return u===i?this:new dn(e,u)};var Vn=0;bn.prototype=Object.create($n),bn.prototype[Dn]=function(t){return"(Ref "+L(t._id)+")"},bn.prototype.get=function(){return this._value},bn.prototype.set=function(t){var r=this._value;t!==r&&(this._value=t,null!=this._onchange&&this._onchange(r,t))},bn.prototype.modify=function(t){this.set(t(this.get()))},function(t,r){"function"==typeof define&&define.amd?define(["exports"],r):"object"==typeof exports?r(exports):(t.Immutable={},r(t.Immutable))}(this,function(t){t.equal=s,t.fromJS=Qr,t.toJS=Kr,t.isDict=Nr,t.isSet=un,t.isSortedDict=Rr,t.isSortedSet=fn,t.isList=Er,t.isQueue=cn,t.isTuple=Pr,t.isStack=vn,t.isImmutable=kn,t.SortedDict=Mr,t.SortedSet=an,t.isIterable=c,t.Dict=Lr,t.Set=sn,t.List=xr,t.Tuple=Gr,t.Queue=ln,t.Stack=yn,t.simpleSort=Sr,t.isRecord=wn,t.Record=mn,t.toJSON=$,t.fromJSON=F,t.deref=En,t.Ref=Sn,t.isRef=xn,t.isTag=i,t.isUUIDTag=u,t.Tag=f,t.UUIDTag=a,t.each=j,t.map=J,t.keep=N,t.findIndex=I,t.reverse=U,t.foldl=S,t.foldr=k,t.join=O,t.zip=E,t.toArray=z,t.any=d,t.all=w,t.find=m,t.partition=b,t.range=D,t.take=C,t.indexOf=T,t.toIterator=l,t.Iterable=p})}).call(this);
+(function() {
+    "use strict";
+    function $$Array$$copy(array) {
+      var len = array.length;
+      var out = new Array(len);
+
+      for (var i = 0; i < len; ++i) {
+        out[i] = array[i];
+      }
+
+      return out;
+    }
+
+    function $$Array$$insert(array, index, value) {
+      var len = array.length + 1;
+
+      var out = new Array(len);
+
+      var i = 0;
+      while (i < index) {
+        out[i] = array[i];
+        ++i;
+      }
+
+      out[i] = value;
+      ++i;
+
+      while (i < len) {
+        out[i] = array[i - 1];
+        ++i;
+      }
+
+      return out;
+    }
+
+    function $$Array$$modify(array, index, f) {
+      var old_value = array[index];
+      var new_value = f(old_value);
+
+      if (old_value === new_value) {
+        return array;
+
+      } else {
+        var new_array = $$Array$$copy(array);
+        new_array[index] = new_value;
+        return new_array;
+      }
+    }
+
+    function $$Array$$remove(array, index) {
+      var len = array.length - 1;
+
+      var out = new Array(len);
+
+      var i = 0;
+      while (i < index) {
+        out[i] = array[i];
+        ++i;
+      }
+
+      while (i < len) {
+        out[i] = array[i + 1];
+        ++i;
+      }
+
+      return out;
+    }
+    var $$Tag$$tag_uuid = "48de6fff-9d11-472d-a76f-ed77a59a5cbc";
+    var $$Tag$$tag_id = 0;
+
+    var $$Tag$$uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+    var $$Tag$$uuid_regexp = new RegExp("^" + $$Tag$$uuid + "$");
+
+    var $$Tag$$is_tag_regexp = new RegExp("^\\(Tag " + $$Tag$$tag_uuid + " [0-9]+\\)$");
+
+    var $$Tag$$is_uuid_tag_regexp = new RegExp("^\\(UUIDTag " + $$Tag$$uuid + "\\)$");
+
+    var $$Tag$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
+                                   ? Symbol.iterator
+                                   : null);
+
+    var $$Tag$$Symbol_keyFor = (typeof Symbol !== "undefined" && typeof Symbol.keyFor !== "undefined"
+                                 ? Symbol.keyFor
+                                 : null);
+
+    function $$Tag$$isUUID(x) {
+      return typeof x === "string" && $$Tag$$uuid_regexp.test(x);
+    }
+
+    function $$Tag$$isTag(x) {
+      return typeof x === "string" &&
+             ($$Tag$$is_tag_regexp.test(x) ||
+              $$Tag$$is_uuid_tag_regexp.test(x));
+    }
+
+    function $$Tag$$isUUIDTag(x) {
+      return typeof x === "string" && $$Tag$$is_uuid_tag_regexp.test(x);
+    }
+
+    function $$Tag$$Tag() {
+      if (arguments.length === 0) {
+        return "(Tag " + $$Tag$$tag_uuid + " " + (++$$Tag$$tag_id) + ")";
+      } else {
+        throw new Error("Expected 0 arguments but got " + arguments.length);
+      }
+    }
+
+    function $$Tag$$UUIDTag(id) {
+      if (arguments.length === 1) {
+        if ($$Tag$$isUUID(id)) {
+          return "(UUIDTag " + id + ")";
+        } else {
+          throw new Error("Expected a lower-case UUID, but got: " + id);
+        }
+
+      } else {
+        throw new Error("Expected 1 argument but got " + arguments.length);
+      }
+    }
+    var $$static$$tag_hash        = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
+    var $$static$$tag_iter        = $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
+    var $$static$$tag_toJS        = $$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
+    var $$static$$tag_toJSON_type = $$Tag$$UUIDTag("89d8297c-d95e-4ce9-bc9b-6b6f73fa6a37");
+    var $$static$$tag_toJSON      = $$Tag$$UUIDTag("99e14916-bc99-4c48-81aa-299cf1ad6de3");
+
+    var $$static$$fromJSON_registry = {};
+
+    var $$static$$nil = {};
+    $$static$$nil.depth      = 0;
+    $$static$$nil.size       = 0;
+    function $$equal$$equal(x, y) {
+      return x === y || $$hash$$hash(x) === $$hash$$hash(y);
+    }
+
+    // TODO move into "./static.js" ?
+    var $$iter$$empty = {};
+
+    function $$iter$$iter_array(array) {
+      var i = 0;
+
+      return {
+        next: function () {
+          if (i < array.length) {
+            return { value: array[i++] };
+          } else {
+            return { done: true };
+          }
+        }
+      };
+    }
+
+    function $$iter$$isIterable(x) {
+      if ($$util$$isObject(x)) {
+        return x[$$static$$tag_iter] != null ||
+               ($$Tag$$Symbol_iterator !== null && x[$$Tag$$Symbol_iterator] != null) ||
+               Array.isArray(x);
+      } else {
+        return typeof x === "string" && !$$Tag$$isTag(x);
+      }
+    }
+
+    function $$iter$$toIterator(x) {
+      var fn;
+
+      if ((fn = x[$$static$$tag_iter]) != null) {
+        return fn.call(x);
+
+      // TODO should ES6 Iterables have precedence over `tag_iter` ?
+      } else if ($$Tag$$Symbol_iterator !== null && (fn = x[$$Tag$$Symbol_iterator]) != null) {
+        return fn.call(x);
+
+      } else if (Array.isArray(x)) {
+        return $$iter$$iter_array(x);
+
+      // TODO this isn't quite correct
+      } else if (typeof x === "string" && !$$Tag$$isTag(x)) {
+        return $$iter$$iter_array(x);
+
+      } else {
+        throw new Error("Cannot iter: " + x);
+      }
+    }
+
+    function $$iter$$Iterable(f) {
+      var o = {};
+
+      function iter() {
+        return f();
+      }
+
+      o[$$static$$tag_iter] = iter;
+
+      if ($$Tag$$Symbol_iterator !== null) {
+        o[$$Tag$$Symbol_iterator] = iter;
+      }
+
+      return o;
+    }
+
+    function $$iter$$each_iter(iterator, f) {
+      for (;;) {
+        var info = iterator.next();
+        // TODO what if it has a value too?
+        if (info.done) {
+          break;
+        } else {
+          f(info.value);
+        }
+      }
+    }
+
+    function $$iter$$map_iter(iterator, f) {
+      return {
+        next: function () {
+          var info = iterator.next();
+          // TODO what if it has a value too?
+          if (info.done) {
+            // TODO just return `info` ?
+            return { done: true };
+          } else {
+            return { value: f(info.value) };
+          }
+        }
+      };
+    }
+
+    function $$iter$$concat_iter(x, y) {
+      var x_done = false;
+      var y_done = false;
+
+      return {
+        next: function () {
+          for (;;) {
+            if (x_done) {
+              if (y_done) {
+                return { done: true };
+              } else {
+                var info = y.next();
+                if (info.done) {
+                  y_done = true;
+                } else {
+                  return { value: info.value };
+                }
+              }
+            } else {
+              var info = x.next();
+              if (info.done) {
+                x_done = true;
+              } else {
+                return { value: info.value };
+              }
+            }
+          }
+        }
+      };
+    }
+
+    function $$iter$$any(x, f) {
+      var iterator = $$iter$$toIterator(x);
+
+      for (;;) {
+        var info = iterator.next();
+        if (info.done) {
+          return false;
+        } else if (f(info.value)) {
+          return true;
+        }
+      }
+    }
+
+    function $$iter$$all(x, f) {
+      var iterator = $$iter$$toIterator(x);
+
+      for (;;) {
+        var info = iterator.next();
+        if (info.done) {
+          return true;
+        } else if (!f(info.value)) {
+          return false;
+        }
+      }
+    }
+
+    function $$iter$$find(x, f, def) {
+      var iterator = $$iter$$toIterator(x);
+
+      for (;;) {
+        var info = iterator.next();
+        if (info.done) {
+          if (arguments.length === 3) {
+            return def;
+          } else {
+            throw new Error("Did not find anything");
+          }
+
+        } else if (f(info.value)) {
+          return info.value;
+        }
+      }
+    }
+
+    function $$iter$$partition(x, f) {
+      var yes_buffer = [];
+      var no_buffer  = [];
+
+      var iterator = $$iter$$empty;
+      var done     = false;
+
+      return $$ImmutableTuple$$unsafe_Tuple([
+        $$iter$$Iterable(function () {
+          if (iterator === $$iter$$empty) {
+            iterator = $$iter$$toIterator(x);
+          }
+
+          return {
+            next: function () {
+              for (;;) {
+                if (yes_buffer.length) {
+                  return yes_buffer.shift();
+
+                } else if (done) {
+                  return { done: true };
+
+                } else {
+                  var info = iterator.next();
+                  if (info.done) {
+                    done = true;
+
+                  } else if (f(info.value)) {
+                    return { value: info.value };
+
+                  } else {
+                    no_buffer.push({ value: info.value });
+                  }
+                }
+              }
+            }
+          };
+        }),
+
+        $$iter$$Iterable(function () {
+          if (iterator === $$iter$$empty) {
+            iterator = $$iter$$toIterator(x);
+          }
+
+          return {
+            next: function () {
+              for (;;) {
+                if (no_buffer.length) {
+                  return no_buffer.shift();
+
+                } else if (done) {
+                  return { done: true };
+
+                } else {
+                  var info = iterator.next();
+                  if (info.done) {
+                    done = true;
+
+                  } else if (f(info.value)) {
+                    yes_buffer.push({ value: info.value });
+
+                  } else {
+                    return { value: info.value };
+                  }
+                }
+              }
+            }
+          };
+        })
+      ]);
+    }
+
+    function $$iter$$zip(x, def) {
+      var hasDefault = (arguments.length === 2);
+
+      return $$iter$$Iterable(function () {
+        var args = $$iter$$toArray(x).map(function (x) {
+          return $$iter$$toIterator(x);
+        });
+
+        var isDone = false;
+
+        return {
+          next: function () {
+            for (;;) {
+              if (isDone) {
+                return { done: true };
+
+              } else {
+                var out  = [];
+                var seen = false;
+
+                for (var i = 0, l = args.length; i < l; ++i) {
+                  var info = args[i].next();
+                  if (info.done) {
+                    if (hasDefault) {
+                      out.push(def);
+                    } else {
+                      seen = false;
+                      break;
+                    }
+                  } else {
+                    seen = true;
+                    out.push(info.value);
+                  }
+                }
+
+                if (seen) {
+                  return { value: $$ImmutableTuple$$unsafe_Tuple(out) };
+
+                } else {
+                  isDone = true;
+                }
+              }
+            }
+          }
+        };
+      });
+    }
+
+    function $$iter$$reverse_iter(iterator) {
+      var stack = [];
+
+      // TODO should it do this here, or inside `next` ?
+      $$iter$$each_iter(iterator, function (x) {
+        stack.push(x);
+      });
+
+      var i = stack.length;
+
+      return {
+        next: function () {
+          if (i) {
+            return { value: stack[--i] };
+          } else {
+            return { done: true };
+          }
+        }
+      };
+    }
+
+    function $$iter$$foldl(x, init, f) {
+      $$iter$$each(x, function (x) {
+        init = f(init, x);
+      });
+      return init;
+    }
+
+    function $$iter$$foldr(x, init, f) {
+      return $$iter$$foldl($$iter$$reverse(x), init, function (x, y) {
+        return f(y, x);
+      });
+    }
+
+    function $$iter$$toArray(x) {
+      if (Array.isArray(x)) {
+        return x;
+
+      } else {
+        var a = [];
+
+        $$iter$$each(x, function (x) {
+          a.push(x);
+        });
+
+        return a;
+      }
+    }
+
+    function $$iter$$join(x, separator) {
+      if (arguments.length === 1) {
+        separator = "";
+      }
+
+      if (typeof x === "string" && separator === "") {
+        return x;
+      } else {
+        // TODO this requires O(n) space, perhaps we can use an iterator to make it O(1) space ?
+        return $$iter$$toArray(x).join(separator);
+      }
+    }
+
+    function $$iter$$mapcat_iter(iterator, f) {
+      var done = false;
+      var sub  = $$iter$$empty;
+
+      return {
+        next: function () {
+          for (;;) {
+            if (done) {
+              return { done: true };
+
+            } else if (sub === $$iter$$empty) {
+              var info = iterator.next();
+              // TODO what if it has a value too?
+              if (info.done) {
+                done = true;
+              } else {
+                sub = f(info.value);
+              }
+
+            } else {
+              var info = sub.next();
+              if (info.done) {
+                sub = $$iter$$empty;
+              } else {
+                return { value: info.value };
+              }
+            }
+          }
+        }
+      };
+    }
+
+    function $$iter$$iter_object(x) {
+      if ($$util$$isJSLiteral(x)) {
+        return $$iter$$map(Object.keys(x), function (key) {
+          return [key, x[key]];
+        });
+      } else {
+        return x;
+      }
+    }
+
+
+    function $$iter$$each(x, f) {
+      $$iter$$each_iter($$iter$$toIterator(x), f);
+    }
+
+    function $$iter$$findIndex(x, f, def) {
+      var iterator = $$iter$$toIterator(x);
+
+      var index = 0;
+
+      for (;;) {
+        var info = iterator.next();
+        // TODO what if it has a value too?
+        if (info.done) {
+          if (arguments.length === 3) {
+            return def;
+          } else {
+            throw new Error("Did not find anything");
+          }
+
+        } else if (f(info.value)) {
+          return index;
+
+        } else {
+          ++index;
+        }
+      }
+    }
+
+    function $$iter$$indexOf(x, value, def) {
+      if (arguments.length === 3) {
+        return $$iter$$findIndex(x, function (other) {
+          // TODO should `value` or `other` come first ?
+          return $$equal$$equal(other, value);
+        }, def);
+      } else {
+        return $$iter$$findIndex(x, function (other) {
+          // TODO should `value` or `other` come first ?
+          return $$equal$$equal(other, value);
+        });
+      }
+    }
+
+    function $$iter$$take(x, count) {
+      // TODO isInteger function
+      if (Math.round(count) !== count) {
+        throw new Error("Count must be an integer");
+      }
+
+      if (count < 0) {
+        throw new Error("Count cannot be negative");
+      }
+
+      return $$iter$$Iterable(function () {
+        var iterator = $$iter$$toIterator(x);
+
+        return {
+          next: function () {
+            for (;;) {
+              if (count < 0) {
+                throw new Error("Invalid count");
+
+              } else if (count === 0) {
+                return { done: true };
+
+              } else {
+                var info = iterator.next();
+                if (info.done) {
+                  count = 0;
+                } else {
+                  --count;
+                  return { value: info.value };
+                }
+              }
+            }
+          }
+        };
+      });
+    }
+
+    function $$iter$$range(start, end, step) {
+      if (arguments.length < 1) {
+        start = 0;
+      }
+      if (arguments.length < 2) {
+        end = Infinity;
+      }
+      if (arguments.length < 3) {
+        step = 1;
+      }
+
+      if (step < 0) {
+        throw new Error("Step cannot be negative");
+      }
+
+      return $$iter$$Iterable(function () {
+        if (start < end) {
+          var next = function () {
+            if (start < end) {
+              var current = start;
+              start += step;
+              return { value: current };
+
+            } else {
+              return { done: true };
+            }
+          };
+        } else {
+          var next = function () {
+            if (start > end) {
+              var current = start;
+              start -= step;
+              return { value: current };
+
+            } else {
+              return { done: true };
+            }
+          };
+        }
+        return {
+          next: next
+        };
+      });
+    }
+
+    function $$iter$$map(x, f) {
+      return $$iter$$Iterable(function () {
+        return $$iter$$map_iter($$iter$$toIterator(x), f);
+      });
+    }
+
+    function $$iter$$reverse(x) {
+      return $$iter$$Iterable(function () {
+        return $$iter$$reverse_iter($$iter$$toIterator(x));
+      });
+    }
+
+    function $$iter$$keep(x, f) {
+      return $$iter$$Iterable(function () {
+        var iterator = $$iter$$toIterator(x);
+        return {
+          next: function () {
+            for (;;) {
+              var info = iterator.next();
+              // TODO what if it has a value too?
+              if (info.done) {
+                return { done: true };
+              } else if (f(info.value)) {
+                return { value: info.value };
+              }
+            }
+          }
+        };
+      });
+    }
+
+    var $$hash$$mutable_hash_id = 0;
+
+    var $$hash$$Symbol_id = 0;
+    var $$hash$$Symbol_registry = {};
+
+    function $$hash$$hash_string(x) {
+      return "\"" + x.replace(/[\\\"\n]/g, function (s) {
+        if (s === "\n") {
+          return s + " ";
+        } else {
+          return "\\" + s;
+        }
+      }) + "\"";
+    }
+
+    function $$hash$$hash_symbol(x) {
+      var key;
+      if ($$Tag$$Symbol_keyFor !== null && (key = $$Tag$$Symbol_keyFor(x)) != null) {
+        return "(Symbol.for " + $$hash$$hash(key) + ")";
+      } else {
+        key = $$hash$$Symbol_registry[x];
+        if (key == null) {
+          key = $$hash$$Symbol_registry[x] = (++$$hash$$Symbol_id);
+        }
+        return "(Symbol " + key + ")";
+      }
+    }
+
+    function $$hash$$hash(x) {
+      var type = typeof x;
+      // TODO this is probably pretty inefficient
+      if (type === "string") {
+        if ($$Tag$$isTag(x)) {
+          return x;
+        } else {
+          return $$hash$$hash_string(x);
+        }
+
+      } else if (type === "number"    ||
+                 type === "boolean"   ||
+                 type === "undefined" ||
+                 x === null) {
+        return "" + x;
+
+      } else if (type === "symbol") {
+        return $$hash$$hash_symbol(x);
+
+      } else {
+        var hasher = x[$$static$$tag_hash];
+        if (hasher != null) {
+          return hasher(x);
+
+        } else {
+          if (Object.isExtensible(x)) {
+            var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
+
+            Object.defineProperty(x, $$static$$tag_hash, {
+              configurable: false,
+              enumerable: false,
+              writable: false,
+              value: function () {
+                return id;
+              }
+            });
+
+            return id;
+
+          } else {
+            throw new Error("Cannot use a non-extensible object as a key: " + x);
+          }
+        }
+      }
+    }
+
+    function $$hash$$hash_dict(x, spaces) {
+      var max_key = 0;
+
+      var a = [];
+
+      $$iter$$each(x, function (_array) {
+        $$util$$destructure_pair(_array, function (key, value) {
+          key   = $$hash$$hash(key);
+          value = $$hash$$hash(value);
+
+          key = key.split(/\n/);
+
+          $$iter$$each(key, function (key) {
+            max_key = Math.max(max_key, key.length);
+          });
+
+          a.push({
+            key: key,
+            value: value
+          });
+        });
+      });
+
+      var spaces = "  ";
+
+      a = $$iter$$map(a, function (x) {
+        var last = x.key.length - 1;
+        x.key[last] = $$util$$pad_right(x.key[last], max_key, " ");
+
+        var key = $$iter$$join(x.key, "\n");
+
+        var value = x.value.replace(/\n/g, "\n" + $$util$$repeat(" ", max_key + 3));
+
+        return key + " = " + value;
+      });
+
+      return $$hash$$join_lines(a, spaces);
+    }
+
+    function $$hash$$hash_array(s) {
+      return function (x) {
+        if (x.hash === null) {
+          var a = $$iter$$map(x, function (x) {
+            return $$hash$$hash(x);
+          });
+
+          x.hash = "(" + s + $$hash$$join_lines(a, "  ") + ")";
+        }
+
+        return x.hash;
+      };
+    }
+
+    function $$hash$$join_lines(a, spaces) {
+      var separator = "\n" + spaces;
+
+      return $$iter$$join($$iter$$map(a, function (x) {
+        return separator + x.replace(/\n/g, separator);
+      }));
+    }
+    function $$toJSON$$fromJSON(x) {
+      var type = typeof x;
+
+      if ($$Tag$$isTag(x)) {
+        if ($$Tag$$isUUIDTag(x)) {
+          return x;
+        } else {
+          throw new Error("Cannot convert Tag from JSON, use UUIDTag instead: " + x);
+        }
+
+      } else if (type === "string" || type === "boolean" || x === null || $$util$$isFinite(x)) {
+        return x;
+
+      } else if ($$util$$isObject(x)) {
+        var type = x[$$static$$tag_toJSON_type];
+        if (type != null) {
+          var register = $$static$$fromJSON_registry[type];
+          if (register != null) {
+            return register(x);
+          } else {
+            throw new Error("Cannot handle type " + type);
+          }
+
+        } else if (Array.isArray(x)) {
+          return x.map($$toJSON$$fromJSON);
+
+        } else if ($$util$$isJSLiteral(x)) {
+          var out = {};
+          // TODO is Object.keys correct here ?
+          Object.keys(x).forEach(function (key) {
+                // TODO unit tests for this
+            out[$$toJSON$$fromJSON(key)] = $$toJSON$$fromJSON(x[key]);
+          });
+          return out;
+
+        } else {
+          throw new Error("Cannot convert from JSON: " + x);
+        }
+
+      } else {
+        throw new Error("Cannot convert from JSON: " + x);
+      }
+    }
+
+    function $$toJSON$$toJSON(x) {
+      var type = typeof x;
+
+      if ($$Tag$$isTag(x)) {
+        if ($$Tag$$isUUIDTag(x)) {
+          return x;
+        } else {
+          throw new Error("Cannot convert Tag to JSON, use UUIDTag instead: " + x);
+        }
+
+      } else if (type === "string" || type === "boolean" || x === null || $$util$$isFinite(x)) {
+        return x;
+
+      } else if ($$util$$isObject(x)) {
+        var fn = x[$$static$$tag_toJSON];
+        if (fn != null) {
+          return fn(x);
+
+        // TODO isFunction ?
+        // TODO should this be before or after tag_toJSON ?
+        } else if (typeof x.toJSON === "function") {
+          return $$toJSON$$toJSON(x.toJSON());
+
+        } else if (Array.isArray(x)) {
+          return x.map($$toJSON$$toJSON);
+
+        } else if ($$util$$isJSLiteral(x)) {
+          var out = {};
+          // TODO is Object.keys correct here ?
+          Object.keys(x).forEach(function (key) {
+                // TODO unit tests for this
+            out[$$toJSON$$toJSON(key)] = $$toJSON$$toJSON(x[key]);
+          });
+          return out;
+
+        } else {
+          throw new Error("Cannot convert to JSON: " + x);
+        }
+
+      } else {
+        throw new Error("Cannot convert to JSON: " + x);
+      }
+    }
+
+    function $$toJSON$$toJSON_object(type, x) {
+      var o = {};
+
+      o[$$static$$tag_toJSON_type] = type;
+
+      o.keys   = [];
+      o.values = [];
+
+      $$iter$$each(x, function (_array) {
+        $$util$$destructure_pair(_array, function (key, value) {
+          o.keys.push($$toJSON$$toJSON(key));
+          o.values.push($$toJSON$$toJSON(value));
+        });
+      });
+
+      return o;
+    }
+
+    function $$toJSON$$toJSON_array(type, x) {
+      var o = {};
+
+      o[$$static$$tag_toJSON_type] = type;
+
+      o.values = [];
+
+      $$iter$$each(x, function (value) {
+        o.values.push($$toJSON$$toJSON(value));
+      });
+
+      return o;
+    }
+
+    function $$toJSON$$fromJSON_object(x) {
+      var keys   = x.keys;
+      var values = x.values;
+
+      var l = keys.length;
+      var out = new Array(l);
+
+      for (var i = 0; i < l; ++i) {
+        out[i] = [$$toJSON$$fromJSON(keys[i]), $$toJSON$$fromJSON(values[i])];
+      }
+
+      return out;
+    }
+
+    function $$toJSON$$fromJSON_array(x) {
+      var values = x.values;
+
+      var l = values.length;
+      var out = new Array(l);
+
+      for (var i = 0; i < l; ++i) {
+        out[i] = $$toJSON$$fromJSON(values[i]);
+      }
+
+      return out;
+    }
+    function $$AVL$$max(x, y) {
+      if (x > y) {
+        return x;
+      } else {
+        return y;
+      }
+    }
+
+    function $$AVL$$balanced_node(node, left, right) {
+      var l_depth = left.depth;
+      var r_depth = right.depth;
+
+      // Left side is deeper
+      if (l_depth > r_depth + 1) {
+        var lleft  = left.left;
+        var lright = left.right;
+
+        // Right side is deeper
+        if (lright.depth > lleft.depth) {
+          // Left rotate -> Right rotate
+          return lright.copy(left.copy(lleft, lright.left),
+                             node.copy(lright.right, right));
+
+        // Left side is deeper
+        } else {
+          // Right rotate
+          return left.copy(lleft, node.copy(lright, right));
+        }
+
+      // Right side is deeper
+      } else if (r_depth > l_depth + 1) {
+        var rright = right.right;
+        var rleft  = right.left;
+
+        // Left side is deeper
+        if (rleft.depth > rright.depth) {
+          // Right rotate -> Left rotate
+          return rleft.copy(node.copy(left, rleft.left),
+                            right.copy(rleft.right, rright));
+
+        // Right side is deeper
+        } else {
+          // Left rotate
+          return right.copy(node.copy(left, rleft), rright);
+        }
+
+      // No balancing needed
+      } else {
+        return node.copy(left, right);
+      }
+    }
+
+    function $$AVL$$concat(x, y) {
+      if (x === $$static$$nil) {
+        return y;
+
+      } else if (y === $$static$$nil) {
+        return x;
+
+      // TODO what if the depths are the same?
+      } else if (x.depth < y.depth) {
+        var left = $$AVL$$concat(x, y.left);
+        return $$AVL$$balanced_node(y, left, y.right);
+
+      } else {
+        var right = $$AVL$$concat(x.right, y);
+        return $$AVL$$balanced_node(x, x.left, right);
+      }
+    }
+
+    function $$AVL$$insert_min(node, new_node) {
+      if (node === $$static$$nil) {
+        return new_node;
+      } else {
+        // TODO do we need to use balanced_node ?
+        return $$AVL$$balanced_node(node, $$AVL$$insert_min(node.left, new_node), node.right);
+      }
+    }
+
+    function $$AVL$$insert_max(node, new_node) {
+      if (node === $$static$$nil) {
+        return new_node;
+      } else {
+        // TODO do we need to use balanced_node ?
+        return $$AVL$$balanced_node(node, node.left, $$AVL$$insert_max(node.right, new_node));
+      }
+    }
+
+    function $$AVL$$iter_tree(node) {
+      var parents = [];
+
+      while (node !== $$static$$nil) {
+        parents.push(node);
+        node = node.left;
+      }
+
+      return {
+        next: function () {
+          if (parents.length) {
+            var parent = parents.pop();
+
+            node = parent.right;
+
+            while (node !== $$static$$nil) {
+              parents.push(node);
+              node = node.left;
+            }
+
+            return { value: parent };
+          } else {
+            return { done: true };
+          }
+        }
+      };
+    }
+    var $$Base$$MutableBase   = {};
+    var $$Base$$ImmutableBase = {};
+
+    function $$Base$$toString() {
+      return $$hash$$hash(this);
+    }
+
+    // TODO Infinite cycle detection ?
+    function $$Base$$_toJSON() {
+      return $$toJSON$$toJSON(this);
+    }
+
+    $$Base$$MutableBase.toString = $$Base$$ImmutableBase.toString = $$Base$$toString;
+    $$Base$$MutableBase.inspect  = $$Base$$ImmutableBase.inspect  = $$Base$$toString;
+
+    // Mutable things cannot be converted to JSON
+    $$Base$$ImmutableBase.toJSON = $$Base$$_toJSON;
+
+    if ($$Tag$$Symbol_iterator !== null) {
+      $$Base$$MutableBase[$$Tag$$Symbol_iterator] = $$Base$$ImmutableBase[$$Tag$$Symbol_iterator] = function () {
+        return $$iter$$toIterator(this);
+      };
+    }
+    function $$Ordered$$nth_has(index, len) {
+      return index >= 0 && index < len;
+    }
+
+    function $$Ordered$$ordered_has(index) {
+      var len = this.size();
+
+      if (index < 0) {
+        index += len;
+      }
+
+      return $$Ordered$$nth_has(index, len);
+    }
+    function $$Cons$$Cons(car, cdr) {
+      this.car = car;
+      this.cdr = cdr;
+    }
+
+    function $$Cons$$iter_cons(x) {
+      return {
+        next: function () {
+          if (x === $$static$$nil) {
+            return { done: true };
+          } else {
+            var value = x.car;
+            x = x.cdr;
+            return { value: value };
+          }
+        }
+      };
+    }
+
+    function $$Cons$$each_cons(x, f) {
+      while (x !== $$static$$nil) {
+        f(x.car);
+        x = x.cdr;
+      }
+    }
+
+
+    // It's faster to use arrays for small lists
+    var $$ImmutableList$$array_limit = 125;
+
+    var $$ImmutableList$$ceiling = Math.ceil;
+    var $$ImmutableList$$floor   = Math.floor;
+
+
+    function $$ImmutableList$$add_slice(slices, slice) {
+      if (slices.length) {
+        var last = slices[slices.length - 1];
+        if (last.length + slice.length <= $$ImmutableList$$array_limit) {
+          slices[slices.length - 1] = last.concat(slice);
+        } else {
+          slices.push(slice);
+        }
+      } else {
+        slices.push(slice);
+      }
+    }
+
+    function $$ImmutableList$$slices_to_tree1(slices, min, max) {
+      if (min < max) {
+        var pivot = $$ImmutableList$$floor((min + max) / 2);
+        var left  = $$ImmutableList$$slices_to_tree1(slices, min, pivot);
+        var right = $$ImmutableList$$slices_to_tree1(slices, pivot + 1, max);
+        return new $$ImmutableList$$ArrayNode(left, right, slices[pivot]);
+      } else {
+        return $$static$$nil;
+      }
+    }
+
+    function $$ImmutableList$$slices_to_tree(slices) {
+      return $$ImmutableList$$slices_to_tree1(slices, 0, slices.length);
+    }
+
+    // TODO move this into Array.js ?
+    function $$ImmutableList$$array_slice(array, from, to) {
+      if (from < 0) {
+        from = 0;
+      }
+
+      var len = array.length;
+      if (to > len) {
+        to = len;
+      }
+
+      if (from === 0 && to === len) {
+        return array;
+      } else {
+        return array.slice(from, to);
+      }
+    }
+
+
+    // Converts a stack (reversed cons) into an array
+    function $$ImmutableList$$stack_to_array(a, size) {
+      var out = new Array(size);
+
+      while (size--) {
+        out[size] = a.car;
+        a = a.cdr;
+      }
+
+      return out;
+    }
+
+    function $$ImmutableList$$stack_nth(a, size, i) {
+      while (--size !== i) {
+        a = a.cdr;
+      }
+
+      return a.car;
+    }
+
+
+    function $$ImmutableList$$ArrayNode(left, right, array) {
+      this.left  = left;
+      this.right = right;
+      this.array = array;
+      this.size  = left.size + right.size + array.length;
+      this.depth = $$AVL$$max(left.depth, right.depth) + 1;
+    }
+
+    $$ImmutableList$$ArrayNode.prototype.copy = function (left, right) {
+      return new $$ImmutableList$$ArrayNode(left, right, this.array);
+    };
+
+
+    function $$ImmutableList$$nth_get(node, index) {
+      for (;;) {
+        var left    = node.left;
+        var l_index = left.size;
+
+        if (index < l_index) {
+          node = left;
+
+        } else {
+          index -= l_index;
+
+          var array = node.array;
+          var len   = array.length;
+          if (index < len) {
+            return array[index];
+
+          } else {
+            index -= len;
+            node  = node.right;
+          }
+        }
+      }
+    }
+
+    function $$ImmutableList$$nth_insert(node, index, value) {
+      // TODO is this necessary ?
+      if (node === $$static$$nil) {
+        return new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, [value]);
+
+      } else {
+        var left    = node.left;
+        var right   = node.right;
+        var l_index = left.size;
+
+        if (index < l_index) {
+          var child = $$ImmutableList$$nth_insert(left, index, value);
+          return $$AVL$$balanced_node(node, child, right);
+
+        } else {
+          index -= l_index;
+
+          var array = node.array;
+          var len   = array.length;
+          // TODO test this
+          if (index <= len) {
+            array = $$Array$$insert(array, index, value);
+
+            // TODO this fails when array_limit is 1
+            if (len === $$ImmutableList$$array_limit) {
+              var pivot  = $$ImmutableList$$ceiling(array.length / 2);
+              var aleft  = array.slice(0, pivot);
+              var aright = array.slice(pivot);
+
+              if (left.depth < right.depth) {
+                return new $$ImmutableList$$ArrayNode($$AVL$$insert_max(left, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, aleft)), right, aright);
+              } else {
+                return new $$ImmutableList$$ArrayNode(left, $$AVL$$insert_min(right, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, aright)), aleft);
+              }
+
+            } else {
+              return new $$ImmutableList$$ArrayNode(left, right, array);
+            }
+
+          } else {
+            var child = $$ImmutableList$$nth_insert(right, index - len, value);
+            return $$AVL$$balanced_node(node, left, child);
+          }
+        }
+      }
+    }
+
+    function $$ImmutableList$$nth_modify(node, index, f) {
+      var left    = node.left;
+      var right   = node.right;
+      var l_index = left.size;
+
+      if (index < l_index) {
+        var child = $$ImmutableList$$nth_modify(left, index, f);
+        if (child === left) {
+          return node;
+        } else {
+          return node.copy(child, right); // TODO test this
+        }
+
+      } else {
+        index -= l_index;
+
+        var array = node.array;
+        var len   = array.length;
+        // TODO test this
+        if (index < len) {
+          var new_array = $$Array$$modify(array, index, f);
+          if (new_array === array) {
+            return node;
+          } else {
+            return new $$ImmutableList$$ArrayNode(left, right, new_array);
+          }
+
+        } else {
+          var child = $$ImmutableList$$nth_modify(right, index - len, f);
+          if (child === right) {
+            return node;
+          } else {
+            return node.copy(left, child); // TODO test this
+          }
+        }
+      }
+    }
+
+    function $$ImmutableList$$nth_remove(node, index) {
+      var left    = node.left;
+      var right   = node.right;
+      var l_index = left.size;
+
+      if (index < l_index) {
+        var child = $$ImmutableList$$nth_remove(left, index);
+        return $$AVL$$balanced_node(node, child, right);
+
+      } else {
+        index -= l_index;
+
+        var array = node.array;
+        var len   = array.length;
+        // TODO test this
+        if (index < len) {
+          // TODO use `array.length === 1` so we can skip the call to `array_remove`
+          array = $$Array$$remove(array, index);
+
+          if (array.length === 0) {
+            return $$AVL$$concat(left, right);
+          } else {
+            return new $$ImmutableList$$ArrayNode(left, right, array);
+          }
+
+        } else {
+          var child = $$ImmutableList$$nth_remove(right, index - len);
+          return $$AVL$$balanced_node(node, left, child);
+        }
+      }
+    }
+
+    function $$ImmutableList$$nth_slice(slices, node, from, to) {
+      if (node !== $$static$$nil) {
+        var left = node.left;
+        var size = left.size;
+
+        if (from < size) {
+          $$ImmutableList$$nth_slice(slices, left, from, to);
+        }
+
+        var array = node.array;
+        var len   = array.length;
+
+        from -= size;
+        to   -= size;
+
+        if (from < len && to > 0) {
+          $$ImmutableList$$add_slice(slices, $$ImmutableList$$array_slice(array, from, to));
+        }
+
+        if (to > len) {
+          $$ImmutableList$$nth_slice(slices, node.right, from - len, to - len);
+        }
+      }
+    }
+
+
+    function $$ImmutableList$$ImmutableList(root, tail, tail_size) {
+      this.root = root;
+      this.tail = tail;
+      this.tail_size = tail_size;
+      this.hash = null;
+    }
+
+    $$ImmutableList$$ImmutableList.prototype = Object.create($$Base$$ImmutableBase);
+
+    $$ImmutableList$$ImmutableList.prototype[$$static$$tag_hash] = $$hash$$hash_array("List");
+    $$ImmutableList$$ImmutableList.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableList$$ImmutableList.prototype.has = $$Ordered$$ordered_has;
+
+    $$static$$fromJSON_registry["List"] = function (x) {
+      return $$ImmutableList$$List($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableList$$ImmutableList.prototype[$$static$$tag_toJSON] = function (x) {
+      return $$toJSON$$toJSON_array("List", x);
+    };
+
+    $$ImmutableList$$ImmutableList.prototype[$$static$$tag_iter] = function () {
+      var tree = $$iter$$mapcat_iter($$AVL$$iter_tree(this.root), function (node) {
+        return $$iter$$toIterator(node.array);
+      });
+      return $$iter$$concat_iter(tree, $$iter$$reverse_iter($$Cons$$iter_cons(this.tail)));
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.isEmpty = function () {
+      return this.root === $$static$$nil && this.tail === $$static$$nil;
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.removeAll = function () {
+      return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0);
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.size = function () {
+      return this.root.size + this.tail_size;
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.get = function (index, def) {
+      var len = this.size();
+
+      if (index < 0) {
+        index += len;
+      }
+
+      if ($$Ordered$$nth_has(index, len)) {
+        var root = this.root;
+        var size = root.size;
+        if (index < size) {
+          return $$ImmutableList$$nth_get(root, index);
+        } else {
+          return $$ImmutableList$$stack_nth(this.tail, this.tail_size, index - size);
+        }
+
+      } else if (arguments.length === 2) {
+        return def;
+
+      } else {
+        throw new Error("Index " + index + " is not valid");
+      }
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.insert = function (value, index) {
+      if (arguments.length === 1) {
+        index = -1;
+      }
+
+      var len = this.size();
+
+      if (index < 0) {
+        index += (len + 1);
+      }
+
+      var root      = this.root;
+      var tail      = this.tail;
+      var tail_size = this.tail_size;
+      if (index === len) {
+        if (tail_size === $$ImmutableList$$array_limit) {
+          var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, $$ImmutableList$$stack_to_array(tail, tail_size)));
+          return new $$ImmutableList$$ImmutableList(node, new $$Cons$$Cons(value, $$static$$nil), 1);
+
+        } else {
+          return new $$ImmutableList$$ImmutableList(root, new $$Cons$$Cons(value, tail), tail_size + 1);
+        }
+
+      } else if ($$Ordered$$nth_has(index, len)) {
+        var size = root.size;
+        // TODO should this be <= ?
+        if (index < size) {
+          return new $$ImmutableList$$ImmutableList($$ImmutableList$$nth_insert(root, index, value), tail, tail_size);
+
+        } else {
+          var array = $$Array$$insert($$ImmutableList$$stack_to_array(tail, tail_size), index - size, value);
+          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, array));
+          return new $$ImmutableList$$ImmutableList(node, $$static$$nil, 0);
+        }
+
+      } else {
+        throw new Error("Index " + index + " is not valid");
+      }
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.remove = function (index) {
+      if (arguments.length === 0) {
+        index = -1;
+      }
+
+      var len = this.size();
+
+      if (index < 0) {
+        index += len;
+      }
+
+      var root      = this.root;
+      var tail      = this.tail;
+      var tail_size = this.tail_size;
+
+      if (tail !== $$static$$nil && index === len - 1) {
+        return new $$ImmutableList$$ImmutableList(root, tail.cdr, tail_size - 1);
+
+      } else if ($$Ordered$$nth_has(index, len)) {
+        var size = root.size;
+        if (index < size) {
+          return new $$ImmutableList$$ImmutableList($$ImmutableList$$nth_remove(root, index), tail, tail_size);
+
+        } else {
+          var array = $$Array$$remove($$ImmutableList$$stack_to_array(tail, tail_size), index - size);
+          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, array));
+          return new $$ImmutableList$$ImmutableList(node, $$static$$nil, 0);
+        }
+
+      } else {
+        throw new Error("Index " + index + " is not valid");
+      }
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.modify = function (index, f) {
+      var len = this.size();
+
+      if (index < 0) {
+        index += len;
+      }
+
+      if ($$Ordered$$nth_has(index, len)) {
+        var root = this.root;
+        var tail = this.tail;
+        var tail_size = this.tail_size;
+        var size = root.size;
+
+        if (tail !== $$static$$nil && index === len - 1) {
+          var value = f(tail.car);
+          if (value === tail.car) {
+            return this;
+          } else {
+            return new $$ImmutableList$$ImmutableList(root, new $$Cons$$Cons(value, tail.cdr), tail_size);
+          }
+
+        } else if (index < size) {
+          var node = $$ImmutableList$$nth_modify(root, index, f);
+          if (node === root) {
+            return this;
+          } else {
+            return new $$ImmutableList$$ImmutableList(node, tail, tail_size);
+          }
+
+        } else {
+          var stack = $$ImmutableList$$stack_to_array(tail, tail_size);
+          var array = $$Array$$modify(stack, index - size, f);
+          if (array === stack) {
+            return this;
+          } else {
+            var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, array));
+            return new $$ImmutableList$$ImmutableList(node, $$static$$nil, 0);
+          }
+        }
+
+      } else {
+        throw new Error("Index " + index + " is not valid");
+      }
+    };
+
+    // TODO a bit of code duplication
+    $$ImmutableList$$ImmutableList.prototype.set = function (index, value) {
+      return this.modify(index, function () {
+        return value;
+      });
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.slice = function (from, to) {
+      var len = this.size();
+
+      if (from == null) {
+        from = 0;
+      }
+      if (to == null) {
+        to = len;
+      }
+
+      if (from < 0) {
+        from += len;
+      }
+      if (to < 0) {
+        to += len;
+      }
+
+      if (from === 0 && to === len) {
+        return this;
+
+      } else if (from > to) {
+        throw new Error("Index " + from + " is greater than index " + to);
+
+      } else if ($$Ordered$$nth_has(from, len)) {
+        if (from === to) {
+          return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0);
+
+        // TODO code duplication with nth_has ?
+        } else if (to > 0 && to <= len) {
+          var root = this.root;
+          var size = root.size;
+
+          var slices = [];
+
+          if (from <= size) {
+            $$ImmutableList$$nth_slice(slices, root, from, to);
+          }
+
+          if (to > size) {
+            var stack = $$ImmutableList$$stack_to_array(this.tail, this.tail_size);
+            $$ImmutableList$$add_slice(slices, $$ImmutableList$$array_slice(stack, from - size, to - size));
+          }
+
+          return new $$ImmutableList$$ImmutableList($$ImmutableList$$slices_to_tree(slices), $$static$$nil, 0);
+
+        } else {
+          throw new Error("Index " + to + " is not valid");
+        }
+
+      } else {
+        throw new Error("Index " + from + " is not valid");
+      }
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.concat = function (right) {
+      if (right instanceof $$ImmutableList$$ImmutableList) {
+        var lroot = this.root;
+        var ltail = this.tail;
+
+        var rroot = right.root;
+        var rtail = right.tail;
+
+        if (rroot === $$static$$nil && rtail === $$static$$nil) {
+          return this;
+
+        } else if (lroot === $$static$$nil && ltail === $$static$$nil) {
+          return right;
+
+        } else {
+          if (ltail !== $$static$$nil) {
+            lroot = $$AVL$$insert_max(lroot, new $$ImmutableList$$ArrayNode($$static$$nil, $$static$$nil, $$ImmutableList$$stack_to_array(ltail, this.tail_size)));
+          }
+
+          var node = $$AVL$$concat(lroot, rroot);
+          return new $$ImmutableList$$ImmutableList(node, rtail, right.tail_size);
+        }
+
+      } else {
+        return $$iter$$foldl(right, this, function (self, x) {
+          return self.insert(x);
+        });
+      }
+    };
+
+    function $$ImmutableList$$isList(x) {
+      return x instanceof $$ImmutableList$$ImmutableList;
+    }
+
+    function $$ImmutableList$$List(array) {
+      if (array != null) {
+        if (array instanceof $$ImmutableList$$ImmutableList) {
+          return array;
+        } else {
+          return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0).concat(array);
+        }
+      } else {
+        return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0);
+      }
+    }
+    function $$Sorted$$simpleSort(x, y) {
+      if (x === y) {
+        return 0;
+      } else if (x < y) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }
+
+    function $$Sorted$$key_get(node, sort, hash) {
+      while (node !== $$static$$nil) {
+        var order = sort(hash, node.hash);
+        if (order === 0) {
+          break;
+
+        } else if (order < 0) {
+          node = node.left;
+
+        } else {
+          node = node.right;
+        }
+      }
+
+      return node;
+    }
+
+    function $$Sorted$$key_set(node, sort, hash, new_node) {
+      if (node === $$static$$nil) {
+        return new_node;
+
+      } else {
+        var left  = node.left;
+        var right = node.right;
+
+        var order = sort(hash, node.hash);
+        if (order === 0) {
+          return node.modify(new_node);
+
+        } else if (order < 0) {
+          var child = $$Sorted$$key_set(left, sort, hash, new_node);
+          if (child === left) {
+            return node;
+          } else {
+            return $$AVL$$balanced_node(node, child, right);
+          }
+
+        } else {
+          var child = $$Sorted$$key_set(right, sort, hash, new_node);
+          if (child === right) {
+            return node;
+          } else {
+            return $$AVL$$balanced_node(node, left, child);
+          }
+        }
+      }
+    }
+
+    function $$Sorted$$key_modify(node, sort, hash, key, f) {
+      if (node === $$static$$nil) {
+        throw new Error("Key " + key + " not found");
+
+      } else {
+        var left  = node.left;
+        var right = node.right;
+
+        var order = sort(hash, node.hash);
+        if (order === 0) {
+          // TODO what if `f` suspends?
+          return node.modify({ key: key, hash: hash, value: f(node.value) });
+
+        } else if (order < 0) {
+          var child = $$Sorted$$key_modify(left, sort, hash, key, f);
+          if (child === left) {
+            return node;
+          } else {
+            return $$AVL$$balanced_node(node, child, right);
+          }
+
+        } else {
+          var child = $$Sorted$$key_modify(right, sort, hash, key, f);
+          if (child === right) {
+            return node;
+          } else {
+            return $$AVL$$balanced_node(node, left, child);
+          }
+        }
+      }
+    }
+
+    function $$Sorted$$key_remove(node, sort, hash) {
+      if (node === $$static$$nil) {
+        return node;
+
+      } else {
+        var left  = node.left;
+        var right = node.right;
+
+        var order = sort(hash, node.hash);
+        if (order === 0) {
+          return $$AVL$$concat(left, right);
+
+        } else if (order < 0) {
+          var child = $$Sorted$$key_remove(left, sort, hash);
+          if (child === left) {
+            return node;
+          } else {
+            return $$AVL$$balanced_node(node, child, right);
+          }
+
+        } else {
+          var child = $$Sorted$$key_remove(right, sort, hash);
+          if (child === right) {
+            return node;
+          } else {
+            return $$AVL$$balanced_node(node, left, child);
+          }
+        }
+      }
+    }
+
+    function $$Sorted$$sorted_isEmpty() {
+      return this.root === $$static$$nil;
+    }
+
+    function $$Sorted$$sorted_has(key) {
+      return $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key)) !== $$static$$nil;
+    }
+
+    function $$Sorted$$sorted_remove(f) {
+      return function (key) {
+        var root = this.root;
+        var sort = this.sort;
+        var hash_fn = this.hash_fn;
+        var node = $$Sorted$$key_remove(root, sort, hash_fn(key));
+        if (node === root) {
+          return this;
+        } else {
+          // TODO is this slower than using the constructor directly ?
+          return new f(node, sort, hash_fn);
+        }
+      };
+    }
+
+    function $$Sorted$$sorted_merge(other) {
+      return $$iter$$foldl($$iter$$iter_object(other), this, function (self, _array) {
+        return $$util$$destructure_pair(_array, function (key, value) {
+          return self.set(key, value);
+        });
+      });
+    }
+
+    function $$Sorted$$stack_size() {
+      return this.len;
+    }
+
+    function $$Sorted$$stack_concat(right) {
+      return $$iter$$foldl(right, this, function (self, x) {
+        return self.push(x);
+      });
+    }
+
+
+    function $$ImmutableDict$$KeyNode(left, right, hash, key, value) {
+      this.left  = left;
+      this.right = right;
+      this.hash  = hash;
+      this.key   = key;
+      this.value = value;
+      this.depth = $$AVL$$max(left.depth, right.depth) + 1;
+    }
+
+    $$ImmutableDict$$KeyNode.prototype.copy = function (left, right) {
+      return new $$ImmutableDict$$KeyNode(left, right, this.hash, this.key, this.value);
+    };
+
+    $$ImmutableDict$$KeyNode.prototype.modify = function (info) {
+      var hash  = info.hash;
+      var key   = info.key;
+      var value = info.value;
+      // We don't use equal, for increased speed
+      if (this.hash === hash && this.key === key && this.value === value) {
+        return this;
+      } else {
+        return new $$ImmutableDict$$KeyNode(this.left, this.right, hash, key, value);
+      }
+    };
+
+
+    function $$ImmutableDict$$ImmutableDict(root, sort, hash_fn) {
+      this.root = root;
+      this.sort = sort;
+      this.hash_fn = hash_fn;
+      this.hash = null;
+    }
+
+    $$ImmutableDict$$ImmutableDict.prototype = Object.create($$Base$$ImmutableBase);
+
+    $$ImmutableDict$$ImmutableDict.prototype[$$static$$tag_toJS] = $$toJS$$toJS_object;
+    $$ImmutableDict$$ImmutableDict.prototype.isEmpty = $$Sorted$$sorted_isEmpty;
+    $$ImmutableDict$$ImmutableDict.prototype.has = $$Sorted$$sorted_has;
+    $$ImmutableDict$$ImmutableDict.prototype.remove = $$Sorted$$sorted_remove($$ImmutableDict$$ImmutableDict);
+    $$ImmutableDict$$ImmutableDict.prototype.merge = $$Sorted$$sorted_merge;
+
+    $$ImmutableDict$$ImmutableDict.prototype[$$static$$tag_iter] = function () {
+      return $$iter$$map_iter($$AVL$$iter_tree(this.root), function (node) {
+        return $$ImmutableTuple$$unsafe_Tuple([node.key, node.value]);
+      });
+    };
+
+    $$ImmutableDict$$ImmutableDict.prototype[$$static$$tag_hash] = function (x) {
+      if (x.hash === null) {
+        // We don't use equal, for increased speed
+        if ($$ImmutableDict$$isDict(x) && !$$ImmutableDict$$isSortedDict(x)) {
+          x.hash = "(Dict" + $$hash$$hash_dict(x, "  ") + ")";
+        } else {
+          x.hash = "(SortedDict " + $$hash$$hash(x.sort) + $$hash$$hash_dict(x, "  ") + ")";
+        }
+      }
+
+      return x.hash;
+    };
+
+    $$static$$fromJSON_registry["Dict"] = function (x) {
+      return $$ImmutableDict$$Dict($$toJSON$$fromJSON_object(x));
+    };
+
+    $$ImmutableDict$$ImmutableDict.prototype[$$static$$tag_toJSON] = function (x) {
+      if ($$ImmutableDict$$isDict(x) && !$$ImmutableDict$$isSortedDict(x)) {
+        return $$toJSON$$toJSON_object("Dict", x);
+      } else {
+        throw new Error("Cannot convert SortedDict to JSON");
+      }
+    };
+
+    $$ImmutableDict$$ImmutableDict.prototype.removeAll = function () {
+      return new $$ImmutableDict$$ImmutableDict($$static$$nil, this.sort, this.hash_fn);
+    };
+
+    $$ImmutableDict$$ImmutableDict.prototype.get = function (key, def) {
+      var node = $$Sorted$$key_get(this.root, this.sort, this.hash_fn(key));
+      if (node === $$static$$nil) {
+        if (arguments.length === 2) {
+          return def;
+        } else {
+          throw new Error("Key " + key + " not found");
+        }
+      } else {
+        return node.value;
+      }
+    };
+
+    // TODO code duplication
+    // TODO what if `sort` suspends ?
+    $$ImmutableDict$$ImmutableDict.prototype.set = function (key, value) {
+      var root = this.root;
+      var sort = this.sort;
+      var hash_fn = this.hash_fn;
+      var hash = hash_fn(key);
+      var node = $$Sorted$$key_set(root, sort, hash, new $$ImmutableDict$$KeyNode($$static$$nil, $$static$$nil, hash, key, value));
+      if (node === root) {
+        return this;
+      } else {
+        return new $$ImmutableDict$$ImmutableDict(node, sort, hash_fn);
+      }
+    };
+
+    $$ImmutableDict$$ImmutableDict.prototype.modify = function (key, f) {
+      var root = this.root;
+      var sort = this.sort;
+      var hash_fn = this.hash_fn;
+      var node = $$Sorted$$key_modify(root, sort, hash_fn(key), key, f);
+      if (node === root) {
+        return this;
+      } else {
+        return new $$ImmutableDict$$ImmutableDict(node, sort, hash_fn);
+      }
+    };
+
+
+    function $$ImmutableDict$$isDict(x) {
+      return x instanceof $$ImmutableDict$$ImmutableDict;
+    }
+
+    function $$ImmutableDict$$isSortedDict(x) {
+      return $$ImmutableDict$$isDict(x) && x.hash_fn === $$util$$identity;
+    }
+
+    function $$ImmutableDict$$SortedDict(sort, obj) {
+      if (obj != null) {
+        // We don't use equal, for increased speed
+        if ($$ImmutableDict$$isSortedDict(obj) && obj.sort === sort) {
+          return obj;
+        } else {
+          return new $$ImmutableDict$$ImmutableDict($$static$$nil, sort, $$util$$identity).merge(obj);
+        }
+      } else {
+        return new $$ImmutableDict$$ImmutableDict($$static$$nil, sort, $$util$$identity);
+      }
+    }
+
+    function $$ImmutableDict$$Dict(obj) {
+      if (obj != null) {
+        if ($$ImmutableDict$$isDict(obj) && !$$ImmutableDict$$isSortedDict(obj)) {
+          return obj;
+        } else {
+          return new $$ImmutableDict$$ImmutableDict($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).merge(obj);
+        }
+      } else {
+        return new $$ImmutableDict$$ImmutableDict($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+      }
+    }
+    function $$toJS$$fromJS(x) {
+      if (Array.isArray(x)) {
+        var out = $$ImmutableList$$List();
+
+        for (var i = 0, l = x.length; i < l; ++i) {
+          out = out.insert($$toJS$$fromJS(x[i]));
+        }
+
+        return out;
+
+      } else if ($$util$$isJSLiteral(x)) {
+        var out = $$ImmutableDict$$Dict();
+
+        // TODO is using Object.keys correct ?
+        Object.keys(x).forEach(function (key) {
+                        // TODO unit test for this
+          out = out.set($$toJS$$fromJS(key), $$toJS$$fromJS(x[key]));
+        });
+
+        return out;
+
+      } else {
+        return x;
+      }
+    }
+
+    function $$toJS$$toJS(x) {
+      if ($$util$$isObject(x)) {
+        var fn = x[$$static$$tag_toJS];
+        if (fn != null) {
+          return fn(x);
+
+        } else if (Array.isArray(x)) {
+          return x.map($$toJS$$toJS);
+
+        } else if ($$util$$isJSLiteral(x)) {
+          var out = {};
+
+          // TODO is using Object.keys correct ?
+          Object.keys(x).forEach(function (key) {
+                // TODO unit test for this
+            out[$$toJS$$toJS(key)] = $$toJS$$toJS(x[key]);
+          });
+
+          return out;
+
+        } else {
+          return x;
+        }
+      } else {
+        return x;
+      }
+    }
+
+    function $$toJS$$toJS_object(x) {
+      var o = {};
+
+      $$iter$$each(x, function (_array) {
+        $$util$$destructure_pair(_array, function (key, value) {
+          // Tags are currently implemented as strings
+          // TODO use isString test ?
+          if (typeof key !== "string") {
+            throw new Error("Cannot convert to JavaScript: expected key to be string or Tag but got " + key);
+          }
+
+          o[key] = $$toJS$$toJS(value);
+        });
+      });
+
+      return o;
+    }
+
+    function $$toJS$$toJS_array(x) {
+      var a = [];
+
+      $$iter$$each(x, function (value) {
+        a.push($$toJS$$toJS(value));
+      });
+
+      return a;
+    }
+    function $$ImmutableTuple$$ImmutableTuple(values) {
+      this.values = values;
+      this.hash   = null;
+    }
+
+    $$ImmutableTuple$$ImmutableTuple.prototype = Object.create($$Base$$ImmutableBase);
+
+    $$ImmutableTuple$$ImmutableTuple.prototype[$$static$$tag_hash] = $$hash$$hash_array("Tuple");
+    $$ImmutableTuple$$ImmutableTuple.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
+
+    $$static$$fromJSON_registry["Tuple"] = function (x) {
+      return $$ImmutableTuple$$Tuple($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableTuple$$ImmutableTuple.prototype[$$static$$tag_toJSON] = function (x) {
+      return $$toJSON$$toJSON_array("Tuple", x);
+    };
+
+    $$ImmutableTuple$$ImmutableTuple.prototype[$$static$$tag_iter] = function () {
+      return $$iter$$toIterator(this.values);
+    };
+
+    $$ImmutableTuple$$ImmutableTuple.prototype.size = function () {
+      return this.values.length;
+    };
+
+    $$ImmutableTuple$$ImmutableTuple.prototype.get = function (index) {
+      var len = this.size();
+
+      if ($$Ordered$$nth_has(index, len)) {
+        return this.values[index];
+      } else {
+        throw new Error("Index " + index + " is not valid");
+      }
+    };
+
+    $$ImmutableTuple$$ImmutableTuple.prototype.modify = function (index, f) {
+      var len = this.size();
+
+      if ($$Ordered$$nth_has(index, len)) {
+        var values = this.values;
+        var array  = $$Array$$modify(values, index, f);
+        if (array === values) {
+          return this;
+        } else {
+          return new $$ImmutableTuple$$ImmutableTuple(array);
+        }
+
+      } else {
+        throw new Error("Index " + index + " is not valid");
+      }
+    };
+
+    // TODO a bit of code duplication
+    $$ImmutableTuple$$ImmutableTuple.prototype.set = function (index, value) {
+      return this.modify(index, function () {
+        return value;
+      });
+    };
+
+    function $$ImmutableTuple$$isTuple(x) {
+      return x instanceof $$ImmutableTuple$$ImmutableTuple;
+    }
+
+    function $$ImmutableTuple$$unsafe_Tuple(array) {
+      return new $$ImmutableTuple$$ImmutableTuple(array);
+    }
+
+    function $$ImmutableTuple$$Tuple(array) {
+      if (array != null) {
+        if ($$ImmutableTuple$$isTuple(array)) {
+          return array;
+
+        } else {
+          var values = [];
+
+          // We can't use toArray, because `array` might be mutated
+          $$iter$$each(array, function (x) {
+            values.push(x);
+          });
+
+          return new $$ImmutableTuple$$ImmutableTuple(values);
+        }
+      } else {
+        return new $$ImmutableTuple$$ImmutableTuple([]);
+      }
+    }
+    function $$util$$isNaN(x) {
+      return x !== x;
+    }
+
+    function $$util$$isFinite(x) {
+      return typeof x === "number" &&
+             x !== Infinity &&
+             x !== -Infinity &&
+             !$$util$$isNaN(x);
+    }
+
+    function $$util$$isObject(x) {
+      return Object(x) === x;
+    }
+
+    function $$util$$isJSLiteral(x) {
+      // TODO this won't work cross-realm
+      return $$util$$isObject(x) && Object.getPrototypeOf(x) === Object.prototype;
+    }
+
+    function $$util$$repeat(s, i) {
+      return new Array(i + 1).join(s);
+    }
+
+    function $$util$$pad_right(input, i, s) {
+      var right = Math.max(0, i - input.length);
+      return input + $$util$$repeat(s, right);
+    }
+
+    function $$util$$identity(x) {
+      return x;
+    }
+
+    function $$util$$plural(i, s) {
+      if (i === 1) {
+        return s;
+      } else {
+        return s + "s";
+      }
+    }
+
+    function $$util$$destructure_pair(x, f) {
+      if (Array.isArray(x)) {
+        if (x.length === 2) {
+          return f(x[0], x[1]);
+        } else {
+          throw new Error("Expected array with 2 elements but got " + x.length + " " + $$util$$plural(x.length, "element"));
+        }
+
+      } else if ($$ImmutableTuple$$isTuple(x)) {
+        if (x.size() === 2) {
+          return f(x.get(0), x.get(1));
+        } else {
+          // TODO code duplication
+          throw new Error("Expected Tuple with 2 elements but got " + x.size() + " " + $$util$$plural(x.size(), "element"));
+        }
+
+      } else {
+        throw new Error("Expected array or Tuple but got: " + x);
+      }
+    }
+
+
+    function $$ImmutableSet$$SetNode(left, right, hash, key) {
+      this.left  = left;
+      this.right = right;
+      this.hash  = hash;
+      this.key   = key;
+      this.depth = $$AVL$$max(left.depth, right.depth) + 1;
+    }
+
+    $$ImmutableSet$$SetNode.prototype.copy = function (left, right) {
+      return new $$ImmutableSet$$SetNode(left, right, this.hash, this.key);
+    };
+
+    $$ImmutableSet$$SetNode.prototype.modify = function (info) {
+      var hash = info.hash;
+      var key  = info.key;
+      // We don't use equal, for increased speed
+      if (this.hash === hash && this.key === key) {
+        return this;
+      } else {
+        return new $$ImmutableSet$$SetNode(this.left, this.right, hash, key);
+      }
+    };
+
+
+    function $$ImmutableSet$$ImmutableSet(root, sort, hash_fn) {
+      this.root = root;
+      this.sort = sort;
+      this.hash_fn = hash_fn;
+      this.hash = null;
+    }
+
+    $$ImmutableSet$$ImmutableSet.prototype = Object.create($$Base$$ImmutableBase);
+
+    $$ImmutableSet$$ImmutableSet.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableSet$$ImmutableSet.prototype.isEmpty = $$Sorted$$sorted_isEmpty;
+    $$ImmutableSet$$ImmutableSet.prototype.has = $$Sorted$$sorted_has;
+    $$ImmutableSet$$ImmutableSet.prototype.remove = $$Sorted$$sorted_remove($$ImmutableSet$$ImmutableSet);
+
+    $$static$$fromJSON_registry["Set"] = function (x) {
+      return $$ImmutableSet$$Set($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype[$$static$$tag_iter] = function () {
+      return $$iter$$map_iter($$AVL$$iter_tree(this.root), function (node) {
+        return node.key;
+      });
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype[$$static$$tag_toJSON] = function (x) {
+      if ($$ImmutableSet$$isSet(x) && !$$ImmutableSet$$isSortedSet(x)) {
+        return $$toJSON$$toJSON_array("Set", x);
+      } else {
+        throw new Error("Cannot convert SortedSet to JSON");
+      }
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype[$$static$$tag_hash] = function (x) {
+      if (x.hash === null) {
+        var a = $$iter$$map(x, function (value) {
+          return $$hash$$hash(value);
+        });
+
+        var spaces = "  ";
+
+        if ($$ImmutableSet$$isSet(x) && !$$ImmutableSet$$isSortedSet(x)) {
+          x.hash = "(Set" + $$hash$$join_lines(a, spaces) + ")";
+        } else {
+          x.hash = "(SortedSet " + $$hash$$hash(x.sort) + $$hash$$join_lines(a, spaces) + ")";
+        }
+      }
+
+      return x.hash;
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype.removeAll = function () {
+      return new $$ImmutableSet$$ImmutableSet($$static$$nil, this.sort, this.hash_fn);
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype.add = function (key) {
+      var root = this.root;
+      var sort = this.sort;
+      var hash_fn = this.hash_fn;
+      var hash = hash_fn(key);
+      var node = $$Sorted$$key_set(root, sort, hash, new $$ImmutableSet$$SetNode($$static$$nil, $$static$$nil, hash, key));
+      if (node === root) {
+        return this;
+      } else {
+        return new $$ImmutableSet$$ImmutableSet(node, sort, hash_fn);
+      }
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype.union = function (other) {
+      return $$iter$$foldl(other, this, function (self, value) {
+        return self.add(value);
+      });
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype.intersect = function (other) {
+      var self = this;
+
+      if (self.isEmpty()) {
+        return self;
+
+      } else {
+        var out = self.removeAll();
+
+        return $$iter$$foldl(other, out, function (out, value) {
+          if (self.has(value)) {
+            return out.add(value);
+          } else {
+            return out;
+          }
+        });
+      }
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype.disjoint = function (other) {
+      var self = this;
+
+      return $$iter$$foldl(other, self, function (out, value) {
+        if (self.has(value)) {
+          return out.remove(value);
+        } else {
+          return out.add(value);
+        }
+      });
+    };
+
+    $$ImmutableSet$$ImmutableSet.prototype.subtract = function (other) {
+      if (this.isEmpty()) {
+        return this;
+
+      } else {
+        return $$iter$$foldl(other, this, function (self, value) {
+          return self.remove(value);
+        });
+      }
+    };
+
+
+    function $$ImmutableSet$$isSet(x) {
+      return x instanceof $$ImmutableSet$$ImmutableSet;
+    }
+
+    function $$ImmutableSet$$isSortedSet(x) {
+      return $$ImmutableSet$$isSet(x) && x.hash_fn === $$util$$identity;
+    }
+
+    function $$ImmutableSet$$SortedSet(sort, array) {
+      if (array != null) {
+        // We don't use equal, for increased speed
+        if ($$ImmutableSet$$isSortedSet(array) && array.sort === sort) {
+          return array;
+        } else {
+          return new $$ImmutableSet$$ImmutableSet($$static$$nil, sort, $$util$$identity).union(array);
+        }
+      } else {
+        return new $$ImmutableSet$$ImmutableSet($$static$$nil, sort, $$util$$identity);
+      }
+    }
+
+    function $$ImmutableSet$$Set(array) {
+      if (array != null) {
+        if ($$ImmutableSet$$isSet(array) && !$$ImmutableSet$$isSortedSet(array)) {
+          return array;
+        } else {
+          return new $$ImmutableSet$$ImmutableSet($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).union(array);
+        }
+      } else {
+        return new $$ImmutableSet$$ImmutableSet($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+      }
+    }
+    function $$ImmutableQueue$$ImmutableQueue(left, right, len) {
+      this.left  = left;
+      this.right = right;
+      this.len   = len;
+      this.hash  = null;
+    }
+
+    $$ImmutableQueue$$ImmutableQueue.prototype = Object.create($$Base$$ImmutableBase);
+
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$static$$tag_hash] = $$hash$$hash_array("Queue");
+    $$ImmutableQueue$$ImmutableQueue.prototype.size = $$Sorted$$stack_size;
+    $$ImmutableQueue$$ImmutableQueue.prototype.concat = $$Sorted$$stack_concat;
+
+    $$static$$fromJSON_registry["Queue"] = function (x) {
+      return $$ImmutableQueue$$Queue($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$static$$tag_toJSON] = function (x) {
+      return $$toJSON$$toJSON_array("Queue", x);
+    };
+
+    $$ImmutableQueue$$ImmutableQueue.prototype.isEmpty = function () {
+      return this.left === $$static$$nil && this.right === $$static$$nil;
+    };
+
+    $$ImmutableQueue$$ImmutableQueue.prototype.removeAll = function () {
+      return new $$ImmutableQueue$$ImmutableQueue($$static$$nil, $$static$$nil, 0);
+    };
+
+    $$ImmutableQueue$$ImmutableQueue.prototype[$$static$$tag_iter] = function () {
+      return $$iter$$concat_iter($$Cons$$iter_cons(this.left), $$iter$$reverse_iter($$Cons$$iter_cons(this.right)));
+    };
+
+    $$ImmutableQueue$$ImmutableQueue.prototype.peek = function (def) {
+      if (this.isEmpty()) {
+        if (arguments.length === 1) {
+          return def;
+        } else {
+          throw new Error("Cannot peek from an empty queue");
+        }
+      } else {
+        return this.left.car;
+      }
+    };
+
+    $$ImmutableQueue$$ImmutableQueue.prototype.push = function (value) {
+      if (this.isEmpty()) {
+        return new $$ImmutableQueue$$ImmutableQueue(new $$Cons$$Cons(value, this.left), this.right, this.len + 1);
+      } else {
+        return new $$ImmutableQueue$$ImmutableQueue(this.left, new $$Cons$$Cons(value, this.right), this.len + 1);
+      }
+    };
+
+    $$ImmutableQueue$$ImmutableQueue.prototype.pop = function () {
+      if (this.isEmpty()) {
+        throw new Error("Cannot pop from an empty queue");
+      } else {
+        var left = this.left.cdr;
+        if (left === $$static$$nil) {
+          var right = $$static$$nil;
+
+          // TODO a little gross
+          // TODO replace with foldl ?
+          $$Cons$$each_cons(this.right, function (x) {
+            right = new $$Cons$$Cons(x, right);
+          });
+
+          return new $$ImmutableQueue$$ImmutableQueue(right, $$static$$nil, this.len - 1);
+        } else {
+          return new $$ImmutableQueue$$ImmutableQueue(left, this.right, this.len - 1);
+        }
+      }
+    };
+
+
+    function $$ImmutableQueue$$isQueue(x) {
+      return x instanceof $$ImmutableQueue$$ImmutableQueue;
+    }
+
+    function $$ImmutableQueue$$Queue(x) {
+      if (x != null) {
+        if (x instanceof $$ImmutableQueue$$ImmutableQueue) {
+          return x;
+        } else {
+          return new $$ImmutableQueue$$ImmutableQueue($$static$$nil, $$static$$nil, 0).concat(x);
+        }
+      } else {
+        return new $$ImmutableQueue$$ImmutableQueue($$static$$nil, $$static$$nil, 0);
+      }
+    }
+    function $$ImmutableStack$$ImmutableStack(root, len) {
+      this.root = root;
+      this.len  = len;
+      this.hash = null;
+    }
+
+    $$ImmutableStack$$ImmutableStack.prototype = Object.create($$Base$$ImmutableBase);
+
+    $$ImmutableStack$$ImmutableStack.prototype[$$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$ImmutableStack$$ImmutableStack.prototype[$$static$$tag_hash] = $$hash$$hash_array("Stack");
+    $$ImmutableStack$$ImmutableStack.prototype.isEmpty = $$Sorted$$sorted_isEmpty;
+    $$ImmutableStack$$ImmutableStack.prototype.size = $$Sorted$$stack_size;
+    $$ImmutableStack$$ImmutableStack.prototype.concat = $$Sorted$$stack_concat;
+
+    $$static$$fromJSON_registry["Stack"] = function (x) {
+      return $$ImmutableStack$$Stack($$toJSON$$fromJSON_array(x));
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype[$$static$$tag_iter] = function () {
+      return $$iter$$reverse_iter($$Cons$$iter_cons(this.root));
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype[$$static$$tag_toJSON] = function (x) {
+      return $$toJSON$$toJSON_array("Stack", x);
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype.removeAll = function () {
+      return new $$ImmutableStack$$ImmutableStack($$static$$nil, 0);
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype.peek = function (def) {
+      if (this.isEmpty()) {
+        if (arguments.length === 1) {
+          return def;
+        } else {
+          throw new Error("Cannot peek from an empty stack");
+        }
+      } else {
+        return this.root.car;
+      }
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype.push = function (value) {
+      return new $$ImmutableStack$$ImmutableStack(new $$Cons$$Cons(value, this.root), this.len + 1);
+    };
+
+    $$ImmutableStack$$ImmutableStack.prototype.pop = function () {
+      if (this.isEmpty()) {
+        throw new Error("Cannot pop from an empty stack");
+      } else {
+        return new $$ImmutableStack$$ImmutableStack(this.root.cdr, this.len - 1);
+      }
+    };
+
+
+    function $$ImmutableStack$$isStack(x) {
+      return x instanceof $$ImmutableStack$$ImmutableStack;
+    }
+
+    function $$ImmutableStack$$Stack(x) {
+      if (x != null) {
+        if (x instanceof $$ImmutableStack$$ImmutableStack) {
+          return x;
+        } else {
+          return new $$ImmutableStack$$ImmutableStack($$static$$nil, 0).concat(x);
+        }
+      } else {
+        return new $$ImmutableStack$$ImmutableStack($$static$$nil, 0);
+      }
+    }
+
+    function $$ImmutableRecord$$checkKey(key) {
+      // Tags are currently implemented as strings
+      if (typeof key !== "string") {
+        throw new Error("Expected key to be a string or Tag but got " + key);
+      }
+    }
+
+    function $$ImmutableRecord$$ImmutableRecord(keys, values) {
+      this.keys   = keys;
+      this.values = values;
+      this.hash   = null;
+    }
+
+    $$ImmutableRecord$$ImmutableRecord.prototype = Object.create($$Base$$ImmutableBase);
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.update = $$Sorted$$sorted_merge;
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$static$$tag_toJS] = $$toJS$$toJS_object;
+
+    $$static$$fromJSON_registry["Record"] = function (x) {
+      return $$ImmutableRecord$$Record($$toJSON$$fromJSON_object(x));
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$static$$tag_toJSON] = function (x) {
+      return $$toJSON$$toJSON_object("Record", x);
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$static$$tag_hash] = function (x) {
+      if (x.hash === null) {
+        x.hash = "(Record" + $$hash$$hash_dict(x, "  ") + ")";
+      }
+
+      return x.hash;
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype[$$static$$tag_iter] = function () {
+      var keys   = this.keys;
+      var values = this.values;
+
+      // TODO a little gross
+      return $$iter$$toIterator($$iter$$map($$iter$$iter_object(keys), function (_array) {
+        // TODO should this use destructure_pair ?
+        return $$util$$destructure_pair(_array, function (s, index) {
+          return $$ImmutableTuple$$unsafe_Tuple([s, values[index]]);
+        });
+      }));
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
+      $$ImmutableRecord$$checkKey(key);
+
+      var index = this.keys[key];
+      if (index == null) {
+        throw new Error("Key " + key + " not found");
+
+      } else {
+        return this.values[index];
+      }
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.set = function (key, value) {
+      return this.modify(key, function () {
+        return value;
+      });
+    };
+
+    $$ImmutableRecord$$ImmutableRecord.prototype.modify = function (key, f) {
+      $$ImmutableRecord$$checkKey(key);
+
+      var keys  = this.keys;
+      var index = keys[key];
+      if (index == null) {
+        throw new Error("Key " + key + " not found");
+
+      } else {
+        var values = this.values;
+        var array  = $$Array$$modify(values, index, f);
+        if (array === values) {
+          return this;
+        } else {
+          return new $$ImmutableRecord$$ImmutableRecord(keys, array);
+        }
+      }
+    };
+
+
+    function $$ImmutableRecord$$isRecord(x) {
+      return x instanceof $$ImmutableRecord$$ImmutableRecord;
+    }
+
+    function $$ImmutableRecord$$Record(obj) {
+      var keys   = {};
+      var values = [];
+
+      if (obj != null) {
+        if ($$ImmutableRecord$$isRecord(obj)) {
+          return obj;
+
+        } else {
+          var mapped = $$iter$$map($$iter$$iter_object(obj), function (_array) {
+            return $$util$$destructure_pair(_array, function (key, value) {
+              $$ImmutableRecord$$checkKey(key);
+              return [key, value];
+            });
+          });
+
+          // TODO "sort" function in "iter.js" ?
+          // TODO can this be made any faster/more efficient ?
+          var sorted = $$iter$$toArray(mapped).sort(function (x, y) {
+            return $$Sorted$$simpleSort(x[0], y[0]);
+          });
+
+          $$iter$$each(sorted, function (_array) {
+            var key   = _array[0];
+            var value = _array[1];
+
+            var index = keys[key];
+            if (index == null) {
+              keys[key] = values.push(value) - 1;
+            } else {
+              values[index] = value;
+            }
+          });
+        }
+      }
+
+      return new $$ImmutableRecord$$ImmutableRecord(keys, values);
+    }
+
+    var $$MutableRef$$ref_id = 0;
+
+    function $$MutableRef$$MutableRef(value, onchange) {
+      this._id = ++$$MutableRef$$ref_id;
+      this._value = value;
+      this._onchange = onchange;
+    }
+
+    $$MutableRef$$MutableRef.prototype = Object.create($$Base$$MutableBase);
+
+    $$MutableRef$$MutableRef.prototype[$$static$$tag_hash] = function (x) {
+      return "(Ref " + $$hash$$hash(x._id) + ")";
+    };
+
+    $$MutableRef$$MutableRef.prototype.get = function () {
+      return this._value;
+    };
+
+    $$MutableRef$$MutableRef.prototype.set = function (value) {
+      var old = this._value;
+      if (value !== old) {
+        this._value = value;
+        if (this._onchange != null) {
+          this._onchange(old, value);
+        }
+      }
+    };
+
+    $$MutableRef$$MutableRef.prototype.modify = function (f) {
+      this.set(f(this.get()));
+    };
+
+
+    function $$MutableRef$$deref(x) {
+      if ($$MutableRef$$isRef(x)) {
+        return x.get();
+      } else {
+        return x;
+      }
+    }
+
+    function $$MutableRef$$isRef(x) {
+      return x instanceof $$MutableRef$$MutableRef;
+    }
+
+    function $$MutableRef$$Ref(value, onchange) {
+      if (arguments.length < 1 || arguments.length > 2) {
+        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
+      }
+
+      return new $$MutableRef$$MutableRef(value, onchange);
+    }
+    function src$Immutable$Immutable$$isImmutable(x) {
+      if ($$util$$isObject(x)) {
+        return Object.isFrozen(x) ||
+               $$ImmutableDict$$isDict(x)  ||
+               $$ImmutableSet$$isSet(x)   ||
+               $$ImmutableList$$isList(x)  ||
+               $$ImmutableTuple$$isTuple(x) ||
+               $$ImmutableQueue$$isQueue(x) ||
+               $$ImmutableStack$$isStack(x) ||
+               $$ImmutableRecord$$isRecord(x);
+      // TODO just return true? are there any mutable value types?
+      } else {
+        var type = typeof x;
+        // Tags are currently implemented with strings
+        return type === "string"  ||
+               type === "number"  ||
+               type === "boolean" ||
+               type === "symbol"  ||
+               x == null;
+      }
+    }
+
+
+    (function (root, fn) {
+      if (typeof define === 'function' && define.amd) {
+        define(["exports"], fn);
+      } else if (typeof exports === 'object') {
+        fn(exports);
+      } else {
+        root.Immutable = {};
+        fn(root.Immutable);
+      }
+    })(this, function (exports) {
+      exports.equal = $$equal$$equal;
+      exports.fromJS = $$toJS$$fromJS;
+      exports.toJS = $$toJS$$toJS;
+      exports.isDict = $$ImmutableDict$$isDict;
+      exports.isSet = $$ImmutableSet$$isSet;
+      exports.isSortedDict = $$ImmutableDict$$isSortedDict;
+      exports.isSortedSet = $$ImmutableSet$$isSortedSet;
+      exports.isList = $$ImmutableList$$isList;
+      exports.isQueue = $$ImmutableQueue$$isQueue;
+      exports.isTuple = $$ImmutableTuple$$isTuple;
+      exports.isStack = $$ImmutableStack$$isStack;
+      exports.isImmutable = src$Immutable$Immutable$$isImmutable;
+      exports.SortedDict = $$ImmutableDict$$SortedDict;
+      exports.SortedSet = $$ImmutableSet$$SortedSet;
+      exports.isIterable = $$iter$$isIterable;
+      exports.Dict = $$ImmutableDict$$Dict;
+      exports.Set = $$ImmutableSet$$Set;
+      exports.List = $$ImmutableList$$List;
+      exports.Tuple = $$ImmutableTuple$$Tuple;
+      exports.Queue = $$ImmutableQueue$$Queue;
+      exports.Stack = $$ImmutableStack$$Stack;
+      exports.simpleSort = $$Sorted$$simpleSort;
+      exports.isRecord = $$ImmutableRecord$$isRecord;
+      exports.Record = $$ImmutableRecord$$Record;
+      exports.toJSON = $$toJSON$$toJSON;
+      exports.fromJSON = $$toJSON$$fromJSON;
+      exports.deref = $$MutableRef$$deref;
+      exports.Ref = $$MutableRef$$Ref;
+      exports.isRef = $$MutableRef$$isRef;
+      exports.isTag = $$Tag$$isTag;
+      exports.isUUIDTag = $$Tag$$isUUIDTag;
+      exports.Tag = $$Tag$$Tag;
+      exports.UUIDTag = $$Tag$$UUIDTag;
+      exports.each = $$iter$$each;
+      exports.map = $$iter$$map;
+      exports.keep = $$iter$$keep;
+      exports.findIndex = $$iter$$findIndex;
+      exports.reverse = $$iter$$reverse;
+      exports.foldl = $$iter$$foldl;
+      exports.foldr = $$iter$$foldr;
+      exports.join = $$iter$$join;
+      exports.zip = $$iter$$zip;
+      exports.toArray = $$iter$$toArray;
+      exports.any = $$iter$$any;
+      exports.all = $$iter$$all;
+      exports.find = $$iter$$find;
+      exports.partition = $$iter$$partition;
+      exports.range = $$iter$$range;
+      exports.take = $$iter$$take;
+      exports.indexOf = $$iter$$indexOf;
+      exports.toIterator = $$iter$$toIterator;
+      exports.Iterable = $$iter$$Iterable;
+    });
+}).call(this);
+
+//# sourceMappingURL=Immutable.js.map

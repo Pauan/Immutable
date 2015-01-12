@@ -327,7 +327,7 @@ function verify_record(record, obj) {
 
   var count = 0;
 
-  for (var s in record.keys) {
+  for (var _ in record.keys) {
     ++count;
   }
 
@@ -2709,13 +2709,12 @@ test("toJSON", function () {
 
   var x = {};
   x.toJSON = function () {
-    return function () {
-    };
+    return function (){};
   };
 
   assert_raises(function () {
     toJSON(x);
-  }, "Cannot convert to JSON: function () {\n        }");
+  }, "Cannot convert to JSON: function (){}");
 
 
   var x = {};
@@ -2819,7 +2818,7 @@ test("each", function () {
   var ran = false;
 
   assert_raises(function () {
-    each(Tag(), function (x) {
+    each(Tag(), function () {
       ran = true;
     });
   }, "Cannot iter: (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 12)");
@@ -2828,7 +2827,7 @@ test("each", function () {
 
 
   var ran = false;
-  each([], function (x) {
+  each([], function () {
     ran = true;
   });
   assert(ran === false);
@@ -3090,7 +3089,7 @@ test("foldl", function () {
 
   var init = 0;
   var ran = false;
-  var out = foldl([], init, function (x, y) {
+  var out = foldl([], init, function () {
     ran = true;
   });
 
@@ -3115,7 +3114,7 @@ test("foldr", function () {
 
   var init = 0;
   var ran = false;
-  var out = foldr([], init, function (x, y) {
+  var out = foldr([], init, function () {
     ran = true;
   });
 

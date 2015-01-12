@@ -8,7 +8,9 @@ rm build/Immutable.js.map &&
 rm build/Benchmark.js.map &&
 rm build/Test.js.map &&
 
-uglifyjs build/Immutable.js --screw-ie8 --mangle --compress unsafe --output build/Immutable.js &&
+uglifyjs build/Immutable.js --screw-ie8 --mangle --compress unsafe --output build/Immutable.min.js &&
+uglifyjs build/Benchmark.js --screw-ie8 --mangle --compress unsafe --output build/Benchmark.min.js &&
+uglifyjs build/Test.js --screw-ie8 --mangle --compress unsafe --output build/Test.min.js &&
 #         --in-source-map build/Immutable.js.map --source-map build/Immutable.js.map
 
-node build/Test.js
+node build/Test.min.js

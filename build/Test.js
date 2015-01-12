@@ -3180,7 +3180,7 @@
 
       var count = 0;
 
-      for (var s in record.keys) {
+      for (var _ in record.keys) {
         ++count;
       }
 
@@ -5562,13 +5562,12 @@
 
       var x = {};
       x.toJSON = function () {
-        return function () {
-        };
+        return function (){};
       };
 
       src$Test$Test$$assert_raises(function () {
         $$toJSON$$toJSON(x);
-      }, "Cannot convert to JSON: function () {\n        }");
+      }, "Cannot convert to JSON: function (){}");
 
 
       var x = {};
@@ -5672,7 +5671,7 @@
       var ran = false;
 
       src$Test$Test$$assert_raises(function () {
-        $$iter$$each($$$Immutable$Tag$$Tag(), function (x) {
+        $$iter$$each($$$Immutable$Tag$$Tag(), function () {
           ran = true;
         });
       }, "Cannot iter: (Tag 48de6fff-9d11-472d-a76f-ed77a59a5cbc 12)");
@@ -5681,7 +5680,7 @@
 
 
       var ran = false;
-      $$iter$$each([], function (x) {
+      $$iter$$each([], function () {
         ran = true;
       });
       $$assert$$assert(ran === false);
@@ -5943,7 +5942,7 @@
 
       var init = 0;
       var ran = false;
-      var out = $$iter$$foldl([], init, function (x, y) {
+      var out = $$iter$$foldl([], init, function () {
         ran = true;
       });
 
@@ -5968,7 +5967,7 @@
 
       var init = 0;
       var ran = false;
-      var out = $$iter$$foldr([], init, function (x, y) {
+      var out = $$iter$$foldr([], init, function () {
         ran = true;
       });
 

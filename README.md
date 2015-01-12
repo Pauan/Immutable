@@ -1,7 +1,7 @@
 How to use
 ==========
 
-Just load up `build/Immutable.js`. It works with AMD / Require.js, CommonJS / Node.js, or the `Immutable` global variable.
+Just load up `build/Immutable.min.js`. It works with AMD / Require.js, CommonJS / Node.js, or the `Immutable` global variable.
 
 You can find documentation in the `doc` folder.
 
@@ -128,6 +128,6 @@ For developers
 
 You'll probably need to use `npm install` to get the required dependencies. Every time you make a change to the `src` directory, you have to run `npm install` to rebuild.
 
-Run the benchmarks with `node build/Benchmark.js`. This will take a long time (several minutes, possibly hours).
+Run the benchmarks with `node build/Benchmark.min.js`. This will take a long time (several minutes, possibly hours).
 
-The unit tests are automatically run when using `npm install`, but you can also run them manually by using `node build/Test.js`.
+The unit tests are automatically run when using `npm install`, but you can also run them manually by using `node build/Test.min.js`.
