@@ -121,16 +121,18 @@ Table of Contents
 
     all(x: Iterable, fn: Function) -> Boolean
 
-  Returns ``true`` if ``fn`` returns ``true`` for all
+  Returns :js:`true` if ``fn`` returns :js:`true` for all
   of the values in ``x``.
 
   This function calls ``fn`` for each value in ``x``, and
-  if ``fn`` returns ``false``, it will return ``false``.
+  if ``fn`` returns :js:`false`, it will return :js:`false`.
 
-  If ``fn`` never returns ``false``, then this function returns
-  ``true``.
+  If ``fn`` never returns :js:`false`, then this function returns
+  :js:`true`.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns true
     all([1, 2, 3], function (x) {
