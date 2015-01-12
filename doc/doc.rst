@@ -1,23 +1,27 @@
 This documentation uses the following format::
 
-  foo(x: Number, [y: Boolean]) -> String
+  foo(x: Function, [y: Boolean], [z: Number = 5]) -> String
 
-* ``foo`` is the name of the function
-* ``x`` is the name of the first argument
-* ``Number`` is the expected type for ``x``
+* ``foo`` is the name of the function.
+* ``x`` is the name of the first argument.
+* ``Function`` is the required type for ``x``.
 * ``y`` is the name of the second argument.
   The ``[...]`` means that it is *optional* and doesn't need to be provided.
-* ``Boolean`` is the expected type for ``y``, if it is provided
-* ``String`` is the return type for the function ``foo``
+* ``Boolean`` is the required type for ``y``, if it is provided.
+* ``z`` is the name of the third argument.
+  The ``[...]`` means that it is *optional* and doesn't need to be provided.
+* ``Number`` is the required type for ``z``, if it is provided.
+* The ``=`` means that if ``z`` is not provided, it will default to ``5``.
+* ``String`` is the return type for the function ``foo``.
 
 Table of Contents
 =================
 
 * Iteration
 
-  `all <all_>`_
-  `any <any_>`_
-  each_
+  * all_
+  * any_
+  * each_
 
 ----
 
