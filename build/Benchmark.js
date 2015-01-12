@@ -281,7 +281,7 @@
     function $$iter$$isIterable(x) {
       if ($$util$$isObject(x)) {
         return x[$$$Immutable$static$$tag_iter] != null ||
-               ($$Tag$$Symbol_iterator !== null && x[$$Tag$$Symbol_iterator]) ||
+               ($$Tag$$Symbol_iterator !== null && x[$$Tag$$Symbol_iterator] != null) ||
                Array.isArray(x);
       } else {
         return typeof x === "string" && !$$Tag$$isTag(x);

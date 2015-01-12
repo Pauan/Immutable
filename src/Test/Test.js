@@ -731,6 +731,10 @@ context("Dict", function () {
     assert("" + SortedDict(simpleSort, { foo: 1 }) === "(SortedDict (Mutable 4)\n  \"foo\" = 1)");
     assert("" + SortedDict(simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 4)\n  \"bar\" = 2\n  \"foo\" = 1)");
 
+    assert("" + Dict([[0, 1]]) === "(Dict\n  0 = 1)");
+    assert("" + Dict([[-0, 1]]) === "(Dict\n  0 = 1)");
+    assert("" + Dict([[0, 1], [-0, 2]]) === "(Dict\n  0 = 2)");
+
     assert("" + Dict([[{}, 1]]) === "(Dict\n  (Mutable 6) = 1)");
     assert("" + Dict([[{}, 1]]) === "(Dict\n  (Mutable 7) = 1)");
 
@@ -1038,6 +1042,7 @@ context("Set", function () {
   });
 
   test("toString", function () {
+    assert("" + Set([0, -0]) === "(Set\n  0)");
     assert("" + Set() === "(Set)");
     assert("" + SortedSet(simpleSort) === "(SortedSet (Mutable 4))");
     assert("" + Set([1, 2, 3, 4, 5]) === "(Set\n  1\n  2\n  3\n  4\n  5)");
@@ -3228,12 +3233,45 @@ test("range", function () {
   assert(deepEqual(toArray(range(4.2, 6.9, 0.5)), [4.2, 4.7, 5.2, 5.7, 6.2, 6.7]));
   assert(deepEqual(toArray(range(-10, -2)), [-10, -9, -8, -7, -6, -5, -4, -3]));
 
-  assert(deepEqual(toArray(range(0, 0.5, 0.1)), [ 0, 0.1, 0.2, 0.30000000000000004, 0.4 ]));
+  assert(deepEqual(toArray(range(-0, 0)), []));
+  assert(deepEqual(toArray(range(0, -0)), []));
+  assert(deepEqual(toArray(range(0, 1)), [0]));
+  assert(deepEqual(toArray(range(-0, 1)), [-0]));
+
+  assert(deepEqual(toArray(range(0, 0.5, 0.1)), [0, 0.1, 0.2, 0.30000000000000004, 0.4]));
   assert(deepEqual(toArray(take(range(5, 4, 0), 5)), [5, 5, 5, 5, 5]));
 
   assert_raises(function () {
     range(5, 4, -1);
   }, "Step cannot be negative");
+});
+
+test("equal", function () {
+  assert(equal(0, 0));
+  assert(equal(-0, -0));
+  assert(equal(0, -0));
+  assert(equal(-0, 0));
+  assert(equal(1, 1));
+  assert(equal(null, null));
+  assert(equal(void 0, void 0));
+  assert(equal(NaN, NaN));
+  assert(equal(true, true));
+  assert(equal(false, false));
+  assert(equal("foo", "foo"));
+
+  var x = {};
+  assert(equal(x, x));
+
+  assert(!equal(1, 2));
+  assert(!equal(null, void 0));
+  assert(!equal(void 0, null));
+  assert(!equal(NaN, 0));
+  assert(!equal(NaN, 1));
+  assert(!equal(NaN, "foo"));
+  assert(!equal(true, false));
+  assert(!equal(false, true));
+  assert(!equal("foo", "foo2"));
+  assert(!equal({}, {}));
 });
 
 

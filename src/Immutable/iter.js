@@ -26,7 +26,7 @@ function iter_array(array) {
 export function isIterable(x) {
   if (isObject(x)) {
     return x[tag_iter] != null ||
-           (Symbol_iterator !== null && x[Symbol_iterator]) ||
+           (Symbol_iterator !== null && x[Symbol_iterator] != null) ||
            Array.isArray(x);
   } else {
     return typeof x === "string" && !isTag(x);

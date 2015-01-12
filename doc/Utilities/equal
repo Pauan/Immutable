@@ -11,6 +11,12 @@
          equal(1, 1); // true
          equal("foo", "foo"); // true
 
+     This works correctly with `NaN`. Also,
+     `0` and `-0` are treated as equal:
+
+         equal(NaN, NaN); // true
+         equal(0, -0); // true
+
      This takes `O(1)` time.
 
      ----

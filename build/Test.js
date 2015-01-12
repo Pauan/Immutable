@@ -183,7 +183,7 @@
     function $$iter$$isIterable(x) {
       if ($$util$$isObject(x)) {
         return x[$$$Immutable$static$$tag_iter] != null ||
-               ($$$Immutable$Tag$$Symbol_iterator !== null && x[$$$Immutable$Tag$$Symbol_iterator]) ||
+               ($$$Immutable$Tag$$Symbol_iterator !== null && x[$$$Immutable$Tag$$Symbol_iterator] != null) ||
                Array.isArray(x);
       } else {
         return typeof x === "string" && !$$$Immutable$Tag$$isTag(x);
@@ -3584,6 +3584,10 @@
         $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1 }) === "(SortedDict (Mutable 4)\n  \"foo\" = 1)");
         $$assert$$assert("" + $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, { foo: 1, bar: 2 }) === "(SortedDict (Mutable 4)\n  \"bar\" = 2\n  \"foo\" = 1)");
 
+        $$assert$$assert("" + $$ImmutableDict$$Dict([[0, 1]]) === "(Dict\n  0 = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict([[-0, 1]]) === "(Dict\n  0 = 1)");
+        $$assert$$assert("" + $$ImmutableDict$$Dict([[0, 1], [-0, 2]]) === "(Dict\n  0 = 2)");
+
         $$assert$$assert("" + $$ImmutableDict$$Dict([[{}, 1]]) === "(Dict\n  (Mutable 6) = 1)");
         $$assert$$assert("" + $$ImmutableDict$$Dict([[{}, 1]]) === "(Dict\n  (Mutable 7) = 1)");
 
@@ -3891,6 +3895,7 @@
       });
 
       src$Test$Test$$test("toString", function () {
+        $$assert$$assert("" + $$ImmutableSet$$Set([0, -0]) === "(Set\n  0)");
         $$assert$$assert("" + $$ImmutableSet$$Set() === "(Set)");
         $$assert$$assert("" + $$ImmutableSet$$SortedSet($$Sorted$$simpleSort) === "(SortedSet (Mutable 4))");
         $$assert$$assert("" + $$ImmutableSet$$Set([1, 2, 3, 4, 5]) === "(Set\n  1\n  2\n  3\n  4\n  5)");
@@ -6081,12 +6086,45 @@
       $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(4.2, 6.9, 0.5)), [4.2, 4.7, 5.2, 5.7, 6.2, 6.7]));
       $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(-10, -2)), [-10, -9, -8, -7, -6, -5, -4, -3]));
 
-      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(0, 0.5, 0.1)), [ 0, 0.1, 0.2, 0.30000000000000004, 0.4 ]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(-0, 0)), []));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(0, -0)), []));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(0, 1)), [0]));
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(-0, 1)), [-0]));
+
+      $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$range(0, 0.5, 0.1)), [0, 0.1, 0.2, 0.30000000000000004, 0.4]));
       $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray($$iter$$take($$iter$$range(5, 4, 0), 5)), [5, 5, 5, 5, 5]));
 
       src$Test$Test$$assert_raises(function () {
         $$iter$$range(5, 4, -1);
       }, "Step cannot be negative");
+    });
+
+    src$Test$Test$$test("equal", function () {
+      $$assert$$assert($$equal$$equal(0, 0));
+      $$assert$$assert($$equal$$equal(-0, -0));
+      $$assert$$assert($$equal$$equal(0, -0));
+      $$assert$$assert($$equal$$equal(-0, 0));
+      $$assert$$assert($$equal$$equal(1, 1));
+      $$assert$$assert($$equal$$equal(null, null));
+      $$assert$$assert($$equal$$equal(void 0, void 0));
+      $$assert$$assert($$equal$$equal(NaN, NaN));
+      $$assert$$assert($$equal$$equal(true, true));
+      $$assert$$assert($$equal$$equal(false, false));
+      $$assert$$assert($$equal$$equal("foo", "foo"));
+
+      var x = {};
+      $$assert$$assert($$equal$$equal(x, x));
+
+      $$assert$$assert(!$$equal$$equal(1, 2));
+      $$assert$$assert(!$$equal$$equal(null, void 0));
+      $$assert$$assert(!$$equal$$equal(void 0, null));
+      $$assert$$assert(!$$equal$$equal(NaN, 0));
+      $$assert$$assert(!$$equal$$equal(NaN, 1));
+      $$assert$$assert(!$$equal$$equal(NaN, "foo"));
+      $$assert$$assert(!$$equal$$equal(true, false));
+      $$assert$$assert(!$$equal$$equal(false, true));
+      $$assert$$assert(!$$equal$$equal("foo", "foo2"));
+      $$assert$$assert(!$$equal$$equal({}, {}));
     });
 
 
