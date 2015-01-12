@@ -1,16 +1,15 @@
 #! /bin/sh
 
-compile-modules convert --output build/Immutable.js --format bundle src/Immutable/Immutable.js &&
-compile-modules convert --output build/Benchmark.js --format bundle src/Benchmark/run.js &&
-compile-modules convert --output build/Test.js --format bundle src/Test/Test.js &&
+compile() {
+  compile-modules convert --output "${2}.js" --format bundle "${1}" &&
+  rm "${2}.js.map" &&
+  cat "LICENSE" "${2}.js" > "build/tmp" && mv "build/tmp" "${2}.js" &&
+  uglifyjs "${2}.js" --comments --screw-ie8 --mangle --compress unsafe --output "${2}.min.js"
+  #         --in-source-map build/Immutable.js.map --source-map build/Immutable.js.map
+}
 
-rm build/Immutable.js.map &&
-rm build/Benchmark.js.map &&
-rm build/Test.js.map &&
+compile "src/Immutable/Immutable.js" "build/Immutable" &&
+compile "src/Benchmark/run.js"       "build/Benchmark" &&
+compile "src/Test/Test.js"           "build/Test" &&
 
-uglifyjs build/Immutable.js --screw-ie8 --mangle --compress unsafe --output build/Immutable.min.js &&
-uglifyjs build/Benchmark.js --screw-ie8 --mangle --compress unsafe --output build/Benchmark.min.js &&
-uglifyjs build/Test.js --screw-ie8 --mangle --compress unsafe --output build/Test.min.js &&
-#         --in-source-map build/Immutable.js.map --source-map build/Immutable.js.map
-
-node build/Test.min.js
+node "build/Test.min.js"

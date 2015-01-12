@@ -13,9 +13,9 @@
 
      ----
 
-     The values are in unsorted order, so you cannot rely upon
-     the order. If you need to maintain order, use a [::SortedSet]
-     or [::List].
+     You *should not* rely upon the order of the values in
+     a [::Set]. If you need a specific order, use a
+     [::SortedSet] or [::List] instead.
 
      Mutable objects can be used as values, and they are treated
      as equal only if they are exactly the same object:
