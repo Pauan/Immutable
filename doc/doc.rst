@@ -17,7 +17,8 @@ This documentation uses the following format::
 
     * ``String | Boolean`` is the required type for ``y``, if it is provided.
 
-      * The ``|`` means that ``y`` must be either a ``String`` or ``Boolean``, if provided.
+      * The ``|`` means that ``y`` must be either a ``String`` or ``Boolean``,
+        if it is provided.
 
   * ``z`` is the name of the third argument.
 
@@ -54,6 +55,16 @@ Table of Contents
 * **Types**
 
   * Dict_
+
+    * Dict get_
+    * Dict has_
+    * Dict isEmpty_
+    * Dict merge_
+    * Dict modify_
+    * Dict remove_
+    * Dict removeAll_
+    * Dict set_
+
   * Iterable_
   * Iterator_
   * List_
@@ -253,217 +264,247 @@ Table of Contents
   Because :js:`obj1` and :js:`obj2` have the same keys/values,
   they are equal_.
 
-  A Dict_ has the following methods:
+----
 
-  * ::
+.. _Dict get:
 
-      isEmpty() -> Boolean
+* ::
 
-    Returns :js:`true` if the Dict_ is empty.
+    Dict get(key: Any, [default: Any]) -> Any
 
-    This function runs in `O(1)` time.
+  Returns the value for ``key`` in the Dict_, or ``default``
+  if ``key`` is not in the Dict_.
 
-    A Dict_ is empty if it has no keys/values in it.
+  This function runs in ``O(log2(n))`` worst-case time.
 
-    Examples:
+  If ``key`` is not in the Dict_:
 
-    .. code:: javascript
+  * If ``default`` is provided, it is returned.
+  * If ``default`` is not provided, an error is thrown.
 
-      // returns true
-      Dict().isEmpty();
+  Examples:
 
-      // returns false
-      Dict({ "foo": 1 }).isEmpty();
+  .. code:: javascript
 
-  * ::
+    // throws an error
+    Dict().get("foo");
 
-      has(key: Any) -> Boolean
+    // returns 5
+    Dict().get("foo", 5);
 
-    Returns :js:`true` if ``key`` is in the Dict_.
+    // returns 10
+    Dict({ "foo": 10 }).get("foo");
 
-    This function runs in ``O(log2(n))`` worst-case time.
+----
 
-    Examples:
+.. _Dict has:
 
-    .. code:: javascript
+* ::
 
-      // returns false
-      Dict().has("foo");
+    Dict has(key: Any) -> Boolean
 
-      // returns true
-      Dict({ "foo": 1 }).has("foo");
+  Returns :js:`true` if ``key`` is in the Dict_.
 
-  * ::
+  This function runs in ``O(log2(n))`` worst-case time.
 
-      get(key: Any, [default: Any]) -> Any
+  Examples:
 
-    Returns the value for ``key`` in the Dict_, or ``default``
-    if ``key`` is not in the Dict_.
+  .. code:: javascript
 
-    This function runs in ``O(log2(n))`` worst-case time.
+    // returns false
+    Dict().has("foo");
 
-    If ``key`` is not in the Dict_:
+    // returns true
+    Dict({ "foo": 1 }).has("foo");
 
-    * If ``default`` is provided, it is returned.
-    * If ``default`` is not provided, an error is thrown.
+----
 
-    Examples:
+.. _Dict isEmpty:
 
-    .. code:: javascript
+* ::
 
-      // throws an error
-      Dict().get("foo");
+    Dict isEmpty() -> Boolean
 
-      // returns 5
-      Dict().get("foo", 5);
+  Returns :js:`true` if the Dict_ is empty.
 
-      // returns 10
-      Dict({ "foo": 10 }).get("foo");
+  This function runs in `O(1)` time.
 
-  * ::
+  A Dict_ is empty if it has no keys/values in it.
 
-      set(key: Any, value: Any) -> Dict
+  Examples:
 
-    Returns a new Dict_ with ``key`` set to ``value``.
+  .. code:: javascript
 
-    This function runs in ``O(log2(n))`` worst-case time.
+    // returns true
+    Dict().isEmpty();
 
-    This does not modify the Dict_, it returns a new Dict_.
+    // returns false
+    Dict({ "foo": 1 }).isEmpty();
 
-    * If ``key`` already exists, it is overwritten.
-    * If ``key`` does not exist, it is created.
+----
 
-    Examples:
+.. _Dict merge:
 
-    .. code:: javascript
+* ::
 
-      // returns { foo: 5 }
-      Dict().set("foo", 5);
+    Dict merge(x: Object | Iterable) -> Dict
 
-      // returns { foo: 5, bar: 10, qux: 15 }
-      Dict().set("foo", 5)
-            .set("bar", 10)
-            .set("qux", 15);
+  Returns a new Dict_ with all the keys/values of ``x`` added
+  to this Dict_.
 
-  * ::
+  This function runs in ``O(log2(n) * m)`` worst-case time.
 
-      remove(key: Any) -> Dict
+  This does not modify the Dict_, it returns a new Dict_.
 
-    Returns a new Dict_ with ``key`` removed.
+  If a key from ``x`` already exists in this Dict_, it is overwritten.
 
-    If ``key`` is not in the Dict_, it does nothing.
+  ``x`` must be either a JavaScript object literal, or an
+  Iterable_ where each value is an array or Tuple_ of
+  :js:`[key, value]`.
 
-    This function runs in ``O(log2(n))`` worst-case time.
+  You can use this to merge two Dict_:
 
-    This does not modify the Dict_, it returns a new Dict_.
+  .. code:: javascript
 
-    Examples:
+    var foo = Dict({
+      foo: 1
+    });
 
-    .. code:: javascript
+    var bar = Dict({
+      bar: 2
+    });
 
-      // returns {}
-      Dict({ "foo": 1 }).remove("foo");
+    // returns { foo: 1, bar: 2 }
+    foo.merge(bar);
 
-      // returns { foo: 1 }
-      Dict({ "foo": 1 }).remove("bar");
+  You can also use this to merge with a JavaScript object literal:
 
-  * ::
+  .. code:: javascript
 
-      removeAll() -> Dict
+    var foo = Dict({
+      foo: 1
+    });
 
-    Returns a new Dict_ with no keys/values.
+    // returns { foo: 1, bar: 2 }
+    foo.merge({
+      bar: 2
+    });
 
-    This function runs in ``O(1)`` time.
+----
 
-    This does not modify the Dict_, it returns a new Dict_.
+.. _Dict modify:
 
-    This function is useful because it preserves the
-    sort of a SortedDict_:
+* ::
 
-    .. code:: javascript
+    Dict modify(key: Any, fn: Function) -> Dict
 
-      var x = SortedDict(...);
+  Returns a new Dict_ with ``key`` modified by ``fn``.
 
-      // No keys/values, but same sort as `x`
-      x.removeAll();
+  This function runs in ``O(log2(n))`` worst-case time.
 
-  * ::
+  This does not modify the Dict_, it returns a new Dict_.
 
-      modify(key: Any, fn: Function) -> Dict
+  If ``key`` is not in the Dict_, it will throw an error.
 
-    Returns a new Dict_ with ``key`` modified by ``fn``.
+  This function calls ``fn`` with the value for ``key``, and
+  whatever ``fn`` returns will be used as the new value for
+  ``key``:
 
-    This function runs in ``O(log2(n))`` worst-case time.
+  .. code:: javascript
 
-    This does not modify the Dict_, it returns a new Dict_.
+    var dict = Dict({
+      "foo": 1,
+      "bar": 2
+    });
 
-    If ``key`` is not in the Dict_, it will throw an error.
+    // returns { "foo": 11, "bar": 2 }
+    dict.modify("foo", function (x) {
+      return x + 10;
+    });
 
-    This function calls ``fn`` with the value for ``key``, and
-    whatever ``fn`` returns will be used as the new value for
-    ``key``:
+    // returns { "foo": 1, "bar": 12 }
+    dict.modify("bar", function (x) {
+      return x + 10;
+    });
 
-    .. code:: javascript
+----
 
-      var dict = Dict({
-        "foo": 1,
-        "bar": 2
-      });
+.. _Dict remove:
 
-      // returns { "foo": 11, "bar": 2 }
-      dict.modify("foo", function (x) {
-        return x + 10;
-      });
+* ::
 
-      // returns { "foo": 1, "bar": 12 }
-      dict.modify("bar", function (x) {
-        return x + 10;
-      });
+    Dict remove(key: Any) -> Dict
 
-  * ::
+  Returns a new Dict_ with ``key`` removed.
 
-      merge(x: Object | Iterable) -> Dict
+  If ``key`` is not in the Dict_, it does nothing.
 
-    Returns a new Dict_ with all the keys/values of ``x`` added
-    to this Dict_.
+  This function runs in ``O(log2(n))`` worst-case time.
 
-    This function runs in ``O(log2(n) * m)`` worst-case time.
+  This does not modify the Dict_, it returns a new Dict_.
 
-    This does not modify the Dict_, it returns a new Dict_.
+  Examples:
 
-    If a key from ``x`` already exists in this Dict_, it is overwritten.
+  .. code:: javascript
 
-    ``x`` must be either a JavaScript object literal, or an
-    Iterable_ where each value is an array or Tuple_ of
-    :js:`[key, value]`.
+    // returns {}
+    Dict({ "foo": 1 }).remove("foo");
 
-    You can use this to merge two Dict_:
+    // returns { foo: 1 }
+    Dict({ "foo": 1 }).remove("bar");
 
-    .. code:: javascript
+----
 
-      var foo = Dict({
-        foo: 1
-      });
+.. _Dict removeAll:
 
-      var bar = Dict({
-        bar: 2
-      });
+* ::
 
-      // returns { foo: 1, bar: 2 }
-      foo.merge(bar);
+    Dict removeAll() -> Dict
 
-    You can also use this to merge with a JavaScript object literal:
+  Returns a new Dict_ with no keys/values.
 
-    .. code:: javascript
+  This function runs in ``O(1)`` time.
 
-      var foo = Dict({
-        foo: 1
-      });
+  This does not modify the Dict_, it returns a new Dict_.
 
-      // returns { foo: 1, bar: 2 }
-      foo.merge({
-        bar: 2
-      });
+  This function is useful because it preserves the
+  sort of a SortedDict_:
+
+  .. code:: javascript
+
+    var x = SortedDict(...);
+
+    // No keys/values, but same sort as `x`
+    x.removeAll();
+
+----
+
+.. _Dict set:
+
+* ::
+
+    Dict set(key: Any, value: Any) -> Dict
+
+  Returns a new Dict_ with ``key`` set to ``value``.
+
+  This function runs in ``O(log2(n))`` worst-case time.
+
+  This does not modify the Dict_, it returns a new Dict_.
+
+  * If ``key`` already exists, it is overwritten.
+  * If ``key`` does not exist, it is created.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns { foo: 5 }
+    Dict().set("foo", 5);
+
+    // returns { foo: 5, bar: 10, qux: 15 }
+    Dict().set("foo", 5)
+          .set("bar", 10)
+          .set("qux", 15);
 
 ----
 
