@@ -152,16 +152,18 @@ Table of Contents
 
     any(x: Iterable, fn: Function) -> Boolean
 
-  Returns ``true`` if ``fn`` returns ``true`` for any
+  Returns :js:`true` if ``fn`` returns :js:`true` for any
   of the values in ``x``
 
   This function calls ``fn`` for each value in ``x``, and
-  if ``fn`` returns ``true``, it will return ``true``.
+  if ``fn`` returns :js:`true`, it will return :js:`true`.
 
-  If ``fn`` never returns ``true``, then this function returns
-  ``false``.
+  If ``fn`` never returns :js:`true`, then this function returns
+  :js:`false`.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns true
     any([1, 2, 3], function (x) {
@@ -185,7 +187,9 @@ Table of Contents
 
   This is the same as a ``for..of`` loop in ECMAScript 6.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // 1
     // 2
@@ -215,16 +219,20 @@ Table of Contents
 
     equal(x: Any, y: Any) -> Boolean
 
-  Returns ``true`` if ``x`` and ``y`` are equal.
+  Returns :js:`true` if ``x`` and ``y`` are equal.
 
   * Simple things like numbers and strings are
-    treated as equal if they have the same value::
+    treated as equal if they have the same value:
+
+    .. code:: javascript
 
       equal(1, 1); // true
       equal("foo", "foo"); // true
 
-    This works correctly with ``NaN``. Also,
-    ``0`` and ``-0`` are treated as equal::
+    This works correctly with :js:`NaN`. Also,
+    :js:`0` and :js:`-0` are treated as equal:
+
+    .. code:: javascript
 
       equal(NaN, NaN); // true
       equal(0, -0); // true
@@ -232,7 +240,9 @@ Table of Contents
     This takes ``O(1)`` time.
 
   * Mutable objects (including Ref_) are treated
-    as equal if they are exactly the same object::
+    as equal if they are exactly the same object:
+
+    .. code:: javascript
 
       var obj = {};
 
@@ -241,7 +251,9 @@ Table of Contents
     This takes ``O(1)`` time.
 
   * Dict_ are treated as equal if they have
-    the same keys/values::
+    the same keys/values:
+
+    .. code:: javascript
 
       equal(Dict({ foo: 1 }),
             Dict({ foo: 1 })); // true
@@ -251,7 +263,9 @@ Table of Contents
     time.
 
   * Set_ are treated as equal if they have
-    the same values::
+    the same values:
+
+    .. code:: javascript
 
       equal(Set([1]),
             Set([1])); // true
@@ -261,7 +275,9 @@ Table of Contents
     time.
 
   * List_ are treated as equal if they have
-    the same values in the same order::
+    the same values in the same order:
+
+    .. code:: javascript
 
       equal(List([1]),
             List([1])); // true
@@ -271,7 +287,9 @@ Table of Contents
     time.
 
   * Tuple_ are treated as equal if they have
-    the same values in the same order::
+    the same values in the same order:
+
+    .. code:: javascript
 
       equal(Tuple([1]),
             Tuple([1])); // true
@@ -281,7 +299,9 @@ Table of Contents
     time.
 
   * Queue_ are treated as equal if they have
-    the same values in the same order::
+    the same values in the same order:
+
+    .. code:: javascript
 
       equal(Queue([1]),
             Queue([1])); // true
@@ -291,7 +311,9 @@ Table of Contents
     time.
 
   * Stack_ are treated as equal if they have
-    the same values in the same order::
+    the same values in the same order:
+
+    .. code:: javascript
 
       equal(Stack([1]),
             Stack([1])); // true
@@ -301,7 +323,9 @@ Table of Contents
     time.
 
   * Record_ are treated as equal if they have
-    the same keys/values::
+    the same keys/values:
+
+    .. code:: javascript
 
       equal(Record({ foo: 1 }),
             Record({ foo: 1 })); // true
@@ -311,7 +335,9 @@ Table of Contents
     time.
 
   * Tag_ are treated as equal if they are
-    exactly the same tag::
+    exactly the same tag:
+
+    .. code:: javascript
 
       var tag = Tag();
 
@@ -320,7 +346,9 @@ Table of Contents
     This takes ``O(1)`` time.
 
   * UUIDTag_ are treated as equal if they have
-    the same UUID::
+    the same UUID:
+
+    .. code:: javascript
 
       equal(UUIDTag("fce81b71-9793-4f8b-b090-810a5e82e9aa"),
             UUIDTag("fce81b71-9793-4f8b-b090-810a5e82e9aa")); // true
@@ -340,14 +368,16 @@ Table of Contents
     find(x: Iterable, fn: Function, [default: Any]) -> Any
 
   Applies ``fn`` to each value in ``x`` and returns
-  the first value where ``fn`` returns ``true``.
+  the first value where ``fn`` returns :js:`true`.
 
-  If ``fn`` never returns ``true``:
+  If ``fn`` never returns :js:`true`:
 
   * If ``default`` is provided, it is returned.
   * Otherwise it throws an error.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns 2
     find([1, 2, 3], function (x) {
@@ -373,14 +403,16 @@ Table of Contents
     findIndex(x: Iterable, fn: Function, [default: Any]) -> Integer | Any
 
   Applies ``fn`` to each value in ``x`` and returns
-  the index that ``fn`` first returns ``true``.
+  the index that ``fn`` first returns :js:`true`.
 
-  If ``fn`` never returns ``true``:
+  If ``fn`` never returns :js:`true`:
 
   * If ``default`` is provided, it is returned.
   * Otherwise it throws an error.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns 1
     findIndex([1, 2, 3], function (x) {
@@ -410,7 +442,9 @@ Table of Contents
   returns becomes the new ``init``. When ``x`` is finished,
   this function returns ``init``.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns 15
     foldl([1, 2, 3, 4, 5], 0, function (x, y) {
@@ -438,7 +472,9 @@ Table of Contents
   This function requires ``O(n)`` space, because it must
   reach the end of ``x`` before it can call ``fn``.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns 15
     foldr([1, 2, 3, 4, 5], 0, function (x, y) {
@@ -470,7 +506,9 @@ Table of Contents
   the two values match or not. If you want to use a
   different function for equality, use findIndex_.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns 1
     indexOf([1, 2, 3], 2);
@@ -492,10 +530,12 @@ Table of Contents
   Returns a string which contains all the
   values of ``x``, separated by ``separator``.
 
-  This is the same as ``Array.prototype.join``, except
+  This is the same as :js:`Array.prototype.join`, except
   it works on all Iterable_.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns "123"
     join([1, 2, 3])
@@ -518,17 +558,19 @@ Table of Contents
     keep(x: Iterable, fn: Function) -> Iterable
 
   Returns a new Iterable_ which contains all the
-  values of ``x`` where ``fn`` returns ``true``.
+  values of ``x`` where ``fn`` returns :js:`true`.
 
   This function calls ``fn`` for each value in ``x``,
-  and if ``fn`` returns ``true``, it keeps the value,
+  and if ``fn`` returns :js:`true`, it keeps the value,
   otherwise it doesn't.
 
   This function returns an Iterable_, which is lazy:
   it only generates the values as needed. If you want
   an array, use toArray_.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns [1, 2, 3, 0]
     keep([1, 2, 3, 4, 5, 0], function (x) {
@@ -553,7 +595,9 @@ Table of Contents
   it only generates the values as needed. If you want
   an array, use toArray_.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns [21, 22, 23]
     map([1, 2, 3], function (x) {
@@ -570,18 +614,20 @@ Table of Contents
 
   Returns a Tuple_ with two Iterable_: the first
   contains the values of ``x`` for which ``fn`` returns
-  ``true``, and the second contains the values of ``x`` for
-  which ``fn`` returns ``false``.
+  :js:`true`, and the second contains the values of ``x`` for
+  which ``fn`` returns :js:`false`.
 
   This function calls ``fn`` for each value in ``x``, and
-  if the function returns ``true`` then the value will be
+  if the function returns :js:`true` then the value will be
   in the first iterable, otherwise it will be in the second.
 
   This function returns a Tuple_ which contains Iterable_,
   which are lazy: they only generate the values as needed.
   If you want an array, use toArray_.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     var tuple = partition([1, 2, 3, 4, 5, 6, 7, 8, 9, 0], function (x) {
       return x < 5;
@@ -610,18 +656,24 @@ Table of Contents
   an array, use toArray_.
 
   Without any arguments, this function generates an
-  infinite sequence of integers starting at ``0``::
+  infinite sequence of integers starting at :js:`0`:
+
+  .. code:: javascript
 
     // returns [0, 1, 2, 3, 4, 5...]
     range();
 
   With a single argument, you control where the sequence
-  starts::
+  starts:
+
+  .. code:: javascript
 
     // returns [5, 6, 7, 8, 9, 10...]
     range(5);
 
-  With two arguments, you control where the sequence stops::
+  With two arguments, you control where the sequence stops:
+
+  .. code:: javascript
 
     // returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     range(0, 10);
@@ -630,29 +682,39 @@ Table of Contents
   never included in the sequence.
 
   With three arguments, you can change how much to increment
-  each number::
+  each number:
+
+  .. code:: javascript
 
     // returns [0, 2, 4, 6, 8]
     range(0, 10, 2);
 
   If ``start`` is greater than ``end``, it will count down rather
-  than up::
+  than up:
+
+  .. code:: javascript
 
     // returns [10, 8, 6, 4, 2]
     range(10, 0, 2);
 
-  You can use a ``step`` of ``0`` to repeat ``start`` forever::
+  You can use a ``step`` of :js:`0` to repeat ``start`` forever:
+
+  .. code:: javascript
 
     // returns [0, 0, 0, 0, 0...]
     range(0, 10, 0);
 
   Although integers are most common, you can also use
-  floating-point numbers for any of the three arguments::
+  floating-point numbers for any of the three arguments:
+
+  .. code:: javascript
 
     // returns [2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
     range(2.5, 6.2, 0.5);
 
-  Negative numbers are allowed for ``start`` or ``end``::
+  Negative numbers are allowed for ``start`` or ``end``:
+
+  .. code:: javascript
 
     // returns [-10, -9, -8, -7, -6, -5, -4, -3]
     range(-10, -2);
@@ -660,7 +722,9 @@ Table of Contents
     // returns [-5, -4, -3, -2, -1, 0, 1, 2]
     range(-5, 3);
 
-  The only restriction is that ``step`` cannot be negative::
+  The only restriction is that ``step`` cannot be negative:
+
+  .. code:: javascript
 
     // throws an error
     range(0, 10, -1);
@@ -683,7 +747,9 @@ Table of Contents
   This function returns an Iterable_. If you want an
   array, use toArray_.
 
-  Examples::
+  Examples:
+
+  .. code:: javascript
 
     // returns [3, 2, 1]
     reverse([1, 2, 3]);
@@ -704,12 +770,16 @@ Table of Contents
   an array, use toArray_.
 
   This function is a simple way of dealing with
-  infinite Iterable_::
+  infinite Iterable_:
+
+  .. code:: javascript
 
     // returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     take(range(), 10);
 
-  `count` must be an integer, and may not be negative::
+  ``count`` must be an integer, and may not be negative:
+
+  .. code:: javascript
 
     // throws an error
     take(range(), 0.5);
@@ -734,6 +804,13 @@ Table of Contents
 
   This is useful because most iteration functions do not return
   arrays, they return Iterable_\ s.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [0, 1, 2, 3, 4]
+    toArray(range(0, 5));
 
 ----
 
@@ -767,25 +844,33 @@ Table of Contents
 
   This function returns an Iterable_ which contains
   multiple Tuple_ which contain alternating values
-  from each Iterable_ in ``x``::
+  from each Iterable_ in ``x``:
+
+  .. code:: javascript
 
     // returns [[1, 4], [2, 5], [3, 6]]
     zip([[1, 2, 3], [4, 5, 6]]);
 
   You can think of it as being similar to a `real-world zipper <http://en.wikipedia.org/wiki/Zipper>`_.
 
-  It stops when it reaches the end of the shortest iterable::
+  It stops when it reaches the end of the shortest iterable:
+
+  .. code:: javascript
 
     // returns [[1, 4, 7]]
     zip([[1, 2, 3], [4, 5, 6], [7]]);
 
   If you provide a second argument, it will be used to fill
-  in the missing spots::
+  in the missing spots:
+
+  .. code:: javascript
 
     // returns [[1, 4, 7], [2, 5, 0], [3, 6, 0]]
     zip([[1, 2, 3], [4, 5, 6], [7]], 0);
 
-  You can undo a zip by simply using zip_ a second time::
+  You can undo a zip by simply using zip_ a second time:
+
+  .. code:: javascript
 
     // returns [[1, 4], [2, 5], [3, 6]]
     var x = zip([[1, 2, 3], [4, 5, 6]]);
@@ -794,7 +879,9 @@ Table of Contents
     zip(x);
 
   Using zip_, it's easy to collect all the keys/values
-  of a Dict_ or Record_::
+  of a Dict_ or Record_:
+
+  .. code:: javascript
 
     var x = Record({
       foo: 1,
