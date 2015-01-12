@@ -3,7 +3,7 @@ How to use
 
 Just load up `build/Immutable.min.js`. It works with AMD / Require.js, CommonJS / Node.js, or the `Immutable` global variable.
 
-You can find documentation in the `doc` folder.
+You can find documentation in the `doc/doc.rst` file.
 
 You can find benchmarks in the `benchmarks` folder.
 
@@ -11,43 +11,7 @@ You can find benchmarks in the `benchmarks` folder.
 Quick overview
 ==============
 
-* `Dict` `SortedDict`
-
-  * `isEmpty` `has` `get` `set` `remove` `removeAll` `modify` `merge`
-
-* `Set` `SortedSet`
-
-  * `isEmpty` `has` `add` `remove` `removeAll` `union` `intersect` `disjoint` `subtract`
-
-* `List`
-
-  * `isEmpty` `size` `has` `get` `set` `insert` `remove` `removeAll` `modify` `slice` `concat`
-
-* `Queue`
-
-  * `isEmpty` `size` `peek` `push` `pop` `concat` `removeAll`
-
-* `Stack`
-
-  * `isEmpty` `size` `peek` `push` `pop` `concat` `removeAll`
-
-* `Tuple`
-
-  * `size` `get` `set` `modify`
-
-* `Record`
-
-  * `get` `set` `modify` `update`
-
-* `Ref`
-
-  * `get` `set` `modify`
-
-* `Iterable`
-
-  * `all` `any` `each` `find` `findIndex` `foldl` `foldr` `indexOf` `join`
-    `keep` `map` `partition` `range` `reverse` `take` `toArray`
-    `toIterator` `zip`
+See the documentation for a list of types/functions provided by this library.
 
 ----
 
@@ -109,7 +73,7 @@ All data types accept an [ECMAScript 6 Iterable](https://developer.mozilla.org/e
       console.log(x);
     }
 
-In addition, the various iteration functions (each, map, zip, etc.) accept and return Iterables:
+In addition, the various iteration functions (`each`, `map`, `zip`, etc.) accept and return Iterables:
 
     var tuple2 = map(tuple, function (x) {
       return x + 20;

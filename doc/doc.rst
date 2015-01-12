@@ -69,7 +69,14 @@ Table of Contents
   * Iterator_
   * List_
   * Queue_
+
   * Record_
+
+    * `Record get`_
+    * `Record modify`_
+    * `Record set`_
+    * `Record update`_
+
   * Ref_
   * Set_
   * SortedDict_
@@ -1304,6 +1311,185 @@ Table of Contents
 
 ----
 
+.. _Record:
+
+* ::
+
+    Record([x: Object | Iterable]) -> Record
+
+  A Record_ is an immutable fixed-size dictionary mapping
+  strings/Tag_\ s to values.
+
+  * If ``x`` is an Iterable_, the values must be arrays or Tuple_\ s
+    of :js:`[key, value]`, which will be added to the Record_.
+
+  * If ``x`` is a JavaScript object literal like :js:`{ foo: 1 }`,
+    then the keys/values will be added to the Record_.
+
+  This takes ``O(n + (n * log2(n)) + n)`` time, unless ``x``
+  is already a Record_, in which case it takes ``O(1)``
+  time.
+
+  In either case, the keys must be strings or Tag_\ s.
+
+  You *should not* rely upon the order of the keys in
+  a Record_. If you need a specific key order, use a
+  SortedDict_ instead.
+
+  A Record_ is *much* faster and lighter-weight than a Dict_,
+  but in exchange for that they can only have strings or Tag_\ s
+  for keys, and you cannot add or remove keys from a Record_.
+
+----
+
+.. _Record get:
+
+* ::
+
+    Record get(key: String | Tag) -> Any
+
+  Returns the value for ``key`` in the Record_.
+
+  This function runs in ``O(1)`` time.
+
+  If ``key`` is not in the Record_, an error is thrown.
+
+  Examples:
+
+  .. code:: javascript
+
+    // throws an error
+    Record().get("foo");
+
+    // returns 10
+    Record({ "foo": 10 }).get("foo");
+
+----
+
+.. _Record modify:
+
+* ::
+
+    Record modify(key: String | Tag, fn: Function) -> Record
+
+  Returns a new Record_ with ``key`` modified by ``fn``.
+
+  This function runs in ``O(n)`` time.
+
+  This does not modify the Record_, it returns a new Record_.
+
+  If ``key`` is not in the Record_, it will throw an error.
+
+  This function calls ``fn`` with the value for ``key``, and
+  whatever ``fn`` returns will be used as the new value for
+  ``key``.
+
+  Examples:
+
+  .. code:: javascript
+
+    var record = Record({
+      "foo": 1,
+      "bar": 2
+    });
+
+    // returns { "foo": 11, "bar": 2 }
+    record.modify("foo", function (x) {
+      return x + 10;
+    });
+
+    // returns { "foo": 1, "bar": 12 }
+    record.modify("bar", function (x) {
+      return x + 10;
+    });
+
+    // throws an error
+    record.modify("qux", function (x) {
+      return x + 10;
+    });
+
+----
+
+.. _Record set:
+
+* ::
+
+    Record set(key: String | Tag, value: Any) -> Record
+
+  Returns a new Record_ with ``key`` set to ``value``.
+
+  This function runs in ``O(n)`` time.
+
+  This does not modify the Record_, it returns a new Record_.
+
+  If ``key`` does not exist, an error is thrown.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns { "foo": 10 }
+    Record({ "foo": 5 }).set("foo", 10);
+
+    // throws an error
+    Record({ "foo": 5 }).set("bar", 10);
+
+----
+
+.. _Record update:
+
+* ::
+
+    Record update(x: Object | Iterable) -> Record
+
+  Returns a new Record_ with all the keys/values of this Record_
+  updated with ``x``.
+
+  This function runs in ``O(n * m)`` time.
+
+  This does not modify the Record_, it returns a new Record_.
+
+  ``x`` must be either a JavaScript object literal, or an
+  Iterable_ where each value is an array or Tuple_ of
+  :js:`[key, value]`.
+
+  * If a key from ``x`` already exists in this Record_, it is overwritten.
+
+  * If a key from ``x`` does not exist in this Record_, an error is thrown.
+
+  You can use this to update a Record_ with another Record_:
+
+  .. code:: javascript
+
+    var defaults = Record({
+      "foo": 1,
+      "bar": 2
+    });
+
+    var other = Record({
+      "foo": 50
+    });
+
+    // returns { "foo": 50, "bar": 2 }
+    defaults.update(other);
+
+  You can also use this to update a Record_ with a JavaScript
+  object literal:
+
+  .. code:: javascript
+
+    var defaults = Record({
+      "foo": 1,
+      "bar": 2
+    });
+
+    // returns { "foo": 50, "bar": 2 }
+    defaults.update({
+      "foo": 50
+    });
+
+----
+
 .. _reverse:
 
 * ::
@@ -1628,7 +1814,7 @@ Table of Contents
   Duplicate values are allowed, and duplicates don't
   have to be in the same order.
 
-  The values in the Tuple_ can have whatever order you
+  The values in a Tuple_ can have whatever order you
   want, but they are not sorted. If you want the values
   to be sorted, use a SortedSet_ instead.
 
@@ -1714,7 +1900,7 @@ Table of Contents
 
   This does not modify the Tuple_, it returns a new Tuple_.
 
-  If `index` is not in the tuple, an error is thrown.
+  If ``index`` is not in the Tuple_, an error is thrown.
 
   Examples:
 
