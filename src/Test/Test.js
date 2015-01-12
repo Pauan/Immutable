@@ -7,7 +7,7 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, Tuple, isTuple,
          each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
-         isIterable, any, all, find, partition, range, take } from "../Immutable/Immutable";
+         isIterable, any, all, find, partition, range, take, indexOf } from "../Immutable/Immutable";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
 
@@ -2967,6 +2967,27 @@ test("findIndex", function () {
 
   var x = findIndex([1, 2, 3, 4, 5], function (x) { return x > 5 }, 500);
   assert(x === 500);
+});
+
+test("indexOf", function () {
+  var x = indexOf([1, 2, 3, 4, 5], 4);
+  assert(x === 3);
+
+  assert_raises(function () {
+    indexOf([1, 2, 3, 4, 5], 6);
+  }, "Did not find anything");
+
+  var x = indexOf([1, 2, 3, 4, 5], 6, 500);
+  assert(x === 500);
+
+  var x = [Tuple([1, 2, 3]), Record({ foo: 1, bar: 2 })];
+
+  assert_raises(function () {
+    indexOf(x, Tuple([1, 2, 4]))
+  }, "Did not find anything");
+
+  assert(indexOf(x, Tuple([1, 2, 4]), -1) === -1);
+  assert(indexOf(x, Tuple([1, 2, 3])) === 0);
 });
 
 test("find", function () {

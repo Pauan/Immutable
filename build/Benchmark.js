@@ -129,58 +129,6 @@
       $$Benchmark$$add_timers();
       $$Benchmark$$suite.run();
     }
-    var $$Tag$$tag_uuid = "48de6fff-9d11-472d-a76f-ed77a59a5cbc";
-    var $$Tag$$tag_id = 0;
-
-    var $$Tag$$uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-    var $$Tag$$uuid_regexp = new RegExp("^" + $$Tag$$uuid + "$");
-
-    var $$Tag$$is_tag_regexp = new RegExp("^\\(Tag " + $$Tag$$tag_uuid + " [0-9]+\\)$");
-
-    var $$Tag$$is_uuid_tag_regexp = new RegExp("^\\(UUIDTag " + $$Tag$$uuid + "\\)$");
-
-    var $$Tag$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
-                                   ? Symbol.iterator
-                                   : null);
-
-    var $$Tag$$Symbol_keyFor = (typeof Symbol !== "undefined" && typeof Symbol.keyFor !== "undefined"
-                                 ? Symbol.keyFor
-                                 : null);
-
-    function $$Tag$$isUUID(x) {
-      return typeof x === "string" && $$Tag$$uuid_regexp.test(x);
-    }
-
-    function $$Tag$$isTag(x) {
-      return typeof x === "string" &&
-             ($$Tag$$is_tag_regexp.test(x) ||
-              $$Tag$$is_uuid_tag_regexp.test(x));
-    }
-
-    function $$Tag$$isUUIDTag(x) {
-      return typeof x === "string" && $$Tag$$is_uuid_tag_regexp.test(x);
-    }
-
-    function $$Tag$$Tag() {
-      if (arguments.length === 0) {
-        return "(Tag " + $$Tag$$tag_uuid + " " + (++$$Tag$$tag_id) + ")";
-      } else {
-        throw new Error("Expected 0 arguments but got " + arguments.length);
-      }
-    }
-
-    function $$Tag$$UUIDTag(id) {
-      if (arguments.length === 1) {
-        if ($$Tag$$isUUID(id)) {
-          return "(UUIDTag " + id + ")";
-        } else {
-          throw new Error("Expected a lower-case UUID, but got: " + id);
-        }
-
-      } else {
-        throw new Error("Expected 1 argument but got " + arguments.length);
-      }
-    }
     function $$$Immutable$Array$$copy(array) {
       var len = array.length;
       var out = new Array(len);
@@ -246,6 +194,58 @@
 
       return out;
     }
+    var $$Tag$$tag_uuid = "48de6fff-9d11-472d-a76f-ed77a59a5cbc";
+    var $$Tag$$tag_id = 0;
+
+    var $$Tag$$uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+    var $$Tag$$uuid_regexp = new RegExp("^" + $$Tag$$uuid + "$");
+
+    var $$Tag$$is_tag_regexp = new RegExp("^\\(Tag " + $$Tag$$tag_uuid + " [0-9]+\\)$");
+
+    var $$Tag$$is_uuid_tag_regexp = new RegExp("^\\(UUIDTag " + $$Tag$$uuid + "\\)$");
+
+    var $$Tag$$Symbol_iterator = (typeof Symbol !== "undefined" && typeof Symbol.iterator !== "undefined"
+                                   ? Symbol.iterator
+                                   : null);
+
+    var $$Tag$$Symbol_keyFor = (typeof Symbol !== "undefined" && typeof Symbol.keyFor !== "undefined"
+                                 ? Symbol.keyFor
+                                 : null);
+
+    function $$Tag$$isUUID(x) {
+      return typeof x === "string" && $$Tag$$uuid_regexp.test(x);
+    }
+
+    function $$Tag$$isTag(x) {
+      return typeof x === "string" &&
+             ($$Tag$$is_tag_regexp.test(x) ||
+              $$Tag$$is_uuid_tag_regexp.test(x));
+    }
+
+    function $$Tag$$isUUIDTag(x) {
+      return typeof x === "string" && $$Tag$$is_uuid_tag_regexp.test(x);
+    }
+
+    function $$Tag$$Tag() {
+      if (arguments.length === 0) {
+        return "(Tag " + $$Tag$$tag_uuid + " " + (++$$Tag$$tag_id) + ")";
+      } else {
+        throw new Error("Expected 0 arguments but got " + arguments.length);
+      }
+    }
+
+    function $$Tag$$UUIDTag(id) {
+      if (arguments.length === 1) {
+        if ($$Tag$$isUUID(id)) {
+          return "(UUIDTag " + id + ")";
+        } else {
+          throw new Error("Expected a lower-case UUID, but got: " + id);
+        }
+
+      } else {
+        throw new Error("Expected 1 argument but got " + arguments.length);
+      }
+    }
     var $$$Immutable$static$$tag_hash        = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");
     var $$$Immutable$static$$tag_iter        = $$Tag$$UUIDTag("6199065c-b518-4cb3-8b41-ab70a9769ec3");
     var $$$Immutable$static$$tag_toJS        = $$Tag$$UUIDTag("1b75a273-16bd-4248-be8a-e4b5e8c4b523");
@@ -257,6 +257,9 @@
     var $$$Immutable$static$$nil = {};
     $$$Immutable$static$$nil.depth      = 0;
     $$$Immutable$static$$nil.size       = 0;
+    function $$equal$$equal(x, y) {
+      return x === y || $$hash$$hash(x) === $$hash$$hash(y);
+    }
 
     // TODO move into "./static.js" ?
     var $$iter$$empty = {};
@@ -674,6 +677,20 @@
       }
     }
 
+    function $$iter$$indexOf(x, value, def) {
+      if (arguments.length === 3) {
+        return $$iter$$findIndex(x, function (other) {
+          // TODO should `value` or `other` come first ?
+          return $$equal$$equal(other, value);
+        }, def);
+      } else {
+        return $$iter$$findIndex(x, function (other) {
+          // TODO should `value` or `other` come first ?
+          return $$equal$$equal(other, value);
+        });
+      }
+    }
+
     function $$iter$$take(x, count) {
       // TODO isInteger function
       if (Math.round(count) !== count) {
@@ -787,6 +804,140 @@
       });
     }
 
+    var $$hash$$mutable_hash_id = 0;
+
+    var $$hash$$Symbol_id = 0;
+    var $$hash$$Symbol_registry = {};
+
+    function $$hash$$hash_string(x) {
+      return "\"" + x.replace(/[\\\"\n]/g, function (s) {
+        if (s === "\n") {
+          return s + " ";
+        } else {
+          return "\\" + s;
+        }
+      }) + "\"";
+    }
+
+    function $$hash$$hash_symbol(x) {
+      var key;
+      if ($$Tag$$Symbol_keyFor !== null && (key = $$Tag$$Symbol_keyFor(x)) != null) {
+        return "(Symbol.for " + $$hash$$hash(key) + ")";
+      } else {
+        key = $$hash$$Symbol_registry[x];
+        if (key == null) {
+          key = $$hash$$Symbol_registry[x] = (++$$hash$$Symbol_id);
+        }
+        return "(Symbol " + key + ")";
+      }
+    }
+
+    function $$hash$$hash(x) {
+      var type = typeof x;
+      // TODO this is probably pretty inefficient
+      if (type === "string") {
+        if ($$Tag$$isTag(x)) {
+          return x;
+        } else {
+          return $$hash$$hash_string(x);
+        }
+
+      } else if (type === "number"    ||
+                 type === "boolean"   ||
+                 type === "undefined" ||
+                 x === null) {
+        return "" + x;
+
+      } else if (type === "symbol") {
+        return $$hash$$hash_symbol(x);
+
+      } else {
+        var hasher = x[$$$Immutable$static$$tag_hash];
+        if (hasher != null) {
+          return hasher(x);
+
+        } else {
+          if (Object.isExtensible(x)) {
+            var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
+
+            Object.defineProperty(x, $$$Immutable$static$$tag_hash, {
+              configurable: false,
+              enumerable: false,
+              writable: false,
+              value: function () {
+                return id;
+              }
+            });
+
+            return id;
+
+          } else {
+            throw new Error("Cannot use a non-extensible object as a key: " + x);
+          }
+        }
+      }
+    }
+
+    function $$hash$$hash_dict(x, spaces) {
+      var max_key = 0;
+
+      var a = [];
+
+      $$iter$$each(x, function (_array) {
+        $$util$$destructure_pair(_array, function (key, value) {
+          key   = $$hash$$hash(key);
+          value = $$hash$$hash(value);
+
+          key = key.split(/\n/);
+
+          $$iter$$each(key, function (key) {
+            max_key = Math.max(max_key, key.length);
+          });
+
+          a.push({
+            key: key,
+            value: value
+          });
+        });
+      });
+
+      var spaces = "  ";
+
+      a = $$iter$$map(a, function (x) {
+        var last = x.key.length - 1;
+        x.key[last] = $$util$$pad_right(x.key[last], max_key, " ");
+
+        var key = $$iter$$join(x.key, "\n");
+
+        var value = x.value.replace(/\n/g, "\n" + $$util$$repeat(" ", max_key + 3));
+
+        return key + " = " + value;
+      });
+
+      return $$hash$$join_lines(a, spaces);
+    }
+
+    function $$hash$$hash_array(s) {
+      return function (x) {
+        if (x.hash === null) {
+          var a = $$iter$$map(x, function (x) {
+            return $$hash$$hash(x);
+          });
+
+          x.hash = "(" + s + $$hash$$join_lines(a, "  ") + ")";
+        }
+
+        return x.hash;
+      };
+    }
+
+    function $$hash$$join_lines(a, spaces) {
+      var separator = "\n" + spaces;
+
+      return $$iter$$join($$iter$$map(a, function (x) {
+        return separator + x.replace(/\n/g, separator);
+      }));
+    }
     function $$toJSON$$fromJSON(x) {
       var type = typeof x;
 
@@ -2197,141 +2348,6 @@
       }
     }
 
-    var $$hash$$mutable_hash_id = 0;
-
-    var $$hash$$Symbol_id = 0;
-    var $$hash$$Symbol_registry = {};
-
-    function $$hash$$hash_string(x) {
-      return "\"" + x.replace(/[\\\"\n]/g, function (s) {
-        if (s === "\n") {
-          return s + " ";
-        } else {
-          return "\\" + s;
-        }
-      }) + "\"";
-    }
-
-    function $$hash$$hash_symbol(x) {
-      var key;
-      if ($$Tag$$Symbol_keyFor !== null && (key = $$Tag$$Symbol_keyFor(x)) != null) {
-        return "(Symbol.for " + $$hash$$hash(key) + ")";
-      } else {
-        key = $$hash$$Symbol_registry[x];
-        if (key == null) {
-          key = $$hash$$Symbol_registry[x] = (++$$hash$$Symbol_id);
-        }
-        return "(Symbol " + key + ")";
-      }
-    }
-
-    function $$hash$$hash(x) {
-      var type = typeof x;
-      // TODO this is probably pretty inefficient
-      if (type === "string") {
-        if ($$Tag$$isTag(x)) {
-          return x;
-        } else {
-          return $$hash$$hash_string(x);
-        }
-
-      } else if (type === "number"    ||
-                 type === "boolean"   ||
-                 type === "undefined" ||
-                 x === null) {
-        return "" + x;
-
-      } else if (type === "symbol") {
-        return $$hash$$hash_symbol(x);
-
-      } else {
-        var hasher = x[$$$Immutable$static$$tag_hash];
-        if (hasher != null) {
-          return hasher(x);
-
-        } else {
-          if (Object.isExtensible(x)) {
-            var id = "(Mutable " + (++$$hash$$mutable_hash_id) + ")";
-
-            Object.defineProperty(x, $$$Immutable$static$$tag_hash, {
-              configurable: false,
-              enumerable: false,
-              writable: false,
-              value: function () {
-                return id;
-              }
-            });
-
-            return id;
-
-          } else {
-            throw new Error("Cannot use a non-extensible object as a key: " + x);
-          }
-        }
-      }
-    }
-
-    function $$hash$$hash_dict(x, spaces) {
-      var max_key = 0;
-
-      var a = [];
-
-      $$iter$$each(x, function (_array) {
-        $$util$$destructure_pair(_array, function (key, value) {
-          key   = $$hash$$hash(key);
-          value = $$hash$$hash(value);
-
-          key = key.split(/\n/);
-
-          $$iter$$each(key, function (key) {
-            max_key = Math.max(max_key, key.length);
-          });
-
-          a.push({
-            key: key,
-            value: value
-          });
-        });
-      });
-
-      var spaces = "  ";
-
-      a = $$iter$$map(a, function (x) {
-        var last = x.key.length - 1;
-        x.key[last] = $$util$$pad_right(x.key[last], max_key, " ");
-
-        var key = $$iter$$join(x.key, "\n");
-
-        var value = x.value.replace(/\n/g, "\n" + $$util$$repeat(" ", max_key + 3));
-
-        return key + " = " + value;
-      });
-
-      return $$hash$$join_lines(a, spaces);
-    }
-
-    function $$hash$$hash_array(s) {
-      return function (x) {
-        if (x.hash === null) {
-          var a = $$iter$$map(x, function (x) {
-            return $$hash$$hash(x);
-          });
-
-          x.hash = "(" + s + $$hash$$join_lines(a, "  ") + ")";
-        }
-
-        return x.hash;
-      };
-    }
-
-    function $$hash$$join_lines(a, spaces) {
-      var separator = "\n" + spaces;
-
-      return $$iter$$join($$iter$$map(a, function (x) {
-        return separator + x.replace(/\n/g, separator);
-      }));
-    }
-
 
     function $$ImmutableSet$$SetNode(left, right, hash, key) {
       this.left  = left;
@@ -2847,10 +2863,6 @@
 
       return new $$MutableRef$$MutableRef(value, onchange);
     }
-    function $$$Immutable$Immutable$$equal(x, y) {
-      return x === y || $$hash$$hash(x) === $$hash$$hash(y);
-    }
-
     function $$$Immutable$Immutable$$isImmutable(x) {
       if ($$util$$isObject(x)) {
         return Object.isFrozen(x) ||
@@ -2884,7 +2896,7 @@
         fn(root.Immutable);
       }
     })(this, function (exports) {
-      exports.equal = $$$Immutable$Immutable$$equal;
+      exports.equal = $$equal$$equal;
       exports.fromJS = $$toJS$$fromJS;
       exports.toJS = $$toJS$$toJS;
       exports.isDict = $$ImmutableDict$$isDict;
@@ -2933,6 +2945,7 @@
       exports.partition = $$iter$$partition;
       exports.range = $$iter$$range;
       exports.take = $$iter$$take;
+      exports.indexOf = $$iter$$indexOf;
     });
     var $$List$$immutablejs = require("immutable");
     var $$List$$mori        = require("mori");

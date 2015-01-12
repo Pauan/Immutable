@@ -1,0 +1,29 @@
+/**
+   @function indexOf
+   @param {::Iterable} [x]
+   @param {Any} [value]
+   @param {optional Any} [default]
+   @return {Integer}
+   @summary Returns the first index within `x` where
+            the value is [::equal] to `value`.
+   @desc
+     This function uses [::equal] to determine whether
+     the two values match or not. If you want to use a
+     different function for equality, use [::findIndex].
+
+     ----
+
+     If `x` does not contain `value`:
+
+     * If `default` is provided, it is returned.
+     * Otherwise it throws an error.
+
+         // returns 1
+         indexOf([1, 2, 3], 2);
+
+         // throws an error
+         indexOf([1, 2, 3], 4);
+
+         // returns -1
+         indexOf([1, 2, 3], 4, -1);
+ */

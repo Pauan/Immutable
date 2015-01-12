@@ -1,6 +1,6 @@
-import { hash } from "./hash";
 import { isObject } from "./util";
 
+import { equal } from "./equal";
 import { toJS, fromJS } from "./toJS";
 import { toJSON, fromJSON } from "./toJSON";
 import { simpleSort } from "./Sorted";
@@ -15,9 +15,9 @@ import { deref, Ref, isRef } from "./MutableRef";
 import { isTag, isUUIDTag, Tag, UUIDTag } from "./Tag";
 import { each, map, keep, findIndex, reverse, foldl,
          foldr, join, zip, toArray, isIterable,
-         any, all, find, partition, range, take } from "./iter";
+         any, all, find, partition, range, take, indexOf } from "./iter";
 
-export { toJS, fromJS, simpleSort, toJSON, fromJSON,
+export { equal, toJS, fromJS, simpleSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
          SortedSet, Set, isSet, isSortedSet,
          isList, List, isQueue, Queue,
@@ -27,13 +27,7 @@ export { toJS, fromJS, simpleSort, toJSON, fromJSON,
          isTag, isUUIDTag, Tag, UUIDTag,
          each, map, keep, findIndex, reverse, foldl,
          foldr, join, zip, toArray, isIterable, any, all,
-         find, partition, range, take };
-
-
-// TODO support -0 and 0 ?
-export function equal(x, y) {
-  return x === y || hash(x) === hash(y);
-}
+         find, partition, range, take, indexOf };
 
 // TODO use `x instanceof ImmutableBase` ? What about ImmutableRef ?
 export function isImmutable(x) {
@@ -119,4 +113,5 @@ export function isImmutable(x) {
   exports.partition = partition;
   exports.range = range;
   exports.take = take;
+  exports.indexOf = indexOf;
 });

@@ -1,6 +1,7 @@
 import { isObject, isJSLiteral } from "./util";
 import { tag_iter } from "./static";
 import { Symbol_iterator, isTag } from "./Tag";
+import { equal } from "./equal";
 
 // TODO circular import
 import { unsafe_Tuple } from "./ImmutableTuple";
@@ -419,6 +420,20 @@ export function findIndex(x, f, def) {
     } else {
       ++index;
     }
+  }
+}
+
+export function indexOf(x, value, def) {
+  if (arguments.length === 3) {
+    return findIndex(x, function (other) {
+      // TODO should `value` or `other` come first ?
+      return equal(other, value);
+    }, def);
+  } else {
+    return findIndex(x, function (other) {
+      // TODO should `value` or `other` come first ?
+      return equal(other, value);
+    });
   }
 }
 
