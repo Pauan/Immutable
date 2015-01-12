@@ -3,7 +3,7 @@
 
 This documentation uses the following format::
 
-  foo(x: Array, [y: Boolean], [z: Number = 5]) -> String | Boolean
+  foo(x: Array, [y: String | Boolean], [z: Number = 5]) -> String | Boolean
 
 * ``foo`` is the name of the function.
 
@@ -15,7 +15,9 @@ This documentation uses the following format::
 
     * The ``[...]`` means that ``y`` is *optional* and doesn't need to be provided.
 
-    * ``Boolean`` is the required type for ``y``, if it is provided.
+    * ``String | Boolean`` is the required type for ``y``, if it is provided.
+
+      * The ``|`` means that ``y`` must be either a ``String`` or ``Boolean``, if provided.
 
   * ``z`` is the name of the third argument.
 
@@ -189,6 +191,279 @@ Table of Contents
 
   This is useful if you want to make sure you have a value, and
   you're not sure whether something is a Ref_ or not.
+
+----
+
+.. _Dict:
+
+* ::
+
+    Dict(x: Object | Iterable) -> Dict
+
+  A Dict_ is an immutable dictionary mapping keys to values.
+
+  You *should not* rely upon the order of the keys in
+  a Dict_. If you need a specific key order, use a
+  SortedDict_ instead.
+
+  * If ``x`` is an Iterable_, the values must be arrays or Tuple_\ s
+    of :js:`[key, value]`, which will be added to the Dict_.
+
+  * If ``x`` is a JavaScript object literal like :js:`{ foo: 1 }`,
+    then the keys/values will be added to the Dict_.
+
+  This takes ``O(n * log2(n))`` time, unless ``x`` is already
+  a Dict_, in which case it takes ``O(1)`` time.
+
+  Mutable objects can be used as keys, and they are treated as
+  equal_ only if they are exactly the same object:
+
+  .. code:: javascript
+
+    var obj1 = { foo: 1 };
+    var obj2 = { foo: 1 };
+
+    var dict = Dict().set(obj1, "bar")
+                     .set(obj2, "qux");
+
+    // Returns "bar"
+    dict.get(obj1);
+
+    // Returns "qux"
+    dict.get(obj2);
+
+  You can also use immutable objects (like Dict_, Set_, List_,
+  etc.) as keys, and they are treated as equal_ if their
+  keys/values are equal_:
+
+  .. code:: javascript
+
+    var obj1 = Dict({ foo: 1 });
+    var obj2 = Dict({ foo: 1 });
+
+    var dict = Dict().set(obj1, "bar")
+                     .set(obj2, "qux");
+
+    // Returns "qux"
+    dict.get(obj1);
+
+    // Returns "qux"
+    dict.get(obj2);
+
+  Because :js:`obj1` and :js:`obj2` have the same keys/values,
+  they are equal_.
+
+  A Dict_ has the following methods:
+
+  * ::
+
+      isEmpty() -> Boolean
+
+    Returns :js:`true` if the Dict_ is empty.
+
+    This function runs in `O(1)` time.
+
+    A Dict_ is empty if it has no keys/values in it.
+
+    Examples:
+
+    .. code:: javascript
+
+      // returns true
+      Dict().isEmpty();
+
+      // returns false
+      Dict({ "foo": 1 }).isEmpty();
+
+  * ::
+
+      has(key: Any) -> Boolean
+
+    Returns :js:`true` if ``key`` is in the Dict_.
+
+    This function runs in ``O(log2(n))`` worst-case time.
+
+    Examples:
+
+    .. code:: javascript
+
+      // returns false
+      Dict().has("foo");
+
+      // returns true
+      Dict({ "foo": 1 }).has("foo");
+
+  * ::
+
+      get(key: Any, [default: Any]) -> Any
+
+    Returns the value for ``key`` in the Dict_, or ``default``
+    if ``key`` is not in the Dict_.
+
+    This function runs in ``O(log2(n))`` worst-case time.
+
+    If ``key`` is not in the Dict_:
+
+    * If ``default`` is provided, it is returned.
+    * If ``default`` is not provided, an error is thrown.
+
+    Examples:
+
+    .. code:: javascript
+
+      // throws an error
+      Dict().get("foo");
+
+      // returns 5
+      Dict().get("foo", 5);
+
+      // returns 10
+      Dict({ "foo": 10 }).get("foo");
+
+  * ::
+
+      set(key: Any, value: Any) -> Dict
+
+    Returns a new Dict_ with ``key`` set to ``value``.
+
+    This function runs in ``O(log2(n))`` worst-case time.
+
+    This does not modify the Dict_, it returns a new Dict_.
+
+    * If ``key`` already exists, it is overwritten.
+    * If ``key`` does not exist, it is created.
+
+    Examples:
+
+    .. code:: javascript
+
+      // returns { foo: 5 }
+      Dict().set("foo", 5);
+
+      // returns { foo: 5, bar: 10, qux: 15 }
+      Dict().set("foo", 5)
+            .set("bar", 10)
+            .set("qux", 15);
+
+  * ::
+
+      remove(key: Any) -> Dict
+
+    Returns a new Dict_ with ``key`` removed.
+
+    If ``key`` is not in the Dict_, it does nothing.
+
+    This function runs in ``O(log2(n))`` worst-case time.
+
+    This does not modify the Dict_, it returns a new Dict_.
+
+    Examples:
+
+    .. code:: javascript
+
+      // returns {}
+      Dict({ "foo": 1 }).remove("foo");
+
+      // returns { foo: 1 }
+      Dict({ "foo": 1 }).remove("bar");
+
+  * ::
+
+      removeAll() -> Dict
+
+    Returns a new Dict_ with no keys/values.
+
+    This function runs in ``O(1)`` time.
+
+    This does not modify the Dict_, it returns a new Dict_.
+
+    This function is useful because it preserves the
+    sort of a SortedDict_:
+
+    .. code:: javascript
+
+      var x = SortedDict(...);
+
+      // No keys/values, but same sort as `x`
+      x.removeAll();
+
+  * ::
+
+      modify(key: Any, fn: Function) -> Dict
+
+    Returns a new Dict_ with ``key`` modified by ``fn``.
+
+    This function runs in ``O(log2(n))`` worst-case time.
+
+    This does not modify the Dict_, it returns a new Dict_.
+
+    If ``key`` is not in the Dict_, it will throw an error.
+
+    This function calls ``fn`` with the value for ``key``, and
+    whatever ``fn`` returns will be used as the new value for
+    ``key``:
+
+    .. code:: javascript
+
+      var dict = Dict({
+        "foo": 1,
+        "bar": 2
+      });
+
+      // returns { "foo": 11, "bar": 2 }
+      dict.modify("foo", function (x) {
+        return x + 10;
+      });
+
+      // returns { "foo": 1, "bar": 12 }
+      dict.modify("bar", function (x) {
+        return x + 10;
+      });
+
+  * ::
+
+      merge(x: Object | Iterable) -> Dict
+
+    Returns a new Dict_ with all the keys/values of ``x`` added
+    to this Dict_.
+
+    This function runs in ``O(log2(n) * m)`` worst-case time.
+
+    This does not modify the Dict_, it returns a new Dict_.
+
+    If a key from ``x`` already exists in this Dict_, it is overwritten.
+
+    ``x`` must be either a JavaScript object literal, or an
+    Iterable_ where each value is an array or Tuple_ of
+    :js:`[key, value]`.
+
+    You can use this to merge two Dict_:
+
+    .. code:: javascript
+
+      var foo = Dict({
+        foo: 1
+      });
+
+      var bar = Dict({
+        bar: 2
+      });
+
+      // returns { foo: 1, bar: 2 }
+      foo.merge(bar);
+
+    You can also use this to merge with a JavaScript object literal:
+
+    .. code:: javascript
+
+      var foo = Dict({
+        foo: 1
+      });
+
+      // returns { foo: 1, bar: 2 }
+      foo.merge({
+        bar: 2
+      });
 
 ----
 
@@ -585,7 +860,7 @@ Table of Contents
 
     var x = Record({ foo: 1 });
 
-    // true
+    // returns true
     equal(x, fromJSON(toJSON(x)));
 
   This makes it possible to store immutable objects on disk,
@@ -1189,7 +1464,7 @@ Table of Contents
 
       var x = Record({ foo: 1 });
 
-      // true
+      // returns true
       equal(x, fromJSON(toJSON(x)));
 
   This makes it possible to store immutable objects on disk,
