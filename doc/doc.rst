@@ -1,23 +1,52 @@
 This documentation uses the following format::
 
-  foo(x: Function, [y: Boolean], [z: Number = 5]) -> String
+  foo(x: Array, [y: Boolean], [z: Number = 5]) -> String
 
 * ``foo`` is the name of the function.
-* ``x`` is the name of the first argument.
-* ``Function`` is the required type for ``x``.
-* ``y`` is the name of the second argument.
-  The ``[...]`` means that it is *optional* and doesn't need to be provided.
-* ``Boolean`` is the required type for ``y``, if it is provided.
-* ``z`` is the name of the third argument.
-  The ``[...]`` means that it is *optional* and doesn't need to be provided.
-* ``Number`` is the required type for ``z``, if it is provided.
-* The ``=`` means that if ``z`` is not provided, it will default to ``5``.
-* ``String`` is the return type for the function ``foo``.
+
+  * ``x`` is the name of the first argument.
+
+    * ``Array`` is the required type for ``x``.
+
+  * ``y`` is the name of the second argument.
+
+    * The ``[...]`` means that ``y`` is *optional* and doesn't need to be provided.
+
+    * ``Boolean`` is the required type for ``y``, if it is provided.
+
+  * ``z`` is the name of the third argument.
+
+    * The ``[...]`` means that ``z`` is *optional* and doesn't need to be provided.
+
+    * ``Number`` is the required type for ``z``, if it is provided.
+
+    * The ``=`` means that if ``z`` is not provided, it will default to ``5``.
+
+  * ``String`` is the return type for the function ``foo``.
+
+Here are some examples of how you might call the function ``foo``::
+
+  foo([1]);
+  foo([1], true);
+  foo([1], true, 2);
+
+The types are straight-forward, and are either JavaScript built-ins or
+are defined by this library. However, there are some exceptions:
+
+* ``Any`` can be any type.
+
+.. _Integer:
+
+* ``Integer`` is a JavaScript ``Number`` that is restricted to be an integer.
+
+.. _Void:
+
+* ``Void`` is the JavaScript value ``undefined``.
 
 Table of Contents
 =================
 
-* Iteration
+* **Iteration**
 
   * all_
   * any_
@@ -33,8 +62,6 @@ Table of Contents
 
   Returns ``true`` if ``fn`` returns ``true`` for all
   of the values in ``x``.
-
-  ----
 
   This function calls ``fn`` for each value in ``x``, and
   if ``fn`` returns ``false``, it will return ``false``.
@@ -52,8 +79,6 @@ Table of Contents
 
   Returns ``true`` if ``fn`` returns ``true`` for any
   of the values in ``x``
-
-  ----
 
   This function calls ``fn`` for each value in ``x``, and
   if ``fn`` returns ``true``, it will return ``true``.
