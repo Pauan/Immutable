@@ -76,7 +76,14 @@ Table of Contents
   * SortedSet_
   * Stack_
   * Tag_
+
   * Tuple_
+
+    * `Tuple get`_
+    * `Tuple modify`_
+    * `Tuple set`_
+    * `Tuple size`_
+
   * UUIDTag_
 
 * **Utilities**
@@ -209,7 +216,7 @@ Table of Contents
 
 * ::
 
-    Dict(x: Object | Iterable) -> Dict
+    Dict([x: Object | Iterable]) -> Dict
 
   A Dict_ is an immutable dictionary mapping keys to values.
 
@@ -408,7 +415,9 @@ Table of Contents
 
   This function calls ``fn`` with the value for ``key``, and
   whatever ``fn`` returns will be used as the new value for
-  ``key``:
+  ``key``.
+
+  Examples:
 
   .. code:: javascript
 
@@ -424,6 +433,11 @@ Table of Contents
 
     // returns { "foo": 1, "bar": 12 }
     dict.modify("bar", function (x) {
+      return x + 10;
+    });
+
+    // throws an error
+    dict.modify("qux", function (x) {
       return x + 10;
     });
 
@@ -1337,6 +1351,82 @@ Table of Contents
 
 ----
 
+.. _SortedDict:
+
+* ::
+
+    SortedDict(sort: Function, [x: Object | Iterable]) -> Dict
+
+  Returns a Dict_ where the keys are sorted by ``sort``.
+
+  The ``x`` argument is exactly the same as for Dict_,
+  except that the keys are sorted.
+
+  The sort order for the keys is determined by the ``sort`` function.
+
+  The ``sort`` function is given two keys:
+
+  * If it returns :js:`0` the keys are treated as equal.
+  * If it returns :js:`-1` the first key is lower than the second key.
+  * If it returns :js:`1` the first key is greater than the second key.
+
+  The sort order must be consistent:
+
+  * If given the same keys, the function must return the same result.
+
+  * If it returns :js:`0` for :js:`foo` and :js:`bar`, it must return
+    :js:`0` for :js:`bar` and :js:`foo`.
+
+  * If it returns :js:`-1` for :js:`foo` and :js:`bar`, it must return
+    :js:`1` for :js:`bar` and :js:`foo`.
+
+  * If it returns :js:`1` for :js:`foo` and :js:`bar`, it must return
+    :js:`-1` for :js:`bar` and :js:`foo`.
+
+  If the sort order is not consistent, the behavior of
+  SortedDict_ will be unpredictable. This is not a
+  bug in SortedDict_, it is a bug in your sort function.
+
+----
+
+.. _SortedSet:
+
+* ::
+
+    SortedSet(sort: Function, [x: Iterable]) -> Set
+
+  Returns a Set_ where the keys are sorted by ``sort``.
+
+  The ``x`` argument is exactly the same as for Set_,
+  except that the values are sorted.
+
+  The sort order for the values is determined by the ``sort`` function.
+
+  The ``sort`` function is given two values:
+
+  * If it returns :js:`0` the values are treated as equal.
+  * If it returns :js:`-1` the first value is lower than the second value.
+  * If it returns :js:`1` the first value is greater than the second value.
+
+  The sort order must be consistent:
+
+  * If given the same values, the function must return the same result.
+
+  * If it returns :js:`0` for :js:`foo` and :js:`bar`, it must return
+    :js:`0` for :js:`bar` and :js:`foo`.
+
+  * If it returns :js:`-1` for :js:`foo` and :js:`bar`, it must return
+    :js:`1` for :js:`bar` and :js:`foo`.
+
+  * If it returns :js:`1` for :js:`foo` and :js:`bar`, it must return
+    :js:`-1` for :js:`bar` and :js:`foo`.
+
+  If the sort order is not consistent, the behavior of
+  SortedSet_ will be unpredictable. This is not a
+  bug in SortedSet_, it is a bug in your sort function.
+
+----
+
 .. _take:
 
 * ::
@@ -1514,6 +1604,151 @@ Table of Contents
 
   If you just want to use a library that expects normal
   JavaScript objects, use toJS_ and fromJS_ instead.
+
+----
+
+.. _Tuple:
+
+* ::
+
+    Tuple([x: Iterable]) -> Tuple
+
+  A Tuple_ is an immutable fixed-size ordered sequence of values.
+
+  The values from ``x`` will be inserted into
+  the Tuple_, in the same order as ``x``.
+
+  This takes ``O(n)`` time, unless ``x`` is already a
+  Tuple_, in which case it takes ``O(1)`` time.
+
+  A Tuple_ is *much* faster and lighter-weight than a List_,
+  but in exchange for that they are fixed size: you cannot insert
+  or remove values from a Tuple_.
+
+  Duplicate values are allowed, and duplicates don't
+  have to be in the same order.
+
+  The values in the Tuple_ can have whatever order you
+  want, but they are not sorted. If you want the values
+  to be sorted, use a SortedSet_ instead.
+
+----
+
+.. _Tuple get:
+
+* ::
+
+    Tuple get(index: Integer) -> Any
+
+  Returns the value in the Tuple_ at index ``index``.
+
+  If ``index`` is not in the Tuple_, an error is thrown.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns 50
+    Tuple([50, 100, 150]).get(0);
+
+    // returns 150
+    Tuple([50, 100, 150]).get(2);
+
+    // throws an error
+    Tuple([50, 100, 150]).get(3);
+
+----
+
+.. _Tuple modify:
+
+* ::
+
+    Tuple modify(index: Integer, fn: Function) -> Tuple
+
+  Returns a new Tuple_ with the value at ``index`` modified by ``fn``.
+
+  If ``index`` is not in the Tuple_, an error is thrown.
+
+  This function runs in ``O(n)`` time.
+
+  This does not modify the Tuple_, it returns a new Tuple_.
+
+  This function calls ``fn`` with the value at ``index``, and
+  whatever ``fn`` returns is used as the new value at
+  ``index``.
+
+  Examples:
+
+  .. code:: javascript
+
+      var tuple = Tuple([1, 2, 3]);
+
+      // returns [11, 2, 3]
+      tuple.modify(0, function (x) {
+        return x + 10;
+      });
+
+      // returns [1, 12, 3]
+      tuple.modify(1, function (x) {
+        return x + 10;
+      });
+
+      // throws an error
+      tuple.modify(3, function (x) {
+        return x + 10;
+      });
+
+----
+
+.. _Tuple set:
+
+* ::
+
+    Tuple set(index: Integer, value: Any) -> Tuple
+
+  Returns a new Tuple_ with the value at ``index`` set to ``value``.
+
+  This function runs in ``O(n)`` time.
+
+  This does not modify the Tuple_, it returns a new Tuple_.
+
+  If `index` is not in the tuple, an error is thrown.
+
+  Examples:
+
+  .. code:: javascript
+
+    var tuple = Tuple([1, 2, 3]);
+
+    // returns [50, 2, 3]
+    tuple.set(0, 50);
+
+    // returns [1, 50, 3]
+    tuple.set(1, 50);
+
+----
+
+.. _Tuple size:
+
+* ::
+
+    Tuple size() -> Integer
+
+  Returns the number of values in the Tuple_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns 0
+    Tuple().size();
+
+    // returns 3
+    Tuple([1, 2, 3]).size();
 
 ----
 
