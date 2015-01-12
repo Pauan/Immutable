@@ -1101,6 +1101,87 @@ Table of Contents
 
 ----
 
+.. _Iterable:
+
+* ::
+
+    Iterable(fn: Function) -> Iterable
+
+  This function will call ``fn`` with no arguments.
+  ``fn`` is supposed to return an Iterator_.
+
+  It will then wrap the Iterator_ so that it is recognized
+  as being Iterable_.
+
+  This is useful to create your own iteration functions.
+
+  If something is Iterable_, it can be used by the iteration
+  functions like each_, map_, zip_, etc.
+
+  All Iterable_ things can be converted into an Iterator_ by
+  using toIterator_.
+
+  These things are Iterable_:
+
+  * JavaScript Array
+
+  * JavaScript String
+
+  * ECMAScript 6 Iterable
+
+  * The return value of the Iterable_ function.
+
+  * Dict_, List_, Record_, Set_, Stack_, Tuple_, and Queue_
+
+----
+
+.. _Iterator:
+
+* ::
+
+    All Iterable_ things can be converted into an Iterator_
+    by using toIterator_.
+
+    An Iterator_ isn't really a type or a function. Instead,
+    an Iterator_ is simply an object that has a :js:`next` method.
+
+    Calling the :js:`next` method will return an object with
+    the following properties:
+
+    * If the Iterator_ is finished, :js:`done` will be :js:`true`.
+
+    * If the Iterator_ is not finished, :js:`value` will be the
+      next value in the Iterator_.
+
+      .. code:: javascript
+
+        var iterator = toIterator([1, 2, 3]);
+
+        // returns { value: 1 }
+        iterator.next();
+
+        // returns { value: 2 }
+        iterator.next();
+
+        // returns { value: 3 }
+        iterator.next();
+
+        // returns { done: true }
+        iterator.next();
+
+    As you can see above, Iterator_\ s are *mutable*: every time
+    you call the :js:`next` method it will return the next value,
+    or :js:`done` if it's finished.
+
+    It is recommended to not use Iterator_ directly, instead
+    you should use the higher-level functions like each_, map_,
+    foldl_, etc.
+
+    But if you want to create your own iteration functions, you
+    will need to use toIterator_ and Iterable_.
+
+----
+
 .. _join:
 
 * ::
@@ -1935,6 +2016,66 @@ Table of Contents
 
     // returns 3
     Tuple([1, 2, 3]).size();
+
+----
+
+.. _UUIDTag:
+
+* ::
+
+    UUIDTag(uuid: String) -> Tag
+
+  Returns a Tag_ which uses ``uuid`` for equality.
+
+  Using Tag_ is very easy and convenient, but it
+  has a major limitation: you can't convert a Tag_
+  to/from JSON.
+
+  The reason for this is: imagine a server and client that
+  both use the same library. The library uses some Tag_\ s.
+  The server sends some data to the client (using toJSON_),
+  which the client then receives (using fromJSON_).
+
+  Because both the client and server are using the same
+  library, you would expect the Tag_\ s to be the same, but
+  they're not!
+
+  Another example: imagine some data that uses Tag_\ s. The
+  data is saved to a database using toJSON_. The program
+  is restarted, and the data is read from the database
+  (using fromJSON_). You would expect the Tag_\ s to match
+  up, but they don't.
+
+  There's not that many good ways to solve this problem.
+  `UUIDs <http://en.wikipedia.org/wiki/Universally_unique_identifier>`_
+  are one solution, so that's what UUIDTag_ uses.
+
+  Rather than doing this:
+
+  .. code:: javascript
+
+    var tag_foo = Tag();
+
+  You should instead do this:
+
+  .. code:: javascript
+
+    var tag_foo = UUIDTag("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
+
+  Replace :js:`"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"` with a UUID
+  that you have generated.
+
+  If two Tag_\ s use the same UUID, they are treated as the same
+  Tag_, and so now the server can correctly send the data to
+  the client, and the Tag_\ s will match with the database.
+
+  But you have to be careful that different Tag_\ s have different
+  UUIDs, or you will have a collision. You can't reuse the same
+  UUID over and over again, you have to generate a new one every
+  time.
+
+  You can search Google for "uuid generator". I personally
+  use `this site <https://www.uuidgenerator.net/version4>`_.
 
 ----
 
