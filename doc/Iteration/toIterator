@@ -1,0 +1,11 @@
+/**
+   @function toIterator
+   @param {::Iterable} [x]
+   @return {::Iterator}
+   @summary Converts an [::Iterable] into an [::Iterator]
+   @desc
+     This is useful if you want to create your own iterator
+     functions.
+
+     See also [::Iterable] for creating Iterables.
+ */

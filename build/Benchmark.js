@@ -288,7 +288,7 @@
       }
     }
 
-    function $$iter$$iter(x) {
+    function $$iter$$toIterator(x) {
       var fn;
 
       if ((fn = x[$$$Immutable$static$$tag_iter]) != null) {
@@ -310,13 +310,17 @@
       }
     }
 
-    function $$iter$$make_seq(f) {
+    function $$iter$$Iterable(f) {
       var o = {};
 
-      o[$$$Immutable$static$$tag_iter] = f;
+      function iter() {
+        return f();
+      }
+
+      o[$$$Immutable$static$$tag_iter] = iter;
 
       if ($$Tag$$Symbol_iterator !== null) {
-        o[$$Tag$$Symbol_iterator] = f;
+        o[$$Tag$$Symbol_iterator] = iter;
       }
 
       return o;
@@ -381,7 +385,7 @@
     }
 
     function $$iter$$any(x, f) {
-      var iterator = $$iter$$iter(x);
+      var iterator = $$iter$$toIterator(x);
 
       for (;;) {
         var info = iterator.next();
@@ -394,7 +398,7 @@
     }
 
     function $$iter$$all(x, f) {
-      var iterator = $$iter$$iter(x);
+      var iterator = $$iter$$toIterator(x);
 
       for (;;) {
         var info = iterator.next();
@@ -407,7 +411,7 @@
     }
 
     function $$iter$$find(x, f, def) {
-      var iterator = $$iter$$iter(x);
+      var iterator = $$iter$$toIterator(x);
 
       for (;;) {
         var info = iterator.next();
@@ -432,9 +436,9 @@
       var done     = false;
 
       return $$ImmutableTuple$$unsafe_Tuple([
-        $$iter$$make_seq(function () {
+        $$iter$$Iterable(function () {
           if (iterator === $$iter$$empty) {
-            iterator = $$iter$$iter(x);
+            iterator = $$iter$$toIterator(x);
           }
 
           return {
@@ -463,9 +467,9 @@
           };
         }),
 
-        $$iter$$make_seq(function () {
+        $$iter$$Iterable(function () {
           if (iterator === $$iter$$empty) {
-            iterator = $$iter$$iter(x);
+            iterator = $$iter$$toIterator(x);
           }
 
           return {
@@ -499,9 +503,9 @@
     function $$iter$$zip(x, def) {
       var hasDefault = (arguments.length === 2);
 
-      return $$iter$$make_seq(function () {
+      return $$iter$$Iterable(function () {
         var args = $$iter$$toArray(x).map(function (x) {
-          return $$iter$$iter(x);
+          return $$iter$$toIterator(x);
         });
 
         var isDone = false;
@@ -650,11 +654,11 @@
 
 
     function $$iter$$each(x, f) {
-      $$iter$$each_iter($$iter$$iter(x), f);
+      $$iter$$each_iter($$iter$$toIterator(x), f);
     }
 
     function $$iter$$findIndex(x, f, def) {
-      var iterator = $$iter$$iter(x);
+      var iterator = $$iter$$toIterator(x);
 
       var index = 0;
 
@@ -701,8 +705,8 @@
         throw new Error("Count cannot be negative");
       }
 
-      return $$iter$$make_seq(function () {
-        var iterator = $$iter$$iter(x);
+      return $$iter$$Iterable(function () {
+        var iterator = $$iter$$toIterator(x);
 
         return {
           next: function () {
@@ -743,7 +747,7 @@
         throw new Error("Step cannot be negative");
       }
 
-      return $$iter$$make_seq(function () {
+      return $$iter$$Iterable(function () {
         if (start < end) {
           var next = function () {
             if (start < end) {
@@ -774,20 +778,20 @@
     }
 
     function $$iter$$map(x, f) {
-      return $$iter$$make_seq(function () {
-        return $$iter$$map_iter($$iter$$iter(x), f);
+      return $$iter$$Iterable(function () {
+        return $$iter$$map_iter($$iter$$toIterator(x), f);
       });
     }
 
     function $$iter$$reverse(x) {
-      return $$iter$$make_seq(function () {
-        return $$iter$$reverse_iter($$iter$$iter(x));
+      return $$iter$$Iterable(function () {
+        return $$iter$$reverse_iter($$iter$$toIterator(x));
       });
     }
 
     function $$iter$$keep(x, f) {
-      return $$iter$$make_seq(function () {
-        var iterator = $$iter$$iter(x);
+      return $$iter$$Iterable(function () {
+        var iterator = $$iter$$toIterator(x);
         return {
           next: function () {
             for (;;) {
@@ -1219,7 +1223,7 @@
 
     if ($$Tag$$Symbol_iterator !== null) {
       $$Base$$MutableBase[$$Tag$$Symbol_iterator] = $$Base$$ImmutableBase[$$Tag$$Symbol_iterator] = function () {
-        return $$iter$$iter(this);
+        return $$iter$$toIterator(this);
       };
     }
     function $$Ordered$$nth_has(index, len) {
@@ -1540,7 +1544,7 @@
 
     $$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_iter] = function () {
       var tree = $$iter$$mapcat_iter($$AVL$$iter_tree(this.root), function (node) {
-        return $$iter$$iter(node.array);
+        return $$iter$$toIterator(node.array);
       });
       return $$iter$$concat_iter(tree, $$iter$$reverse_iter($$$Immutable$Cons$$iter_cons(this.tail)));
     };
@@ -2218,7 +2222,7 @@
     };
 
     $$ImmutableTuple$$ImmutableTuple.prototype[$$$Immutable$static$$tag_iter] = function () {
-      return $$iter$$iter(this.values);
+      return $$iter$$toIterator(this.values);
     };
 
     $$ImmutableTuple$$ImmutableTuple.prototype.size = function () {
@@ -2722,7 +2726,7 @@
       var values = this.values;
 
       // TODO a little gross
-      return $$iter$$iter($$iter$$map($$iter$$iter_object(keys), function (_array) {
+      return $$iter$$toIterator($$iter$$map($$iter$$iter_object(keys), function (_array) {
         // TODO should this use destructure_pair ?
         return $$util$$destructure_pair(_array, function (s, index) {
           return $$ImmutableTuple$$unsafe_Tuple([s, values[index]]);
@@ -2946,6 +2950,8 @@
       exports.range = $$iter$$range;
       exports.take = $$iter$$take;
       exports.indexOf = $$iter$$indexOf;
+      exports.toIterator = $$iter$$toIterator;
+      exports.Iterable = $$iter$$Iterable;
     });
     var $$List$$immutablejs = require("immutable");
     var $$List$$mori        = require("mori");

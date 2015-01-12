@@ -4,7 +4,7 @@ import { hash_array } from "./hash";
 import { toJSON_array, fromJSON_array } from "./toJSON";
 import { toJS_array } from "./toJS";
 import { ImmutableBase } from "./Base";
-import { iter, mapcat_iter, concat_iter, reverse_iter, foldl } from "./iter";
+import { toIterator, mapcat_iter, concat_iter, reverse_iter, foldl } from "./iter";
 import { nil, tag_hash, tag_toJSON, fromJSON_registry, tag_toJS, tag_iter } from "./static";
 import { nth_has, ordered_has } from "./Ordered";
 
@@ -290,7 +290,7 @@ ImmutableList.prototype[tag_toJSON] = function (x) {
 
 ImmutableList.prototype[tag_iter] = function () {
   var tree = mapcat_iter(iter_tree(this.root), function (node) {
-    return iter(node.array);
+    return toIterator(node.array);
   });
   return concat_iter(tree, reverse_iter(iter_cons(this.tail)));
 };

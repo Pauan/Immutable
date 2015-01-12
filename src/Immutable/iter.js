@@ -33,7 +33,7 @@ export function isIterable(x) {
   }
 }
 
-export function iter(x) {
+export function toIterator(x) {
   var fn;
 
   if ((fn = x[tag_iter]) != null) {
@@ -55,13 +55,17 @@ export function iter(x) {
   }
 }
 
-export function make_seq(f) {
+export function Iterable(f) {
   var o = {};
 
-  o[tag_iter] = f;
+  function iter() {
+    return f();
+  }
+
+  o[tag_iter] = iter;
 
   if (Symbol_iterator !== null) {
-    o[Symbol_iterator] = f;
+    o[Symbol_iterator] = iter;
   }
 
   return o;
@@ -126,7 +130,7 @@ export function concat_iter(x, y) {
 }
 
 export function any(x, f) {
-  var iterator = iter(x);
+  var iterator = toIterator(x);
 
   for (;;) {
     var info = iterator.next();
@@ -139,7 +143,7 @@ export function any(x, f) {
 }
 
 export function all(x, f) {
-  var iterator = iter(x);
+  var iterator = toIterator(x);
 
   for (;;) {
     var info = iterator.next();
@@ -152,7 +156,7 @@ export function all(x, f) {
 }
 
 export function find(x, f, def) {
-  var iterator = iter(x);
+  var iterator = toIterator(x);
 
   for (;;) {
     var info = iterator.next();
@@ -177,9 +181,9 @@ export function partition(x, f) {
   var done     = false;
 
   return unsafe_Tuple([
-    make_seq(function () {
+    Iterable(function () {
       if (iterator === empty) {
-        iterator = iter(x);
+        iterator = toIterator(x);
       }
 
       return {
@@ -208,9 +212,9 @@ export function partition(x, f) {
       };
     }),
 
-    make_seq(function () {
+    Iterable(function () {
       if (iterator === empty) {
-        iterator = iter(x);
+        iterator = toIterator(x);
       }
 
       return {
@@ -244,9 +248,9 @@ export function partition(x, f) {
 export function zip(x, def) {
   var hasDefault = (arguments.length === 2);
 
-  return make_seq(function () {
+  return Iterable(function () {
     var args = toArray(x).map(function (x) {
-      return iter(x);
+      return toIterator(x);
     });
 
     var isDone = false;
@@ -396,11 +400,11 @@ export function iter_object(x) {
 
 
 export function each(x, f) {
-  each_iter(iter(x), f);
+  each_iter(toIterator(x), f);
 }
 
 export function findIndex(x, f, def) {
-  var iterator = iter(x);
+  var iterator = toIterator(x);
 
   var index = 0;
 
@@ -447,8 +451,8 @@ export function take(x, count) {
     throw new Error("Count cannot be negative");
   }
 
-  return make_seq(function () {
-    var iterator = iter(x);
+  return Iterable(function () {
+    var iterator = toIterator(x);
 
     return {
       next: function () {
@@ -489,7 +493,7 @@ export function range(start, end, step) {
     throw new Error("Step cannot be negative");
   }
 
-  return make_seq(function () {
+  return Iterable(function () {
     if (start < end) {
       var next = function () {
         if (start < end) {
@@ -527,21 +531,21 @@ export function range(start, end, step) {
 }*/
 
 export function map(x, f) {
-  return make_seq(function () {
-    return map_iter(iter(x), f);
+  return Iterable(function () {
+    return map_iter(toIterator(x), f);
   });
 }
 
 // TODO what if `x` is an Array ?
 export function reverse(x) {
-  return make_seq(function () {
-    return reverse_iter(iter(x));
+  return Iterable(function () {
+    return reverse_iter(toIterator(x));
   });
 }
 
 export function keep(x, f) {
-  return make_seq(function () {
-    var iterator = iter(x);
+  return Iterable(function () {
+    var iterator = toIterator(x);
     return {
       next: function () {
         for (;;) {
@@ -563,13 +567,13 @@ export function keep(x, f) {
   if (info.done) {
     return null;
   } else {
-    return iter(info.value);
+    return toIterator(info.value);
   }
 }
 
 export function flatten1(x) {
-  return make_seq(function () {
-    var iterator = iter(x);
+  return Iterable(function () {
+    var iterator = toIterator(x);
 
     var isDone = false;
     var current = null;

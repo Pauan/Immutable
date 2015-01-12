@@ -46,7 +46,8 @@ Quick overview
 * `Iterable`
 
   * `all` `any` `each` `find` `findIndex` `foldl` `foldr` `indexOf` `join`
-    `keep` `map` `partition` `range` `reverse` `take` `zip`
+    `keep` `map` `partition` `range` `reverse` `take` `toArray`
+    `toIterator` `zip`
 
 ----
 

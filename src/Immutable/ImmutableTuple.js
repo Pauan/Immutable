@@ -3,7 +3,7 @@ import { hash_array } from "./hash";
 import { toJSON_array, fromJSON_array } from "./toJSON";
 import { toJS_array } from "./toJS";
 import { ImmutableBase } from "./Base";
-import { iter, each } from "./iter";
+import { toIterator, each } from "./iter";
 import { tag_hash, tag_toJSON, fromJSON_registry, tag_toJS, tag_iter } from "./static";
 import { ordered_has, nth_has } from "./Ordered";
 
@@ -26,7 +26,7 @@ ImmutableTuple.prototype[tag_toJSON] = function (x) {
 };
 
 ImmutableTuple.prototype[tag_iter] = function () {
-  return iter(this.values);
+  return toIterator(this.values);
 };
 
 ImmutableTuple.prototype.size = function () {

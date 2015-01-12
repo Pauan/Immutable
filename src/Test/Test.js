@@ -7,7 +7,8 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          isQueue, isStack, isImmutable, fromJS, isRecord, Record, toJSON, fromJSON,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, Tuple, isTuple,
          each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
-         isIterable, any, all, find, partition, range, take, indexOf } from "../Immutable/Immutable";
+         isIterable, any, all, find, partition, range, take, indexOf,
+         toIterator, Iterable } from "../Immutable/Immutable";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
 
@@ -2955,6 +2956,50 @@ test("partition", function () {
   assert(!Array.isArray(no));
   assert(deepEqual(toArray(yes), []));
   assert(deepEqual(toArray(no), [5, 6, 7, 8, 9]));
+});
+
+test("toIterator", function () {
+  var iterator = toIterator([1, 2, 3]);
+  assert(typeof iterator.next === "function");
+  assert(deepEqual(iterator.next(), { value: 1 }));
+  assert(deepEqual(iterator.next(), { value: 2 }));
+  assert(deepEqual(iterator.next(), { value: 3 }));
+  assert(deepEqual(iterator.next(), { done: true }));
+
+
+  var iterator = toIterator(List([1, 2, 3]));
+  assert(typeof iterator.next === "function");
+  assert(deepEqual(iterator.next(), { value: 1 }));
+  assert(deepEqual(iterator.next(), { value: 2 }));
+  assert(deepEqual(iterator.next(), { value: 3 }));
+  assert(deepEqual(iterator.next(), { done: true }));
+});
+
+test("Iterable", function () {
+  var iterable = Iterable(function () {
+    assert(this === void 0);
+
+    var i = 0;
+    return {
+      next: function () {
+        if (i < 4) {
+          return { value: i++ };
+        } else {
+          return { done: true };
+        }
+      }
+    };
+  });
+
+  assert(deepEqual(toArray(iterable), [0, 1, 2, 3]));
+
+  var iterator = toIterator(iterable);
+  assert(typeof iterator.next === "function");
+  assert(deepEqual(iterator.next(), { value: 0 }));
+  assert(deepEqual(iterator.next(), { value: 1 }));
+  assert(deepEqual(iterator.next(), { value: 2 }));
+  assert(deepEqual(iterator.next(), { value: 3 }));
+  assert(deepEqual(iterator.next(), { done: true }));
 });
 
 test("findIndex", function () {

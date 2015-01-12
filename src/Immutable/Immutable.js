@@ -15,7 +15,8 @@ import { deref, Ref, isRef } from "./MutableRef";
 import { isTag, isUUIDTag, Tag, UUIDTag } from "./Tag";
 import { each, map, keep, findIndex, reverse, foldl,
          foldr, join, zip, toArray, isIterable,
-         any, all, find, partition, range, take, indexOf } from "./iter";
+         any, all, find, partition, range, take, indexOf,
+         toIterator, Iterable } from "./iter";
 
 export { equal, toJS, fromJS, simpleSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
@@ -27,7 +28,8 @@ export { equal, toJS, fromJS, simpleSort, toJSON, fromJSON,
          isTag, isUUIDTag, Tag, UUIDTag,
          each, map, keep, findIndex, reverse, foldl,
          foldr, join, zip, toArray, isIterable, any, all,
-         find, partition, range, take, indexOf };
+         find, partition, range, take, indexOf,
+         toIterator, Iterable };
 
 // TODO use `x instanceof ImmutableBase` ? What about ImmutableRef ?
 export function isImmutable(x) {
@@ -114,4 +116,6 @@ export function isImmutable(x) {
   exports.range = range;
   exports.take = take;
   exports.indexOf = indexOf;
+  exports.toIterator = toIterator;
+  exports.Iterable = Iterable;
 });

@@ -1,5 +1,5 @@
 import { hash } from "./hash";
-import { iter } from "./iter";
+import { toIterator } from "./iter";
 import { Symbol_iterator } from "./Tag";
 
 // TODO circular import ?
@@ -25,6 +25,6 @@ ImmutableBase.toJSON = _toJSON;
 
 if (Symbol_iterator !== null) {
   MutableBase[Symbol_iterator] = ImmutableBase[Symbol_iterator] = function () {
-    return iter(this);
+    return toIterator(this);
   };
 }

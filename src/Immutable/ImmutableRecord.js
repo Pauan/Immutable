@@ -4,7 +4,7 @@ import { toJSON_object, fromJSON_object } from "./toJSON";
 import { toJS_object } from "./toJS";
 import { ImmutableBase } from "./Base";
 import { unsafe_Tuple } from "./ImmutableTuple";
-import { iter_object, map, iter, each, toArray } from "./iter";
+import { iter_object, map, toIterator, each, toArray } from "./iter";
 import { destructure_pair } from "./util";
 import { simpleSort, sorted_merge } from "./Sorted";
 import { tag_hash, tag_toJSON, fromJSON_registry, tag_toJS, tag_iter } from "./static";
@@ -48,7 +48,7 @@ ImmutableRecord.prototype[tag_iter] = function () {
   var values = this.values;
 
   // TODO a little gross
-  return iter(map(iter_object(keys), function (_array) {
+  return toIterator(map(iter_object(keys), function (_array) {
     // TODO should this use destructure_pair ?
     return destructure_pair(_array, function (s, index) {
       return unsafe_Tuple([s, values[index]]);
