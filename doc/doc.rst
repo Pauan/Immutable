@@ -56,14 +56,14 @@ Table of Contents
 
   * Dict_
 
-    * Dict get_
-    * Dict has_
-    * Dict isEmpty_
-    * Dict merge_
-    * Dict modify_
-    * Dict remove_
-    * Dict removeAll_
-    * Dict set_
+    * `Dict get`_
+    * `Dict has`_
+    * `Dict isEmpty`_
+    * `Dict merge`_
+    * `Dict modify`_
+    * `Dict remove`_
+    * `Dict removeAll`_
+    * `Dict set`_
 
   * Iterable_
   * Iterator_
