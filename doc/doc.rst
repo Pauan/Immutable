@@ -35,11 +35,7 @@ are defined by this library. However, there are some exceptions:
 
 * ``Any`` can be any type.
 
-.. _Integer:
-
 * ``Integer`` is a JavaScript ``Number`` that is restricted to be an integer.
-
-.. _Void:
 
 * ``Void`` is the JavaScript value ``undefined``.
 
@@ -54,9 +50,9 @@ Table of Contents
 
 ----
 
-  .. _all:
+.. _all:
 
-  ::
+* ::
 
     all(x: Iterable, fn: Function) -> Boolean
 
@@ -71,9 +67,9 @@ Table of Contents
 
 ----
 
-  .. _any:
+.. _any:
 
-  ::
+* ::
 
     any(x: Iterable, fn: Function) -> Boolean
 
@@ -88,9 +84,9 @@ Table of Contents
 
 ----
 
-  .. _each:
+.. _each:
 
-  ::
+* ::
 
     each(x: Iterable, fn: Function) -> Void
 
@@ -120,15 +116,14 @@ Table of Contents
 
 ----
 
-  .. _find:
+.. _find:
 
-  ::
+* ::
 
     find(x: Iterable, fn: Function, [default: Any]) -> Any
 
   Applies ``fn`` to each value in ``x`` and returns
   the first value where ``fn`` returns ``true``.
-
 
   If ``fn`` never returns ``true``:
 
