@@ -1,3 +1,6 @@
+.. role:: js(code)
+   :language: javascript
+
 This documentation uses the following format::
 
   foo(x: Array, [y: Boolean], [z: Number = 5]) -> String | Boolean
@@ -26,7 +29,9 @@ This documentation uses the following format::
 
     * The ``|`` means that it will return either a ``String`` or a ``Boolean``.
 
-Here are some examples of how you might call the function ``foo``::
+Here are some examples of how you might call the function ``foo``:
+
+.. code:: javascript
 
   foo([1]);
   foo([1], true);
@@ -39,7 +44,7 @@ However, there are some exceptions:
 
 * ``Integer`` is a JavaScript ``Number`` that is restricted to be an integer.
 
-* ``Void`` is the JavaScript value ``undefined``.
+* ``Void`` is the JavaScript value :js:`undefined`.
 
 Table of Contents
 =================
