@@ -177,6 +177,21 @@ Table of Contents
 
 ----
 
+.. _deref:
+
+* ::
+
+    deref(x: Any) -> Any
+
+  * If ``x`` is a Ref_, it will return the ref's current value.
+
+  * Otherwise it returns ``x`` as-is.
+
+  This is useful if you want to make sure you have a value, and
+  you're not sure whether something is a Ref_ or not.
+
+----
+
 .. _each:
 
 * ::
@@ -488,6 +503,100 @@ Table of Contents
 
 ----
 
+.. _fromJS:
+
+* ::
+
+    fromJS(x: Any) -> Any
+
+  Converts a JavaScript object into its immutable equivalent.
+
+  This function has the following behavior:
+
+  * JavaScript object literals are deeply converted
+    into a Dict_, with fromJS_ called on all
+    the keys/values.
+
+    This conversion takes ``O(n)`` time.
+
+  * JavaScript arrays are deeply converted into a
+    List_, with fromJS_ called on all the
+    values.
+
+    This conversion takes ``O(n)`` time.
+
+  * Everything else is returned as-is.
+
+  This is useful if you like using Dict_ or List_,
+  but you want to use a library that gives you ordinary
+  JavaScript objects/arrays.
+
+  If you want to losslessly store an immutable object on
+  disk, or send it over the network, you can use toJSON_
+  and fromJSON_ instead.
+
+----
+
+.. _fromJSON:
+
+* ::
+
+    fromJSON(x: Any) -> Any
+
+  Converts specially marked JSON to a Dict_,
+  Set_, List_, Queue_, Stack_, Tuple_,
+  or _Record.
+
+  This function has the following behavior:
+
+  * JavaScript object literals are deeply copied, with
+    fromJSON_ called on all the keys/values.
+
+    This copying takes ``O(n)`` time.
+
+  * JavaScript arrays are deeply copied, with fromJSON_
+    called on all the values.
+
+    This copying takes ``O(n)`` time.
+
+  * :js:`null`, booleans, strings, and UUIDTag_ are
+    returned as-is.
+
+  * Numbers are returned as-is, except :js:`NaN`,
+    :js:`Infinity`, and :js:`-Infinity` throw an error.
+
+  * Specially marked JSON objects are converted into a
+    Dict_, Set_, List_, Queue_, Stack_, Tuple_, or
+    Record_, with fromJSON_ called on all the
+    keys/values.
+
+    This conversion takes ``O(n)`` time.
+
+  * Everything else throws an error.
+
+  You *cannot* use Tag_ with fromJSON_, but you
+  *can* use UUIDTag_.
+
+  This function is useful because it's *lossless*: if you
+  use toJSON_ followed by fromJSON_, the two objects
+  will be equal_:
+
+  .. code:: javascript
+
+    var x = Record({ foo: 1 });
+
+    // true
+    equal(x, fromJSON(toJSON(x)));
+
+  This makes it possible to store immutable objects on disk,
+  or send them over the network with JSON, reconstructing
+  them on the other side.
+
+  If you just want to use a library that expects normal
+  JavaScript objects, use toJS_ and fromJS_ instead.
+
+----
+
 .. _indexOf:
 
 * ::
@@ -538,10 +647,10 @@ Table of Contents
     isImmutable(x: Any) -> Boolean
 
   Returns :js:`true` if ``x`` is a string, number, boolean,
-  null, undefined, symbol, frozen object, Dict_, List_, Queue_,
-  Record_, Set_, Stack_, Tuple_, or Tag_.
+  :js:`null`, :js:`undefined`, symbol, frozen object, Dict_,
+  List_, Queue_, Record_, Set_, Stack_, Tuple_, or Tag_.
 
-  It returns :js:`false` for everything else.
+  Returns :js:`false` for everything else.
 
 ----
 
@@ -890,6 +999,28 @@ Table of Contents
 
 ----
 
+.. _simpleSort:
+
+* ::
+
+    simpleSort(x: Any, y: Any) -> Integer
+
+  This function can be used with SortedDict_ and SortedSet_.
+
+  * If ``x`` is lower than ``y``, it returns :js:`-1`.
+  * If ``x`` is equal to ``y``, it returns :js:`0`.
+  * If ``x`` is greater than ``y``, it returns :js:`1`.
+
+  This function only works on simple types (numbers, strings, and booleans).
+
+  In addition, it requires all the values to be the same type.
+  Mixing two or more types together will not work correctly.
+
+  *e.g.* You shouldn't use this function if you want to use both
+  numbers and strings as keys in the same Dict_/Set_.
+
+----
+
 .. _take:
 
 * ::
@@ -960,6 +1091,113 @@ Table of Contents
   functions.
 
   See also Iterable_ for creating Iterable_\ s.
+
+----
+
+.. _toJS:
+
+* ::
+
+    toJS(x: Any) -> Any
+
+  Converts a Dict_, Set_, List_, Queue_, Stack_, Tuple_, or
+  Record_ to its JavaScript equivalent.
+
+  This function has the following behavior:
+
+  * JavaScript object literals are deeply copied, with
+    toJS_ called on all the keys/values.
+
+    This copying takes ``O(n)`` time.
+
+  * JavaScript arrays are deeply copied, with toJS_
+    called on all the values.
+
+    This copying takes ``O(n)`` time.
+
+  * Dict_ and Record_ are converted into a JavaScript
+    object, with toJS_ called on all the keys/values.
+    The keys must be strings or Tag_.
+
+    This conversion takes ``O(n)`` time.
+
+  * Set_, List_, Queue_, Stack_, and Tuple_ are
+    converted into a JavaScript array, with toJS_
+    called on all the values.
+
+    This conversion takes ``O(n)`` time.
+
+  * Everything else is returned as-is.
+
+  This is useful if you like using Dict_, Set_, List_,
+  Queue_, Stack_, Tuple_, or Record_ but you want to
+  use a library that requires ordinary JavaScript
+  objects/arrays.
+
+  If you want to losslessly store an immutable object on
+  disk, or send it over the network, you can use toJSON_
+  and fromJSON_ instead.
+
+----
+
+.. _toJSON:
+
+* ::
+
+    toJSON(x: Any) -> Any
+
+  Converts a Dict_, Set_, List_, Queue_, Stack_, Tuple_,
+  or Record_ to JSON.
+
+  This function has the following behavior:
+
+  * JavaScript object literals are deeply copied, with
+    toJSON_ called on all the keys/values.
+
+    This copying takes ``O(n)`` time.
+
+  * JavaScript arrays are deeply copied, with toJSON_
+    called on all the values.
+
+    This copying takes ``O(n)`` time.
+
+  * If an object has a :js:`toJSON` method, it will be called,
+    with toJSON_ called on whatever it returns.
+
+  * :js:`null`, booleans, strings, and UUIDTag_ are returned
+    as-is.
+
+  * Numbers are returned as-is, except :js:`NaN`,
+    :js:`Infinity`, and :js:`-Infinity` throw an error.
+
+  * Dict_, Set_, List_, Queue_, Stack_, Tuple_, and
+    Record_ are converted into specially marked JSON
+    objects, with toJSON_ called on all the keys/values.
+
+    This conversion takes ``O(n)`` time.
+
+  * Everything else throws an error.
+
+  You *cannot* use Tag_ with toJSON_, but you *can* use
+  UUIDTag_.
+
+  This function is useful because it's *lossless*: if you
+  use toJSON_ followed by fromJSON_, the two objects
+  will be equal_:
+
+  .. code:: javascript
+
+      var x = Record({ foo: 1 });
+
+      // true
+      equal(x, fromJSON(toJSON(x)));
+
+  This makes it possible to store immutable objects on disk,
+  or send them over the network with JSON, reconstructing
+  them on the other side.
+
+  If you just want to use a library that expects normal
+  JavaScript objects, use toJS_ and fromJS_ instead.
 
 ----
 
