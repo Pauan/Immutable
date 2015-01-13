@@ -8,7 +8,7 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, Tuple, isTuple,
          each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
          isIterable, any, all, find, partition, range, take, indexOf,
-         toIterator, Iterable } from "../Immutable/Immutable";
+         toIterator, Iterable } from "../Immutable";
 import { array_limit } from "../Immutable/ImmutableList";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
