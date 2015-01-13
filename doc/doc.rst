@@ -1,7 +1,7 @@
 .. role:: js(code)
    :language: javascript
 
-This documentation uses the following format::
+This documentation uses the following format for functions::
 
   foo(x: Array, [y: String | Boolean], [z: Number = 5]) -> String | Boolean
 
@@ -39,6 +39,19 @@ Here are some examples of how you might call the function ``foo``:
   foo([1]);
   foo([1], true);
   foo([1], true, 2);
+
+In addition, this is the format used for methods::
+
+  Foo merge(x: Foo) -> Foo
+
+Here are some examples of how you might call the ``merge`` method:
+
+.. code:: javascript
+
+  var foo1 = Foo();
+  var foo2 = Foo();
+
+  foo1.merge(foo2);
 
 The types are either JavaScript built-ins or are defined by this library.
 However, there are some exceptions:
@@ -85,6 +98,14 @@ Table of Contents
 
   * Queue_
 
+    * `Queue concat`_
+    * `Queue isEmpty`_
+    * `Queue peek`_
+    * `Queue pop`_
+    * `Queue push`_
+    * `Queue removeAll`_
+    * `Queue size`_
+
   * Record_
 
     * `Record get`_
@@ -93,10 +114,22 @@ Table of Contents
     * `Record update`_
 
   * Ref_
+
   * Set_
+
   * SortedDict_
   * SortedSet_
+
   * Stack_
+
+    * `Stack concat`_
+    * `Stack isEmpty`_
+    * `Stack peek`_
+    * `Stack pop`_
+    * `Stack push`_
+    * `Stack removeAll`_
+    * `Stack size`_
+
   * Tag_
 
   * Tuple_
@@ -1735,6 +1768,185 @@ Table of Contents
 
 ----
 
+.. _Queue:
+
+* ::
+
+    Queue([x: Iterable]) -> Queue
+
+  A Queue_ is an immutable ordered sequence of values that
+  can efficiently add to the end and remove from the front.
+
+  The values from ``x`` will be inserted into
+  the Queue_, in the same order as ``x``.
+
+  This takes ``O(n)`` time, unless ``x`` is already a
+  Queue_, in which case it takes ``O(1)`` time.
+
+  Duplicate values are allowed, and duplicates don't
+  have to be in the same order.
+
+  The values in the Queue_ can have whatever order you
+  want, but they are not sorted. If you want the values
+  to be sorted, use a SortedSet_ instead.
+
+----
+
+.. _Queue concat:
+
+* ::
+
+    Queue concat(x: Iterable) -> Queue
+
+  Returns a new Queue_ with all the values of this Queue_
+  followed by all the values of ``x``.
+
+  This function runs in ``O(n)`` time.
+
+  This does not modify the Queue_, it returns a new Queue_.
+
+  Examples:
+
+  .. code:: javascript
+
+    var queue = Queue([1, 2, 3]);
+
+    // returns [1, 2, 3, 4, 5, 0]
+    queue.concat([4, 5, 0]);
+
+----
+
+.. _Queue isEmpty:
+
+* ::
+
+    Queue isEmpty() -> Boolean
+
+  Returns :js:`true` if the Queue_ is empty.
+
+  A Queue_ is empty if it has no values in it.
+
+  This function runs in ``O(1)`` time.
+
+----
+
+.. _Queue peek:
+
+* ::
+
+    Queue peek([default: Any]) -> Any
+
+  Returns the value at the front of the Queue_, or
+  ``default`` if the Queue_ is empty.
+
+  If the Queue_ is empty:
+
+  * If ``default`` is provided, it is returned.
+  * If ``default`` is not provided, an error is thrown.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns 1
+    Queue([1, 2, 3]).peek();
+
+    // throws an error
+    Queue().peek();
+
+    // returns 5
+    Queue().peek(5);
+
+----
+
+.. _Queue pop:
+
+* ::
+
+    Queue pop() -> Queue
+
+  Returns a new Queue_ with the value at the front removed.
+
+  If the Queue_ is empty, an error is thrown.
+
+  This does not modify the Queue_, it returns a new Queue_.
+
+  This function runs in amortized ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [2, 3]
+    Queue([1, 2, 3]).pop();
+
+    // throws an error
+    Queue().pop();
+
+----
+
+.. _Queue push:
+
+* ::
+
+    Queue push(value: Any) -> Queue
+
+  Returns a new Queue_ with ``value`` inserted at the end.
+
+  This does not modify the Queue_, it returns a new Queue_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [1, 2, 3, 4]
+    Queue([1, 2, 3]).push(4);
+
+    // returns [1, 2, 3, 4, 5, 0]
+    Queue([1, 2, 3]).push(4).push(5).push(0);
+
+----
+
+.. _Queue removeAll:
+
+* ::
+
+    Queue removeAll() -> Queue
+
+  Returns a new Queue_ with no values.
+
+  This does not modify the Queue_, it returns a new Queue_.
+
+  This function runs in ``O(1)`` time.
+
+----
+
+.. _Queue size:
+
+* ::
+
+    Queue size() -> Integer
+
+  Returns the number of values in the Queue_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns 0
+    Queue().size();
+
+    // returns 3
+    Queue([50, 100, 150]).size();
+
+----
+
 .. _range:
 
 * ::
@@ -2124,6 +2336,417 @@ Table of Contents
   If the sort order is not consistent, the behavior of
   SortedSet_ will be unpredictable. This is not a
   bug in SortedSet_, it is a bug in your sort function.
+
+----
+
+.. _Stack:
+
+* ::
+
+    Stack([x: Iterable]) -> Stack
+
+  A Stack_ is an immutable ordered sequence of values that
+  can efficiently add and remove from the end.
+
+  The values from ``x`` will be inserted into
+  the Stack_, in the same order as ``x``.
+
+  This takes ``O(n)`` time, unless ``x`` is already a
+  Stack_, in which case it takes ``O(1)`` time.
+
+  Duplicate values are allowed, and duplicates don't
+  have to be in the same order.
+
+  The values in the Stack_ can have whatever order you
+  want, but they are not sorted. If you want the values
+  to be sorted, use a SortedSet_ instead.
+
+----
+
+.. _Stack concat:
+
+* ::
+
+    Stack concat(x: Iterable) -> Stack
+
+  Returns a new Stack_ with all the values of this Stack_
+  followed by all the values of ``x``.
+
+  This function runs in ``O(n)`` time.
+
+  This does not modify the Stack_, it returns a new Stack_.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [1, 2, 3, 4, 5, 0]
+    Stack([1, 2, 3]).concat([4, 5, 0]);
+
+----
+
+.. _Stack isEmpty:
+
+* ::
+
+    Stack isEmpty() -> Boolean
+
+  Returns :js:`true` if the Stack_ is empty.
+
+  A Stack_ is empty if it has no values in it.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+    // returns true
+    Stack().isEmpty();
+
+    // returns false
+    Stack([1, 2, 3]).isEmpty();
+
+
+----
+
+.. _Stack peek:
+
+* ::
+
+    Stack peek([default: Any]) -> Any
+
+  Returns the value at the end of the Stack_, or
+  ``default`` if the Stack_ is empty.
+
+  If the Stack_ is empty:
+
+  * If ``default`` is provided, it is returned.
+  * If ``default`` is not provided, an error is thrown.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns 3
+    Stack([1, 2, 3]).peek();
+
+    // throws an error
+    Stack().peek();
+
+    // returns 5
+    Stack().peek(5);
+
+----
+
+.. _Stack pop:
+
+* ::
+
+    Stack pop() -> Stack
+
+  Returns a new Stack_ with the value at the end removed.
+
+  If the Stack_ is empty, an error is thrown.
+
+  This does not modify the Stack_, it returns a new Stack_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [1, 2]
+    Stack([1, 2, 3]).pop();
+
+    // throws an error
+    Stack().pop();
+
+----
+
+.. _Stack push:
+
+* ::
+
+    Stack push(value: Any) -> Stack
+
+  Returns a new Stack_ with ``value`` inserted at the end.
+
+  This does not modify the Stack_, it returns a new Stack_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [1, 2, 3, 4]
+    Stack([1, 2, 3]).push(4);
+
+    // returns [1, 2, 3, 4, 5, 0]
+    Stack([1, 2, 3]).push(4).push(5).push(0);
+
+----
+
+.. _Stack removeAll:
+
+* ::
+
+    Stack removeAll() -> Stack
+
+  Returns a new Stack_ with no values.
+
+  This does not modify the Stack_, it returns a new Stack_.
+
+  This function runs in ``O(1)`` time.
+
+----
+
+.. _Stack size:
+
+* ::
+
+    Stack size() -> Integer
+
+  Returns the number of values in the Stack_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns 0
+    Stack().size();
+
+    // returns 3
+    Stack([50, 100, 150]).size();
+
+----
+
+.. _Tag:
+
+* ::
+
+    Tag() -> Tag
+
+  A Tag_ is an immutable *unique* value. If you call Tag_
+  twice, you get two different Tag_\ s:
+
+  .. code:: javascript
+
+      var x = Tag();
+      var y = Tag();
+
+      // false
+      equal(x, y);
+
+  In addition to using equal_, you can also use JavaScript's
+  :js:`===` and :js:`!==` operators for Tag_\ s:
+
+  .. code:: javascript
+
+      // false
+      x === y;
+
+      // true
+      x === x;
+
+  The *only* purpose of a Tag_ is to be unique. You should
+  *not* rely upon anything other than the uniqueness of a
+  Tag_.
+
+  A Tag_ can be used anywhere that a string can be used.
+
+  Unlike strings, Tag_\ s are guaranteed (with very high
+  probability) to not collide with anything else,
+  including other Tag_\ s and strings.
+
+  There is one major limitation: you can't use a Tag_
+  with toJSON_ or fromJSON_.
+
+  The reason for this is that it's essentially
+  impossible to guarantee uniqueness when using
+  multiple processes.
+
+  If you want to use toJSON_ and fromJSON_, you should
+  use UUIDTag_ instead. For this reason, it's strongly
+  recommended that libraries use UUIDTag_.
+
+  So, if a Tag_ is just a unique value, what can it be
+  used for?
+
+  You can use it to create private data that only you
+  can access:
+
+  .. code:: javascript
+
+      var my_tag = Tag();
+
+      var obj = {};
+
+      obj[my_tag] = 50;
+
+      // returns 50
+      obj[my_tag];
+
+  However, because of certain features of JavaScript,
+  it's possible for a malicious person to access the
+  Tag_, so you should *not* store sensitive data like
+  passwords with a Tag_.
+
+  But you can use this to attach data to an existing
+  object, in a way that doesn't interfere with the
+  object's existing properties.
+
+  Another thing you can do is to create interfaces.
+
+  An interface is the combination of a function and
+  a Tag_. This allows you to change the behavior of the
+  function based upon the type of its argument.
+
+  Here's an example:
+
+  .. code:: javascript
+
+      var tag_print = Tag();
+
+      function print(x) {
+        var fn = x[tag_print];
+        if (fn != null) {
+          return fn(x);
+        } else {
+          throw new Error("Cannot print object!");
+        }
+      }
+
+  Any object that has a :js:`tag_print` method can be
+  printed. Let's create a printable object:
+
+  .. code:: javascript
+
+      function Foo(x) {
+        this.foo = x;
+      }
+
+      Foo.prototype[tag_print] = function (x) {
+        return "(Foo " + x.foo + ")";
+      };
+
+  Now if we call :js:`print(new Foo(5))` it returns
+  :js:`"(Foo 5)"`. This lets us create new data types and
+  give them custom printing behavior without needing to
+  change the :js:`print` function!
+
+  Unlike normal methods, Tag_\ s are unique, so there's no
+  chance of a name collision. You can have two different
+  modules which both export a :js:`tag_print` Tag_, and it
+  will work just fine, because each Tag_ is unique.
+
+  If the :js:`print` function is part of a library, it
+  would be better if it used UUIDTag_ instead of Tag_.
+
+  Another use of Tag_\ s is event listeners. It's common
+  to use things like this:
+
+  .. code:: javascript
+
+      foo.on("click", function () {
+        ...
+      });
+
+      foo.on("keypress", function () {
+        ...
+      });
+
+  The problem is, what if somebody else defines a new
+  `"click"` event with different behavior? Oops, now
+  there's a name collision. With Tag_\ s, there is no
+  collision:
+
+  .. code:: javascript
+
+      foo.on(tag_click, function () {
+        ...
+      });
+
+      foo.on(tag_keypress, function () {
+        ...
+      });
+
+  Yet another use case is to create a `nominal type
+  system <http://en.wikipedia.org/wiki/Nominal_type_system>`_.
+  Immutable objects are treated as equal_ if they have
+  the same keys/values:
+
+  .. code:: javascript
+
+    var foo = Record({
+      "prop1": 1,
+      "prop2": 2
+    });
+
+    var bar = Record({
+      "prop1": 1,
+      "prop2": 2
+    });
+
+    // true
+    equal(foo, bar);
+
+  This is known as `structural typing <http://en.wikipedia.org/wiki/Structural_type_system>`_.
+  Sometimes that's exactly what you want, but sometimes
+  you want a little more precision.
+
+  Let's say you wanted to have a :js:`Human` type. A
+  :js:`Human` would have various properties, like
+  eyes, arms, legs, etc. But other animals also have
+  those properties. So you need a reliable way to
+  determine whether something is a :js:`Human` or not.
+  We can solve this problem by using a Tag_:
+
+  ..code:: javascript
+
+    var tag_Human = Tag();
+
+    var human = Record({
+      "type" : tag_Human,
+      "arms" : ...,
+      "legs" : ...
+    });
+
+  Because Tag_\ s are unique, now our :js:`human` will
+  only be equal_ to other :js:`Human`s, and not other
+  animals.
+
+  We can go further and give each individual :js:`Human`
+  a Tag_:
+
+  .. code:: javascript
+
+    function Human(name, age, gender) {
+      var id = Tag();
+
+      return Record({
+        "type"   : tag_Human,
+        "id"     : id,
+        "name"   : name,
+        "age"    : age,
+        "gender" : gender,
+        "arms"   : ...,
+        "legs"   : ...
+      });
+    }
+
+    var Bob = Human("Bob", 50, "male");
+
+  Now each individual :js:`Human` has a unique :js:`"id"`,
+  which can be used to reliably tell one :js:`Human` apart
+  from another :js:`Human`.
+
+  Basically, anything that requires a unique id that
+  doesn't collide can probably benefit from Tag_\ s.
 
 ----
 
