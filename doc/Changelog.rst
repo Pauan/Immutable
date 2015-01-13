@@ -5,6 +5,21 @@ Version 5.0.0
 
   * ``build/Immutable.js`` has been renamed to ``build/Immutable.min.js``.
 
+  * The various constructor functions now use ``arguments.length``
+    to check for missing arguments, rather than checking for ``null``.
+
+    To migrate to the new version:
+
+    * ``Dict(null)       -> Dict()``
+    * ``List(null)       -> List()``
+    * ``Queue(null)      -> Queue()``
+    * ``Record(null)     -> Record()``
+    * ``Set(null)        -> Set()``
+    * ``SortedDict(null) -> SortedDict()``
+    * ``SortedSet(null)  -> SortedSet()``
+    * ``Stack(null)      -> Stack()``
+    * ``Tuple(null)      -> Tuple()``
+
   * ``List slice``: now uses ``arguments.length`` to check
     for missing arguments, rather than checking for ``null``.
     It also checks that its arguments are numbers.

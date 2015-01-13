@@ -76,7 +76,10 @@ export function unsafe_Tuple(array) {
 }
 
 export function Tuple(array) {
-  if (array != null) {
+  if (arguments.length === 0) {
+    return new ImmutableTuple([]);
+
+  } else {
     if (isTuple(array)) {
       return array;
 
@@ -90,7 +93,5 @@ export function Tuple(array) {
 
       return new ImmutableTuple(values);
     }
-  } else {
-    return new ImmutableTuple([]);
   }
 }

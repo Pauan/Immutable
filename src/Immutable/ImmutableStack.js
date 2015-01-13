@@ -67,13 +67,13 @@ export function isStack(x) {
 }
 
 export function Stack(x) {
-  if (x != null) {
+  if (arguments.length === 0) {
+    return new ImmutableStack(nil, 0);
+  } else {
     if (x instanceof ImmutableStack) {
       return x;
     } else {
       return new ImmutableStack(nil, 0).concat(x);
     }
-  } else {
-    return new ImmutableStack(nil, 0);
   }
 }

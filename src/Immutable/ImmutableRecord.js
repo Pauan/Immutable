@@ -99,14 +99,17 @@ export function isRecord(x) {
 }
 
 export function Record(obj) {
-  var keys   = {};
-  var values = [];
+  if (arguments.length === 0) {
+    return new ImmutableRecord({}, []);
 
-  if (obj != null) {
+  } else {
     if (isRecord(obj)) {
       return obj;
 
     } else {
+      var keys   = {};
+      var values = [];
+
       var mapped = map(iter_object(obj), function (_array) {
         return destructure_pair(_array, function (key, value) {
           checkKey(key);
@@ -131,8 +134,8 @@ export function Record(obj) {
           values[index] = value;
         }
       });
+
+      return new ImmutableRecord(keys, values);
     }
   }
-
-  return new ImmutableRecord(keys, values);
 }

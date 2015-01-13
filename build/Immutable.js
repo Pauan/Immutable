@@ -1727,14 +1727,14 @@
     }
 
     function $$ImmutableList$$List(array) {
-      if (array != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0);
+      } else {
         if (array instanceof $$ImmutableList$$ImmutableList) {
           return array;
         } else {
           return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0).concat(array);
         }
-      } else {
-        return new $$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0);
       }
     }
     function $$Sorted$$simpleSort(x, y) {
@@ -2026,27 +2026,27 @@
     }
 
     function $$ImmutableDict$$SortedDict(sort, obj) {
-      if (obj != null) {
+      if (arguments.length === 1) {
+        return new $$ImmutableDict$$ImmutableDict($$static$$nil, sort, $$util$$identity);
+      } else {
         // We don't use equal, for increased speed
         if ($$ImmutableDict$$isSortedDict(obj) && obj.sort === sort) {
           return obj;
         } else {
           return new $$ImmutableDict$$ImmutableDict($$static$$nil, sort, $$util$$identity).merge(obj);
         }
-      } else {
-        return new $$ImmutableDict$$ImmutableDict($$static$$nil, sort, $$util$$identity);
       }
     }
 
     function $$ImmutableDict$$Dict(obj) {
-      if (obj != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableDict$$ImmutableDict($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+      } else {
         if ($$ImmutableDict$$isDict(obj) && !$$ImmutableDict$$isSortedDict(obj)) {
           return obj;
         } else {
           return new $$ImmutableDict$$ImmutableDict($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).merge(obj);
         }
-      } else {
-        return new $$ImmutableDict$$ImmutableDict($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
       }
     }
     function $$toJS$$fromJS(x) {
@@ -2199,7 +2199,10 @@
     }
 
     function $$ImmutableTuple$$Tuple(array) {
-      if (array != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableTuple$$ImmutableTuple([]);
+
+      } else {
         if ($$ImmutableTuple$$isTuple(array)) {
           return array;
 
@@ -2213,8 +2216,6 @@
 
           return new $$ImmutableTuple$$ImmutableTuple(values);
         }
-      } else {
-        return new $$ImmutableTuple$$ImmutableTuple([]);
       }
     }
     function $$util$$isNaN(x) {
@@ -2429,27 +2430,27 @@
     }
 
     function $$ImmutableSet$$SortedSet(sort, array) {
-      if (array != null) {
+      if (arguments.length === 1) {
+        return new $$ImmutableSet$$ImmutableSet($$static$$nil, sort, $$util$$identity);
+      } else {
         // We don't use equal, for increased speed
         if ($$ImmutableSet$$isSortedSet(array) && array.sort === sort) {
           return array;
         } else {
           return new $$ImmutableSet$$ImmutableSet($$static$$nil, sort, $$util$$identity).union(array);
         }
-      } else {
-        return new $$ImmutableSet$$ImmutableSet($$static$$nil, sort, $$util$$identity);
       }
     }
 
     function $$ImmutableSet$$Set(array) {
-      if (array != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableSet$$ImmutableSet($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+      } else {
         if ($$ImmutableSet$$isSet(array) && !$$ImmutableSet$$isSortedSet(array)) {
           return array;
         } else {
           return new $$ImmutableSet$$ImmutableSet($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).union(array);
         }
-      } else {
-        return new $$ImmutableSet$$ImmutableSet($$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
       }
     }
     function $$ImmutableQueue$$ImmutableQueue(left, right, len) {
@@ -2533,14 +2534,14 @@
     }
 
     function $$ImmutableQueue$$Queue(x) {
-      if (x != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableQueue$$ImmutableQueue($$static$$nil, $$static$$nil, 0);
+      } else {
         if (x instanceof $$ImmutableQueue$$ImmutableQueue) {
           return x;
         } else {
           return new $$ImmutableQueue$$ImmutableQueue($$static$$nil, $$static$$nil, 0).concat(x);
         }
-      } else {
-        return new $$ImmutableQueue$$ImmutableQueue($$static$$nil, $$static$$nil, 0);
       }
     }
     function $$ImmutableStack$$ImmutableStack(root, len) {
@@ -2603,14 +2604,14 @@
     }
 
     function $$ImmutableStack$$Stack(x) {
-      if (x != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableStack$$ImmutableStack($$static$$nil, 0);
+      } else {
         if (x instanceof $$ImmutableStack$$ImmutableStack) {
           return x;
         } else {
           return new $$ImmutableStack$$ImmutableStack($$static$$nil, 0).concat(x);
         }
-      } else {
-        return new $$ImmutableStack$$ImmutableStack($$static$$nil, 0);
       }
     }
 
@@ -2704,14 +2705,17 @@
     }
 
     function $$ImmutableRecord$$Record(obj) {
-      var keys   = {};
-      var values = [];
+      if (arguments.length === 0) {
+        return new $$ImmutableRecord$$ImmutableRecord({}, []);
 
-      if (obj != null) {
+      } else {
         if ($$ImmutableRecord$$isRecord(obj)) {
           return obj;
 
         } else {
+          var keys   = {};
+          var values = [];
+
           var mapped = $$iter$$map($$iter$$iter_object(obj), function (_array) {
             return $$util$$destructure_pair(_array, function (key, value) {
               $$ImmutableRecord$$checkKey(key);
@@ -2736,10 +2740,10 @@
               values[index] = value;
             }
           });
+
+          return new $$ImmutableRecord$$ImmutableRecord(keys, values);
         }
       }
-
-      return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
 
     var $$MutableRef$$ref_id = 0;

@@ -1758,14 +1758,14 @@
     }
 
     function $$$Immutable$ImmutableList$$List(array) {
-      if (array != null) {
+      if (arguments.length === 0) {
+        return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
+      } else {
         if (array instanceof $$$Immutable$ImmutableList$$ImmutableList) {
           return array;
         } else {
           return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0).concat(array);
         }
-      } else {
-        return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
       }
     }
     function $$Sorted$$simpleSort(x, y) {
@@ -2057,27 +2057,27 @@
     }
 
     function $$ImmutableDict$$SortedDict(sort, obj) {
-      if (obj != null) {
+      if (arguments.length === 1) {
+        return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, sort, $$util$$identity);
+      } else {
         // We don't use equal, for increased speed
         if ($$ImmutableDict$$isSortedDict(obj) && obj.sort === sort) {
           return obj;
         } else {
           return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, sort, $$util$$identity).merge(obj);
         }
-      } else {
-        return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, sort, $$util$$identity);
       }
     }
 
     function $$ImmutableDict$$Dict(obj) {
-      if (obj != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+      } else {
         if ($$ImmutableDict$$isDict(obj) && !$$ImmutableDict$$isSortedDict(obj)) {
           return obj;
         } else {
           return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).merge(obj);
         }
-      } else {
-        return new $$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
       }
     }
     function $$toJS$$fromJS(x) {
@@ -2230,7 +2230,10 @@
     }
 
     function $$ImmutableTuple$$Tuple(array) {
-      if (array != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableTuple$$ImmutableTuple([]);
+
+      } else {
         if ($$ImmutableTuple$$isTuple(array)) {
           return array;
 
@@ -2244,8 +2247,6 @@
 
           return new $$ImmutableTuple$$ImmutableTuple(values);
         }
-      } else {
-        return new $$ImmutableTuple$$ImmutableTuple([]);
       }
     }
     function $$util$$isNaN(x) {
@@ -2460,27 +2461,27 @@
     }
 
     function $$ImmutableSet$$SortedSet(sort, array) {
-      if (array != null) {
+      if (arguments.length === 1) {
+        return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, sort, $$util$$identity);
+      } else {
         // We don't use equal, for increased speed
         if ($$ImmutableSet$$isSortedSet(array) && array.sort === sort) {
           return array;
         } else {
           return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, sort, $$util$$identity).union(array);
         }
-      } else {
-        return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, sort, $$util$$identity);
       }
     }
 
     function $$ImmutableSet$$Set(array) {
-      if (array != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
+      } else {
         if ($$ImmutableSet$$isSet(array) && !$$ImmutableSet$$isSortedSet(array)) {
           return array;
         } else {
           return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash).union(array);
         }
-      } else {
-        return new $$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, $$Sorted$$simpleSort, $$hash$$hash);
       }
     }
     function $$ImmutableQueue$$ImmutableQueue(left, right, len) {
@@ -2564,14 +2565,14 @@
     }
 
     function $$ImmutableQueue$$Queue(x) {
-      if (x != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
+      } else {
         if (x instanceof $$ImmutableQueue$$ImmutableQueue) {
           return x;
         } else {
           return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0).concat(x);
         }
-      } else {
-        return new $$ImmutableQueue$$ImmutableQueue($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
       }
     }
     function $$ImmutableStack$$ImmutableStack(root, len) {
@@ -2634,14 +2635,14 @@
     }
 
     function $$ImmutableStack$$Stack(x) {
-      if (x != null) {
+      if (arguments.length === 0) {
+        return new $$ImmutableStack$$ImmutableStack($$$Immutable$static$$nil, 0);
+      } else {
         if (x instanceof $$ImmutableStack$$ImmutableStack) {
           return x;
         } else {
           return new $$ImmutableStack$$ImmutableStack($$$Immutable$static$$nil, 0).concat(x);
         }
-      } else {
-        return new $$ImmutableStack$$ImmutableStack($$$Immutable$static$$nil, 0);
       }
     }
 
@@ -2735,14 +2736,17 @@
     }
 
     function $$ImmutableRecord$$Record(obj) {
-      var keys   = {};
-      var values = [];
+      if (arguments.length === 0) {
+        return new $$ImmutableRecord$$ImmutableRecord({}, []);
 
-      if (obj != null) {
+      } else {
         if ($$ImmutableRecord$$isRecord(obj)) {
           return obj;
 
         } else {
+          var keys   = {};
+          var values = [];
+
           var mapped = $$iter$$map($$iter$$iter_object(obj), function (_array) {
             return $$util$$destructure_pair(_array, function (key, value) {
               $$ImmutableRecord$$checkKey(key);
@@ -2767,10 +2771,10 @@
               values[index] = value;
             }
           });
+
+          return new $$ImmutableRecord$$ImmutableRecord(keys, values);
         }
       }
-
-      return new $$ImmutableRecord$$ImmutableRecord(keys, values);
     }
 
     var $$MutableRef$$ref_id = 0;
@@ -3297,6 +3301,17 @@
       });
 
       src$Test$Test$$test("init", function () {
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableDict$$Dict(null);
+        }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableDict$$SortedDict($$Sorted$$simpleSort, null);
+        }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+        src$Test$Test$$verify_dict($$ImmutableDict$$Dict(), {});
+        src$Test$Test$$verify_dict($$ImmutableDict$$SortedDict($$Sorted$$simpleSort), {});
+
         var x = $$ImmutableDict$$Dict({ foo: 1 });
         src$Test$Test$$verify_dict(x, { foo: 1 });
         $$assert$$assert($$equal$$equal(x, dict_foo));
@@ -3723,6 +3738,17 @@
 
       src$Test$Test$$test("init", function () {
         src$Test$Test$$verify_set($$ImmutableSet$$Set([1, 2, 3]), [1, 2, 3]);
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableSet$$Set(null);
+        }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableSet$$SortedSet($$Sorted$$simpleSort, null);
+        }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+        src$Test$Test$$verify_set($$ImmutableSet$$Set(), []);
+        src$Test$Test$$verify_set($$ImmutableSet$$SortedSet($$Sorted$$simpleSort), []);
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -4001,6 +4027,12 @@
 
       src$Test$Test$$test("init", function () {
         src$Test$Test$$verify_list($$$Immutable$ImmutableList$$List([1, 2, 3]), [1, 2, 3]);
+
+        src$Test$Test$$assert_raises(function () {
+          $$$Immutable$ImmutableList$$List(null);
+        }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+        src$Test$Test$$verify_list($$$Immutable$ImmutableList$$List(), []);
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -4463,6 +4495,12 @@
 
       src$Test$Test$$test("init", function () {
         src$Test$Test$$verify_tuple($$ImmutableTuple$$Tuple([1, 2, 3]), [1, 2, 3]);
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableTuple$$Tuple(null);
+        }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+        src$Test$Test$$verify_tuple($$ImmutableTuple$$Tuple(), []);
       });
 
       src$Test$Test$$test("size", function () {
@@ -4655,6 +4693,12 @@
 
       src$Test$Test$$test("init", function () {
         src$Test$Test$$verify_queue($$ImmutableQueue$$Queue([1, 2, 3]), [1, 2, 3]);
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableQueue$$Queue(null);
+        }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+        src$Test$Test$$verify_queue($$ImmutableQueue$$Queue(), []);
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -4793,6 +4837,12 @@
 
       src$Test$Test$$test("init", function () {
         src$Test$Test$$verify_stack($$ImmutableStack$$Stack([1, 2, 3]), [1, 2, 3]);
+
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableStack$$Stack(null);
+        }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+        src$Test$Test$$verify_stack($$ImmutableStack$$Stack(), []);
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -4942,6 +4992,12 @@
       });
 
       src$Test$Test$$test("init", function () {
+        src$Test$Test$$assert_raises(function () {
+          $$ImmutableRecord$$Record(null);
+        }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+        src$Test$Test$$verify_record($$ImmutableRecord$$Record(), {});
+
         var x = $$ImmutableRecord$$Record({ foo: 1 });
         src$Test$Test$$verify_record(x, { foo: 1 });
         $$assert$$assert($$equal$$equal(x, Foo));

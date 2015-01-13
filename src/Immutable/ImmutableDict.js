@@ -137,26 +137,26 @@ export function isSortedDict(x) {
 }
 
 export function SortedDict(sort, obj) {
-  if (obj != null) {
+  if (arguments.length === 1) {
+    return new ImmutableDict(nil, sort, identity);
+  } else {
     // We don't use equal, for increased speed
     if (isSortedDict(obj) && obj.sort === sort) {
       return obj;
     } else {
       return new ImmutableDict(nil, sort, identity).merge(obj);
     }
-  } else {
-    return new ImmutableDict(nil, sort, identity);
   }
 }
 
 export function Dict(obj) {
-  if (obj != null) {
+  if (arguments.length === 0) {
+    return new ImmutableDict(nil, simpleSort, hash);
+  } else {
     if (isDict(obj) && !isSortedDict(obj)) {
       return obj;
     } else {
       return new ImmutableDict(nil, simpleSort, hash).merge(obj);
     }
-  } else {
-    return new ImmutableDict(nil, simpleSort, hash);
   }
 }

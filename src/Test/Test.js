@@ -389,6 +389,17 @@ context("Dict", function () {
   });
 
   test("init", function () {
+    assert_raises(function () {
+      Dict(null);
+    }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+    assert_raises(function () {
+      SortedDict(simpleSort, null);
+    }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+    verify_dict(Dict(), {});
+    verify_dict(SortedDict(simpleSort), {});
+
     var x = Dict({ foo: 1 });
     verify_dict(x, { foo: 1 });
     assert(equal(x, dict_foo));
@@ -815,6 +826,17 @@ context("Set", function () {
 
   test("init", function () {
     verify_set(Set([1, 2, 3]), [1, 2, 3]);
+
+    assert_raises(function () {
+      Set(null);
+    }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+    assert_raises(function () {
+      SortedSet(simpleSort, null);
+    }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+    verify_set(Set(), []);
+    verify_set(SortedSet(simpleSort), []);
   });
 
   test("isEmpty", function () {
@@ -1093,6 +1115,12 @@ context("List", function () {
 
   test("init", function () {
     verify_list(List([1, 2, 3]), [1, 2, 3]);
+
+    assert_raises(function () {
+      List(null);
+    }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+    verify_list(List(), []);
   });
 
   test("isEmpty", function () {
@@ -1555,6 +1583,12 @@ context("Tuple", function () {
 
   test("init", function () {
     verify_tuple(Tuple([1, 2, 3]), [1, 2, 3]);
+
+    assert_raises(function () {
+      Tuple(null);
+    }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+    verify_tuple(Tuple(), []);
   });
 
   test("size", function () {
@@ -1747,6 +1781,12 @@ context("Queue", function () {
 
   test("init", function () {
     verify_queue(Queue([1, 2, 3]), [1, 2, 3]);
+
+    assert_raises(function () {
+      Queue(null);
+    }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+    verify_queue(Queue(), []);
   });
 
   test("isEmpty", function () {
@@ -1885,6 +1925,12 @@ context("Stack", function () {
 
   test("init", function () {
     verify_stack(Stack([1, 2, 3]), [1, 2, 3]);
+
+    assert_raises(function () {
+      Stack(null);
+    }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+    verify_stack(Stack(), []);
   });
 
   test("isEmpty", function () {
@@ -2034,6 +2080,12 @@ context("Record", function () {
   });
 
   test("init", function () {
+    assert_raises(function () {
+      Record(null);
+    }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+    verify_record(Record(), {});
+
     var x = Record({ foo: 1 });
     verify_record(x, { foo: 1 });
     assert(equal(x, Foo));

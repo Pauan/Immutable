@@ -88,13 +88,13 @@ export function isQueue(x) {
 }
 
 export function Queue(x) {
-  if (x != null) {
+  if (arguments.length === 0) {
+    return new ImmutableQueue(nil, nil, 0);
+  } else {
     if (x instanceof ImmutableQueue) {
       return x;
     } else {
       return new ImmutableQueue(nil, nil, 0).concat(x);
     }
-  } else {
-    return new ImmutableQueue(nil, nil, 0);
   }
 }

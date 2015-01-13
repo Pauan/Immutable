@@ -159,26 +159,26 @@ export function isSortedSet(x) {
 }
 
 export function SortedSet(sort, array) {
-  if (array != null) {
+  if (arguments.length === 1) {
+    return new ImmutableSet(nil, sort, identity);
+  } else {
     // We don't use equal, for increased speed
     if (isSortedSet(array) && array.sort === sort) {
       return array;
     } else {
       return new ImmutableSet(nil, sort, identity).union(array);
     }
-  } else {
-    return new ImmutableSet(nil, sort, identity);
   }
 }
 
 export function Set(array) {
-  if (array != null) {
+  if (arguments.length === 0) {
+    return new ImmutableSet(nil, simpleSort, hash);
+  } else {
     if (isSet(array) && !isSortedSet(array)) {
       return array;
     } else {
       return new ImmutableSet(nil, simpleSort, hash).union(array);
     }
-  } else {
-    return new ImmutableSet(nil, simpleSort, hash);
   }
 }

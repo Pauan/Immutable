@@ -580,13 +580,13 @@ export function isList(x) {
 }
 
 export function List(array) {
-  if (array != null) {
+  if (arguments.length === 0) {
+    return new ImmutableList(nil, nil, 0);
+  } else {
     if (array instanceof ImmutableList) {
       return array;
     } else {
       return new ImmutableList(nil, nil, 0).concat(array);
     }
-  } else {
-    return new ImmutableList(nil, nil, 0);
   }
 }
