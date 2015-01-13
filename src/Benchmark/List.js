@@ -1,8 +1,8 @@
 var immutablejs = require("immutable");
 var mori        = require("mori");
+var immutable   = require("./Immutable.min.js");
 
 import * as benchmark from "./Benchmark";
-import { List } from "../Immutable/Immutable";
 import { insert as insert_at, modify as modify_at, remove as remove_at } from "../Immutable/Array";
 import { nil } from "../Immutable/static";
 import { Cons } from "../Immutable/Cons";
@@ -51,11 +51,7 @@ function array_get(array, i, def) {
   }
 }
 
-function array_insert(array, value, i) {
-  if (arguments.length === 2) {
-    i = -1;
-  }
-
+function array_insert(array, i, value) {
   var len = array.length;
 
   if (i < 0) {
@@ -84,10 +80,6 @@ function array_modify(array, i, f) {
 }
 
 function array_remove(array, i) {
-  if (arguments.length === 1) {
-    i = -1;
-  }
-
   var len = array.length;
 
   if (i < 0) {
@@ -104,10 +96,10 @@ function array_remove(array, i) {
 function array_slice(array, from, to) {
   var len = array.length;
 
-  if (from == null) {
+  if (arguments.length < 2) {
     from = 0;
   }
-  if (to == null) {
+  if (arguments.length < 3) {
     to = len;
   }
 
@@ -167,7 +159,7 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
       });
 
@@ -188,7 +180,7 @@ export function run(counter) {
       });
 
       benchmark.time("Immutable List (insert)", function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -196,20 +188,36 @@ export function run(counter) {
       });
 
       benchmark.time("Immutable List (push)", function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
         }
       });
 
-      /*benchmark.time("Stack (reversed Cons)", function () {
+      benchmark.time("Immutable Queue", function () {
+        var a = immutable.Queue();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+      });
+
+      benchmark.time("Immutable Stack", function () {
+        var a = immutable.Stack();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+      });
+
+      benchmark.time("Cons", function () {
         var a = nil;
 
         for (var i = 0; i < counter; ++i) {
           a = cons_push(a, i);
         }
-      });*/
+      });
 
       /*benchmark.time("Elm Array", function () {
         elm.insert(counter);
@@ -234,7 +242,7 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i, 0);
+          a = array_insert(a, 0, i);
         }
       });
 
@@ -257,7 +265,7 @@ export function run(counter) {
       });*/
 
       benchmark.time("Immutable List", function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(0, i);
@@ -283,7 +291,7 @@ export function run(counter) {
 
         for (var i = 0; i < counter; ++i) {
           var pivot = Math.floor(Math.random() * a.length);
-          a = array_insert(a, i, pivot);
+          a = array_insert(a, pivot, i);
         }
       });
 
@@ -299,7 +307,7 @@ export function run(counter) {
       benchmark.message("Mori Vector");
 
       benchmark.time("Immutable List", function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           var pivot = Math.floor(Math.random() * a.size());
@@ -328,10 +336,10 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
-        benchmark.time("JavaScript Array Copying", function () {
+        benchmark.time("JavaScript Array (error checking)", function () {
           array_get(a, -1);
         });
       })();
@@ -362,7 +370,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -374,7 +382,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -408,10 +416,10 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
-        benchmark.time("JavaScript Array Copying", function () {
+        benchmark.time("JavaScript Array (error checking)", function () {
           array_get(a, 0);
         });
       })();
@@ -441,7 +449,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -453,7 +461,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -486,10 +494,10 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
-        benchmark.time("JavaScript Array Copying", function () {
+        benchmark.time("JavaScript Array (error checking)", function () {
           var pivot = Math.floor(Math.random() * a.length);
           array_get(a, pivot);
         });
@@ -522,7 +530,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -535,7 +543,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -558,13 +566,13 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
         benchmark.time("JavaScript Array Copying", function () {
           var b = a;
           for (var i = 0; i < counter; ++i) {
-            b = array_remove(b);
+            b = array_remove(b, -1);
           }
         });
       })();
@@ -600,7 +608,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -615,7 +623,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -640,7 +648,7 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
         benchmark.time("JavaScript Array Copying", function () {
@@ -684,7 +692,7 @@ export function run(counter) {
       })();*/
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -699,7 +707,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -724,7 +732,7 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
         benchmark.time("JavaScript Array Copying", function () {
@@ -755,7 +763,7 @@ export function run(counter) {
       benchmark.message("Mori Vector");
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -771,7 +779,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -797,7 +805,7 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
         benchmark.time("JavaScript Array Copying", function () {
@@ -832,7 +840,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -846,7 +854,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -870,7 +878,7 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
         benchmark.time("JavaScript Array Copying", function () {
@@ -905,7 +913,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -919,7 +927,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -943,7 +951,7 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
         benchmark.time("JavaScript Array Copying", function () {
@@ -981,7 +989,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -996,7 +1004,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -1031,10 +1039,10 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
-        benchmark.time("JavaScript Array Copying", function () {
+        benchmark.time("JavaScript Array (error checking)", function () {
           array_concat(a, a);
         });
       })();
@@ -1064,7 +1072,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -1076,7 +1084,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -1108,10 +1116,10 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
-        benchmark.time("JavaScript Array Copying", function () {
+        benchmark.time("JavaScript Array (error checking)", function () {
           array_slice(a, 1, 2);
         });
       })();
@@ -1141,7 +1149,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -1153,7 +1161,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -1185,10 +1193,10 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
-        benchmark.time("JavaScript Array Copying", function () {
+        benchmark.time("JavaScript Array (error checking)", function () {
           array_slice(a, 1, Math.floor(a.length / 2));
         });
       })();
@@ -1218,7 +1226,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -1230,7 +1238,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
@@ -1262,10 +1270,10 @@ export function run(counter) {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
-          a = array_insert(a, i);
+          a = array_insert(a, -1, i);
         }
 
-        benchmark.time("JavaScript Array Copying", function () {
+        benchmark.time("JavaScript Array (error checking)", function () {
           array_slice(a, 1);
         });
       })();
@@ -1295,7 +1303,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
@@ -1307,7 +1315,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = List();
+        var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
