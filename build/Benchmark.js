@@ -282,6 +282,1358 @@
     var $$$Immutable$static$$nil = {};
     $$$Immutable$static$$nil.depth      = 0;
     $$$Immutable$static$$nil.size       = 0;
+    function $$$Immutable$Cons$$Cons(car, cdr) {
+      this.car = car;
+      this.cdr = cdr;
+    }
+
+    function $$$Immutable$Cons$$iter_cons(x) {
+      return {
+        next: function () {
+          if (x === $$$Immutable$static$$nil) {
+            return { done: true };
+          } else {
+            var value = x.car;
+            x = x.cdr;
+            return { value: value };
+          }
+        }
+      };
+    }
+
+    function $$$Immutable$Cons$$each_cons(x, f) {
+      while (x !== $$$Immutable$static$$nil) {
+        f(x.car);
+        x = x.cdr;
+      }
+    }
+    var $$List$$immutablejs = require("immutable");
+    var $$List$$mori        = require("mori");
+    var $$List$$immutable   = require("./Immutable.min.js");
+
+    function $$List$$cons_push(x, i) {
+      return new $$$Immutable$Cons$$Cons(i, x);
+    }
+
+
+    /*var fs = require("fs");
+    var vm = require("vm");
+    var path = require("path");
+
+    var elm_path = path.join(__dirname, "../Elm-0.13/elm-runtime.js");
+    var elm_bench_path = path.join(__dirname, "./build/List.js");
+    vm.runInThisContext(fs.readFileSync(elm_path));
+    vm.runInThisContext(fs.readFileSync(elm_bench_path));
+
+    var worker = Elm.worker(Elm.Benchmark);
+
+    var elm = {
+      insert:     worker.ports.insert,
+      insertInit: worker.ports.insertInit
+    };*/
+
+
+    //var counter = +process.argv[2];
+
+    function $$List$$array_has(i, len) {
+      return i >= 0 && i < len;
+    }
+
+    function $$List$$array_get(array, i, def) {
+      var len = array.length;
+
+      if (i < 0) {
+        i += len;
+      }
+
+      if ($$List$$array_has(i, len)) {
+        return array[i];
+      } else if (arguments.length === 3) {
+        return def;
+      } else {
+        throw new Error("Invalid index: " + i);
+      }
+    }
+
+    function $$List$$array_insert(array, i, value) {
+      var len = array.length;
+
+      if (i < 0) {
+        i += (len + 1);
+      }
+
+      if (i >= 0 && i <= len) {
+        return $$$Immutable$Array$$insert(array, i, value);
+      } else {
+        throw new Error("Invalid index: " + i);
+      }
+    }
+
+    function $$List$$array_modify(array, i, f) {
+      var len = array.length;
+
+      if (i < 0) {
+        i += len;
+      }
+
+      if ($$List$$array_has(i, len)) {
+        return $$$Immutable$Array$$modify(array, i, f);
+      } else {
+        throw new Error("Invalid index: " + i);
+      }
+    }
+
+    function $$List$$array_remove(array, i) {
+      var len = array.length;
+
+      if (i < 0) {
+        i += len;
+      }
+
+      if ($$List$$array_has(i, len)) {
+        return $$$Immutable$Array$$remove(array, i);
+      } else {
+        throw new Error("Invalid index: " + i);
+      }
+    }
+
+    function $$List$$array_slice(array, from, to) {
+      var len = array.length;
+
+      if (arguments.length < 2) {
+        from = 0;
+      }
+      if (arguments.length < 3) {
+        to = len;
+      }
+
+      if (from < 0) {
+        from += len;
+      }
+      if (to < 0) {
+        to += len;
+      }
+
+      if (from === 0 && to === len) {
+        return array;
+
+      } else if (from > to) {
+        throw new Error("Index " + from + " is greater than index " + to);
+
+      } else if ($$List$$array_has(from, len)) {
+        if (from === to) {
+          return [];
+
+        // TODO code duplication with array_has ?
+        } else if (to > 0 && to <= len) {
+          return array.slice(from, to);
+
+        } else {
+          throw new Error("Index " + to + " is not valid");
+        }
+
+      } else {
+        throw new Error("Index " + from + " is not valid");
+      }
+    }
+
+    function $$List$$array_concat(array, other) {
+      if (array.length === 0) {
+        return other;
+      } else if (other.length === 0) {
+        return array;
+      } else {
+        return array.concat(other);
+      }
+    }
+
+
+    function $$List$$run(counter) {
+      $$Benchmark$$.group("List with " + counter + " values", function () {
+        $$Benchmark$$.group("Inserting at the end", function () {
+          $$Benchmark$$.time("JavaScript Array", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+          });
+
+          $$Benchmark$$.time("JavaScript Array Copying", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable-js List", function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+          });
+
+          $$Benchmark$$.time("Mori Vector", function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable List (insert)", function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable List (push)", function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable Queue", function () {
+            var a = $$List$$immutable.Queue();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable Stack", function () {
+            var a = $$List$$immutable.Stack();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+          });
+
+          $$Benchmark$$.time("Cons", function () {
+            var a = $$$Immutable$static$$nil;
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$cons_push(a, i);
+            }
+          });
+
+          /*benchmark.time("Elm Array", function () {
+            elm.insert(counter);
+          });
+
+          benchmark.time("Elm Array (initialize)", function () {
+            elm.insertInit(counter);
+          });*/
+        });
+
+
+        $$Benchmark$$.group("Inserting at the start", function () {
+          $$Benchmark$$.time("JavaScript Array", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.unshift(i);
+            }
+          });
+
+          $$Benchmark$$.time("JavaScript Array Copying", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, 0, i);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable-js List", function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.unshift(i);
+            }
+          });
+
+          $$Benchmark$$.message("Mori Vector");
+
+          /*benchmark.time("Mori List", function () {
+            var a = mori.list();
+
+            for (var i = 0; i < counter; ++i) {
+              a = mori.conj(a, i);
+            }
+          });*/
+
+          $$Benchmark$$.time("Immutable List", function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(0, i);
+            }
+          });
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Inserting at random", function () {
+          $$Benchmark$$.time("JavaScript Array", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              var pivot = Math.floor(Math.random() * a.length);
+              a.splice(pivot, 0, i);
+            }
+          });
+
+          $$Benchmark$$.time("JavaScript Array Copying", function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              var pivot = Math.floor(Math.random() * a.length);
+              a = $$List$$array_insert(a, pivot, i);
+            }
+          });
+
+          $$Benchmark$$.time("Immutable-js List", function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              var pivot = Math.floor(Math.random() * a.size);
+              a = a.splice(pivot, 0, i);
+            }
+          });
+
+          $$Benchmark$$.message("Mori Vector");
+
+          $$Benchmark$$.time("Immutable List", function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              var pivot = Math.floor(Math.random() * a.size());
+              a = a.insert(pivot, i);
+            }
+          });
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Retrieving at the end", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a[a.length - 1];
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array (error checking)", function () {
+              $$List$$array_get(a, -1);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.last();
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              // `mori.last` is O(n)
+              $$List$$mori.get(a, $$List$$mori.count(a) - 1);
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              a.get(-1);
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.get(-1);
+            });
+          })();
+
+          //var elm_array = elm.makeList(counter);
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Retrieving at the start", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a[0];
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array (error checking)", function () {
+              $$List$$array_get(a, 0);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.first();
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.get(a, 0);
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              a.get(0);
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.get(0);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Retrieving at random", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              var pivot = Math.floor(Math.random() * a.length);
+              a[pivot];
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array (error checking)", function () {
+              var pivot = Math.floor(Math.random() * a.length);
+              $$List$$array_get(a, pivot);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var pivot = Math.floor(Math.random() * a.size);
+              a.get(pivot);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              var pivot = Math.floor(Math.random() * $$List$$mori.count(a));
+              $$List$$mori.get(a, pivot);
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              var pivot = Math.floor(Math.random() * a.size());
+              a.get(pivot);
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var pivot = Math.floor(Math.random() * a.size());
+              a.get(pivot);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Removing at the end", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = $$List$$array_remove(b, -1);
+              }
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.pop();
+              }
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = $$List$$mori.pop(b);
+              }
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.remove(-1);
+              }
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.remove(-1);
+              }
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Removing at the start", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = $$List$$array_remove(b, 0);
+              }
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.shift();
+              }
+            });
+          })();
+
+          $$Benchmark$$.message("Mori Vector");
+
+          /*;(function () {
+            var a = mori.list();
+
+            for (var i = 0; i < counter; ++i) {
+              a = mori.conj(a, i);
+            }
+
+            benchmark.time("Mori List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = mori.pop(b);
+              }
+            });
+          })();*/
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.remove(0);
+              }
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                b = b.remove(0);
+              }
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Removing at random", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                var pivot = Math.floor(Math.random() * b.length);
+                b = $$List$$array_remove(b, pivot);
+              }
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                var pivot = Math.floor(Math.random() * b.size);
+                b = b.splice(pivot, 1);
+              }
+            });
+          })();
+
+          $$Benchmark$$.message("Mori Vector");
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                var pivot = Math.floor(Math.random() * b.size());
+                b = b.remove(pivot);
+              }
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var b = a;
+              for (var i = 0; i < counter; ++i) {
+                var pivot = Math.floor(Math.random() * b.size());
+                b = b.remove(pivot);
+              }
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Modifying at the end", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_modify(a, -1, function () {
+                return -50;
+              });
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.set(-1, -50);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.assoc(a, $$List$$mori.count(a) - 1, -50);
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              a.modify(-1, function () {
+                return -50;
+              });
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.modify(-1, function () {
+                return -50;
+              });
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Modifying at the start", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              $$List$$array_modify(a, 0, function () {
+                return -50;
+              });
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.set(0, -50);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.assoc(a, 0, -50);
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              a.modify(0, function () {
+                return -50;
+              });
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.modify(0, function () {
+                return -50;
+              });
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Modifying at random", function () {
+          $$Benchmark$$.message("JavaScript Array");
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array Copying", function () {
+              var pivot = Math.floor(Math.random() * a.length);
+              $$List$$array_modify(a, pivot, function () {
+                return -50;
+              });
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              var pivot = Math.floor(Math.random() * a.size);
+              a.set(pivot, -50);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              var pivot = Math.floor(Math.random() * $$List$$mori.count(a));
+              $$List$$mori.assoc(a, pivot, -50);
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              var pivot = Math.floor(Math.random() * a.size());
+              a.modify(pivot, function () {
+                return -50;
+              });
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              var pivot = Math.floor(Math.random() * a.size());
+              a.modify(pivot, function () {
+                return -50;
+              });
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Concatenating", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a.concat(a);
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array (error checking)", function () {
+              $$List$$array_concat(a, a);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.concat(a);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.concat(a, a);
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              a.concat(a);
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.concat(a);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Slicing small", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a.slice(1, 2);
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array (error checking)", function () {
+              $$List$$array_slice(a, 1, 2);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.slice(1, 2);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.subvec(a, 1, 2);
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              a.slice(1, 2);
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.slice(1, 2);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Slicing medium", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a.slice(1, Math.floor(a.length / 2));
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array (error checking)", function () {
+              $$List$$array_slice(a, 1, Math.floor(a.length / 2));
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.slice(1, Math.floor(a.size / 2));
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.subvec(a, 1, Math.floor($$List$$mori.count(a) / 2));
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              a.slice(1, Math.floor(a.size() / 2));
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.slice(1, Math.floor(a.size() / 2));
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+
+
+        $$Benchmark$$.group("Slicing large", function () {
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a.push(i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array", function () {
+              a.slice(1);
+            });
+          })();
+
+          ;(function () {
+            var a = [];
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$array_insert(a, -1, i);
+            }
+
+            $$Benchmark$$.time("JavaScript Array (error checking)", function () {
+              $$List$$array_slice(a, 1);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$immutablejs.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable-js List", function () {
+              a.slice(1);
+            });
+          })();
+
+          ;(function () {
+            var a = $$List$$mori.vector();
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.conj(a, i);
+            }
+
+            $$Benchmark$$.time("Mori Vector", function () {
+              $$List$$mori.subvec(a, 1);
+            });
+          })();
+
+          /*;(function () {
+            var a = immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.insert(-1, i);
+            }
+
+            benchmark.time("Immutable List (insert)", function () {
+              a.slice(1);
+            });
+          })();*/
+
+          ;(function () {
+            var a = $$List$$immutable.List();
+
+            for (var i = 0; i < counter; ++i) {
+              a = a.push(i);
+            }
+
+            $$Benchmark$$.time("Immutable List", function () {
+              a.slice(1);
+            });
+          })();
+
+          //benchmark.message("Elm Array");
+        });
+      });
+    }
     function $$equal$$equal(x, y) {
       return x === y || $$hash$$hash(x) === $$hash$$hash(y);
     }
@@ -1264,34 +2616,6 @@
 
       return $$Ordered$$nth_has(index, len);
     }
-    function $$$Immutable$Cons$$Cons(car, cdr) {
-      this.car = car;
-      this.cdr = cdr;
-    }
-
-    function $$$Immutable$Cons$$iter_cons(x) {
-      return {
-        next: function () {
-          if (x === $$$Immutable$static$$nil) {
-            return { done: true };
-          } else {
-            var value = x.car;
-            x = x.cdr;
-            return { value: value };
-          }
-        }
-      };
-    }
-
-    function $$$Immutable$Cons$$each_cons(x, f) {
-      while (x !== $$$Immutable$static$$nil) {
-        f(x.car);
-        x = x.cdr;
-      }
-    }
-
-
-    // It's faster to use arrays for small lists
     var $$ImmutableList$$array_limit = 125;
 
     var $$ImmutableList$$ceiling = Math.ceil;
@@ -1433,8 +2757,12 @@
               var aright = array.slice(pivot);
 
               if (left.depth < right.depth) {
+                // TODO unit test for this
+                // TODO insert_array_max ?
                 return new $$ImmutableList$$ArrayNode($$AVL$$insert_max(left, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, aleft)), right, aright);
               } else {
+                // TODO unit test for this
+                // TODO insert_array_min ?
                 return new $$ImmutableList$$ArrayNode(left, $$AVL$$insert_min(right, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, aright)), aleft);
               }
 
@@ -1545,6 +2873,22 @@
       }
     }
 
+    function $$ImmutableList$$insert_array_max(node, new_array) {
+      if (node === $$$Immutable$static$$nil) {
+        return new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, new_array);
+      } else {
+        var left  = node.left;
+        var right = node.right;
+        var array = node.array;
+        if (right === $$$Immutable$static$$nil && array.length + new_array.length <= $$ImmutableList$$array_limit) {
+          return new $$ImmutableList$$ArrayNode(left, right, array.concat(new_array));
+        } else {
+          // TODO do we need to use balanced_node ?
+          return $$AVL$$balanced_node(node, left, $$ImmutableList$$insert_array_max(right, new_array));
+        }
+      }
+    }
+
 
     function $$ImmutableList$$ImmutableList(root, tail, tail_size) {
       this.root = root;
@@ -1610,9 +2954,9 @@
       }
     };
 
-    $$ImmutableList$$ImmutableList.prototype.insert = function (value, index) {
-      if (arguments.length === 1) {
-        index = -1;
+    $$ImmutableList$$ImmutableList.prototype.insert = function (index, value) {
+      if (arguments.length !== 2) {
+        throw new Error("Expected 2 arguments but got " + arguments.length);
       }
 
       var len = this.size();
@@ -1621,38 +2965,46 @@
         index += (len + 1);
       }
 
+      if (index === len) {
+        return this.push(value);
+
+      } else {
+        var root      = this.root;
+        var tail      = this.tail;
+        var tail_size = this.tail_size;
+
+        if ($$Ordered$$nth_has(index, len)) {
+          var size = root.size;
+          if (index <= size) {
+            return new $$ImmutableList$$ImmutableList($$ImmutableList$$nth_insert(root, index, value), tail, tail_size);
+
+          } else {
+            var array = $$$Immutable$Array$$insert($$ImmutableList$$stack_to_array(tail, tail_size), index - size, value);
+            return new $$ImmutableList$$ImmutableList($$ImmutableList$$insert_array_max(root, array), $$$Immutable$static$$nil, 0);
+          }
+
+        } else {
+          throw new Error("Index " + index + " is not valid");
+        }
+      }
+    };
+
+    $$ImmutableList$$ImmutableList.prototype.push = function (value) {
       var root      = this.root;
       var tail      = this.tail;
       var tail_size = this.tail_size;
-      if (index === len) {
-        if (tail_size === $$ImmutableList$$array_limit) {
-          var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, $$ImmutableList$$stack_to_array(tail, tail_size)));
-          return new $$ImmutableList$$ImmutableList(node, new $$$Immutable$Cons$$Cons(value, $$$Immutable$static$$nil), 1);
 
-        } else {
-          return new $$ImmutableList$$ImmutableList(root, new $$$Immutable$Cons$$Cons(value, tail), tail_size + 1);
-        }
-
-      } else if ($$Ordered$$nth_has(index, len)) {
-        var size = root.size;
-        // TODO should this be <= ?
-        if (index < size) {
-          return new $$ImmutableList$$ImmutableList($$ImmutableList$$nth_insert(root, index, value), tail, tail_size);
-
-        } else {
-          var array = $$$Immutable$Array$$insert($$ImmutableList$$stack_to_array(tail, tail_size), index - size, value);
-          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, array));
-          return new $$ImmutableList$$ImmutableList(node, $$$Immutable$static$$nil, 0);
-        }
-
+      if (tail_size === $$ImmutableList$$array_limit) {
+        var node = $$ImmutableList$$insert_array_max(root, $$ImmutableList$$stack_to_array(tail, tail_size));
+        return new $$ImmutableList$$ImmutableList(node, new $$$Immutable$Cons$$Cons(value, $$$Immutable$static$$nil), 1);
       } else {
-        throw new Error("Index " + index + " is not valid");
+        return new $$ImmutableList$$ImmutableList(root, new $$$Immutable$Cons$$Cons(value, tail), tail_size + 1);
       }
     };
 
     $$ImmutableList$$ImmutableList.prototype.remove = function (index) {
-      if (arguments.length === 0) {
-        index = -1;
+      if (arguments.length !== 1) {
+        throw new Error("Expected 1 argument but got " + arguments.length);
       }
 
       var len = this.size();
@@ -1675,8 +3027,7 @@
 
         } else {
           var array = $$$Immutable$Array$$remove($$ImmutableList$$stack_to_array(tail, tail_size), index - size);
-          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, array));
-          return new $$ImmutableList$$ImmutableList(node, $$$Immutable$static$$nil, 0);
+          return new $$ImmutableList$$ImmutableList($$ImmutableList$$insert_array_max(root, array), $$$Immutable$static$$nil, 0);
         }
 
       } else {
@@ -1719,8 +3070,7 @@
           if (array === stack) {
             return this;
           } else {
-            var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, array));
-            return new $$ImmutableList$$ImmutableList(node, $$$Immutable$static$$nil, 0);
+            return new $$ImmutableList$$ImmutableList($$ImmutableList$$insert_array_max(root, array), $$$Immutable$static$$nil, 0);
           }
         }
 
@@ -1739,11 +3089,18 @@
     $$ImmutableList$$ImmutableList.prototype.slice = function (from, to) {
       var len = this.size();
 
-      if (from == null) {
+      if (arguments.length < 1) {
         from = 0;
       }
-      if (to == null) {
+      if (arguments.length < 2) {
         to = len;
+      }
+
+      if (typeof from !== "number") {
+        throw new Error("Expected a number but got " + from);
+      }
+      if (typeof to !== "number") {
+        throw new Error("Expected a number but got " + to);
       }
 
       if (from < 0) {
@@ -1806,7 +3163,7 @@
 
         } else {
           if (ltail !== $$$Immutable$static$$nil) {
-            lroot = $$AVL$$insert_max(lroot, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, $$ImmutableList$$stack_to_array(ltail, this.tail_size)));
+            lroot = $$ImmutableList$$insert_array_max(lroot, $$ImmutableList$$stack_to_array(ltail, this.tail_size));
           }
 
           var node = $$AVL$$concat(lroot, rroot);
@@ -1815,10 +3172,11 @@
 
       } else {
         return $$iter$$foldl(right, this, function (self, x) {
-          return self.insert(x);
+          return self.push(x);
         });
       }
     };
+
 
     function $$ImmutableList$$isList(x) {
       return x instanceof $$ImmutableList$$ImmutableList;
@@ -2152,7 +3510,7 @@
         var out = $$ImmutableList$$List();
 
         for (var i = 0, l = x.length; i < l; ++i) {
-          out = out.insert($$toJS$$fromJS(x[i]));
+          out = out.push($$toJS$$fromJS(x[i]));
         }
 
         return out;
@@ -2978,1150 +4336,6 @@
       exports.toIterator = $$iter$$toIterator;
       exports.Iterable = $$iter$$Iterable;
     });
-    var $$List$$immutablejs = require("immutable");
-    var $$List$$mori        = require("mori");
-
-    function $$List$$cons_push(x, i) {
-      return new $$$Immutable$Cons$$Cons(i, x);
-    }
-
-
-    /*var fs = require("fs");
-    var vm = require("vm");
-    var path = require("path");
-
-    var elm_path = path.join(__dirname, "../Elm-0.13/elm-runtime.js");
-    var elm_bench_path = path.join(__dirname, "./build/List.js");
-    vm.runInThisContext(fs.readFileSync(elm_path));
-    vm.runInThisContext(fs.readFileSync(elm_bench_path));
-
-    var worker = Elm.worker(Elm.Benchmark);
-
-    var elm = {
-      insert:     worker.ports.insert,
-      insertInit: worker.ports.insertInit
-    };*/
-
-
-    //var counter = +process.argv[2];
-
-    function $$List$$array_has(i, len) {
-      return i >= 0 && i < len;
-    }
-
-    function $$List$$array_get(array, i, def) {
-      var len = array.length;
-
-      if (i < 0) {
-        i += len;
-      }
-
-      if ($$List$$array_has(i, len)) {
-        return array[i];
-      } else if (arguments.length === 3) {
-        return def;
-      } else {
-        throw new Error("Invalid index: " + i);
-      }
-    }
-
-    function $$List$$array_insert(array, value, i) {
-      if (arguments.length === 2) {
-        i = -1;
-      }
-
-      var len = array.length;
-
-      if (i < 0) {
-        i += (len + 1);
-      }
-
-      if (i >= 0 && i <= len) {
-        return $$$Immutable$Array$$insert(array, i, value);
-      } else {
-        throw new Error("Invalid index: " + i);
-      }
-    }
-
-    function $$List$$array_modify(array, i, f) {
-      var len = array.length;
-
-      if (i < 0) {
-        i += len;
-      }
-
-      if ($$List$$array_has(i, len)) {
-        return $$$Immutable$Array$$modify(array, i, f);
-      } else {
-        throw new Error("Invalid index: " + i);
-      }
-    }
-
-    function $$List$$array_remove(array, i) {
-      if (arguments.length === 1) {
-        i = -1;
-      }
-
-      var len = array.length;
-
-      if (i < 0) {
-        i += len;
-      }
-
-      if ($$List$$array_has(i, len)) {
-        return $$$Immutable$Array$$remove(array, i);
-      } else {
-        throw new Error("Invalid index: " + i);
-      }
-    }
-
-    function $$List$$array_slice(array, from, to) {
-      var len = array.length;
-
-      if (from == null) {
-        from = 0;
-      }
-      if (to == null) {
-        to = len;
-      }
-
-      if (from < 0) {
-        from += len;
-      }
-      if (to < 0) {
-        to += len;
-      }
-
-      if (from === 0 && to === len) {
-        return array;
-
-      } else if (from > to) {
-        throw new Error("Index " + from + " is greater than index " + to);
-
-      } else if ($$List$$array_has(from, len)) {
-        if (from === to) {
-          return [];
-
-        // TODO code duplication with array_has ?
-        } else if (to > 0 && to <= len) {
-          return array.slice(from, to);
-
-        } else {
-          throw new Error("Index " + to + " is not valid");
-        }
-
-      } else {
-        throw new Error("Index " + from + " is not valid");
-      }
-    }
-
-    function $$List$$array_concat(array, other) {
-      if (array.length === 0) {
-        return other;
-      } else if (other.length === 0) {
-        return array;
-      } else {
-        return array.concat(other);
-      }
-    }
-
-
-    function $$List$$run(counter) {
-      $$Benchmark$$.group("List with " + counter + " values", function () {
-        $$Benchmark$$.group("Inserting at the end", function () {
-          $$Benchmark$$.time("JavaScript Array", function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a.push(i);
-            }
-          });
-
-          $$Benchmark$$.time("JavaScript Array Copying", function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-          });
-
-          $$Benchmark$$.time("Immutable-js List", function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-          });
-
-          $$Benchmark$$.time("Mori Vector", function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-          });
-
-          $$Benchmark$$.time("Immutable List", function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-          });
-
-          /*benchmark.time("Immutable List (push)", function () {
-            var a = List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-          });*/
-
-          /*benchmark.time("Stack (reversed Cons)", function () {
-            var a = nil;
-
-            for (var i = 0; i < counter; ++i) {
-              a = cons_push(a, i);
-            }
-          });*/
-
-          /*benchmark.time("Elm Array", function () {
-            elm.insert(counter);
-          });
-
-          benchmark.time("Elm Array (initialize)", function () {
-            elm.insertInit(counter);
-          });*/
-        });
-
-
-        $$Benchmark$$.group("Inserting at the start", function () {
-          $$Benchmark$$.time("JavaScript Array", function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a.unshift(i);
-            }
-          });
-
-          $$Benchmark$$.time("JavaScript Array Copying", function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i, 0);
-            }
-          });
-
-          $$Benchmark$$.time("Immutable-js List", function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.unshift(i);
-            }
-          });
-
-          $$Benchmark$$.message("Mori Vector");
-
-          /*benchmark.time("Mori List", function () {
-            var a = mori.list();
-
-            for (var i = 0; i < counter; ++i) {
-              a = mori.conj(a, i);
-            }
-          });*/
-
-          $$Benchmark$$.time("Immutable List", function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i, 0);
-            }
-          });
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Inserting at random", function () {
-          $$Benchmark$$.time("JavaScript Array", function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              var pivot = Math.floor(Math.random() * a.length);
-              a.splice(pivot, 0, i);
-            }
-          });
-
-          $$Benchmark$$.time("JavaScript Array Copying", function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              var pivot = Math.floor(Math.random() * a.length);
-              a = $$List$$array_insert(a, i, pivot);
-            }
-          });
-
-          $$Benchmark$$.time("Immutable-js List", function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              var pivot = Math.floor(Math.random() * a.size);
-              a = a.splice(pivot, 0, i);
-            }
-          });
-
-          $$Benchmark$$.message("Mori Vector");
-
-          $$Benchmark$$.time("Immutable List", function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              var pivot = Math.floor(Math.random() * a.size());
-              a = a.insert(i, pivot);
-            }
-          });
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Retrieving at the end", function () {
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a.push(i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array", function () {
-              a[a.length - 1];
-            });
-          })();
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              $$List$$array_get(a, -1);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              a.last();
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              // `mori.last` is O(n)
-              $$List$$mori.get(a, $$List$$mori.count(a) - 1);
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              a.get(-1);
-            });
-          })();
-
-          //var elm_array = elm.makeList(counter);
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Retrieving at the start", function () {
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a.push(i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array", function () {
-              a[0];
-            });
-          })();
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              $$List$$array_get(a, 0);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              a.first();
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.get(a, 0);
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              a.get(0);
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Retrieving at random", function () {
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a.push(i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array", function () {
-              var pivot = Math.floor(Math.random() * a.length);
-              a[pivot];
-            });
-          })();
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              var pivot = Math.floor(Math.random() * a.length);
-              $$List$$array_get(a, pivot);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              var pivot = Math.floor(Math.random() * a.size);
-              a.get(pivot);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              var pivot = Math.floor(Math.random() * $$List$$mori.count(a));
-              $$List$$mori.get(a, pivot);
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              var pivot = Math.floor(Math.random() * a.size());
-              a.get(pivot);
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Removing at the end", function () {
-          $$Benchmark$$.message("JavaScript Array");
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                b = $$List$$array_remove(b);
-              }
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                b = b.pop();
-              }
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                b = $$List$$mori.pop(b);
-              }
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                b = b.remove();
-              }
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Removing at the start", function () {
-          $$Benchmark$$.message("JavaScript Array");
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                b = $$List$$array_remove(b, 0);
-              }
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                b = b.shift();
-              }
-            });
-          })();
-
-          $$Benchmark$$.message("Mori Vector");
-
-          /*;(function () {
-            var a = mori.list();
-
-            for (var i = 0; i < counter; ++i) {
-              a = mori.conj(a, i);
-            }
-
-            benchmark.time("Mori List", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                b = mori.pop(b);
-              }
-            });
-          })();*/
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                b = b.remove(0);
-              }
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Removing at random", function () {
-          $$Benchmark$$.message("JavaScript Array");
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                var pivot = Math.floor(Math.random() * b.length);
-                b = $$List$$array_remove(b, pivot);
-              }
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                var pivot = Math.floor(Math.random() * b.size);
-                b = b.splice(pivot, 1);
-              }
-            });
-          })();
-
-          $$Benchmark$$.message("Mori Vector");
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              var b = a;
-              for (var i = 0; i < counter; ++i) {
-                var pivot = Math.floor(Math.random() * b.size());
-                b = b.remove(pivot);
-              }
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Modifying at the end", function () {
-          $$Benchmark$$.message("JavaScript Array");
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              $$List$$array_modify(a, -1, function () {
-                return -50;
-              });
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              a.set(-1, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.assoc(a, $$List$$mori.count(a) - 1, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              a.modify(-1, function () {
-                return -50;
-              });
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Modifying at the start", function () {
-          $$Benchmark$$.message("JavaScript Array");
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              $$List$$array_modify(a, 0, function () {
-                return -50;
-              });
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              a.set(0, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.assoc(a, 0, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              a.modify(0, function () {
-                return -50;
-              });
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Modifying at random", function () {
-          $$Benchmark$$.message("JavaScript Array");
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              var pivot = Math.floor(Math.random() * a.length);
-              $$List$$array_modify(a, pivot, function () {
-                return -50;
-              });
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              var pivot = Math.floor(Math.random() * a.size);
-              a.set(pivot, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              var pivot = Math.floor(Math.random() * $$List$$mori.count(a));
-              $$List$$mori.assoc(a, pivot, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              var pivot = Math.floor(Math.random() * a.size());
-              a.modify(pivot, function () {
-                return -50;
-              });
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Concatenating", function () {
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a.push(i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array", function () {
-              a.concat(a);
-            });
-          })();
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              $$List$$array_concat(a, a);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              a.concat(a);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.concat(a, a);
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              a.concat(a);
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Slicing small", function () {
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a.push(i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array", function () {
-              a.slice(1, 2);
-            });
-          })();
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              $$List$$array_slice(a, 1, 2);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              a.slice(1, 2);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.subvec(a, 1, 2);
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              a.slice(1, 2);
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Slicing medium", function () {
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a.push(i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array", function () {
-              a.slice(1, Math.floor(a.length / 2));
-            });
-          })();
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              $$List$$array_slice(a, 1, Math.floor(a.length / 2));
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              a.slice(1, Math.floor(a.size / 2));
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.subvec(a, 1, Math.floor($$List$$mori.count(a) / 2));
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              a.slice(1, Math.floor(a.size() / 2));
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-
-
-        $$Benchmark$$.group("Slicing large", function () {
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a.push(i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array", function () {
-              a.slice(1);
-            });
-          })();
-
-          ;(function () {
-            var a = [];
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$array_insert(a, i);
-            }
-
-            $$Benchmark$$.time("JavaScript Array Copying", function () {
-              $$List$$array_slice(a, 1);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$immutablejs.List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.push(i);
-            }
-
-            $$Benchmark$$.time("Immutable-js List", function () {
-              a.slice(1);
-            });
-          })();
-
-          ;(function () {
-            var a = $$List$$mori.vector();
-
-            for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
-            }
-
-            $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.subvec(a, 1);
-            });
-          })();
-
-          ;(function () {
-            var a = $$ImmutableList$$List();
-
-            for (var i = 0; i < counter; ++i) {
-              a = a.insert(i);
-            }
-
-            $$Benchmark$$.time("Immutable List", function () {
-              a.slice(1);
-            });
-          })();
-
-          //benchmark.message("Elm Array");
-        });
-      });
-    }
     var $$Record$$immutablejs = require("immutable");
     var $$Record$$mori        = require("mori");
 
@@ -4500,27 +4714,31 @@
       });
     }
 
+    var src$Benchmark$run$$package = require("../package.json");
+
+    var src$Benchmark$run$$dependencies = src$Benchmark$run$$package.devDependencies;
+
     function src$Benchmark$run$$header() {
       $$Benchmark$$.group("Information", function () {
         $$Benchmark$$.group("Node.js", function () {
           $$Benchmark$$.message("URL: http://nodejs.org/");
-          $$Benchmark$$.message("Version: 0.10.22");
+          $$Benchmark$$.message("Version: " + process.version);
         });
         $$Benchmark$$.group("Benchmark.js", function () {
           $$Benchmark$$.message("URL: https://github.com/bestiejs/benchmark.js");
-          $$Benchmark$$.message("Version: 1.0.0");
+          $$Benchmark$$.message("Version: " + src$Benchmark$run$$dependencies.benchmark);
         });
         $$Benchmark$$.group("Immutable-js", function () {
           $$Benchmark$$.message("URL: https://github.com/facebook/immutable-js");
-          $$Benchmark$$.message("Version: 3.4.1");
+          $$Benchmark$$.message("Version: " + src$Benchmark$run$$dependencies.immutable);
         });
         $$Benchmark$$.group("Mori", function () {
           $$Benchmark$$.message("URL: https://github.com/swannodette/mori");
-          $$Benchmark$$.message("Version: 0.2.9");
+          $$Benchmark$$.message("Version: " + src$Benchmark$run$$dependencies.mori);
         });
         $$Benchmark$$.group("Immutable", function () {
           $$Benchmark$$.message("URL: https://github.com/Pauan/Immutable");
-          $$Benchmark$$.message("Version: 4.0.0");
+          $$Benchmark$$.message("Version: " + src$Benchmark$run$$package.version);
         });
         /*benchmark.group("Elm", function () {
           benchmark.message("URL: http://elm-lang.org/");
@@ -4530,17 +4748,17 @@
     }
 
 
-    /*header();
-    list.run(10);
-    list.run(100);
-    list.run(1000);*/
-
     src$Benchmark$run$$header();
-    $$Record$$.run(1);
-    $$Record$$.run(10);
-    $$Record$$.run(100);
-    $$Record$$.run(1000);
-    $$Record$$.run(10000);
+    $$List$$.run(10);
+    $$List$$.run(100);
+    $$List$$.run(1000);
+
+    /*header();
+    record.run(1);
+    record.run(10);
+    record.run(100);
+    record.run(1000);
+    record.run(10000);*/
 
     $$Benchmark$$.run();
 }).call(this);

@@ -1191,19 +1191,16 @@
         x = x.cdr;
       }
     }
+    var $$$Immutable$ImmutableList$$array_limit = 125;
+
+    var $$$Immutable$ImmutableList$$ceiling = Math.ceil;
+    var $$$Immutable$ImmutableList$$floor   = Math.floor;
 
 
-    // It's faster to use arrays for small lists
-    var $$ImmutableList$$array_limit = 125;
-
-    var $$ImmutableList$$ceiling = Math.ceil;
-    var $$ImmutableList$$floor   = Math.floor;
-
-
-    function $$ImmutableList$$add_slice(slices, slice) {
+    function $$$Immutable$ImmutableList$$add_slice(slices, slice) {
       if (slices.length) {
         var last = slices[slices.length - 1];
-        if (last.length + slice.length <= $$ImmutableList$$array_limit) {
+        if (last.length + slice.length <= $$$Immutable$ImmutableList$$array_limit) {
           slices[slices.length - 1] = last.concat(slice);
         } else {
           slices.push(slice);
@@ -1213,23 +1210,23 @@
       }
     }
 
-    function $$ImmutableList$$slices_to_tree1(slices, min, max) {
+    function $$$Immutable$ImmutableList$$slices_to_tree1(slices, min, max) {
       if (min < max) {
-        var pivot = $$ImmutableList$$floor((min + max) / 2);
-        var left  = $$ImmutableList$$slices_to_tree1(slices, min, pivot);
-        var right = $$ImmutableList$$slices_to_tree1(slices, pivot + 1, max);
-        return new $$ImmutableList$$ArrayNode(left, right, slices[pivot]);
+        var pivot = $$$Immutable$ImmutableList$$floor((min + max) / 2);
+        var left  = $$$Immutable$ImmutableList$$slices_to_tree1(slices, min, pivot);
+        var right = $$$Immutable$ImmutableList$$slices_to_tree1(slices, pivot + 1, max);
+        return new $$$Immutable$ImmutableList$$ArrayNode(left, right, slices[pivot]);
       } else {
         return $$$Immutable$static$$nil;
       }
     }
 
-    function $$ImmutableList$$slices_to_tree(slices) {
-      return $$ImmutableList$$slices_to_tree1(slices, 0, slices.length);
+    function $$$Immutable$ImmutableList$$slices_to_tree(slices) {
+      return $$$Immutable$ImmutableList$$slices_to_tree1(slices, 0, slices.length);
     }
 
     // TODO move this into Array.js ?
-    function $$ImmutableList$$array_slice(array, from, to) {
+    function $$$Immutable$ImmutableList$$array_slice(array, from, to) {
       if (from < 0) {
         from = 0;
       }
@@ -1248,7 +1245,7 @@
 
 
     // Converts a stack (reversed cons) into an array
-    function $$ImmutableList$$stack_to_array(a, size) {
+    function $$$Immutable$ImmutableList$$stack_to_array(a, size) {
       var out = new Array(size);
 
       while (size--) {
@@ -1259,7 +1256,7 @@
       return out;
     }
 
-    function $$ImmutableList$$stack_nth(a, size, i) {
+    function $$$Immutable$ImmutableList$$stack_nth(a, size, i) {
       while (--size !== i) {
         a = a.cdr;
       }
@@ -1268,7 +1265,7 @@
     }
 
 
-    function $$ImmutableList$$ArrayNode(left, right, array) {
+    function $$$Immutable$ImmutableList$$ArrayNode(left, right, array) {
       this.left  = left;
       this.right = right;
       this.array = array;
@@ -1276,12 +1273,12 @@
       this.depth = $$AVL$$max(left.depth, right.depth) + 1;
     }
 
-    $$ImmutableList$$ArrayNode.prototype.copy = function (left, right) {
-      return new $$ImmutableList$$ArrayNode(left, right, this.array);
+    $$$Immutable$ImmutableList$$ArrayNode.prototype.copy = function (left, right) {
+      return new $$$Immutable$ImmutableList$$ArrayNode(left, right, this.array);
     };
 
 
-    function $$ImmutableList$$nth_get(node, index) {
+    function $$$Immutable$ImmutableList$$nth_get(node, index) {
       for (;;) {
         var left    = node.left;
         var l_index = left.size;
@@ -1305,10 +1302,10 @@
       }
     }
 
-    function $$ImmutableList$$nth_insert(node, index, value) {
+    function $$$Immutable$ImmutableList$$nth_insert(node, index, value) {
       // TODO is this necessary ?
       if (node === $$$Immutable$static$$nil) {
-        return new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, [value]);
+        return new $$$Immutable$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, [value]);
 
       } else {
         var left    = node.left;
@@ -1316,7 +1313,7 @@
         var l_index = left.size;
 
         if (index < l_index) {
-          var child = $$ImmutableList$$nth_insert(left, index, value);
+          var child = $$$Immutable$ImmutableList$$nth_insert(left, index, value);
           return $$AVL$$balanced_node(node, child, right);
 
         } else {
@@ -1329,36 +1326,40 @@
             array = $$Array$$insert(array, index, value);
 
             // TODO this fails when array_limit is 1
-            if (len === $$ImmutableList$$array_limit) {
-              var pivot  = $$ImmutableList$$ceiling(array.length / 2);
+            if (len === $$$Immutable$ImmutableList$$array_limit) {
+              var pivot  = $$$Immutable$ImmutableList$$ceiling(array.length / 2);
               var aleft  = array.slice(0, pivot);
               var aright = array.slice(pivot);
 
               if (left.depth < right.depth) {
-                return new $$ImmutableList$$ArrayNode($$AVL$$insert_max(left, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, aleft)), right, aright);
+                // TODO unit test for this
+                // TODO insert_array_max ?
+                return new $$$Immutable$ImmutableList$$ArrayNode($$AVL$$insert_max(left, new $$$Immutable$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, aleft)), right, aright);
               } else {
-                return new $$ImmutableList$$ArrayNode(left, $$AVL$$insert_min(right, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, aright)), aleft);
+                // TODO unit test for this
+                // TODO insert_array_min ?
+                return new $$$Immutable$ImmutableList$$ArrayNode(left, $$AVL$$insert_min(right, new $$$Immutable$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, aright)), aleft);
               }
 
             } else {
-              return new $$ImmutableList$$ArrayNode(left, right, array);
+              return new $$$Immutable$ImmutableList$$ArrayNode(left, right, array);
             }
 
           } else {
-            var child = $$ImmutableList$$nth_insert(right, index - len, value);
+            var child = $$$Immutable$ImmutableList$$nth_insert(right, index - len, value);
             return $$AVL$$balanced_node(node, left, child);
           }
         }
       }
     }
 
-    function $$ImmutableList$$nth_modify(node, index, f) {
+    function $$$Immutable$ImmutableList$$nth_modify(node, index, f) {
       var left    = node.left;
       var right   = node.right;
       var l_index = left.size;
 
       if (index < l_index) {
-        var child = $$ImmutableList$$nth_modify(left, index, f);
+        var child = $$$Immutable$ImmutableList$$nth_modify(left, index, f);
         if (child === left) {
           return node;
         } else {
@@ -1376,11 +1377,11 @@
           if (new_array === array) {
             return node;
           } else {
-            return new $$ImmutableList$$ArrayNode(left, right, new_array);
+            return new $$$Immutable$ImmutableList$$ArrayNode(left, right, new_array);
           }
 
         } else {
-          var child = $$ImmutableList$$nth_modify(right, index - len, f);
+          var child = $$$Immutable$ImmutableList$$nth_modify(right, index - len, f);
           if (child === right) {
             return node;
           } else {
@@ -1390,13 +1391,13 @@
       }
     }
 
-    function $$ImmutableList$$nth_remove(node, index) {
+    function $$$Immutable$ImmutableList$$nth_remove(node, index) {
       var left    = node.left;
       var right   = node.right;
       var l_index = left.size;
 
       if (index < l_index) {
-        var child = $$ImmutableList$$nth_remove(left, index);
+        var child = $$$Immutable$ImmutableList$$nth_remove(left, index);
         return $$AVL$$balanced_node(node, child, right);
 
       } else {
@@ -1412,23 +1413,23 @@
           if (array.length === 0) {
             return $$AVL$$concat(left, right);
           } else {
-            return new $$ImmutableList$$ArrayNode(left, right, array);
+            return new $$$Immutable$ImmutableList$$ArrayNode(left, right, array);
           }
 
         } else {
-          var child = $$ImmutableList$$nth_remove(right, index - len);
+          var child = $$$Immutable$ImmutableList$$nth_remove(right, index - len);
           return $$AVL$$balanced_node(node, left, child);
         }
       }
     }
 
-    function $$ImmutableList$$nth_slice(slices, node, from, to) {
+    function $$$Immutable$ImmutableList$$nth_slice(slices, node, from, to) {
       if (node !== $$$Immutable$static$$nil) {
         var left = node.left;
         var size = left.size;
 
         if (from < size) {
-          $$ImmutableList$$nth_slice(slices, left, from, to);
+          $$$Immutable$ImmutableList$$nth_slice(slices, left, from, to);
         }
 
         var array = node.array;
@@ -1438,57 +1439,73 @@
         to   -= size;
 
         if (from < len && to > 0) {
-          $$ImmutableList$$add_slice(slices, $$ImmutableList$$array_slice(array, from, to));
+          $$$Immutable$ImmutableList$$add_slice(slices, $$$Immutable$ImmutableList$$array_slice(array, from, to));
         }
 
         if (to > len) {
-          $$ImmutableList$$nth_slice(slices, node.right, from - len, to - len);
+          $$$Immutable$ImmutableList$$nth_slice(slices, node.right, from - len, to - len);
+        }
+      }
+    }
+
+    function $$$Immutable$ImmutableList$$insert_array_max(node, new_array) {
+      if (node === $$$Immutable$static$$nil) {
+        return new $$$Immutable$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, new_array);
+      } else {
+        var left  = node.left;
+        var right = node.right;
+        var array = node.array;
+        if (right === $$$Immutable$static$$nil && array.length + new_array.length <= $$$Immutable$ImmutableList$$array_limit) {
+          return new $$$Immutable$ImmutableList$$ArrayNode(left, right, array.concat(new_array));
+        } else {
+          // TODO do we need to use balanced_node ?
+          return $$AVL$$balanced_node(node, left, $$$Immutable$ImmutableList$$insert_array_max(right, new_array));
         }
       }
     }
 
 
-    function $$ImmutableList$$ImmutableList(root, tail, tail_size) {
+    function $$$Immutable$ImmutableList$$ImmutableList(root, tail, tail_size) {
       this.root = root;
       this.tail = tail;
       this.tail_size = tail_size;
       this.hash = null;
     }
 
-    $$ImmutableList$$ImmutableList.prototype = Object.create($$Base$$ImmutableBase);
+    $$$Immutable$ImmutableList$$ImmutableList.prototype = Object.create($$Base$$ImmutableBase);
 
-    $$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_hash] = $$hash$$hash_array("List");
-    $$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_toJS] = $$toJS$$toJS_array;
-    $$ImmutableList$$ImmutableList.prototype.has = $$Ordered$$ordered_has;
+    $$$Immutable$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_hash] = $$hash$$hash_array("List");
+    $$$Immutable$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_toJS] = $$toJS$$toJS_array;
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.has = $$Ordered$$ordered_has;
 
     $$$Immutable$static$$fromJSON_registry["List"] = function (x) {
-      return $$ImmutableList$$List($$toJSON$$fromJSON_array(x));
+      return $$$Immutable$ImmutableList$$List($$toJSON$$fromJSON_array(x));
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
+    $$$Immutable$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
       return $$toJSON$$toJSON_array("List", x);
     };
 
-    $$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_iter] = function () {
+    $$$Immutable$ImmutableList$$ImmutableList.prototype[$$$Immutable$static$$tag_iter] = function () {
       var tree = $$iter$$mapcat_iter($$AVL$$iter_tree(this.root), function (node) {
         return $$iter$$toIterator(node.array);
       });
       return $$iter$$concat_iter(tree, $$iter$$reverse_iter($$Cons$$iter_cons(this.tail)));
     };
 
-    $$ImmutableList$$ImmutableList.prototype.isEmpty = function () {
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.isEmpty = function () {
       return this.root === $$$Immutable$static$$nil && this.tail === $$$Immutable$static$$nil;
     };
 
-    $$ImmutableList$$ImmutableList.prototype.removeAll = function () {
-      return new $$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.removeAll = function () {
+      return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
     };
 
-    $$ImmutableList$$ImmutableList.prototype.size = function () {
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.size = function () {
       return this.root.size + this.tail_size;
     };
 
-    $$ImmutableList$$ImmutableList.prototype.get = function (index, def) {
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.get = function (index, def) {
       var len = this.size();
 
       if (index < 0) {
@@ -1499,9 +1516,9 @@
         var root = this.root;
         var size = root.size;
         if (index < size) {
-          return $$ImmutableList$$nth_get(root, index);
+          return $$$Immutable$ImmutableList$$nth_get(root, index);
         } else {
-          return $$ImmutableList$$stack_nth(this.tail, this.tail_size, index - size);
+          return $$$Immutable$ImmutableList$$stack_nth(this.tail, this.tail_size, index - size);
         }
 
       } else if (arguments.length === 2) {
@@ -1512,9 +1529,9 @@
       }
     };
 
-    $$ImmutableList$$ImmutableList.prototype.insert = function (value, index) {
-      if (arguments.length === 1) {
-        index = -1;
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.insert = function (index, value) {
+      if (arguments.length !== 2) {
+        throw new Error("Expected 2 arguments but got " + arguments.length);
       }
 
       var len = this.size();
@@ -1523,38 +1540,46 @@
         index += (len + 1);
       }
 
-      var root      = this.root;
-      var tail      = this.tail;
-      var tail_size = this.tail_size;
       if (index === len) {
-        if (tail_size === $$ImmutableList$$array_limit) {
-          var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, $$ImmutableList$$stack_to_array(tail, tail_size)));
-          return new $$ImmutableList$$ImmutableList(node, new $$Cons$$Cons(value, $$$Immutable$static$$nil), 1);
-
-        } else {
-          return new $$ImmutableList$$ImmutableList(root, new $$Cons$$Cons(value, tail), tail_size + 1);
-        }
-
-      } else if ($$Ordered$$nth_has(index, len)) {
-        var size = root.size;
-        // TODO should this be <= ?
-        if (index < size) {
-          return new $$ImmutableList$$ImmutableList($$ImmutableList$$nth_insert(root, index, value), tail, tail_size);
-
-        } else {
-          var array = $$Array$$insert($$ImmutableList$$stack_to_array(tail, tail_size), index - size, value);
-          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, array));
-          return new $$ImmutableList$$ImmutableList(node, $$$Immutable$static$$nil, 0);
-        }
+        return this.push(value);
 
       } else {
-        throw new Error("Index " + index + " is not valid");
+        var root      = this.root;
+        var tail      = this.tail;
+        var tail_size = this.tail_size;
+
+        if ($$Ordered$$nth_has(index, len)) {
+          var size = root.size;
+          if (index <= size) {
+            return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$ImmutableList$$nth_insert(root, index, value), tail, tail_size);
+
+          } else {
+            var array = $$Array$$insert($$$Immutable$ImmutableList$$stack_to_array(tail, tail_size), index - size, value);
+            return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$ImmutableList$$insert_array_max(root, array), $$$Immutable$static$$nil, 0);
+          }
+
+        } else {
+          throw new Error("Index " + index + " is not valid");
+        }
       }
     };
 
-    $$ImmutableList$$ImmutableList.prototype.remove = function (index) {
-      if (arguments.length === 0) {
-        index = -1;
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.push = function (value) {
+      var root      = this.root;
+      var tail      = this.tail;
+      var tail_size = this.tail_size;
+
+      if (tail_size === $$$Immutable$ImmutableList$$array_limit) {
+        var node = $$$Immutable$ImmutableList$$insert_array_max(root, $$$Immutable$ImmutableList$$stack_to_array(tail, tail_size));
+        return new $$$Immutable$ImmutableList$$ImmutableList(node, new $$Cons$$Cons(value, $$$Immutable$static$$nil), 1);
+      } else {
+        return new $$$Immutable$ImmutableList$$ImmutableList(root, new $$Cons$$Cons(value, tail), tail_size + 1);
+      }
+    };
+
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.remove = function (index) {
+      if (arguments.length !== 1) {
+        throw new Error("Expected 1 argument but got " + arguments.length);
       }
 
       var len = this.size();
@@ -1568,17 +1593,16 @@
       var tail_size = this.tail_size;
 
       if (tail !== $$$Immutable$static$$nil && index === len - 1) {
-        return new $$ImmutableList$$ImmutableList(root, tail.cdr, tail_size - 1);
+        return new $$$Immutable$ImmutableList$$ImmutableList(root, tail.cdr, tail_size - 1);
 
       } else if ($$Ordered$$nth_has(index, len)) {
         var size = root.size;
         if (index < size) {
-          return new $$ImmutableList$$ImmutableList($$ImmutableList$$nth_remove(root, index), tail, tail_size);
+          return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$ImmutableList$$nth_remove(root, index), tail, tail_size);
 
         } else {
-          var array = $$Array$$remove($$ImmutableList$$stack_to_array(tail, tail_size), index - size);
-          var node  = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, array));
-          return new $$ImmutableList$$ImmutableList(node, $$$Immutable$static$$nil, 0);
+          var array = $$Array$$remove($$$Immutable$ImmutableList$$stack_to_array(tail, tail_size), index - size);
+          return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$ImmutableList$$insert_array_max(root, array), $$$Immutable$static$$nil, 0);
         }
 
       } else {
@@ -1586,7 +1610,7 @@
       }
     };
 
-    $$ImmutableList$$ImmutableList.prototype.modify = function (index, f) {
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.modify = function (index, f) {
       var len = this.size();
 
       if (index < 0) {
@@ -1604,25 +1628,24 @@
           if (value === tail.car) {
             return this;
           } else {
-            return new $$ImmutableList$$ImmutableList(root, new $$Cons$$Cons(value, tail.cdr), tail_size);
+            return new $$$Immutable$ImmutableList$$ImmutableList(root, new $$Cons$$Cons(value, tail.cdr), tail_size);
           }
 
         } else if (index < size) {
-          var node = $$ImmutableList$$nth_modify(root, index, f);
+          var node = $$$Immutable$ImmutableList$$nth_modify(root, index, f);
           if (node === root) {
             return this;
           } else {
-            return new $$ImmutableList$$ImmutableList(node, tail, tail_size);
+            return new $$$Immutable$ImmutableList$$ImmutableList(node, tail, tail_size);
           }
 
         } else {
-          var stack = $$ImmutableList$$stack_to_array(tail, tail_size);
+          var stack = $$$Immutable$ImmutableList$$stack_to_array(tail, tail_size);
           var array = $$Array$$modify(stack, index - size, f);
           if (array === stack) {
             return this;
           } else {
-            var node = $$AVL$$insert_max(root, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, array));
-            return new $$ImmutableList$$ImmutableList(node, $$$Immutable$static$$nil, 0);
+            return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$ImmutableList$$insert_array_max(root, array), $$$Immutable$static$$nil, 0);
           }
         }
 
@@ -1632,20 +1655,27 @@
     };
 
     // TODO a bit of code duplication
-    $$ImmutableList$$ImmutableList.prototype.set = function (index, value) {
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.set = function (index, value) {
       return this.modify(index, function () {
         return value;
       });
     };
 
-    $$ImmutableList$$ImmutableList.prototype.slice = function (from, to) {
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.slice = function (from, to) {
       var len = this.size();
 
-      if (from == null) {
+      if (arguments.length < 1) {
         from = 0;
       }
-      if (to == null) {
+      if (arguments.length < 2) {
         to = len;
+      }
+
+      if (typeof from !== "number") {
+        throw new Error("Expected a number but got " + from);
+      }
+      if (typeof to !== "number") {
+        throw new Error("Expected a number but got " + to);
       }
 
       if (from < 0) {
@@ -1663,7 +1693,7 @@
 
       } else if ($$Ordered$$nth_has(from, len)) {
         if (from === to) {
-          return new $$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
+          return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
 
         // TODO code duplication with nth_has ?
         } else if (to > 0 && to <= len) {
@@ -1673,15 +1703,15 @@
           var slices = [];
 
           if (from <= size) {
-            $$ImmutableList$$nth_slice(slices, root, from, to);
+            $$$Immutable$ImmutableList$$nth_slice(slices, root, from, to);
           }
 
           if (to > size) {
-            var stack = $$ImmutableList$$stack_to_array(this.tail, this.tail_size);
-            $$ImmutableList$$add_slice(slices, $$ImmutableList$$array_slice(stack, from - size, to - size));
+            var stack = $$$Immutable$ImmutableList$$stack_to_array(this.tail, this.tail_size);
+            $$$Immutable$ImmutableList$$add_slice(slices, $$$Immutable$ImmutableList$$array_slice(stack, from - size, to - size));
           }
 
-          return new $$ImmutableList$$ImmutableList($$ImmutableList$$slices_to_tree(slices), $$$Immutable$static$$nil, 0);
+          return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$ImmutableList$$slices_to_tree(slices), $$$Immutable$static$$nil, 0);
 
         } else {
           throw new Error("Index " + to + " is not valid");
@@ -1692,8 +1722,8 @@
       }
     };
 
-    $$ImmutableList$$ImmutableList.prototype.concat = function (right) {
-      if (right instanceof $$ImmutableList$$ImmutableList) {
+    $$$Immutable$ImmutableList$$ImmutableList.prototype.concat = function (right) {
+      if (right instanceof $$$Immutable$ImmutableList$$ImmutableList) {
         var lroot = this.root;
         var ltail = this.tail;
 
@@ -1708,33 +1738,34 @@
 
         } else {
           if (ltail !== $$$Immutable$static$$nil) {
-            lroot = $$AVL$$insert_max(lroot, new $$ImmutableList$$ArrayNode($$$Immutable$static$$nil, $$$Immutable$static$$nil, $$ImmutableList$$stack_to_array(ltail, this.tail_size)));
+            lroot = $$$Immutable$ImmutableList$$insert_array_max(lroot, $$$Immutable$ImmutableList$$stack_to_array(ltail, this.tail_size));
           }
 
           var node = $$AVL$$concat(lroot, rroot);
-          return new $$ImmutableList$$ImmutableList(node, rtail, right.tail_size);
+          return new $$$Immutable$ImmutableList$$ImmutableList(node, rtail, right.tail_size);
         }
 
       } else {
         return $$iter$$foldl(right, this, function (self, x) {
-          return self.insert(x);
+          return self.push(x);
         });
       }
     };
 
-    function $$ImmutableList$$isList(x) {
-      return x instanceof $$ImmutableList$$ImmutableList;
+
+    function $$$Immutable$ImmutableList$$isList(x) {
+      return x instanceof $$$Immutable$ImmutableList$$ImmutableList;
     }
 
-    function $$ImmutableList$$List(array) {
+    function $$$Immutable$ImmutableList$$List(array) {
       if (array != null) {
-        if (array instanceof $$ImmutableList$$ImmutableList) {
+        if (array instanceof $$$Immutable$ImmutableList$$ImmutableList) {
           return array;
         } else {
-          return new $$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0).concat(array);
+          return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0).concat(array);
         }
       } else {
-        return new $$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
+        return new $$$Immutable$ImmutableList$$ImmutableList($$$Immutable$static$$nil, $$$Immutable$static$$nil, 0);
       }
     }
     function $$Sorted$$simpleSort(x, y) {
@@ -2051,10 +2082,10 @@
     }
     function $$toJS$$fromJS(x) {
       if (Array.isArray(x)) {
-        var out = $$ImmutableList$$List();
+        var out = $$$Immutable$ImmutableList$$List();
 
         for (var i = 0, l = x.length; i < l; ++i) {
-          out = out.insert($$toJS$$fromJS(x[i]));
+          out = out.push($$toJS$$fromJS(x[i]));
         }
 
         return out;
@@ -2799,7 +2830,7 @@
         return Object.isFrozen(x) ||
                $$ImmutableDict$$isDict(x)  ||
                $$ImmutableSet$$isSet(x)   ||
-               $$ImmutableList$$isList(x)  ||
+               $$$Immutable$ImmutableList$$isList(x)  ||
                $$ImmutableTuple$$isTuple(x) ||
                $$ImmutableQueue$$isQueue(x) ||
                $$ImmutableStack$$isStack(x) ||
@@ -2834,7 +2865,7 @@
       exports.isSet = $$ImmutableSet$$isSet;
       exports.isSortedDict = $$ImmutableDict$$isSortedDict;
       exports.isSortedSet = $$ImmutableSet$$isSortedSet;
-      exports.isList = $$ImmutableList$$isList;
+      exports.isList = $$$Immutable$ImmutableList$$isList;
       exports.isQueue = $$ImmutableQueue$$isQueue;
       exports.isTuple = $$ImmutableTuple$$isTuple;
       exports.isStack = $$ImmutableStack$$isStack;
@@ -2844,7 +2875,7 @@
       exports.isIterable = $$iter$$isIterable;
       exports.Dict = $$ImmutableDict$$Dict;
       exports.Set = $$ImmutableSet$$Set;
-      exports.List = $$ImmutableList$$List;
+      exports.List = $$$Immutable$ImmutableList$$List;
       exports.Tuple = $$ImmutableTuple$$Tuple;
       exports.Queue = $$ImmutableQueue$$Queue;
       exports.Stack = $$ImmutableStack$$Stack;
@@ -3134,8 +3165,8 @@
       return tree;
     }
 
-    function src$Test$Test$$verify_list(tree, array) {
-      $$assert$$assert($$ImmutableList$$isList(tree));
+    function src$Test$Test$$verify_list1(tree, array, strict) {
+      $$assert$$assert($$$Immutable$ImmutableList$$isList(tree));
 
       function loop(node) {
         if (node !== $$$Immutable$static$$nil) {
@@ -3147,7 +3178,15 @@
           var diff = left.depth - right.depth;
           $$assert$$assert(diff === -1 || diff === 0 || diff === 1);
 
-          $$assert$$assert(node.array.length <= 125);
+          $$assert$$assert(node.array.length <= $$$Immutable$ImmutableList$$array_limit);
+
+          if (strict && left !== $$$Immutable$static$$nil) {
+            $$assert$$assert(node.array.length + left.array.length > $$$Immutable$ImmutableList$$array_limit);
+          }
+
+          if (strict && right !== $$$Immutable$static$$nil) {
+            $$assert$$assert(node.array.length + right.array.length > $$$Immutable$ImmutableList$$array_limit);
+          }
 
           $$assert$$assert(node.size === left.size + right.size + node.array.length);
           loop(left);
@@ -3164,11 +3203,19 @@
       }
 
       $$assert$$assert(count === tree.tail_size);
-      $$assert$$assert(tree.tail_size <= 125);
+      $$assert$$assert(tree.tail_size <= $$$Immutable$ImmutableList$$array_limit);
 
       $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(tree), array));
 
       return tree;
+    }
+
+    function src$Test$Test$$verify_list_loose(tree, array) {
+      return src$Test$Test$$verify_list1(tree, array, false);
+    }
+
+    function src$Test$Test$$verify_list(tree, array) {
+      return src$Test$Test$$verify_list1(tree, array, true);
     }
 
     function src$Test$Test$$verify_tuple(tuple, array) {
@@ -3263,7 +3310,7 @@
         }, "Cannot convert object to primitive value");
 
         src$Test$Test$$assert_raises(function () {
-          $$ImmutableDict$$Dict([$$ImmutableList$$List(["foo", 2])]);
+          $$ImmutableDict$$Dict([$$$Immutable$ImmutableList$$List(["foo", 2])]);
         }, "Expected array or Tuple but got: (List\n  \"foo\"\n  2)");
 
         src$Test$Test$$assert_raises(function () {
@@ -3404,7 +3451,7 @@
         }, "Cannot convert object to primitive value");
 
         src$Test$Test$$assert_raises(function () {
-          $$ImmutableDict$$Dict().merge([$$ImmutableList$$List(["foo", 2])]);
+          $$ImmutableDict$$Dict().merge([$$$Immutable$ImmutableList$$List(["foo", 2])]);
         }, "Expected array or Tuple but got: (List\n  \"foo\"\n  2)");
 
         src$Test$Test$$assert_raises(function () {
@@ -3939,12 +3986,12 @@
 
 
     src$Test$Test$$context("List", function () {
-      var empty_list = $$ImmutableList$$List();
-      var five_list  = $$ImmutableList$$List().insert(1).insert(2).insert(3).insert(4).insert(5);
+      var empty_list = $$$Immutable$ImmutableList$$List();
+      var five_list  = $$$Immutable$ImmutableList$$List().push(1).push(2).push(3).push(4).push(5);
 
       src$Test$Test$$test("isList", function () {
-        $$assert$$assert(!$$ImmutableList$$isList($$ImmutableDict$$Dict()));
-        $$assert$$assert($$ImmutableList$$isList($$ImmutableList$$List()));
+        $$assert$$assert(!$$$Immutable$ImmutableList$$isList($$ImmutableDict$$Dict()));
+        $$assert$$assert($$$Immutable$ImmutableList$$isList($$$Immutable$ImmutableList$$List()));
       });
 
       src$Test$Test$$test("verify", function () {
@@ -3953,7 +4000,7 @@
       });
 
       src$Test$Test$$test("init", function () {
-        src$Test$Test$$verify_list($$ImmutableList$$List([1, 2, 3]), [1, 2, 3]);
+        src$Test$Test$$verify_list($$$Immutable$ImmutableList$$List([1, 2, 3]), [1, 2, 3]);
       });
 
       src$Test$Test$$test("isEmpty", function () {
@@ -4014,15 +4061,22 @@
       });
 
       src$Test$Test$$test("insert", function () {
+        src$Test$Test$$verify_list($$$Immutable$ImmutableList$$List().insert(0, 5).insert(0, 10).insert(0, 15).push(20).push(25).insert(-2, 30),
+                    [15, 10, 5, 20, 30, 25]);
+
         src$Test$Test$$assert_raises(function () {
-          empty_list.insert(5, 1);
+          five_list.insert(2);
+        }, "Expected 2 arguments but got 1");
+
+        src$Test$Test$$assert_raises(function () {
+          empty_list.insert(1, 5);
         }, "Index 1 is not valid");
 
         src$Test$Test$$assert_raises(function () {
-          empty_list.insert(5, -2);
+          empty_list.insert(-2, 5);
         }, "Index -1 is not valid");
 
-        var x = empty_list.insert(10);
+        var x = empty_list.insert(-1, 10);
 
         src$Test$Test$$verify_list(empty_list, []);
         src$Test$Test$$verify_list(x, [10]);
@@ -4032,22 +4086,26 @@
         $$assert$$assert(x.get(0) === 10);
         $$assert$$assert(x.get(-1) === 10);
 
-        src$Test$Test$$verify_list(five_list.insert(10), [1, 2, 3, 4, 5, 10]);
-        src$Test$Test$$verify_list(five_list.insert(10).insert(20), [1, 2, 3, 4, 5, 10, 20]);
-        src$Test$Test$$verify_list(five_list.insert(10, 0), [10, 1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_list(five_list.insert(10, 1), [1, 10, 2, 3, 4, 5]);
-        src$Test$Test$$verify_list(five_list.insert(10, -1), [1, 2, 3, 4, 5, 10]);
-        src$Test$Test$$verify_list(five_list.insert(10, -2), [1, 2, 3, 4, 10, 5]);
+        src$Test$Test$$verify_list(five_list.insert(-1, 10), [1, 2, 3, 4, 5, 10]);
+        src$Test$Test$$verify_list(five_list.insert(-1, 10).insert(-1, 20), [1, 2, 3, 4, 5, 10, 20]);
+        src$Test$Test$$verify_list(five_list.insert(0, 10), [10, 1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_list(five_list.insert(1, 10), [1, 10, 2, 3, 4, 5]);
+        src$Test$Test$$verify_list(five_list.insert(-1, 10), [1, 2, 3, 4, 5, 10]);
+        src$Test$Test$$verify_list(five_list.insert(-2, 10), [1, 2, 3, 4, 10, 5]);
         src$Test$Test$$verify_list(five_list, [1, 2, 3, 4, 5]);
 
-        src$Test$Test$$verify_list($$ImmutableList$$List().insert(5, 0).insert(4, 0).insert(3, 0).insert(2, 0).insert(1, 0),
+        src$Test$Test$$verify_list($$$Immutable$ImmutableList$$List().insert(0, 5).insert(0, 4).insert(0, 3).insert(0, 2).insert(0, 1),
                     [1, 2, 3, 4, 5]);
       });
 
+      src$Test$Test$$test("push", function () {
+        src$Test$Test$$verify_list(empty_list.push(5), [5]);
+        src$Test$Test$$verify_list(five_list.push(5).push(6).push(0), [1, 2, 3, 4, 5, 5, 6, 0]);
+      });
+
       src$Test$Test$$test("remove", function () {
-        src$Test$Test$$assert_raises(function () {
-          empty_list.remove();
-        }, "Index -1 is not valid");
+        src$Test$Test$$verify_list($$$Immutable$ImmutableList$$List().insert(0, 5).insert(0, 10).insert(0, 15).push(20).push(25).remove(-2),
+                    [15, 10, 5, 25]);
 
         src$Test$Test$$assert_raises(function () {
           empty_list.remove(0);
@@ -4057,9 +4115,16 @@
           empty_list.remove(-1);
         }, "Index -1 is not valid");
 
-        src$Test$Test$$verify_list(five_list.remove(), [1, 2, 3, 4]);
-        src$Test$Test$$verify_list(five_list.remove().remove(), [1, 2, 3]);
+        src$Test$Test$$assert_raises(function () {
+          empty_list.remove();
+        }, "Expected 1 argument but got 0");
+
+        src$Test$Test$$assert_raises(function () {
+          five_list.remove();
+        }, "Expected 1 argument but got 0");
+
         src$Test$Test$$verify_list(five_list.remove(-1), [1, 2, 3, 4]);
+        src$Test$Test$$verify_list(five_list.remove(-1).remove(-1), [1, 2, 3]);
         src$Test$Test$$verify_list(five_list.remove(-2), [1, 2, 3, 5]);
         src$Test$Test$$verify_list(five_list.remove(0), [2, 3, 4, 5]);
         src$Test$Test$$verify_list(five_list.remove(1), [1, 3, 4, 5]);
@@ -4126,9 +4191,17 @@
           five_list.slice(10, 10);
         }, "Index 10 is not valid");
 
-        src$Test$Test$$verify_list(five_list.slice(null, 5), [1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_list(five_list.slice(0, null), [1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_list(five_list.slice(null, null), [1, 2, 3, 4, 5]);
+        src$Test$Test$$assert_raises(function () {
+          five_list.slice(null, 5);
+        }, "Expected a number but got null");
+
+        src$Test$Test$$assert_raises(function () {
+          five_list.slice(0, null);
+        }, "Expected a number but got null");
+
+        src$Test$Test$$assert_raises(function () {
+          five_list.slice(null, null);
+        }, "Expected a number but got null");
 
         src$Test$Test$$verify_list(five_list.slice(), [1, 2, 3, 4, 5]);
         src$Test$Test$$verify_list(five_list.slice(0), [1, 2, 3, 4, 5]);
@@ -4142,12 +4215,12 @@
         src$Test$Test$$verify_list(five_list.slice(-4, 4), [2, 3, 4]);
 
 
-        var double_list  = $$ImmutableList$$List();
+        var double_list  = $$$Immutable$ImmutableList$$List();
         var double_array = [];
 
         var len = 125 * 2;
         for (var i = 0; i < len; ++i) {
-          double_list = double_list.insert(i);
+          double_list = double_list.push(i);
           double_array.push(i);
         }
 
@@ -4165,12 +4238,12 @@
         src$Test$Test$$verify_list(double_list.slice(0, 250), double_array.slice(0, 250));
 
 
-        var big_list  = $$ImmutableList$$List();
+        var big_list  = $$$Immutable$ImmutableList$$List();
         var big_array = [];
 
         var len = 125 * 1000;
         for (var i = 0; i < len; ++i) {
-          big_list = big_list.insert(i);
+          big_list = big_list.push(i);
           big_array.push(i);
         }
 
@@ -4196,13 +4269,13 @@
       src$Test$Test$$test("concat", function () {
         src$Test$Test$$verify_list(empty_list.concat(empty_list), []);
         src$Test$Test$$verify_list(five_list.concat(five_list), [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_list($$ImmutableList$$List([10, 20, 30]).concat(five_list), [10, 20, 30, 1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_list(five_list.concat($$ImmutableList$$List([10, 20, 30])), [1, 2, 3, 4, 5, 10, 20, 30]);
+        src$Test$Test$$verify_list($$$Immutable$ImmutableList$$List([10, 20, 30]).concat(five_list), [10, 20, 30, 1, 2, 3, 4, 5]);
+        src$Test$Test$$verify_list(five_list.concat($$$Immutable$ImmutableList$$List([10, 20, 30])), [1, 2, 3, 4, 5, 10, 20, 30]);
         src$Test$Test$$verify_list(five_list.concat([10, 20, 30]), [1, 2, 3, 4, 5, 10, 20, 30]);
       });
 
       src$Test$Test$$test("=== when not modified", function () {
-        $$assert$$assert($$ImmutableList$$List(five_list) === five_list);
+        $$assert$$assert($$$Immutable$ImmutableList$$List(five_list) === five_list);
 
         $$assert$$assert(empty_list.concat(empty_list) === empty_list);
         $$assert$$assert(five_list.concat(empty_list) === five_list);
@@ -4217,10 +4290,10 @@
         $$assert$$assert(five_list.set(0, 1) === five_list);
         $$assert$$assert(five_list.set(0, 2) !== five_list);
 
-        var list1 = $$ImmutableList$$List([$$ImmutableList$$List([])]);
+        var list1 = $$$Immutable$ImmutableList$$List([$$$Immutable$ImmutableList$$List([])]);
 
         $$assert$$assert(list1.modify(0, function () {
-          return $$ImmutableList$$List([]);
+          return $$$Immutable$ImmutableList$$List([]);
         }) !== list1);
 
         $$assert$$assert(five_list.modify(0, function () {
@@ -4252,31 +4325,31 @@
         $$assert$$assert($$equal$$equal(empty_list, empty_list));
         $$assert$$assert($$equal$$equal(five_list, five_list));
 
-        $$assert$$assert($$equal$$equal($$ImmutableList$$List([1, 2, 3]), $$ImmutableList$$List([1, 2, 3])));
-        $$assert$$assert(!$$equal$$equal($$ImmutableList$$List([1, 2, 3]), $$ImmutableList$$List([1, 2, 3, 4])));
-        $$assert$$assert(!$$equal$$equal($$ImmutableList$$List([1, 2, 3]), $$ImmutableList$$List([1, 2, 4])));
-        $$assert$$assert(!$$equal$$equal($$ImmutableList$$List([1, 2, 3]), $$ImmutableList$$List([1, 3, 2])));
+        $$assert$$assert($$equal$$equal($$$Immutable$ImmutableList$$List([1, 2, 3]), $$$Immutable$ImmutableList$$List([1, 2, 3])));
+        $$assert$$assert(!$$equal$$equal($$$Immutable$ImmutableList$$List([1, 2, 3]), $$$Immutable$ImmutableList$$List([1, 2, 3, 4])));
+        $$assert$$assert(!$$equal$$equal($$$Immutable$ImmutableList$$List([1, 2, 3]), $$$Immutable$ImmutableList$$List([1, 2, 4])));
+        $$assert$$assert(!$$equal$$equal($$$Immutable$ImmutableList$$List([1, 2, 3]), $$$Immutable$ImmutableList$$List([1, 3, 2])));
 
-        $$assert$$assert($$equal$$equal($$ImmutableList$$List([1, 2, 3, 4, 5]), five_list));
-        $$assert$$assert($$equal$$equal(five_list, $$ImmutableList$$List([1, 2, 3, 4, 5])));
+        $$assert$$assert($$equal$$equal($$$Immutable$ImmutableList$$List([1, 2, 3, 4, 5]), five_list));
+        $$assert$$assert($$equal$$equal(five_list, $$$Immutable$ImmutableList$$List([1, 2, 3, 4, 5])));
 
-        $$assert$$assert($$equal$$equal($$ImmutableList$$List([$$ImmutableList$$List([1, 2, 3])]), $$ImmutableList$$List([$$ImmutableList$$List([1, 2, 3])])));
+        $$assert$$assert($$equal$$equal($$$Immutable$ImmutableList$$List([$$$Immutable$ImmutableList$$List([1, 2, 3])]), $$$Immutable$ImmutableList$$List([$$$Immutable$ImmutableList$$List([1, 2, 3])])));
       });
 
       src$Test$Test$$test("toJS", function () {
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(empty_list), []));
         $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(five_list), [1, 2, 3, 4, 5]));
-        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$ImmutableList$$List([1, 2, $$ImmutableList$$List([3])])), [1, 2, [3]]));
+        $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS($$$Immutable$ImmutableList$$List([1, 2, $$$Immutable$ImmutableList$$List([3])])), [1, 2, [3]]));
       });
 
       src$Test$Test$$test("toJSON", function () {
         src$Test$Test$$verify_json(empty_list, []);
         src$Test$Test$$verify_json(five_list, [1, 2, 3, 4, 5]);
-        src$Test$Test$$verify_json($$ImmutableList$$List([4, 5, $$ImmutableList$$List([1, 2, 3])]), [4, 5, [1, 2, 3]]);
+        src$Test$Test$$verify_json($$$Immutable$ImmutableList$$List([4, 5, $$$Immutable$ImmutableList$$List([1, 2, 3])]), [4, 5, [1, 2, 3]]);
       });
 
       src$Test$Test$$test("random elements", function () {
-        var o = $$ImmutableList$$List();
+        var o = $$$Immutable$ImmutableList$$List();
         var a = [];
 
         src$Test$Test$$verify_list(o, a);
@@ -4284,7 +4357,7 @@
         src$Test$Test$$random_list(200).forEach(function (x) {
           var index = src$Test$Test$$random_int(o.size());
 
-          o = o.insert(x, index);
+          o = o.insert(index, x);
           a.splice(index, 0, x);
 
           src$Test$Test$$verify_list(o, a);
@@ -4304,7 +4377,7 @@
           var index = src$Test$Test$$random_int(o.size());
           o = o.remove(index);
           a.splice(index, 1);
-          src$Test$Test$$verify_list(o, a);
+          src$Test$Test$$verify_list_loose(o, a);
         }
 
         $$assert$$assert(o.isEmpty());
@@ -4318,25 +4391,25 @@
           var al = [];
           var ar = [];
 
-          var il = $$ImmutableList$$List();
-          var ir = $$ImmutableList$$List();
+          var il = $$$Immutable$ImmutableList$$List();
+          var ir = $$$Immutable$ImmutableList$$List();
 
           a.slice(0, pivot).forEach(function (x) {
             var index = src$Test$Test$$random_int(il.size());
-            il = il.insert(x, index);
+            il = il.insert(index, x);
             al.splice(index, 0, x);
             src$Test$Test$$verify_list(il, al);
           });
 
           a.slice(pivot).forEach(function (x) {
             var index = src$Test$Test$$random_int(ir.size());
-            ir = ir.insert(x, index);
+            ir = ir.insert(index, x);
             ar.splice(index, 0, x);
             src$Test$Test$$verify_list(ir, ar);
           });
 
-          src$Test$Test$$verify_list(il.concat(ir), al.concat(ar));
-          src$Test$Test$$verify_list(ir.concat(il), ar.concat(al));
+          src$Test$Test$$verify_list_loose(il.concat(ir), al.concat(ar));
+          src$Test$Test$$verify_list_loose(ir.concat(il), ar.concat(al));
         }
 
         test_concat(0);
@@ -4347,19 +4420,19 @@
       });
 
       src$Test$Test$$test("each", function () {
-        src$Test$Test$$test_each($$ImmutableList$$List, []);
+        src$Test$Test$$test_each($$$Immutable$ImmutableList$$List, []);
 
-        var list = $$ImmutableList$$List([4]);
-        src$Test$Test$$test_each($$ImmutableList$$List, [1, 2, 3, list]);
+        var list = $$$Immutable$ImmutableList$$List([4]);
+        src$Test$Test$$test_each($$$Immutable$ImmutableList$$List, [1, 2, 3, list]);
 
         var expected = src$Test$Test$$random_list(200);
-        src$Test$Test$$test_each($$ImmutableList$$List, expected);
+        src$Test$Test$$test_each($$$Immutable$ImmutableList$$List, expected);
       });
 
       src$Test$Test$$test("toString", function () {
         $$assert$$assert("" + empty_list === "(List)");
-        $$assert$$assert("" + $$ImmutableList$$List([1, 2, 3]) === "(List\n  1\n  2\n  3)");
-        $$assert$$assert("" + $$ImmutableList$$List([1, $$ImmutableList$$List([2]), 3]) === "(List\n  1\n  (List\n    2)\n  3)");
+        $$assert$$assert("" + $$$Immutable$ImmutableList$$List([1, 2, 3]) === "(List\n  1\n  2\n  3)");
+        $$assert$$assert("" + $$$Immutable$ImmutableList$$List([1, $$$Immutable$ImmutableList$$List([2]), 3]) === "(List\n  1\n  (List\n    2)\n  3)");
       });
 
       // TODO
@@ -4379,7 +4452,7 @@
       var five_tuple  = $$ImmutableTuple$$Tuple([1, 2, 3, 4, 5]);
 
       src$Test$Test$$test("isTuple", function () {
-        $$assert$$assert(!$$ImmutableTuple$$isTuple($$ImmutableList$$List()));
+        $$assert$$assert(!$$ImmutableTuple$$isTuple($$$Immutable$ImmutableList$$List()));
         $$assert$$assert($$ImmutableTuple$$isTuple($$ImmutableTuple$$Tuple()));
       });
 
@@ -4571,7 +4644,7 @@
       var five_queue  = $$ImmutableQueue$$Queue().push(1).push(2).push(3).push(4).push(5);
 
       src$Test$Test$$test("isQueue", function () {
-        $$assert$$assert(!$$ImmutableQueue$$isQueue($$ImmutableList$$List()));
+        $$assert$$assert(!$$ImmutableQueue$$isQueue($$$Immutable$ImmutableList$$List()));
         $$assert$$assert($$ImmutableQueue$$isQueue($$ImmutableQueue$$Queue()));
       });
 
@@ -4897,7 +4970,7 @@
         src$Test$Test$$verify_record($$ImmutableRecord$$Record([$$ImmutableTuple$$Tuple(["foo", 2])]), { foo: 2 });
 
         src$Test$Test$$assert_raises(function () {
-          $$ImmutableRecord$$Record([$$ImmutableList$$List(["foo", 2])]);
+          $$ImmutableRecord$$Record([$$$Immutable$ImmutableList$$List(["foo", 2])]);
         }, "Expected array or Tuple but got: (List\n  \"foo\"\n  2)");
 
         src$Test$Test$$assert_raises(function () {
@@ -4995,7 +5068,7 @@
         }, "Cannot convert object to primitive value");
 
         src$Test$Test$$assert_raises(function () {
-          $$ImmutableRecord$$Record([["foo", 2]]).update([$$ImmutableList$$List(["foo", 3])]);
+          $$ImmutableRecord$$Record([["foo", 2]]).update([$$$Immutable$ImmutableList$$List(["foo", 3])]);
         }, "Expected array or Tuple but got: (List\n  \"foo\"\n  3)");
 
         src$Test$Test$$assert_raises(function () {
@@ -5411,7 +5484,7 @@
       $$assert$$assert($$$Immutable$Immutable$$isImmutable(Object.freeze({})));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$Dict()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableSet$$Set()));
-      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableList$$List()));
+      $$assert$$assert($$$Immutable$Immutable$$isImmutable($$$Immutable$ImmutableList$$List()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableQueue$$Queue()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableStack$$Stack()));
       $$assert$$assert($$$Immutable$Immutable$$isImmutable($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
@@ -5437,7 +5510,7 @@
       $$assert$$assert($$iter$$isIterable("foo"));
       $$assert$$assert($$iter$$isIterable($$ImmutableDict$$Dict()));
       $$assert$$assert($$iter$$isIterable($$ImmutableSet$$Set()));
-      $$assert$$assert($$iter$$isIterable($$ImmutableList$$List()));
+      $$assert$$assert($$iter$$isIterable($$$Immutable$ImmutableList$$List()));
       $$assert$$assert($$iter$$isIterable($$ImmutableQueue$$Queue()));
       $$assert$$assert($$iter$$isIterable($$ImmutableStack$$Stack()));
       $$assert$$assert($$iter$$isIterable($$ImmutableDict$$SortedDict($$Sorted$$simpleSort)));
@@ -5481,7 +5554,7 @@
 
 
       var x = {
-        foo: [$$ImmutableTuple$$Tuple([$$ImmutableSet$$Set([1]), 2, 3]), $$ImmutableRecord$$Record({ foo: $$ImmutableList$$List([1]), bar: 2 })]
+        foo: [$$ImmutableTuple$$Tuple([$$ImmutableSet$$Set([1]), 2, 3]), $$ImmutableRecord$$Record({ foo: $$$Immutable$ImmutableList$$List([1]), bar: 2 })]
       };
       $$assert$$assert($$toJS$$toJS(x) !== x);
       $$assert$$assert(src$Test$Test$$deepEqual($$toJS$$toJS(x), { foo: [[[1], 2, 3], { foo: [1], bar: 2 }] }));
@@ -5849,7 +5922,7 @@
       $$assert$$assert(src$Test$Test$$deepEqual(iterator.next(), { done: true }));
 
 
-      var iterator = $$iter$$toIterator($$ImmutableList$$List([1, 2, 3]));
+      var iterator = $$iter$$toIterator($$$Immutable$ImmutableList$$List([1, 2, 3]));
       $$assert$$assert(typeof iterator.next === "function");
       $$assert$$assert(src$Test$Test$$deepEqual(iterator.next(), { value: 1 }));
       $$assert$$assert(src$Test$Test$$deepEqual(iterator.next(), { value: 2 }));
@@ -6028,7 +6101,7 @@
       var x = mapper($$iter$$zip([[1, 2, 3], [4, 5, 6], [7, 8, 9]]));
       $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
 
-      var x = mapper($$iter$$zip($$ImmutableList$$List([$$ImmutableList$$List([1, 2, 3]), $$ImmutableList$$List([4, 5, 6]), $$ImmutableList$$List([7, 8, 9])])));
+      var x = mapper($$iter$$zip($$$Immutable$ImmutableList$$List([$$$Immutable$ImmutableList$$List([1, 2, 3]), $$$Immutable$ImmutableList$$List([4, 5, 6]), $$$Immutable$ImmutableList$$List([7, 8, 9])])));
       $$assert$$assert(src$Test$Test$$deepEqual($$iter$$toArray(x), [[1, 4, 7], [2, 5, 8], [3, 6, 9]]));
 
       var x = mapper($$iter$$zip($$ImmutableTuple$$Tuple([$$ImmutableTuple$$Tuple([1, 2, 3]), $$ImmutableTuple$$Tuple([4, 5, 6]), $$ImmutableTuple$$Tuple([7, 8, 9])])));
