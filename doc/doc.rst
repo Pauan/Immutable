@@ -60,7 +60,8 @@ However, there are some exceptions:
 
 * ``Integer`` is a JavaScript ``Number`` that is restricted to be an integer.
 
-* ``Void`` is the JavaScript value :js:`undefined`.
+* ``Void`` is the JavaScript value :js:`undefined`. It's used to mean
+  the lack of a meaningful value.
 
 Table of Contents
 =================
@@ -115,7 +116,21 @@ Table of Contents
 
   * Ref_
 
+    * `Ref get`_
+    * `Ref modify`_
+    * `Ref set`_
+
   * Set_
+
+    * `Set add`_
+    * `Set disjoint`_
+    * `Set has`_
+    * `Set intersect`_
+    * `Set isEmpty`_
+    * `Set remove`_
+    * `Set removeAll`_
+    * `Set subtract`_
+    * `Set union`_
 
   * SortedDict_
   * SortedSet_
@@ -273,7 +288,8 @@ Table of Contents
 
     Dict([x: Object | Iterable]) -> Dict
 
-  A Dict_ is an immutable dictionary mapping keys to values.
+  A Dict_ is an immutable unordered dictionary mapping keys
+  to values.
 
   You *should not* rely upon the order of the keys in
   a Dict_. If you need a specific key order, use a
@@ -389,9 +405,9 @@ Table of Contents
 
   Returns :js:`true` if the Dict_ is empty.
 
-  This function runs in `O(1)` time.
-
   A Dict_ is empty if it has no keys/values in it.
+
+  This function runs in ``O(1)`` time.
 
   Examples:
 
@@ -2216,6 +2232,198 @@ Table of Contents
 
 ----
 
+.. _Ref:
+
+* ::
+
+    Ref(initial: Any, [onchange: Function]) -> Ref
+
+  A Ref_ is the only mutable data type provided by
+  this library. It holds a single value, which can be
+  anything.
+
+  The Ref_ has the initial value of ``initial``.
+
+  Whenever the Ref_ changes, the function ``onchange``
+  is called with the old value and the new value.
+
+  Because Ref_\ s are mutable, they are only treated as
+  equal_ if they are exactly the same Ref_:
+
+  ..code:: javascript
+
+    var x = Ref(0);
+    var y = Ref(0);
+
+    // false
+    equal(x, y);
+
+  Generally you will use immutable data as much as possible,
+  but occasionally it's useful to have a little bit of
+  mutability.
+
+  You will typically have a Ref_ which contains immutable
+  data. The only way to "change" the data is to change the Ref_,
+  replacing the old immutable data with new immutable data.
+
+  As an example:
+
+  .. code:: javascript
+
+      var car = Ref(Record({
+        "mph": 0
+      }));
+
+  We have a :js:`car`, but now we want to change its
+  :js:`"mph"` property:
+
+  .. code:: javascript
+
+      car.modify(function (record) {
+        return record.set("mph", 10);
+      });
+
+  The above code calls the function with the current value of
+  the Ref_ (in this case, :js:`record`), and whatever the
+  function returns is the new value for the Ref_.
+
+  In other words, we took the *current* immutable Record_, returned
+  a *new* immutable Record_ with :js:`"mph"` set to :js:`10`, and now
+  the Ref_ contains the new immutable Record_.
+
+  This is very different from JavaScript, where every property
+  is mutable.
+
+  This has three major advantages:
+
+  1) It gives fine-grained control over mutability. You can
+     have a Dict_ which is contained within a single Ref_,
+     or you can have a Dict_ where each key contains a Ref_,
+     or even a combination of the two.
+
+  2) In JavaScript, your objects could change at any time,
+     making your code difficult to understand.
+
+     But with immutability as the norm, Ref_\ s are very
+     rarely used, reducing the number of places in your code
+     where you have to worry about mutability.
+
+     In addition, although the Ref_ itself is mutable,
+     the data it contains is immutable, so if you get the
+     data out of a Ref_, you can be assured that it will
+     never change.
+
+  3) Ref_\ s provide an easy and efficient way to be notified
+     when their value changes. Although JavaScript has
+     :js:`Proxy` and :js:`Object.observe`, Ref_ provides a
+     simpler alternative.
+
+----
+
+.. _Ref get:
+
+* ::
+
+    Ref get() -> Any
+
+  Returns the current value of the Ref_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    var ref = Ref(10);
+
+    // returns 10
+    ref.get();
+
+    ref.set(20);
+
+    // returns 20
+    ref.get();
+
+----
+
+.. _Ref modify:
+
+* ::
+
+    Ref modify(fn: Function) -> Void
+
+  This function modifies the current value of the Ref_.
+
+  This mutates the Ref_, it does *not* return a new Ref_!
+
+  This will call the ``onchange`` function of the Ref_.
+
+  This function runs in ``O(1)`` time.
+
+  This function calls ``fn`` with the current value of the
+  Ref_, and whatever ``fn`` returns is used as the new value
+  for the Ref_.
+
+  Examples:
+
+  .. code:: javascript
+
+    var ref = Ref(5);
+
+    // returns 5;
+    ref.get();
+
+    ref.modify(function (x) {
+      return x + 10;
+    });
+
+    // returns 15
+    ref.get();
+
+    ref.modify(function (x) {
+      return x + 10
+    });
+
+    // returns 25
+    ref.get();
+
+----
+
+.. _Ref set:
+
+* ::
+
+    Ref set(value: Any) -> Void
+
+  This function sets the current value of the Ref_ to ``value``.
+
+  This mutates the Ref_, it does *not* return a new Ref_!
+
+  This will call the ``onchange`` function of the Ref_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    var ref = Ref(5);
+
+    // returns 5
+    ref.get();
+
+    ref.set(10);
+
+    // returns 10
+    ref.get();
+
+    ref.set(50);
+
+    // returns 50
+    ref.get();
+
+----
+
 .. _reverse:
 
 * ::
@@ -2238,6 +2446,317 @@ Table of Contents
 
     // returns [3, 2, 1]
     reverse([1, 2, 3]);
+
+----
+
+.. _Set:
+
+* ::
+
+    Set([x: Iterable]) -> Set
+
+  A Set_ is an immutable unordered sequence of values,
+  without duplicates.
+
+  The values from ``x`` will be inserted into the Set_,
+  without duplicates.
+
+  This takes ``O(log2(n) * m)`` time, unless ``x`` is already
+  a Set_, in which case it takes ``O(1)`` time.
+
+  You *should not* rely upon the order of the values in
+  a Set_. If you need a specific order, use a SortedSet_ or
+  List_ instead.
+
+  Mutable objects can be used as values, and they are treated
+  as equal_ only if they are exactly the same object:
+
+  .. code:: javascript
+
+      var obj1 = { foo: 1 };
+      var obj2 = { foo: 1 };
+
+      var set = Set([obj1, obj2]);
+
+      // returns true
+      set.has(obj1);
+
+      // returns true
+      set.has(obj2);
+
+      set = set.remove(obj1);
+
+      // returns false
+      set.has(obj1);
+
+      // returns true
+      set.has(obj2);
+
+  You can also use immutable objects (like Dict_, Set_, List_,
+  etc.) as values, and they are treated as equal_ if their
+  keys/values are equal_:
+
+  .. code:: javascript
+
+      var obj1 = Dict({ foo: 1 });
+      var obj2 = Dict({ foo: 1 });
+
+      var set = Set([obj1, obj2]);
+
+      // returns true
+      set.has(obj1);
+
+      // returns true
+      set.has(obj2);
+
+      set = set.remove(obj1);
+
+      // returns false
+      set.has(obj1);
+
+      // Returns false
+      set.has(obj2);
+
+  Because :js:`obj1` and :js:`obj2` have the same keys/values,
+  they are equal_, and so they are treated as duplicates.
+
+----
+
+.. _Set add:
+
+* ::
+
+    Set add(value: Any) -> Set
+
+  Returns a new Set_ with ``value`` added to it.
+
+  If ``value`` is already in the Set_, this function does nothing.
+
+  This does not modify the Set_, it returns a new Set_.
+
+  This function runs in ``O(log2(n))`` worst-case time.
+
+  Examples:
+
+  .. code:: javascript
+
+    var set = Set([1, 2, 3]);
+
+    // returns [1, 2, 3, 4]
+    set.add(4);
+
+    // returns [0, 1, 2, 3, 4, 5]
+    set.add(4).add(5).add(0);
+
+----
+
+.. _Set disjoint:
+
+* ::
+
+    Set disjoint(x: Iterable) -> Set
+
+  Returns a new Set_ which contains all the values in this
+  Set_, and all the values in ``x``, but *not* the values
+  which are in both this Set_ and ``x``.
+
+  This is also called the `symmetric difference <http://en.wikipedia.org/wiki/Symmetric_difference>`_ of the two Set_\ s.
+
+  This does not modify the Set_, it returns a new Set_.
+
+  This function runs in ``O(2 * log2(n) * m)`` worst-case time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [1, 4]
+    Set([1, 2, 3]).disjoint([2, 3, 4]);
+
+    // returns [1, 2, 3]
+    Set([1, 2, 3]).disjoint([]);
+
+----
+
+.. _Set has:
+
+* ::
+
+    Set has(value: Any) -> Boolean
+
+  Returns :js:`true` if ``value`` is in this Set_.
+
+  This function runs in ``O(log2(n))`` worst-case time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns false
+    Set().has(1);
+
+    // returns true
+    Set([1, 2, 3]).has(1);
+
+----
+
+.. _Set intersect:
+
+* ::
+
+    Set intersect(x: Iterable) -> Set
+
+  Returns a new Set_ which contains all the values that
+  are in both this Set_ *and* ``x``.
+
+  This is a standard `set intersection <http://en.wikipedia.org/wiki/Intersection_%28set_theory%29>`_.
+
+  This does not modify the Set_, it returns a new Set_.
+
+  This function runs in ``O(2 * log2(n) * m)`` worst-case time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [2, 3]
+    Set([1, 2, 3]).intersect([2, 3, 4]);
+
+    // returns []
+    Set([1, 2, 3]).intersect([]);
+
+----
+
+.. _Set isEmpty:
+
+* ::
+
+    Set isEmpty() -> Boolean
+
+  Returns :js:`true` if the Set_ is empty.
+
+  A Set_ is empty if it has no values in it.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns true
+    Set().isEmpty();
+
+    // returns false
+    Set([1, 2, 3]).isEmpty();
+
+----
+
+.. _Set remove:
+
+* ::
+
+    Set remove(value: Any) -> Set
+
+  Returns a new Set_ with ``value`` removed.
+
+  If ``value`` is not in the Set_, this function does nothing.
+
+  This does not modify the Set_, it returns a new Set_.
+
+  This function runs in ``O(log2(n))`` worst-case time.
+
+  Examples:
+
+  .. code:: javascript
+
+    var set = Set([1, 2, 3]);
+
+    // returns [2, 3]
+    set.remove(1);
+
+    // returns [1]
+    set.remove(2).remove(3);
+
+    // returns [1, 2, 3]
+    set.remove(4);
+
+----
+
+.. _Set removeAll:
+
+* ::
+
+    Set removeAll() -> Set
+
+  Returns a new Set_ with no values.
+
+  This does not modify the Set_, it returns a new Set_.
+
+  This function runs in ``O(1)`` time.
+
+  This function is useful because it preserves the
+  sort of a SortedSet_:
+
+  .. code:: javascript
+
+    var x = SortedSet(...);
+
+    // No values, but same sort as `x`
+    x.removeAll();
+
+----
+
+.. _Set subtract:
+
+* ::
+
+    Set subtract(x: Iterable) -> Set
+
+  Returns a new Set_ which contains all the values in
+  this Set_, but without the values in ``x``.
+
+  This is also called the `relative complement <http://en.wikipedia.org/wiki/Complement_%28set_theory%29>`_ of the two Set_\ s.
+
+  This does not modify the Set_, it returns a new Set_.
+
+  This function runs in ``O(log2(n) * m)`` worst-case time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [1]
+    Set([1, 2, 3]).subtract([2, 3, 4]);
+
+    // returns [1, 2, 3]
+    Set([1, 2, 3]).subtract([]);
+
+----
+
+.. _Set union:
+
+* ::
+
+    Set union(x: Iterable) -> Set
+
+  Returns a new Set_ which contains all the values in
+  this Set_, and also all the values in ``x``.
+
+  This is a standard `set union <http://en.wikipedia.org/wiki/Union_%28set_theory%29>`_.
+
+  This does not modify the Set_, it returns a new Set_.
+
+  This function runs in ``O(log2(n) * m)`` worst-case time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns [1, 2, 3, 4]
+    Set([1, 2, 3]).union([2, 3, 4]);
+
+    // returns [1, 2, 3]
+    Set([1, 2, 3]).union([]);
 
 ----
 
