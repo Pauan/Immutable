@@ -187,21 +187,21 @@ export function run(counter) {
         }
       });
 
-      benchmark.time("Immutable List", function () {
+      benchmark.time("Immutable List (insert)", function () {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
       });
 
-      /*benchmark.time("Immutable List (push)", function () {
+      benchmark.time("Immutable List (push)", function () {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.push(i);
         }
-      });*/
+      });
 
       /*benchmark.time("Stack (reversed Cons)", function () {
         var a = nil;
@@ -260,7 +260,7 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i, 0);
+          a = a.insert(0, i);
         }
       });
 
@@ -303,7 +303,7 @@ export function run(counter) {
 
         for (var i = 0; i < counter; ++i) {
           var pivot = Math.floor(Math.random() * a.size());
-          a = a.insert(i, pivot);
+          a = a.insert(pivot, i);
         }
       });
 
@@ -365,10 +365,22 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          a.get(-1);
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           a.get(-1);
         });
       })();
@@ -432,10 +444,22 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          a.get(0);
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           a.get(0);
         });
       })();
@@ -501,10 +525,23 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          var pivot = Math.floor(Math.random() * a.size());
+          a.get(pivot);
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           var pivot = Math.floor(Math.random() * a.size());
           a.get(pivot);
         });
@@ -566,10 +603,25 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          var b = a;
+          for (var i = 0; i < counter; ++i) {
+            b = b.remove();
+          }
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           var b = a;
           for (var i = 0; i < counter; ++i) {
             b = b.remove();
@@ -635,10 +687,25 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          var b = a;
+          for (var i = 0; i < counter; ++i) {
+            b = b.remove(0);
+          }
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           var b = a;
           for (var i = 0; i < counter; ++i) {
             b = b.remove(0);
@@ -691,10 +758,26 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          var b = a;
+          for (var i = 0; i < counter; ++i) {
+            var pivot = Math.floor(Math.random() * b.size());
+            b = b.remove(pivot);
+          }
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           var b = a;
           for (var i = 0; i < counter; ++i) {
             var pivot = Math.floor(Math.random() * b.size());
@@ -752,10 +835,24 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          a.modify(-1, function () {
+            return -50;
+          });
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           a.modify(-1, function () {
             return -50;
           });
@@ -811,10 +908,24 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          a.modify(0, function () {
+            return -50;
+          });
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           a.modify(0, function () {
             return -50;
           });
@@ -873,10 +984,25 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          var pivot = Math.floor(Math.random() * a.size());
+          a.modify(pivot, function () {
+            return -50;
+          });
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           var pivot = Math.floor(Math.random() * a.size());
           a.modify(pivot, function () {
             return -50;
@@ -941,10 +1067,22 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          a.concat(a);
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           a.concat(a);
         });
       })();
@@ -1006,10 +1144,22 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          a.slice(1, 2);
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           a.slice(1, 2);
         });
       })();
@@ -1071,10 +1221,22 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          a.slice(1, Math.floor(a.size() / 2));
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           a.slice(1, Math.floor(a.size() / 2));
         });
       })();
@@ -1136,10 +1298,22 @@ export function run(counter) {
         var a = List();
 
         for (var i = 0; i < counter; ++i) {
-          a = a.insert(i);
+          a = a.insert(-1, i);
         }
 
-        benchmark.time("Immutable List", function () {
+        benchmark.time("Immutable List (insert)", function () {
+          a.slice(1);
+        });
+      })();
+
+      ;(function () {
+        var a = List();
+
+        for (var i = 0; i < counter; ++i) {
+          a = a.push(i);
+        }
+
+        benchmark.time("Immutable List (push)", function () {
           a.slice(1);
         });
       })();

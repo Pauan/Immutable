@@ -331,9 +331,9 @@ ImmutableList.prototype.get = function (index, def) {
   }
 };
 
-ImmutableList.prototype.insert = function (value, index) {
-  if (arguments.length === 1) {
-    index = -1;
+ImmutableList.prototype.insert = function (index, value) {
+  if (arguments.length !== 2) {
+    throw new Error("Expected 2 arguments but got " + arguments.length);
   }
 
   var len = this.size();
@@ -549,7 +549,7 @@ ImmutableList.prototype.concat = function (right) {
 
   } else {
     return foldl(right, this, function (self, x) {
-      return self.insert(x);
+      return self.push(x);
     });
   }
 };

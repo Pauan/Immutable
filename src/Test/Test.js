@@ -1062,7 +1062,7 @@ context("Set", function () {
 
 context("List", function () {
   var empty_list = List();
-  var five_list  = List().insert(1).insert(2).insert(3).insert(4).insert(5);
+  var five_list  = List().push(1).push(2).push(3).push(4).push(5);
 
   test("isList", function () {
     assert(!isList(Dict()));
@@ -1137,14 +1137,18 @@ context("List", function () {
 
   test("insert", function () {
     assert_raises(function () {
-      empty_list.insert(5, 1);
+      five_list.insert(2);
+    }, "u");
+
+    assert_raises(function () {
+      empty_list.insert(1, 5);
     }, "Index 1 is not valid");
 
     assert_raises(function () {
-      empty_list.insert(5, -2);
+      empty_list.insert(-2, 5);
     }, "Index -1 is not valid");
 
-    var x = empty_list.insert(10);
+    var x = empty_list.insert(-1, 10);
 
     verify_list(empty_list, []);
     verify_list(x, [10]);
@@ -1154,23 +1158,24 @@ context("List", function () {
     assert(x.get(0) === 10);
     assert(x.get(-1) === 10);
 
-    verify_list(five_list.insert(10), [1, 2, 3, 4, 5, 10]);
-    verify_list(five_list.insert(10).insert(20), [1, 2, 3, 4, 5, 10, 20]);
-    verify_list(five_list.insert(10, 0), [10, 1, 2, 3, 4, 5]);
-    verify_list(five_list.insert(10, 1), [1, 10, 2, 3, 4, 5]);
-    verify_list(five_list.insert(10, -1), [1, 2, 3, 4, 5, 10]);
-    verify_list(five_list.insert(10, -2), [1, 2, 3, 4, 10, 5]);
+    verify_list(five_list.insert(-1, 10), [1, 2, 3, 4, 5, 10]);
+    verify_list(five_list.insert(-1, 10).insert(-1, 20), [1, 2, 3, 4, 5, 10, 20]);
+    verify_list(five_list.insert(0, 10), [10, 1, 2, 3, 4, 5]);
+    verify_list(five_list.insert(1, 10), [1, 10, 2, 3, 4, 5]);
+    verify_list(five_list.insert(-1, 10), [1, 2, 3, 4, 5, 10]);
+    verify_list(five_list.insert(-2, 10), [1, 2, 3, 4, 10, 5]);
     verify_list(five_list, [1, 2, 3, 4, 5]);
 
-    verify_list(List().insert(5, 0).insert(4, 0).insert(3, 0).insert(2, 0).insert(1, 0),
+    verify_list(List().insert(0, 5).insert(0, 4).insert(0, 3).insert(0, 2).insert(0, 1),
                 [1, 2, 3, 4, 5]);
   });
 
-  test("remove", function () {
-    assert_raises(function () {
-      empty_list.remove();
-    }, "Index -1 is not valid");
+  test("push", function () {
+    verify_list(empty_list.push(5), [5]);
+    verify_list(five_list.push(5).push(6).push(0), [1, 2, 3, 4, 5, 5, 0]);
+  });
 
+  test("remove", function () {
     assert_raises(function () {
       empty_list.remove(0);
     }, "Index 0 is not valid");
@@ -1179,9 +1184,16 @@ context("List", function () {
       empty_list.remove(-1);
     }, "Index -1 is not valid");
 
-    verify_list(five_list.remove(), [1, 2, 3, 4]);
-    verify_list(five_list.remove().remove(), [1, 2, 3]);
+    assert_raises(function () {
+      empty_list.remove();
+    }, "u");
+
+    assert_raises(function () {
+      five_list.remove()
+    }, "u");
+
     verify_list(five_list.remove(-1), [1, 2, 3, 4]);
+    verify_list(five_list.remove(-1).remove(-1), [1, 2, 3]);
     verify_list(five_list.remove(-2), [1, 2, 3, 5]);
     verify_list(five_list.remove(0), [2, 3, 4, 5]);
     verify_list(five_list.remove(1), [1, 3, 4, 5]);
@@ -1248,9 +1260,17 @@ context("List", function () {
       five_list.slice(10, 10);
     }, "Index 10 is not valid");
 
-    verify_list(five_list.slice(null, 5), [1, 2, 3, 4, 5]);
-    verify_list(five_list.slice(0, null), [1, 2, 3, 4, 5]);
-    verify_list(five_list.slice(null, null), [1, 2, 3, 4, 5]);
+    assert_raises(function () {
+      five_list.slice(null, 5);
+    }, "u");
+
+    assert_raises(function () {
+      five_list.slice(0, null)
+    }, "u");
+
+    assert_raises(function () {
+      five_list.slice(null, null)
+    }, "u");
 
     verify_list(five_list.slice(), [1, 2, 3, 4, 5]);
     verify_list(five_list.slice(0), [1, 2, 3, 4, 5]);
@@ -1269,7 +1289,7 @@ context("List", function () {
 
     var len = 125 * 2;
     for (var i = 0; i < len; ++i) {
-      double_list = double_list.insert(i);
+      double_list = double_list.push(i);
       double_array.push(i);
     }
 
@@ -1292,7 +1312,7 @@ context("List", function () {
 
     var len = 125 * 1000;
     for (var i = 0; i < len; ++i) {
-      big_list = big_list.insert(i);
+      big_list = big_list.push(i);
       big_array.push(i);
     }
 
@@ -1406,7 +1426,7 @@ context("List", function () {
     random_list(200).forEach(function (x) {
       var index = random_int(o.size());
 
-      o = o.insert(x, index);
+      o = o.insert(index, x);
       a.splice(index, 0, x);
 
       verify_list(o, a);
@@ -1445,14 +1465,14 @@ context("List", function () {
 
       a.slice(0, pivot).forEach(function (x) {
         var index = random_int(il.size());
-        il = il.insert(x, index);
+        il = il.insert(index, x);
         al.splice(index, 0, x);
         verify_list(il, al);
       });
 
       a.slice(pivot).forEach(function (x) {
         var index = random_int(ir.size());
-        ir = ir.insert(x, index);
+        ir = ir.insert(index, x);
         ar.splice(index, 0, x);
         verify_list(ir, ar);
       });

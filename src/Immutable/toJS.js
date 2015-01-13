@@ -13,7 +13,7 @@ export function fromJS(x) {
     var out = List();
 
     for (var i = 0, l = x.length; i < l; ++i) {
-      out = out.insert(fromJS(x[i]));
+      out = out.push(fromJS(x[i]));
     }
 
     return out;
