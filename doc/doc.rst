@@ -67,7 +67,22 @@ Table of Contents
 
   * Iterable_
   * Iterator_
+
   * List_
+
+    * `List concat`_
+    * `List get`_
+    * `List has`_
+    * `List insert`_
+    * `List isEmpty`_
+    * `List modify`_
+    * `List push`_
+    * `List remove`_
+    * `List removeAll`_
+    * `List set`_
+    * `List size`_
+    * `List slice`_
+
   * Queue_
 
   * Record_
@@ -1240,6 +1255,424 @@ Table of Contents
 
 ----
 
+.. _List:
+
+* ::
+
+    List([x: Iterable]) -> List
+
+  A List_ is an immutable ordered sequence of values.
+
+  The values from ``x`` will be inserted into
+  the List_, in the same order as ``x``.
+
+  This takes ``O(n)`` time, unless ``x`` is already a
+  List_, in which case it takes ``O(1)`` time.
+
+  Duplicate values are allowed, and duplicates don't
+  have to be in the same order.
+
+  The values in the List_ can have whatever order you
+  want, but they are not sorted. If you want the values
+  to be sorted, use a SortedSet_ instead.
+
+----
+
+.. _List concat:
+
+* ::
+
+    List concat(x: Iterable) -> List
+
+  Returns a new List_ with all the values of this List_
+  followed by all the values of ``x``.
+
+  If ``x`` is a List_, this function runs in
+  ``O(125 + log2(n / 125) + log2(min(n / 125, m / 125)))``
+  worst-case time.
+
+  Otherwise this function runs in ``O(m)`` time.
+
+  This does not modify the List_, it returns a new List_.
+
+  Examples:
+
+  .. code:: javascript
+
+    var list = List([1, 2, 3]);
+
+    // returns [1, 2, 3, 4, 5, 6, 0]
+    list.concat([4, 5, 6, 0]);
+
+----
+
+.. _List get:
+
+* ::
+
+    List get(index: Integer, [default: Any]) -> Any
+
+  Returns the value in the List_ at ``index``.
+
+  If ``index`` is not in the List_:
+
+  * If ``default`` is provided, it is returned.
+  * If ``default`` is not provided, an error is thrown.
+
+  This function runs in ``O(log2(n / 125))``
+  worst-case time.
+
+  If ``index`` is negative, it starts counting from
+  the end of the List_, so :js:`-1` is the last value
+  in the List_, :js:`-2` is the second-from-last value,
+  etc.
+
+  Examples:
+
+  .. code:: javascript
+
+    var list = List([50, 100, 150]);
+
+    // returns 50
+    list.get(0);
+
+    // returns 150
+    list.get(2);
+
+    // throws an error
+    list.get(3);
+
+    // returns -1
+    list.get(3, -1);
+
+    // returns 150
+    list.get(-1);
+
+    // returns 100
+    list.get(-2);
+
+----
+
+.. _List has:
+
+* ::
+
+    List has(index: Integer) -> Boolean
+
+  Returns :js:`true` if ``index`` is in the List_.
+
+  If ``index`` is negative, it starts counting from
+  the end of the List_, so :js:`-1` is the last index of
+  the List_, :js:`-2` is the second-from-last index, etc.
+
+  This function runs in ``O(1)`` time.
+
+----
+
+.. _List insert:
+
+* ::
+
+    List insert(index: Integer, value: Any) -> List
+
+  Returns a new List_ with ``value`` inserted at ``index``.
+
+  This function runs in ``O(log2(n / 125) + 125)``
+  worst-case time.
+
+  If you just want to insert at the *end* of a List_,
+  it's much faster to use `List push`_ instead.
+
+  This does not modify the List_, it returns a new List_.
+
+  If ``index`` is negative, it starts counting from
+  the end of the List_, so :js:`-1` inserts ``value``
+  as the last value, :js:`-2` inserts ``value`` as the
+  second-from-last value, etc.
+
+  Examples:
+
+  .. code:: javascript
+
+    var list = List([1, 2, 3]);
+
+    // returns [50, 1, 2, 3]
+    list.insert(0, 50);
+
+    // returns [1, 2, 3, 50]
+    list.insert(3, 50);
+
+    // throws an error
+    list.insert(4, 50);
+
+    // returns [1, 2, 3, 50]
+    list.insert(-1, 50);
+
+    // returns [1, 2, 50, 3]
+    list.insert(-2, 50);
+
+----
+
+.. _List isEmpty:
+
+* ::
+
+    List isEmpty() -> Boolean
+
+  Returns :js:`true` if the List_ is empty.
+
+  A List_ is empty if it has no values in it.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns true
+    List().isEmpty();
+
+    // returns false
+    List([1, 2, 3]).isEmpty();
+
+----
+
+.. _List modify:
+
+* ::
+
+    List modify(index: Integer, fn: Function) -> List
+
+  Returns a new List_ with the value at ``index`` modified by ``fn``.
+
+  This function runs in ``O(log2(n / 125) + 125)`` worst-case time.
+
+  This does not modify the List_, it returns a new List_.
+
+  This function calls ``fn`` with the value at ``index``, and
+  whatever ``fn`` returns will be used as the new value at
+  ``index``.
+
+  If ``index`` is negative, it starts counting from
+  the end of the List_, so :js:`-1` modifies the last value,
+  :js:`-2` modifies the second-from-last value, etc.
+
+  If ``index`` is not in the List_, an error is thrown.
+
+  Examples:
+
+  .. code:: javascript
+
+      var list = List([1, 2, 3]);
+
+      function plus10(x) {
+        return x + 10;
+      }
+
+      // returns [11, 2, 3]
+      list.modify(0, plus10);
+
+      // returns [1, 12, 3]
+      list.modify(1, plus10);
+
+      // returns [1, 2, 13]
+      list.modify(-1, plus10);
+
+----
+
+.. _List push:
+
+* ::
+
+    List push(value: Any) -> List
+
+  Returns a new List_ with ``value`` inserted at the end of
+  this List_.
+
+  If you want to insert at arbitrary indexes, use
+  `List insert`_ instead.
+
+  This function runs in amortized ``O(1)`` time.
+
+  This does not modify the List_, it returns a new List_.
+
+  Examples:
+
+  .. code:: javascript
+
+    var list = List([1, 2, 3]);
+
+    // returns [1, 2, 3, 4]
+    list.push(4);
+
+    // returns [1, 2, 3, 4, 5, 0]
+    list.push(4).push(5).push(0);
+
+----
+
+.. _List remove:
+
+* ::
+
+    List remove(index: Integer) -> List
+
+  Returns a new List_ with the value at ``index`` removed.
+
+  This function runs in ``O(log2(n / 125) + 125)``
+  worst-case time.
+
+  This does not modify the List_, it returns a new List_.
+
+  If ``index`` is negative, it starts counting from
+  the end of the List_, so :js:`-1` removes the last value,
+  :js:`-2` removes the second-from-last value, etc.
+
+  If ``index`` is not in the List_, an error is thrown.
+
+  Examples:
+
+  .. code:: javascript
+
+    var list = List([50, 100, 150]);
+
+    // returns [100, 150]
+    list.remove(0);
+
+    // returns [50, 100]
+    list.remove(2);
+
+    // throws an error
+    list.remove(3);
+
+    // returns [50, 100]
+    list.remove(-1);
+
+    // returns [50, 150]
+    list.remove(-2);
+
+----
+
+.. _List removeAll:
+
+* ::
+
+    List removeAll() -> List
+
+  Returns a new List_ with no values.
+
+  This function runs in ``O(1)`` time.
+
+  This does not modify the List_, it returns a new List_.
+
+----
+
+.. _List set:
+
+* ::
+
+    List set(index: Integer, value: Any) -> List
+
+  Returns a new List_ with the value at ``index`` set to ``value``.
+
+  This function runs in ``O(log2(n / 125) + 125)`` worst-case time.
+
+  This does not modify the List_, it returns a new List_.
+
+  If ``index`` is negative, it starts counting from
+  the end of the List_, so :js:`-1` sets the last value,
+  :js:`-2` sets the second-from-last value, etc.
+
+  If ``index`` is not in the List_, an error is thrown.
+
+  Examples:
+
+  .. code:: javascript
+
+    var list = List([1, 2, 3]);
+
+    // returns [50, 2, 3]
+    list.set(0, 50);
+
+    // returns [1, 50, 3]
+    list.set(1, 50);
+
+    // throws an error
+    list.set(3, 50);
+
+    // returns [1, 2, 50]
+    list.set(-1, 50);
+
+    // returns [1, 50, 3]
+    list.set(-2, 50);
+
+----
+
+.. _List size:
+
+* ::
+
+    List size() -> Integer
+
+  Returns the number of values in the List_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // returns 0
+    List().size();
+
+    // returns 3
+    List([50, 100, 150]).size();
+
+----
+
+.. _List slice:
+
+* ::
+
+    List slice([from: Integer], [to: Integer]) -> List
+
+  Returns a new List_ with all the values of this List_
+  between ``from`` (included) and ``to`` (excluded).
+
+  If ``from`` is not provided, it defaults to the start of the List_.
+
+  If ``to`` is not provided, it defaults to the end of the List_.
+
+  If ``from`` or ``to`` is negative, it starts counting from
+  the end of the List_, so :js:`-1` means the last value of
+  the List_, :js:`-2` means the second-from-last value, etc.
+
+  If ``from`` is not in the List_, an error is thrown.
+
+  If ``from`` is greater than ``to``, an error is thrown.
+
+  This function runs in ``O(log2(n / 125) + 249 + (2 * (m / 125)))``
+  worst-case time.
+
+  This does not modify the List_, it returns a new List_.
+
+  Examples:
+
+  .. code:: javascript
+
+    var list = List([50, 100, 150, 200]);
+
+    list.slice()       // returns [50, 100, 150, 200]
+    list.slice(1)      // returns [100, 150, 200]
+    list.slice(1, 3)   // returns [100, 150]
+    list.slice(4)      // throws an error
+    list.slice(3, 4)   // returns [200]
+    list.slice(3, 5)   // throws an error
+    list.slice(-1)     // returns [200]
+    list.slice(-2)     // returns [150, 200]
+    list.slice(-2, -1) // returns [150]
+
+----
+
 .. _map:
 
 * ::
@@ -2025,20 +2458,19 @@ Table of Contents
 
     UUIDTag(uuid: String) -> Tag
 
-  Returns a Tag_ which uses ``uuid`` for equality.
+  Returns a Tag_ which uses ``uuid`` for equality. ``uuid``
+  must be a lower-case `UUID <http://en.wikipedia.org/wiki/Universally_unique_identifier>`_.
 
   Using Tag_ is very easy and convenient, but it
-  has a major limitation: you can't convert a Tag_
-  to/from JSON.
+  has a major limitation: you can't use a Tag_ with toJSON_
+  or fromJSON_.
 
-  The reason for this is: imagine a server and client that
-  both use the same library. The library uses some Tag_\ s.
-  The server sends some data to the client (using toJSON_),
-  which the client then receives (using fromJSON_).
-
-  Because both the client and server are using the same
-  library, you would expect the Tag_\ s to be the same, but
-  they're not!
+  The reason is: imagine a server and client that both use
+  the same library. The library uses some Tag_\ s. The server
+  sends some data to the client (using toJSON_), which the
+  client then receives (using fromJSON_). Because both the
+  client and server are using the same library, you would
+  expect the Tag_\ s to be the same, but they're not!
 
   Another example: imagine some data that uses Tag_\ s. The
   data is saved to a database using toJSON_. The program
