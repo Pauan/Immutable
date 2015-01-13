@@ -9,6 +9,7 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
          isIterable, any, all, find, partition, range, take, indexOf,
          toIterator, Iterable } from "../Immutable/Immutable";
+import { array_limit } from "../Immutable/ImmutableList";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
 
@@ -256,7 +257,7 @@ function verify_set(tree, array) {
   return tree;
 }
 
-function verify_list(tree, array) {
+function verify_list1(tree, array, strict) {
   assert(isList(tree));
 
   function loop(node) {
@@ -269,7 +270,15 @@ function verify_list(tree, array) {
       var diff = left.depth - right.depth;
       assert(diff === -1 || diff === 0 || diff === 1);
 
-      assert(node.array.length <= 125);
+      assert(node.array.length <= array_limit);
+
+      if (strict && left !== nil) {
+        assert(node.array.length + left.array.length > array_limit);
+      }
+
+      if (strict && right !== nil) {
+        assert(node.array.length + right.array.length > array_limit);
+      }
 
       assert(node.size === left.size + right.size + node.array.length);
       loop(left);
@@ -286,11 +295,19 @@ function verify_list(tree, array) {
   }
 
   assert(count === tree.tail_size);
-  assert(tree.tail_size <= 125);
+  assert(tree.tail_size <= array_limit);
 
   assert(deepEqual(toJS(tree), array));
 
   return tree;
+}
+
+function verify_list_loose(tree, array) {
+  return verify_list1(tree, array, false);
+}
+
+function verify_list(tree, array) {
+  return verify_list1(tree, array, true);
 }
 
 function verify_tuple(tuple, array) {
@@ -1136,6 +1153,9 @@ context("List", function () {
   });
 
   test("insert", function () {
+    verify_list(List().insert(0, 5).insert(0, 10).insert(0, 15).push(20).push(25).insert(-2, 30),
+                [15, 10, 5, 20, 30, 25]);
+
     assert_raises(function () {
       five_list.insert(2);
     }, "Expected 2 arguments but got 1");
@@ -1176,6 +1196,9 @@ context("List", function () {
   });
 
   test("remove", function () {
+    verify_list(List().insert(0, 5).insert(0, 10).insert(0, 15).push(20).push(25).remove(-2),
+                [15, 10, 5, 25]);
+
     assert_raises(function () {
       empty_list.remove(0);
     }, "Index 0 is not valid");
@@ -1446,7 +1469,7 @@ context("List", function () {
       var index = random_int(o.size());
       o = o.remove(index);
       a.splice(index, 1);
-      verify_list(o, a);
+      verify_list_loose(o, a);
     }
 
     assert(o.isEmpty());
@@ -1477,8 +1500,8 @@ context("List", function () {
         verify_list(ir, ar);
       });
 
-      verify_list(il.concat(ir), al.concat(ar));
-      verify_list(ir.concat(il), ar.concat(al));
+      verify_list_loose(il.concat(ir), al.concat(ar));
+      verify_list_loose(ir.concat(il), ar.concat(al));
     }
 
     test_concat(0);

@@ -13,7 +13,7 @@ import { Cons, iter_cons } from "./Cons";
 
 
 // It's faster to use arrays for small lists
-var array_limit = 125;
+export var array_limit = 125;
 
 var ceiling = Math.ceil;
 var floor   = Math.floor;
@@ -154,8 +154,12 @@ function nth_insert(node, index, value) {
           var aright = array.slice(pivot);
 
           if (left.depth < right.depth) {
+            // TODO unit test for this
+            // TODO insert_array_max ?
             return new ArrayNode(insert_max(left, new ArrayNode(nil, nil, aleft)), right, aright);
           } else {
+            // TODO unit test for this
+            // TODO insert_array_min ?
             return new ArrayNode(left, insert_min(right, new ArrayNode(nil, nil, aright)), aleft);
           }
 
@@ -266,6 +270,22 @@ function nth_slice(slices, node, from, to) {
   }
 }
 
+function insert_array_max(node, new_array) {
+  if (node === nil) {
+    return new ArrayNode(nil, nil, new_array);
+  } else {
+    var left  = node.left;
+    var right = node.right;
+    var array = node.array;
+    if (right === nil && array.length + new_array.length <= array_limit) {
+      return new ArrayNode(left, right, array.concat(new_array));
+    } else {
+      // TODO do we need to use balanced_node ?
+      return balanced_node(node, left, insert_array_max(right, new_array));
+    }
+  }
+}
+
 
 export function ImmutableList(root, tail, tail_size) {
   this.root = root;
@@ -342,32 +362,27 @@ ImmutableList.prototype.insert = function (index, value) {
     index += (len + 1);
   }
 
-  var root      = this.root;
-  var tail      = this.tail;
-  var tail_size = this.tail_size;
   if (index === len) {
-    if (tail_size === array_limit) {
-      var node = insert_max(root, new ArrayNode(nil, nil, stack_to_array(tail, tail_size)));
-      return new ImmutableList(node, new Cons(value, nil), 1);
-
-    } else {
-      return new ImmutableList(root, new Cons(value, tail), tail_size + 1);
-    }
-
-  } else if (nth_has(index, len)) {
-    var size = root.size;
-    // TODO should this be <= ?
-    if (index < size) {
-      return new ImmutableList(nth_insert(root, index, value), tail, tail_size);
-
-    } else {
-      var array = array_insert(stack_to_array(tail, tail_size), index - size, value);
-      var node  = insert_max(root, new ArrayNode(nil, nil, array));
-      return new ImmutableList(node, nil, 0);
-    }
+    return this.push(value);
 
   } else {
-    throw new Error("Index " + index + " is not valid");
+    var root      = this.root;
+    var tail      = this.tail;
+    var tail_size = this.tail_size;
+
+    if (nth_has(index, len)) {
+      var size = root.size;
+      if (index <= size) {
+        return new ImmutableList(nth_insert(root, index, value), tail, tail_size);
+
+      } else {
+        var array = array_insert(stack_to_array(tail, tail_size), index - size, value);
+        return new ImmutableList(insert_array_max(root, array), nil, 0);
+      }
+
+    } else {
+      throw new Error("Index " + index + " is not valid");
+    }
   }
 };
 
@@ -377,7 +392,7 @@ ImmutableList.prototype.push = function (value) {
   var tail_size = this.tail_size;
 
   if (tail_size === array_limit) {
-    var node = insert_max(root, new ArrayNode(nil, nil, stack_to_array(tail, tail_size)));
+    var node = insert_array_max(root, stack_to_array(tail, tail_size));
     return new ImmutableList(node, new Cons(value, nil), 1);
   } else {
     return new ImmutableList(root, new Cons(value, tail), tail_size + 1);
@@ -409,8 +424,7 @@ ImmutableList.prototype.remove = function (index) {
 
     } else {
       var array = array_remove(stack_to_array(tail, tail_size), index - size);
-      var node  = insert_max(root, new ArrayNode(nil, nil, array));
-      return new ImmutableList(node, nil, 0);
+      return new ImmutableList(insert_array_max(root, array), nil, 0);
     }
 
   } else {
@@ -453,8 +467,7 @@ ImmutableList.prototype.modify = function (index, f) {
       if (array === stack) {
         return this;
       } else {
-        var node = insert_max(root, new ArrayNode(nil, nil, array));
-        return new ImmutableList(node, nil, 0);
+        return new ImmutableList(insert_array_max(root, array), nil, 0);
       }
     }
 
@@ -547,7 +560,7 @@ ImmutableList.prototype.concat = function (right) {
 
     } else {
       if (ltail !== nil) {
-        lroot = insert_max(lroot, new ArrayNode(nil, nil, stack_to_array(ltail, this.tail_size)));
+        lroot = insert_array_max(lroot, stack_to_array(ltail, this.tail_size));
       }
 
       var node = concat(lroot, rroot);
