@@ -2377,30 +2377,80 @@ context("Ref", function () {
     ref1.set(50);
     assert(ref1.get() === 50);
 
-    var ran = false;
+    var ran1 = false;
 
     var x = Ref(5, function (before, after) {
+      assert(ran1 === false);
       assert(before === 5);
       assert(after === 10);
-      ran = true;
+      ran1 = true;
+      return after + 1;
     });
+
+    assert(x.get() === 5);
+    assert(ran1 === false);
 
     x.set(10);
 
-    assert(x.get() === 10);
-    assert(ran === true);
+    assert(x.get() === 11);
+    assert(ran1 === true);
 
 
-    var ran = false;
+    var ran2 = false;
 
-    var x = Ref(5, function () {
-      ran = true;
+    var x = Ref(5, function (before, after) {
+      assert(ran2 === false);
+      ran2 = true;
+      return before;
     });
+
+    assert(x.get() === 5);
+    assert(ran2 === false);
 
     x.set(5);
 
     assert(x.get() === 5);
-    assert(ran === false);
+    assert(ran2 === true);
+
+
+    var ran3 = false;
+    var ran4 = false;
+
+    var x = Ref(5, function (before, after) {
+      assert(ran4 === false);
+
+      if (ran3 === false) {
+        assert(x.get() === 5);
+        assert(before === 5);
+        assert(after === 10);
+
+        ran3 = true;
+
+        x.set(20);
+
+        assert(x.get() === 25);
+        assert(ran4 === true);
+        return x.get();
+
+      } else {
+        assert(x.get() === 5);
+        assert(before === 5);
+        assert(after === 20);
+
+        ran4 = true;
+        return after + 5;
+      }
+    });
+
+    assert(x.get() === 5);
+    assert(ran3 === false);
+    assert(ran4 === false);
+
+    x.set(10);
+
+    assert(x.get() === 25);
+    assert(ran3 === true);
+    assert(ran4 === true);
   });
 
   test("modify", function () {
@@ -2408,10 +2458,16 @@ context("Ref", function () {
     var ran2 = false;
 
     var x = Ref(5, function (before, after) {
+      assert(ran1 === false);
       assert(before === 5);
       assert(after === 10);
       ran1 = true;
+      return after + 1;
     });
+
+    assert(x.get() === 5);
+    assert(ran1 === false);
+    assert(ran2 === false);
 
     x.modify(function (x) {
       assert(x === 5);
@@ -2419,27 +2475,35 @@ context("Ref", function () {
       return 10;
     });
 
-    assert(x.get() === 10);
+    assert(x.get() === 11);
     assert(ran1 === true);
     assert(ran2 === true);
 
 
-    var ran1 = false;
-    var ran2 = false;
+    var ran3 = false;
+    var ran4 = false;
 
-    var x = Ref(5, function () {
-      ran1 = true;
+    var x = Ref(5, function (before, after) {
+      assert(ran3 === false);
+      assert(before === 5);
+      assert(after === 5);
+      ran3 = true;
+      return after;
     });
+
+    assert(x.get() === 5);
+    assert(ran3 === false);
+    assert(ran4 === false);
 
     x.modify(function (x) {
       assert(x === 5);
-      ran2 = true;
+      ran4 = true;
       return 5;
     });
 
     assert(x.get() === 5);
-    assert(ran1 === false);
-    assert(ran2 === true);
+    assert(ran3 === true);
+    assert(ran4 === true);
   });
 
   test("equal", function () {
@@ -2790,7 +2854,7 @@ test("toJSON", function () {
 
   assert_raises(function () {
     toJSON(Ref(5));
-  }, "Cannot convert to JSON: (Ref 16)");
+  }, "Cannot convert to JSON: (Ref 17)");
 
 
   var x = {};
@@ -2884,7 +2948,7 @@ test("fromJSON", function () {
 
   assert_raises(function () {
     fromJSON(Ref(5));
-  }, "Cannot convert from JSON: (Ref 17)");
+  }, "Cannot convert from JSON: (Ref 18)");
 
 
   var x = toJSON({

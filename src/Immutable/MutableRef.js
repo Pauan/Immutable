@@ -21,12 +21,12 @@ MutableRef.prototype.get = function () {
 };
 
 MutableRef.prototype.set = function (value) {
-  var old = this._value;
-  if (value !== old) {
+  var old      = this._value;
+  var onchange = this._onchange;
+  if (onchange != null) {
+    this._value = onchange(old, value);
+  } else {
     this._value = value;
-    if (this._onchange != null) {
-      this._onchange(old, value);
-    }
   }
 };
 

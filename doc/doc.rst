@@ -2246,6 +2246,30 @@ Table of Contents
 
   Whenever the Ref_ changes, the function ``onchange``
   is called with the old value and the new value.
+  Whatever the ``onchange`` function returns becomes
+  the new value:
+
+  .. code:: javascript
+
+      var ref = Ref(5, function (before, after) {
+        // Whatever the `onchange` function returns becomes the new value
+        return before + after + 50;
+      });
+
+      // The `onchange` function is called
+      ref.set(5);
+
+      // returns 60
+      ref.get();
+
+      // The `onchange` function is called
+      ref.set(10);
+
+      // returns 120
+      ref.get();
+
+  This allows the ``onchange`` function to do validation,
+  returning the old value, or modifying the value.
 
   Because Ref_\ s are mutable, they are only treated as
   equal_ if they are exactly the same Ref_:

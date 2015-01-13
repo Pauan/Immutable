@@ -2796,12 +2796,12 @@
     };
 
     $$Immutable$MutableRef$$MutableRef.prototype.set = function (value) {
-      var old = this._value;
-      if (value !== old) {
+      var old      = this._value;
+      var onchange = this._onchange;
+      if (onchange != null) {
+        this._value = onchange(old, value);
+      } else {
         this._value = value;
-        if (this._onchange != null) {
-          this._onchange(old, value);
-        }
       }
     };
 
@@ -5224,30 +5224,80 @@
         ref1.set(50);
         $$assert$$assert(ref1.get() === 50);
 
-        var ran = false;
+        var ran1 = false;
 
         var x = $$Immutable$MutableRef$$Ref(5, function (before, after) {
+          $$assert$$assert(ran1 === false);
           $$assert$$assert(before === 5);
           $$assert$$assert(after === 10);
-          ran = true;
+          ran1 = true;
+          return after + 1;
         });
+
+        $$assert$$assert(x.get() === 5);
+        $$assert$$assert(ran1 === false);
 
         x.set(10);
 
-        $$assert$$assert(x.get() === 10);
-        $$assert$$assert(ran === true);
+        $$assert$$assert(x.get() === 11);
+        $$assert$$assert(ran1 === true);
 
 
-        var ran = false;
+        var ran2 = false;
 
-        var x = $$Immutable$MutableRef$$Ref(5, function () {
-          ran = true;
+        var x = $$Immutable$MutableRef$$Ref(5, function (before, after) {
+          $$assert$$assert(ran2 === false);
+          ran2 = true;
+          return before;
         });
+
+        $$assert$$assert(x.get() === 5);
+        $$assert$$assert(ran2 === false);
 
         x.set(5);
 
         $$assert$$assert(x.get() === 5);
-        $$assert$$assert(ran === false);
+        $$assert$$assert(ran2 === true);
+
+
+        var ran3 = false;
+        var ran4 = false;
+
+        var x = $$Immutable$MutableRef$$Ref(5, function (before, after) {
+          $$assert$$assert(ran4 === false);
+
+          if (ran3 === false) {
+            $$assert$$assert(x.get() === 5);
+            $$assert$$assert(before === 5);
+            $$assert$$assert(after === 10);
+
+            ran3 = true;
+
+            x.set(20);
+
+            $$assert$$assert(x.get() === 25);
+            $$assert$$assert(ran4 === true);
+            return x.get();
+
+          } else {
+            $$assert$$assert(x.get() === 5);
+            $$assert$$assert(before === 5);
+            $$assert$$assert(after === 20);
+
+            ran4 = true;
+            return after + 5;
+          }
+        });
+
+        $$assert$$assert(x.get() === 5);
+        $$assert$$assert(ran3 === false);
+        $$assert$$assert(ran4 === false);
+
+        x.set(10);
+
+        $$assert$$assert(x.get() === 25);
+        $$assert$$assert(ran3 === true);
+        $$assert$$assert(ran4 === true);
       });
 
       $$src$Test$Test$$test("modify", function () {
@@ -5255,10 +5305,16 @@
         var ran2 = false;
 
         var x = $$Immutable$MutableRef$$Ref(5, function (before, after) {
+          $$assert$$assert(ran1 === false);
           $$assert$$assert(before === 5);
           $$assert$$assert(after === 10);
           ran1 = true;
+          return after + 1;
         });
+
+        $$assert$$assert(x.get() === 5);
+        $$assert$$assert(ran1 === false);
+        $$assert$$assert(ran2 === false);
 
         x.modify(function (x) {
           $$assert$$assert(x === 5);
@@ -5266,27 +5322,35 @@
           return 10;
         });
 
-        $$assert$$assert(x.get() === 10);
+        $$assert$$assert(x.get() === 11);
         $$assert$$assert(ran1 === true);
         $$assert$$assert(ran2 === true);
 
 
-        var ran1 = false;
-        var ran2 = false;
+        var ran3 = false;
+        var ran4 = false;
 
-        var x = $$Immutable$MutableRef$$Ref(5, function () {
-          ran1 = true;
+        var x = $$Immutable$MutableRef$$Ref(5, function (before, after) {
+          $$assert$$assert(ran3 === false);
+          $$assert$$assert(before === 5);
+          $$assert$$assert(after === 5);
+          ran3 = true;
+          return after;
         });
+
+        $$assert$$assert(x.get() === 5);
+        $$assert$$assert(ran3 === false);
+        $$assert$$assert(ran4 === false);
 
         x.modify(function (x) {
           $$assert$$assert(x === 5);
-          ran2 = true;
+          ran4 = true;
           return 5;
         });
 
         $$assert$$assert(x.get() === 5);
-        $$assert$$assert(ran1 === false);
-        $$assert$$assert(ran2 === true);
+        $$assert$$assert(ran3 === true);
+        $$assert$$assert(ran4 === true);
       });
 
       $$src$Test$Test$$test("equal", function () {
@@ -5637,7 +5701,7 @@
 
       $$src$Test$Test$$assert_raises(function () {
         $$Immutable$toJSON$$toJSON($$Immutable$MutableRef$$Ref(5));
-      }, "Cannot convert to JSON: (Ref 16)");
+      }, "Cannot convert to JSON: (Ref 17)");
 
 
       var x = {};
@@ -5731,7 +5795,7 @@
 
       $$src$Test$Test$$assert_raises(function () {
         $$Immutable$toJSON$$fromJSON($$Immutable$MutableRef$$Ref(5));
-      }, "Cannot convert from JSON: (Ref 17)");
+      }, "Cannot convert from JSON: (Ref 18)");
 
 
       var x = $$Immutable$toJSON$$toJSON({

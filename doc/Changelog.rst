@@ -5,6 +5,50 @@ Version 5.0.0
 
   * ``build/Immutable.js`` has been renamed to ``build/Immutable.min.js``.
 
+  * Before, the ``onchange`` function of a ``Ref`` was not called if the
+    old and new values were ``===``. Now the ``onchange`` function is
+    always called.
+
+    In addition, whatever the ``onchange`` function returns becomes the
+    new value. This enables it to do validation, returning the old
+    value, or modifying the value before returning it.
+
+    The old system:
+
+    .. code:: javascript
+
+      var ref = Ref(5, function (before, after) {
+        // We can't really do much inside of the `onchange` function
+        console.log("change", before, after);
+      });
+
+      // The `onchange` function is not called, because the old and new values are `===`
+      ref.set(5);
+
+      // The `onchange` function is called, but it can't really do much.
+      ref.set(10);
+
+    The new system:
+
+    .. code:: javascript
+
+      var ref = Ref(5, function (before, after) {
+        // Whatever the `onchange` function returns becomes the new value
+        return before + after + 50;
+      });
+
+      // The `onchange` function is called
+      ref.set(5);
+
+      // returns 60
+      ref.get();
+
+      // The `onchange` function is called
+      ref.set(10);
+
+      // returns 120
+      ref.get();
+
   * The various constructor functions now use ``arguments.length``
     to check for missing arguments, rather than checking for ``null``.
 
