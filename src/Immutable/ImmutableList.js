@@ -371,6 +371,19 @@ ImmutableList.prototype.insert = function (value, index) {
   }
 };
 
+ImmutableList.prototype.push = function (value) {
+  var root      = this.root;
+  var tail      = this.tail;
+  var tail_size = this.tail_size;
+
+  if (tail_size === array_limit) {
+    var node = insert_max(root, new ArrayNode(nil, nil, stack_to_array(tail, tail_size)));
+    return new ImmutableList(node, new Cons(value, nil), 1);
+  } else {
+    return new ImmutableList(root, new Cons(value, tail), tail_size + 1);
+  }
+};
+
 ImmutableList.prototype.remove = function (index) {
   if (arguments.length === 0) {
     index = -1;
@@ -540,19 +553,6 @@ ImmutableList.prototype.concat = function (right) {
     });
   }
 };
-
-/*ImmutableList.prototype.push = function (value) {
-  var root      = this.root;
-  var tail      = this.tail;
-  var tail_size = this.tail_size;
-
-  if (tail_size === array_limit) {
-    var node = insert_max(root, new ArrayNode(nil, nil, stack_to_array(tail, tail_size)));
-    return new ImmutableList(node, new Cons(value, nil), 1);
-  } else {
-    return new ImmutableList(root, new Cons(value, tail), tail_size + 1);
-  }
-};*/
 
 
 export function isList(x) {
