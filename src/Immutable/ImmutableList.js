@@ -473,11 +473,18 @@ ImmutableList.prototype.set = function (index, value) {
 ImmutableList.prototype.slice = function (from, to) {
   var len = this.size();
 
-  if (from == null) {
+  if (arguments.length < 1) {
     from = 0;
   }
-  if (to == null) {
+  if (arguments.length < 2) {
     to = len;
+  }
+
+  if (typeof from !== "number") {
+    throw new Error("Expected a number but got " + from);
+  }
+  if (typeof to !== "number") {
+    throw new Error("Expected a number but got " + to);
   }
 
   if (from < 0) {

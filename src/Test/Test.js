@@ -1262,15 +1262,15 @@ context("List", function () {
 
     assert_raises(function () {
       five_list.slice(null, 5);
-    }, "u");
+    }, "Expected a number but got null");
 
     assert_raises(function () {
-      five_list.slice(0, null)
-    }, "u");
+      five_list.slice(0, null);
+    }, "Expected a number but got null");
 
     assert_raises(function () {
-      five_list.slice(null, null)
-    }, "u");
+      five_list.slice(null, null);
+    }, "Expected a number but got null");
 
     verify_list(five_list.slice(), [1, 2, 3, 4, 5]);
     verify_list(five_list.slice(0), [1, 2, 3, 4, 5]);
