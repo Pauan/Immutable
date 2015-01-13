@@ -4275,71 +4275,6 @@
                x == null;
       }
     }
-
-
-    (function (root, fn) {
-      if (typeof define === 'function' && define.amd) {
-        define(["exports"], fn);
-      } else if (typeof exports === 'object') {
-        fn(exports);
-      } else {
-        root.Immutable = {};
-        fn(root.Immutable);
-      }
-    })(this, function (exports) {
-      exports.equal = $$equal$$equal;
-      exports.fromJS = $$toJS$$fromJS;
-      exports.toJS = $$toJS$$toJS;
-      exports.isDict = $$ImmutableDict$$isDict;
-      exports.isSet = $$ImmutableSet$$isSet;
-      exports.isSortedDict = $$ImmutableDict$$isSortedDict;
-      exports.isSortedSet = $$ImmutableSet$$isSortedSet;
-      exports.isList = $$ImmutableList$$isList;
-      exports.isQueue = $$ImmutableQueue$$isQueue;
-      exports.isTuple = $$ImmutableTuple$$isTuple;
-      exports.isStack = $$ImmutableStack$$isStack;
-      exports.isImmutable = $$$Immutable$Immutable$$isImmutable;
-      exports.SortedDict = $$ImmutableDict$$SortedDict;
-      exports.SortedSet = $$ImmutableSet$$SortedSet;
-      exports.isIterable = $$iter$$isIterable;
-      exports.Dict = $$ImmutableDict$$Dict;
-      exports.Set = $$ImmutableSet$$Set;
-      exports.List = $$ImmutableList$$List;
-      exports.Tuple = $$ImmutableTuple$$Tuple;
-      exports.Queue = $$ImmutableQueue$$Queue;
-      exports.Stack = $$ImmutableStack$$Stack;
-      exports.simpleSort = $$Sorted$$simpleSort;
-      exports.isRecord = $$ImmutableRecord$$isRecord;
-      exports.Record = $$ImmutableRecord$$Record;
-      exports.toJSON = $$toJSON$$toJSON;
-      exports.fromJSON = $$toJSON$$fromJSON;
-      exports.deref = $$MutableRef$$deref;
-      exports.Ref = $$MutableRef$$Ref;
-      exports.isRef = $$MutableRef$$isRef;
-      exports.isTag = $$Tag$$isTag;
-      exports.isUUIDTag = $$Tag$$isUUIDTag;
-      exports.Tag = $$Tag$$Tag;
-      exports.UUIDTag = $$Tag$$UUIDTag;
-      exports.each = $$iter$$each;
-      exports.map = $$iter$$map;
-      exports.keep = $$iter$$keep;
-      exports.findIndex = $$iter$$findIndex;
-      exports.reverse = $$iter$$reverse;
-      exports.foldl = $$iter$$foldl;
-      exports.foldr = $$iter$$foldr;
-      exports.join = $$iter$$join;
-      exports.zip = $$iter$$zip;
-      exports.toArray = $$iter$$toArray;
-      exports.any = $$iter$$any;
-      exports.all = $$iter$$all;
-      exports.find = $$iter$$find;
-      exports.partition = $$iter$$partition;
-      exports.range = $$iter$$range;
-      exports.take = $$iter$$take;
-      exports.indexOf = $$iter$$indexOf;
-      exports.toIterator = $$iter$$toIterator;
-      exports.Iterable = $$iter$$Iterable;
-    });
     var $$Record$$immutablejs = require("immutable");
     var $$Record$$mori        = require("mori");
 
@@ -4718,11 +4653,11 @@
       });
     }
 
-    var src$Benchmark$run$$package = require("../package.json");
+    var $$src$Benchmark$run$$package = require("../package.json");
 
-    var src$Benchmark$run$$dependencies = src$Benchmark$run$$package.devDependencies;
+    var $$src$Benchmark$run$$dependencies = $$src$Benchmark$run$$package.devDependencies;
 
-    function src$Benchmark$run$$header() {
+    function $$src$Benchmark$run$$header() {
       $$Benchmark$$.group("Information", function () {
         $$Benchmark$$.group("Node.js", function () {
           $$Benchmark$$.message("URL: http://nodejs.org/");
@@ -4730,19 +4665,19 @@
         });
         $$Benchmark$$.group("Benchmark.js", function () {
           $$Benchmark$$.message("URL: https://github.com/bestiejs/benchmark.js");
-          $$Benchmark$$.message("Version: " + src$Benchmark$run$$dependencies.benchmark);
+          $$Benchmark$$.message("Version: " + $$src$Benchmark$run$$dependencies.benchmark);
         });
         $$Benchmark$$.group("Immutable-js", function () {
           $$Benchmark$$.message("URL: https://github.com/facebook/immutable-js");
-          $$Benchmark$$.message("Version: " + src$Benchmark$run$$dependencies.immutable);
+          $$Benchmark$$.message("Version: " + $$src$Benchmark$run$$dependencies.immutable);
         });
         $$Benchmark$$.group("Mori", function () {
           $$Benchmark$$.message("URL: https://github.com/swannodette/mori");
-          $$Benchmark$$.message("Version: " + src$Benchmark$run$$dependencies.mori);
+          $$Benchmark$$.message("Version: " + $$src$Benchmark$run$$dependencies.mori);
         });
         $$Benchmark$$.group("Immutable", function () {
           $$Benchmark$$.message("URL: https://github.com/Pauan/Immutable");
-          $$Benchmark$$.message("Version: " + src$Benchmark$run$$package.version);
+          $$Benchmark$$.message("Version: " + $$src$Benchmark$run$$package.version);
         });
         /*benchmark.group("Elm", function () {
           benchmark.message("URL: http://elm-lang.org/");
@@ -4752,7 +4687,7 @@
     }
 
 
-    src$Benchmark$run$$header();
+    $$src$Benchmark$run$$header();
     $$List$$.run(10);
     $$List$$.run(100);
     $$List$$.run(1000);

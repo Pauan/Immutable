@@ -2798,7 +2798,7 @@
 
       return new $$MutableRef$$MutableRef(value, onchange);
     }
-    function src$Immutable$Immutable$$isImmutable(x) {
+    function $$Immutable$$isImmutable(x) {
       if ($$util$$isObject(x)) {
         return Object.isFrozen(x) ||
                $$ImmutableDict$$isDict(x)  ||
@@ -2819,8 +2819,6 @@
                x == null;
       }
     }
-
-
     (function (root, fn) {
       if (typeof define === 'function' && define.amd) {
         define(["exports"], fn);
@@ -2842,7 +2840,7 @@
       exports.isQueue = $$ImmutableQueue$$isQueue;
       exports.isTuple = $$ImmutableTuple$$isTuple;
       exports.isStack = $$ImmutableStack$$isStack;
-      exports.isImmutable = src$Immutable$Immutable$$isImmutable;
+      exports.isImmutable = $$Immutable$$isImmutable;
       exports.SortedDict = $$ImmutableDict$$SortedDict;
       exports.SortedSet = $$ImmutableSet$$SortedSet;
       exports.isIterable = $$iter$$isIterable;
