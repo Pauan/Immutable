@@ -385,8 +385,8 @@ ImmutableList.prototype.push = function (value) {
 };
 
 ImmutableList.prototype.remove = function (index) {
-  if (arguments.length === 0) {
-    index = -1;
+  if (arguments.length !== 1) {
+    throw new Error("Expected 1 argument but got " + arguments.length);
   }
 
   var len = this.size();

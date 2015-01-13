@@ -1138,7 +1138,7 @@ context("List", function () {
   test("insert", function () {
     assert_raises(function () {
       five_list.insert(2);
-    }, "u");
+    }, "Expected 2 arguments but got 1");
 
     assert_raises(function () {
       empty_list.insert(1, 5);
@@ -1172,7 +1172,7 @@ context("List", function () {
 
   test("push", function () {
     verify_list(empty_list.push(5), [5]);
-    verify_list(five_list.push(5).push(6).push(0), [1, 2, 3, 4, 5, 5, 0]);
+    verify_list(five_list.push(5).push(6).push(0), [1, 2, 3, 4, 5, 5, 6, 0]);
   });
 
   test("remove", function () {
@@ -1186,11 +1186,11 @@ context("List", function () {
 
     assert_raises(function () {
       empty_list.remove();
-    }, "u");
+    }, "Expected 1 argument but got 0");
 
     assert_raises(function () {
-      five_list.remove()
-    }, "u");
+      five_list.remove();
+    }, "Expected 1 argument but got 0");
 
     verify_list(five_list.remove(-1), [1, 2, 3, 4]);
     verify_list(five_list.remove(-1).remove(-1), [1, 2, 3]);

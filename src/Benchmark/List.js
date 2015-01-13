@@ -609,7 +609,7 @@ export function run(counter) {
         benchmark.time("Immutable List (insert)", function () {
           var b = a;
           for (var i = 0; i < counter; ++i) {
-            b = b.remove();
+            b = b.remove(-1);
           }
         });
       })();
@@ -624,7 +624,7 @@ export function run(counter) {
         benchmark.time("Immutable List (push)", function () {
           var b = a;
           for (var i = 0; i < counter; ++i) {
-            b = b.remove();
+            b = b.remove(-1);
           }
         });
       })();
