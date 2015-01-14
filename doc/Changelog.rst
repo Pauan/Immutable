@@ -1,4 +1,4 @@
-Version 5.0.0
+Version 6.0.0
 =============
 
 * **Breaking changes**
