@@ -1,6 +1,0 @@
-/**
-   @function isRecord
-   @param {Any} [x]
-   @return {Boolean} `true` if `x` is a [::Record]
-   @summary Returns whether `x` is a [::Record]
- */

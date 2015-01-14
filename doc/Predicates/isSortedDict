@@ -1,6 +1,0 @@
-/**
-   @function isSortedDict
-   @param {Any} [x]
-   @return {Boolean} `true` if `x` is a [::SortedDict]
-   @summary Returns whether `x` is a [::SortedDict]
- */

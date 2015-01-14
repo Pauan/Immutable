@@ -1,6 +1,0 @@
-/**
-   @function isRef
-   @param {Any} [x]
-   @return {Boolean} `true` if `x` is a [::Ref]
-   @summary Returns whether `x` is a [::Ref]
- */

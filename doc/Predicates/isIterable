@@ -1,6 +1,0 @@
-/**
-   @function isIterable
-   @param {Any} [x]
-   @return {Boolean} `true` if `x` is [::Iterable]
-   @summary Returns whether `x` is [::Iterable]
- */

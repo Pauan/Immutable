@@ -1,6 +1,0 @@
-/**
-   @function isStack
-   @param {Any} [x]
-   @return {Boolean} `true` if `x` is a [::Stack]
-   @summary Returns whether `x` is a [::Stack]
- */

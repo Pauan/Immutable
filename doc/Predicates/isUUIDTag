@@ -1,6 +1,0 @@
-/**
-   @function isUUIDTag
-   @param {Any} [x]
-   @return {Boolean} `true` if `x` is a [::UUIDTag]
-   @summary Returns whether `x` is a [::UUIDTag]
- */
