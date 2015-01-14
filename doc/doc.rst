@@ -11,7 +11,7 @@ This documentation uses the following format for functions::
 
     * ``Array | Object`` is the required type for ``x``.
 
-      * The ``|`` means that ``x`` must be either an ``Array`` or ``Object``.
+      * The ``|`` means that ``x`` must be either an ``Array`` or an ``Object``.
 
   * ``y`` is the name of the second argument.
 
@@ -45,16 +45,15 @@ Here are some examples of how you might call the function ``foo``:
 
 In addition, this is the format used for methods::
 
-  Foo merge(x: Foo) -> Foo
+  Foo bar(x: Number) -> Foo
 
-Here are some examples of how you might call the ``merge`` method:
+Here are some examples of how you might call the ``bar`` method:
 
 .. code:: javascript
 
-  var foo1 = Foo();
-  var foo2 = Foo();
+  var foo = Foo();
 
-  foo1.merge(foo2);
+  foo.bar(5);
 
 The types are either JavaScript built-ins or are defined by this library.
 However, there are some exceptions:
@@ -63,7 +62,7 @@ However, there are some exceptions:
 
 * ``Integer`` is a JavaScript ``Number`` that is restricted to be an integer.
 
-* ``Void`` is the JavaScript value :js:`undefined`. It's used to mean
+* ``Void`` is the JavaScript value :js:`undefined`. It is used to mean
   the lack of a meaningful value.
 
 Table of Contents
@@ -223,18 +222,20 @@ Table of Contents
   If ``fn`` never returns :js:`false`, then this function returns
   :js:`true`.
 
+  This function runs in ``O(n)`` worst-case time.
+
   Examples:
 
   .. code:: javascript
 
-    // returns true
-    all([1, 2, 3], function (x) {
-      return x < 4;
+    // Returns true
+    all([10, 20, 30], function (x) {
+      return x < 40;
     });
 
-    // returns false
-    all([1, 2, 3], function (x) {
-      return x < 3;
+    // Returns false
+    all([10, 20, 30], function (x) {
+      return x < 30;
     });
 
 ----
@@ -246,7 +247,7 @@ Table of Contents
     any(x: Iterable, fn: Function) -> Boolean
 
   Returns :js:`true` if ``fn`` returns :js:`true` for any
-  of the values in ``x``
+  of the values in ``x``.
 
   This function calls ``fn`` for each value in ``x``, and
   if ``fn`` returns :js:`true`, it will return :js:`true`.
@@ -254,18 +255,20 @@ Table of Contents
   If ``fn`` never returns :js:`true`, then this function returns
   :js:`false`.
 
+  This function runs in ``O(n)`` worst-case time.
+
   Examples:
 
   .. code:: javascript
 
-    // returns true
-    any([1, 2, 3], function (x) {
-      return x > 2;
+    // Returns true
+    any([10, 20, 30], function (x) {
+      return x > 20;
     });
 
-    // returns false
-    any([1, 2, 3], function (x) {
-      return x > 3;
+    // Returns false
+    any([10, 20, 30], function (x) {
+      return x > 30;
     });
 
 ----
@@ -276,12 +279,24 @@ Table of Contents
 
     deref(x: Any) -> Any
 
-  * If ``x`` is a Ref_, it will return the ref's current value.
+  * If ``x`` is a Ref_, it will return the Ref_'s current value.
 
   * Otherwise it returns ``x`` as-is.
 
-  This is useful if you want to make sure you have a value, and
-  you're not sure whether something is a Ref_ or not.
+  This is useful if you're not sure whether something is a Ref_
+  or not, but you want a value.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // Returns 5
+    deref(Ref(5));
+
+    // Returns 5
+    deref(5);
 
 ----
 
@@ -302,7 +317,7 @@ Table of Contents
     of :js:`[key, value]`, which will be added to the Dict_.
 
   * If ``x`` is a JavaScript object literal like :js:`{ foo: 1 }`,
-    then the keys/values will be added to the Dict_.
+    then the keys / values will be added to the Dict_.
 
   This takes ``O(n * log2(n))`` time, unless ``x`` is already
   a Dict_, in which case it takes ``O(1)`` time.
@@ -326,7 +341,7 @@ Table of Contents
 
   You can also use immutable objects (like Dict_, Set_, List_,
   etc.) as keys, and they are treated as equal_ if their
-  keys/values are equal_:
+  keys / values are equal_:
 
   .. code:: javascript
 
@@ -342,7 +357,7 @@ Table of Contents
     // Returns "qux"
     dict.get(obj2);
 
-  Because :js:`obj1` and :js:`obj2` have the same keys/values,
+  Because :js:`obj1` and :js:`obj2` have the same keys / values,
   they are equal_.
 
 ----
@@ -353,27 +368,26 @@ Table of Contents
 
     Dict get(key: Any, [default: Any]) -> Any
 
-  Returns the value for ``key`` in the Dict_, or ``default``
-  if ``key`` is not in the Dict_.
+  * If ``key`` is in the Dict_, the value for ``key`` is returned.
+
+  * If ``key`` is not in the Dict_:
+
+    * If ``default`` is provided, it is returned.
+    * If ``default`` is not provided, an error is thrown.
 
   This function runs in ``O(log2(n))`` worst-case time.
-
-  If ``key`` is not in the Dict_:
-
-  * If ``default`` is provided, it is returned.
-  * If ``default`` is not provided, an error is thrown.
 
   Examples:
 
   .. code:: javascript
 
-    // throws an error
+    // Throws an error
     Dict().get("foo");
 
-    // returns 5
+    // Returns 5
     Dict().get("foo", 5);
 
-    // returns 10
+    // Returns 10
     Dict({ "foo": 10 }).get("foo");
 
 ----
@@ -392,10 +406,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns false
+    // Returns false
     Dict().has("foo");
 
-    // returns true
+    // Returns true
     Dict({ "foo": 1 }).has("foo");
 
 ----
@@ -406,9 +420,7 @@ Table of Contents
 
     Dict isEmpty() -> Boolean
 
-  Returns :js:`true` if the Dict_ is empty.
-
-  A Dict_ is empty if it has no keys/values in it.
+  Returns :js:`true` if the Dict_ has no keys / values in it.
 
   This function runs in ``O(1)`` time.
 
@@ -416,10 +428,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns true
+    // Returns true
     Dict().isEmpty();
 
-    // returns false
+    // Returns false
     Dict({ "foo": 1 }).isEmpty();
 
 ----
@@ -430,32 +442,34 @@ Table of Contents
 
     Dict merge(x: Object | Iterable) -> Dict
 
-  Returns a new Dict_ with all the keys/values of ``x`` added
+  Returns a new Dict_ with all the keys / values of ``x`` added
   to this Dict_.
 
-  This function runs in ``O(log2(n) * m)`` worst-case time.
-
-  This does not modify the Dict_, it returns a new Dict_.
-
-  If a key from ``x`` already exists in this Dict_, it is overwritten.
+  This does not mutate the Dict_, it returns a new Dict_.
 
   ``x`` must be either a JavaScript object literal, or an
   Iterable_ where each value is an array or Tuple_ of
   :js:`[key, value]`.
+
+  * If a ``key`` from ``x`` is not in this Dict_, it is added.
+
+  * If a ``key`` from ``x`` is already in this Dict_, it is overwritten.
+
+  This function runs in ``O(log2(n) * m)`` worst-case time.
 
   You can use this to merge two Dict_:
 
   .. code:: javascript
 
     var foo = Dict({
-      foo: 1
+      "foo": 1
     });
 
     var bar = Dict({
-      bar: 2
+      "bar": 2
     });
 
-    // returns { foo: 1, bar: 2 }
+    // Returns { "foo": 1, "bar": 2 }
     foo.merge(bar);
 
   You can also use this to merge with a JavaScript object literal:
@@ -463,12 +477,12 @@ Table of Contents
   .. code:: javascript
 
     var foo = Dict({
-      foo: 1
+      "foo": 1
     });
 
-    // returns { foo: 1, bar: 2 }
+    // Returns { "foo": 1, "bar": 2 }
     foo.merge({
-      bar: 2
+      "bar": 2
     });
 
 ----
@@ -481,15 +495,15 @@ Table of Contents
 
   Returns a new Dict_ with ``key`` modified by ``fn``.
 
-  This function runs in ``O(log2(n))`` worst-case time.
+  This does not mutate the Dict_, it returns a new Dict_.
 
-  This does not modify the Dict_, it returns a new Dict_.
-
-  If ``key`` is not in the Dict_, it will throw an error.
+  * If ``key`` is not in the Dict_, it will throw an error.
 
   This function calls ``fn`` with the value for ``key``, and
   whatever ``fn`` returns will be used as the new value for
   ``key``.
+
+  This function runs in ``O(log2(n))`` worst-case time.
 
   Examples:
 
@@ -500,20 +514,18 @@ Table of Contents
       "bar": 2
     });
 
-    // returns { "foo": 11, "bar": 2 }
-    dict.modify("foo", function (x) {
+    function add10(x) {
       return x + 10;
-    });
+    }
 
-    // returns { "foo": 1, "bar": 12 }
-    dict.modify("bar", function (x) {
-      return x + 10;
-    });
+    // Returns { "foo": 11, "bar": 2 }
+    dict.modify("foo", add10);
 
-    // throws an error
-    dict.modify("qux", function (x) {
-      return x + 10;
-    });
+    // Returns { "foo": 1, "bar": 12 }
+    dict.modify("bar", add10);
+
+    // Throws an error
+    dict.modify("qux", add10);
 
 ----
 
@@ -525,20 +537,20 @@ Table of Contents
 
   Returns a new Dict_ with ``key`` removed.
 
-  If ``key`` is not in the Dict_, it does nothing.
+  This does not mutate the Dict_, it returns a new Dict_.
+
+  * If ``key`` is not in the Dict_, this function does nothing.
 
   This function runs in ``O(log2(n))`` worst-case time.
-
-  This does not modify the Dict_, it returns a new Dict_.
 
   Examples:
 
   .. code:: javascript
 
-    // returns {}
+    // Returns {}
     Dict({ "foo": 1 }).remove("foo");
 
-    // returns { foo: 1 }
+    // Returns { "foo": 1 }
     Dict({ "foo": 1 }).remove("bar");
 
 ----
@@ -549,11 +561,11 @@ Table of Contents
 
     Dict removeAll() -> Dict
 
-  Returns a new Dict_ with no keys/values.
+  Returns a new Dict_ with no keys / values.
+
+  This does not mutate the Dict_, it returns a new Dict_.
 
   This function runs in ``O(1)`` time.
-
-  This does not modify the Dict_, it returns a new Dict_.
 
   This function is useful because it preserves the
   sort of a SortedDict_:
@@ -562,7 +574,7 @@ Table of Contents
 
     var x = SortedDict(...);
 
-    // No keys/values, but same sort as `x`
+    // No keys / values, but same sort as `x`
     x.removeAll();
 
 ----
@@ -575,24 +587,27 @@ Table of Contents
 
   Returns a new Dict_ with ``key`` set to ``value``.
 
-  This function runs in ``O(log2(n))`` worst-case time.
+  This does not mutate the Dict_, it returns a new Dict_.
 
-  This does not modify the Dict_, it returns a new Dict_.
-
-  * If ``key`` already exists, it is overwritten.
   * If ``key`` does not exist, it is created.
+  * If ``key`` already exists, it is overwritten.
+
+  This function runs in ``O(log2(n))`` worst-case time.
 
   Examples:
 
   .. code:: javascript
 
-    // returns { foo: 5 }
+    // Returns { "foo": 5 }
     Dict().set("foo", 5);
 
-    // returns { foo: 5, bar: 10, qux: 15 }
+    // Returns { "foo": 5, "bar": 10, "qux": 15 }
     Dict().set("foo", 5)
           .set("bar", 10)
           .set("qux", 15);
+
+    // Returns { "foo": 10 }
+    Dict({ "foo": 5 }).set("foo", 10);
 
 ----
 
@@ -606,27 +621,29 @@ Table of Contents
 
   This is the same as a ``for..of`` loop in ECMAScript 6.
 
+  This function runs in ``O(n)`` time.
+
   Examples:
 
   .. code:: javascript
 
-    // 1
-    // 2
-    // 3
-    each([1, 2, 3], function (x) {
+    // Logs 10
+    // Logs 20
+    // Logs 30
+    each([10, 20, 30], function (x) {
       console.log(x);
     });
 
-    // 1
-    // 2
-    // 3
-    each(Tuple([1, 2, 3]), function (x) {
+    // Logs 10
+    // Logs 20
+    // Logs 30
+    each(Tuple([10, 20, 30]), function (x) {
       console.log(x);
     });
 
-    // ["bar", 2]
-    // ["foo", 1]
-    each(Record({ foo: 1, bar: 2 }), function (x) {
+    // Logs ["bar", 2]
+    // Logs ["foo", 1]
+    each(Record({ "foo": 1, "bar": 2 }), function (x) {
       console.log(x);
     });
 
@@ -669,13 +686,16 @@ Table of Contents
 
     This takes ``O(1)`` time.
 
-  * Dict_ are treated as equal if they have
-    the same keys/values:
+  * Dict_ and Record_ are treated as equal if they
+    have the same keys / values:
 
     .. code:: javascript
 
-      equal(Dict({ foo: 1 }),
-            Dict({ foo: 1 })); // true
+      equal(Dict({ "foo": 1 }),
+            Dict({ "foo": 1 })); // true
+
+      equal(Record({ "foo": 1 }),
+            Record({ "foo": 1 })); // true
 
     This takes ``O(n)`` time, except the results
     are cached so that afterwards it takes ``O(1)``
@@ -693,61 +713,23 @@ Table of Contents
     are cached so that afterwards it takes ``O(1)``
     time.
 
-  * List_ are treated as equal if they have
-    the same values in the same order:
+  * List_, Tuple_, Queue_, and Stack_ are treated as
+    equal if they have the same values in the same
+    order:
 
     .. code:: javascript
 
       equal(List([1]),
             List([1])); // true
 
-    This takes ``O(n)`` time, except the results
-    are cached so that afterwards it takes ``O(1)``
-    time.
-
-  * Tuple_ are treated as equal if they have
-    the same values in the same order:
-
-    .. code:: javascript
-
       equal(Tuple([1]),
             Tuple([1])); // true
-
-    This takes ``O(n)`` time, except the results
-    are cached so that afterwards it takes ``O(1)``
-    time.
-
-  * Queue_ are treated as equal if they have
-    the same values in the same order:
-
-    .. code:: javascript
 
       equal(Queue([1]),
             Queue([1])); // true
 
-    This takes ``O(n)`` time, except the results
-    are cached so that afterwards it takes ``O(1)``
-    time.
-
-  * Stack_ are treated as equal if they have
-    the same values in the same order:
-
-    .. code:: javascript
-
       equal(Stack([1]),
             Stack([1])); // true
-
-    This takes ``O(n)`` time, except the results
-    are cached so that afterwards it takes ``O(1)``
-    time.
-
-  * Record_ are treated as equal if they have
-    the same keys/values:
-
-    .. code:: javascript
-
-      equal(Record({ foo: 1 }),
-            Record({ foo: 1 })); // true
 
     This takes ``O(n)`` time, except the results
     are cached so that afterwards it takes ``O(1)``
@@ -789,29 +771,31 @@ Table of Contents
   Applies ``fn`` to each value in ``x`` and returns
   the first value where ``fn`` returns :js:`true`.
 
-  If ``fn`` never returns :js:`true`:
+  * If ``fn`` never returns :js:`true`:
 
-  * If ``default`` is provided, it is returned.
-  * Otherwise it throws an error.
+    * If ``default`` is provided, it is returned.
+    * If ``default`` is not provided, it throws an error.
+
+  This function runs in ``O(n)`` worst-case time.
 
   Examples:
 
   .. code:: javascript
 
-    // returns 2
-    find([1, 2, 3], function (x) {
-      return x === 2;
+    // Returns 20
+    find([10, 20, 30], function (x) {
+      return x === 20;
     });
 
-    // throws an error
-    find([1, 2, 3], function (x) {
-      return x === 4;
+    // Throws an error
+    find([10, 20, 30], function (x) {
+      return x === 40;
     });
 
-    // returns 50
-    find([1, 2, 3], function (x) {
-      return x === 4;
-    }, 50);
+    // Returns -1
+    find([10, 20, 30], function (x) {
+      return x === 40;
+    }, -1);
 
 ----
 
@@ -824,29 +808,31 @@ Table of Contents
   Applies ``fn`` to each value in ``x`` and returns
   the index that ``fn`` first returns :js:`true`.
 
-  If ``fn`` never returns :js:`true`:
+  * If ``fn`` never returns :js:`true`:
 
-  * If ``default`` is provided, it is returned.
-  * Otherwise it throws an error.
+    * If ``default`` is provided, it is returned.
+    * If ``default`` is not provided, it throws an error.
+
+  This function runs in ``O(n)`` worst-case time.
 
   Examples:
 
   .. code:: javascript
 
-    // returns 1
-    findIndex([1, 2, 3], function (x) {
-      return x === 2;
+    // Returns 1
+    findIndex([10, 20, 30], function (x) {
+      return x === 20;
     });
 
-    // throws an error
-    findIndex([1, 2, 3], function (x) {
-      return x === 4;
+    // Throws an error
+    findIndex([10, 20, 30], function (x) {
+      return x === 40;
     });
 
-    // returns 50
-    findIndex([1, 2, 3], function (x) {
-      return x === 4;
-    }, 50);
+    // Returns -1
+    findIndex([10, 20, 30], function (x) {
+      return x === 40;
+    }, -1);
 
 ----
 
@@ -861,18 +847,16 @@ Table of Contents
   returns becomes the new ``init``. When ``x`` is finished,
   this function returns ``init``.
 
+  This function runs in ``O(n)`` time.
+
   Examples:
 
   .. code:: javascript
 
-    // returns 15
+    // Returns 15
+    // Equivalent to (((((0 + 1) + 2) + 3) + 4) + 5)
     foldl([1, 2, 3, 4, 5], 0, function (x, y) {
       return x + y;
-    });
-
-    // returns "(((((0 1) 2) 3) 4) 5)"
-    foldl([1, 2, 3, 4, 5], 0, function (x, y) {
-      return "(" + x + " " + y + ")";
     });
 
 ----
@@ -888,21 +872,23 @@ Table of Contents
   returns becomes the new ``init``. When ``x`` is finished,
   this function returns ``init``.
 
-  This function requires ``O(n)`` space, because it must
+  This function requires ``O(n)`` space because it must
   reach the end of ``x`` before it can call ``fn``.
+
+  That means it has to iterate over ``x`` twice. This
+  is inefficient, so unless you *really* need to use
+  foldr_, you should use foldl_ instead.
+
+  This function runs in ``O(2 * n)`` time.
 
   Examples:
 
   .. code:: javascript
 
-    // returns 15
+    // Returns 15
+    // Equivalent to (1 + (2 + (3 + (4 + (5 + 0)))))
     foldr([1, 2, 3, 4, 5], 0, function (x, y) {
       return x + y;
-    });
-
-    // returns "(1 (2 (3 (4 (5 0)))))"
-    foldr([1, 2, 3, 4, 5], 0, function (x, y) {
-      return "(" + x + " " + y + ")";
     });
 
 ----
@@ -919,7 +905,7 @@ Table of Contents
 
   * JavaScript object literals are deeply converted
     into a Dict_, with fromJS_ called on all
-    the keys/values.
+    the keys / values.
 
     This conversion takes ``O(n)`` time.
 
@@ -933,7 +919,7 @@ Table of Contents
 
   This is useful if you like using Dict_ or List_,
   but you want to use a library that gives you ordinary
-  JavaScript objects/arrays.
+  JavaScript objects / arrays.
 
   If you want to losslessly store an immutable object on
   disk, or send it over the network, you can use toJSON_
@@ -949,12 +935,12 @@ Table of Contents
 
   Converts specially marked JSON to a Dict_,
   Set_, List_, Queue_, Stack_, Tuple_,
-  or _Record.
+  or Record_.
 
   This function has the following behavior:
 
   * JavaScript object literals are deeply copied, with
-    fromJSON_ called on all the keys/values.
+    fromJSON_ called on all the keys / values.
 
     This copying takes ``O(n)`` time.
 
@@ -972,7 +958,7 @@ Table of Contents
   * Specially marked JSON objects are converted into a
     Dict_, Set_, List_, Queue_, Stack_, Tuple_, or
     Record_, with fromJSON_ called on all the
-    keys/values.
+    keys / values.
 
     This conversion takes ``O(n)`` time.
 
@@ -987,9 +973,9 @@ Table of Contents
 
   .. code:: javascript
 
-    var x = Record({ foo: 1 });
+    var x = Record({ "foo": 1 });
 
-    // returns true
+    // Returns true
     equal(x, fromJSON(toJSON(x)));
 
   This makes it possible to store immutable objects on disk,
@@ -1010,26 +996,28 @@ Table of Contents
   Returns the first index within ``x`` where
   the value is equal_ to ``value``.
 
-  If ``x`` does not contain ``value``:
+  * If ``x`` does not contain ``value``:
 
-  * If ``default`` is provided, it is returned.
-  * Otherwise it throws an error.
+    * If ``default`` is provided, it is returned.
+    * If ``default`` is not provided, an error is thrown.
 
   This function uses equal_ to determine whether
   the two values match or not. If you want to use a
   different function for equality, use findIndex_.
 
+  This function runs in ``O(n)`` worst-case time.
+
   Examples:
 
   .. code:: javascript
 
-    // returns 1
+    // Returns 1
     indexOf([1, 2, 3], 2);
 
-    // throws an error
+    // Throws an error
     indexOf([1, 2, 3], 4);
 
-    // returns -1
+    // Returns -1
     indexOf([1, 2, 3], 4, -1);
 
 ----
@@ -1041,6 +1029,8 @@ Table of Contents
     isDict(x: Any) -> Boolean
 
   Returns :js:`true` if ``x`` is a Dict_ or SortedDict_.
+
+  This function runs in ``O(1)`` time.
 
 ----
 
@@ -1056,6 +1046,8 @@ Table of Contents
 
   Returns :js:`false` for everything else.
 
+  This function runs in ``O(1)`` time.
+
 ----
 
 .. _isIterable:
@@ -1065,6 +1057,8 @@ Table of Contents
     isIterable(x: Any) -> Boolean
 
   Returns :js:`true` if ``x`` is Iterable_.
+
+  This function runs in ``O(1)`` time.
 
 ----
 
@@ -1086,6 +1080,8 @@ Table of Contents
 
   Returns :js:`true` if ``x`` is a Queue_.
 
+  This function runs in ``O(1)`` time.
+
 ----
 
 .. _isRecord:
@@ -1095,6 +1091,8 @@ Table of Contents
     isRecord(x: Any) -> Boolean
 
   Returns :js:`true` if ``x`` is a Record_.
+
+  This function runs in ``O(1)`` time.
 
 ----
 
@@ -1106,6 +1104,8 @@ Table of Contents
 
   Returns :js:`true` if ``x`` is a Ref_.
 
+  This function runs in ``O(1)`` time.
+
 ----
 
 .. _isSet:
@@ -1115,6 +1115,8 @@ Table of Contents
     isSet(x: Any) -> Boolean
 
   Returns :js:`true` if ``x`` is a Set_ or SortedSet_.
+
+  This function runs in ``O(1)`` time.
 
 ----
 
@@ -1126,6 +1128,8 @@ Table of Contents
 
   Returns :js:`true` if ``x`` is a SortedDict_.
 
+  This function runs in ``O(1)`` time.
+
 ----
 
 .. _isSortedSet:
@@ -1135,6 +1139,8 @@ Table of Contents
     isSortedSet(x: Any) -> Boolean
 
   Returns :js:`true` if ``x`` is a SortedSet_.
+
+  This function runs in ``O(1)`` time.
 
 ----
 
@@ -1146,6 +1152,8 @@ Table of Contents
 
   Returns :js:`true` if ``x`` is a Stack_.
 
+  This function runs in ``O(1)`` time.
+
 ----
 
 .. _isTag:
@@ -1155,6 +1163,8 @@ Table of Contents
     isTag(x: Any) -> Boolean
 
   Returns :js:`true` if ``x`` is a Tag_ or UUIDTag_.
+
+  This function runs in ``O(1)`` time.
 
 ----
 
@@ -1166,6 +1176,8 @@ Table of Contents
 
   Returns :js:`true` if ``x`` is a UUIDTag_.
 
+  This function runs in ``O(1)`` time.
+
 ----
 
 .. _Iterable:
@@ -1174,19 +1186,46 @@ Table of Contents
 
     Iterable(fn: Function) -> Iterable
 
-  This function will call ``fn`` with no arguments.
-  ``fn`` is supposed to return an Iterator_.
+  This function calls ``fn`` with no arguments.
+  ``fn`` is supposed to return an Iterator_. It will then
+  wrap the Iterator_ so that it is recognized as being
+  Iterable_.
 
-  It will then wrap the Iterator_ so that it is recognized
-  as being Iterable_.
+  All Iterable_ things can be converted into an Iterator_ by
+  using toIterator_.
 
-  This is useful to create your own iteration functions.
+  This is useful for creating your own iteration functions.
 
   If something is Iterable_, it can be used by the iteration
   functions like each_, map_, zip_, etc.
 
-  All Iterable_ things can be converted into an Iterator_ by
-  using toIterator_.
+  Most iteration functions are lazy, which means they only
+  generate their values when needed. That means they run in
+  ``O(1)`` time, and they only need to iterate over the data
+  once.
+
+  So you can freely add as many iteration functions as you
+  want, and it won't decrease the performance:
+
+  .. code:: javascript
+
+    var list = List(...);
+
+    // This does not iterate over `list`, so it takes O(1) time.
+    var mapped = map(list, function (x) {
+      ...
+    });
+
+    // This does not iterate over `mapped`, so it takes O(1) time.
+    var filtered = keep(mapped, function (x) {
+      ...
+    });
+
+    // This iterates over `list` only one time, so it
+    // takes O(n) time rather than O(3 * n) time.
+    each(filtered, function (x) {
+      console.log(x);
+    });
 
   These things are Iterable_:
 
@@ -1196,56 +1235,78 @@ Table of Contents
 
   * ECMAScript 6 Iterable
 
-  * The return value of the Iterable_ function.
+  * The return value of the Iterable_ function
 
-  * Dict_, List_, Record_, Set_, Stack_, Tuple_, and Queue_
+  * Dict_, List_, Queue_, Record_, Set_, Stack_, and Tuple_
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // Don't use this function, use the `map` function instead!
+    function my_map(x, f) {
+      return Iterator(function () {
+        var iterator = toIterator(x);
+
+        return {
+          next: function () {
+            var info = iterator.next();
+            if (info.done) {
+              return { done: true };
+            } else {
+              return { value: f(info.value) };
+            }
+          }
+        };
+      });
+    }
 
 ----
 
 .. _Iterator:
 
-* ::
+* All Iterable_ things can be converted into an Iterator_
+  by using toIterator_.
 
-    All Iterable_ things can be converted into an Iterator_
-    by using toIterator_.
+  An Iterator_ isn't really a type or a function. Instead,
+  an Iterator_ is simply an object that has a :js:`next` method.
 
-    An Iterator_ isn't really a type or a function. Instead,
-    an Iterator_ is simply an object that has a :js:`next` method.
+  Calling the :js:`next` method will return an object with
+  the following properties:
 
-    Calling the :js:`next` method will return an object with
-    the following properties:
+  * If the Iterator_ is finished, :js:`done` will be :js:`true`.
 
-    * If the Iterator_ is finished, :js:`done` will be :js:`true`.
+  * If the Iterator_ is not finished, :js:`value` will be the
+    next value in the Iterator_.
 
-    * If the Iterator_ is not finished, :js:`value` will be the
-      next value in the Iterator_.
+    .. code:: javascript
 
-      .. code:: javascript
+      var iterator = toIterator([1, 2, 3]);
 
-        var iterator = toIterator([1, 2, 3]);
+      // returns { value: 1 }
+      iterator.next();
 
-        // returns { value: 1 }
-        iterator.next();
+      // returns { value: 2 }
+      iterator.next();
 
-        // returns { value: 2 }
-        iterator.next();
+      // returns { value: 3 }
+      iterator.next();
 
-        // returns { value: 3 }
-        iterator.next();
+      // returns { done: true }
+      iterator.next();
 
-        // returns { done: true }
-        iterator.next();
+  As you can see above, Iterator_\ s are *mutable*: every time
+  you call the :js:`next` method it will return the next value,
+  or :js:`done` if it's finished.
 
-    As you can see above, Iterator_\ s are *mutable*: every time
-    you call the :js:`next` method it will return the next value,
-    or :js:`done` if it's finished.
+  It is recommended to not use Iterator_ directly, instead
+  you should use the higher-level functions like each_, map_,
+  foldl_, etc.
 
-    It is recommended to not use Iterator_ directly, instead
-    you should use the higher-level functions like each_, map_,
-    foldl_, etc.
-
-    But if you want to create your own iteration functions, you
-    will need to use toIterator_ and Iterable_.
+  But if you want to create your own iteration functions, you
+  will need to use toIterator_ and Iterable_.
 
 ----
 
@@ -1261,20 +1322,22 @@ Table of Contents
   This is the same as :js:`Array.prototype.join`, except
   it works on all Iterable_.
 
+  This function runs in ``O(n)`` time.
+
   Examples:
 
   .. code:: javascript
 
-    // returns "123"
+    // Returns "123"
     join([1, 2, 3])
 
-    // returns "1 2 3"
+    // Returns "1 2 3"
     join([1, 2, 3], " ")
 
-    // returns "1 2 3"
+    // Returns "1 2 3"
     join(Tuple([1, 2, 3]), " ")
 
-    // returns "1 2 3"
+    // Returns "1 2 3"
     join("123", " ")
 
 ----
@@ -1296,11 +1359,13 @@ Table of Contents
   it only generates the values as needed. If you want
   an array, use toArray_.
 
+  This function runs in ``O(1)`` time.
+
   Examples:
 
   .. code:: javascript
 
-    // returns [1, 2, 3, 0]
+    // Returns [1, 2, 3, 0]
     keep([1, 2, 3, 4, 5, 0], function (x) {
       return x < 4;
     });
@@ -1328,6 +1393,16 @@ Table of Contents
   want, but they are not sorted. If you want the values
   to be sorted, use a SortedSet_ instead.
 
+  Examples:
+
+  .. code:: javascript
+
+    // Returns [1, 2, 3]
+    List([1, 2, 3]);
+
+    // Returns [["bar", 2], ["foo", 1]]
+    List(Dict({ "foo": 1, "bar": 2 }));
+
 ----
 
 .. _List concat:
@@ -1339,22 +1414,19 @@ Table of Contents
   Returns a new List_ with all the values of this List_
   followed by all the values of ``x``.
 
+  This does not mutate the List_, it returns a new List_.
+
   If ``x`` is a List_, this function runs in
   ``O(125 + log2(n / 125) + log2(min(n / 125, m / 125)))``
-  worst-case time.
-
-  Otherwise this function runs in ``O(m)`` time.
-
-  This does not modify the List_, it returns a new List_.
+  worst-case time. Otherwise this function runs in ``O(m)``
+  time.
 
   Examples:
 
   .. code:: javascript
 
-    var list = List([1, 2, 3]);
-
-    // returns [1, 2, 3, 4, 5, 6, 0]
-    list.concat([4, 5, 6, 0]);
+    // Returns [1, 2, 3, 4, 5, 6, 0]
+    List([1, 2, 3]).concat([4, 5, 6, 0]);
 
 ----
 
@@ -1366,41 +1438,44 @@ Table of Contents
 
   Returns the value in the List_ at ``index``.
 
-  If ``index`` is not in the List_:
+  * If ``index`` is negative, it starts counting from
+    the end of the List_, so :js:`-1` is the last value
+    in the List_, :js:`-2` is the second-from-last value,
+    etc.
 
-  * If ``default`` is provided, it is returned.
-  * If ``default`` is not provided, an error is thrown.
+  * If ``index`` is not in the List_:
+
+    * If ``default`` is provided, it is returned.
+    * If ``default`` is not provided, an error is thrown.
 
   This function runs in ``O(log2(n / 125))``
   worst-case time.
-
-  If ``index`` is negative, it starts counting from
-  the end of the List_, so :js:`-1` is the last value
-  in the List_, :js:`-2` is the second-from-last value,
-  etc.
 
   Examples:
 
   .. code:: javascript
 
-    var list = List([50, 100, 150]);
+    var list = List([10, 20, 30]);
 
-    // returns 50
+    // Returns 10
     list.get(0);
 
-    // returns 150
+    // Returns 20
+    list.get(1);
+
+    // Returns 30
     list.get(2);
 
-    // throws an error
+    // Throws an error
     list.get(3);
 
-    // returns -1
+    // Returns -1
     list.get(3, -1);
 
-    // returns 150
+    // Returns 30
     list.get(-1);
 
-    // returns 100
+    // Returns 20
     list.get(-2);
 
 ----
@@ -1413,11 +1488,29 @@ Table of Contents
 
   Returns :js:`true` if ``index`` is in the List_.
 
-  If ``index`` is negative, it starts counting from
-  the end of the List_, so :js:`-1` is the last index of
-  the List_, :js:`-2` is the second-from-last index, etc.
+  * If ``index`` is negative, it starts counting from
+    the end of the List_, so :js:`-1` is the last index of
+    the List_, :js:`-2` is the second-from-last index, etc.
 
   This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    var list = List([10, 20, 30]);
+
+    // Returns true
+    list.has(0);
+
+    // Returns true
+    list.has(2);
+
+    // Returns false
+    list.has(3);
+
+    // Returns true
+    list.has(-1);
 
 ----
 
@@ -1429,38 +1522,38 @@ Table of Contents
 
   Returns a new List_ with ``value`` inserted at ``index``.
 
-  This function runs in ``O(log2(n / 125) + 125)``
-  worst-case time.
-
   If you just want to insert at the *end* of a List_,
   it's much faster to use `List push`_ instead.
 
-  This does not modify the List_, it returns a new List_.
+  This does not mutate the List_, it returns a new List_.
 
-  If ``index`` is negative, it starts counting from
-  the end of the List_, so :js:`-1` inserts ``value``
-  as the last value, :js:`-2` inserts ``value`` as the
-  second-from-last value, etc.
+  * If ``index`` is negative, it starts counting from
+    the end of the List_, so :js:`-1` inserts ``value``
+    as the last value, :js:`-2` inserts ``value`` as the
+    second-from-last value, etc.
+
+  This function runs in ``O(log2(n / 125) + 125)``
+  worst-case time.
 
   Examples:
 
   .. code:: javascript
 
-    var list = List([1, 2, 3]);
+    var list = List([10, 20, 30]);
 
-    // returns [50, 1, 2, 3]
+    // Returns [50, 10, 20, 30]
     list.insert(0, 50);
 
-    // returns [1, 2, 3, 50]
+    // Returns [10, 20, 30, 50]
     list.insert(3, 50);
 
-    // throws an error
+    // Throws an error
     list.insert(4, 50);
 
-    // returns [1, 2, 3, 50]
+    // Returns [10, 20, 30, 50]
     list.insert(-1, 50);
 
-    // returns [1, 2, 50, 3]
+    // Returns [10, 20, 50, 30]
     list.insert(-2, 50);
 
 ----
@@ -1471,9 +1564,7 @@ Table of Contents
 
     List isEmpty() -> Boolean
 
-  Returns :js:`true` if the List_ is empty.
-
-  A List_ is empty if it has no values in it.
+  Returns :js:`true` if the List_ has no values in it.
 
   This function runs in ``O(1)`` time.
 
@@ -1481,10 +1572,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns true
+    // Returns true
     List().isEmpty();
 
-    // returns false
+    // Returns false
     List([1, 2, 3]).isEmpty();
 
 ----
@@ -1497,19 +1588,19 @@ Table of Contents
 
   Returns a new List_ with the value at ``index`` modified by ``fn``.
 
-  This function runs in ``O(log2(n / 125) + 125)`` worst-case time.
-
-  This does not modify the List_, it returns a new List_.
+  This does not mutate the List_, it returns a new List_.
 
   This function calls ``fn`` with the value at ``index``, and
   whatever ``fn`` returns will be used as the new value at
   ``index``.
 
-  If ``index`` is negative, it starts counting from
-  the end of the List_, so :js:`-1` modifies the last value,
-  :js:`-2` modifies the second-from-last value, etc.
+  * If ``index`` is negative, it starts counting from
+    the end of the List_, so :js:`-1` modifies the last value,
+    :js:`-2` modifies the second-from-last value, etc.
 
-  If ``index`` is not in the List_, an error is thrown.
+  * If ``index`` is not in the List_, an error is thrown.
+
+  This function runs in ``O(log2(n / 125) + 125)`` worst-case time.
 
   Examples:
 
@@ -1517,18 +1608,18 @@ Table of Contents
 
       var list = List([1, 2, 3]);
 
-      function plus10(x) {
+      function add10(x) {
         return x + 10;
       }
 
-      // returns [11, 2, 3]
-      list.modify(0, plus10);
+      // Returns [11, 2, 3]
+      list.modify(0, add10);
 
-      // returns [1, 12, 3]
-      list.modify(1, plus10);
+      // Returns [1, 12, 3]
+      list.modify(1, add10);
 
-      // returns [1, 2, 13]
-      list.modify(-1, plus10);
+      // Returns [1, 2, 13]
+      list.modify(-1, add10);
 
 ----
 
@@ -1541,12 +1632,12 @@ Table of Contents
   Returns a new List_ with ``value`` inserted at the end of
   this List_.
 
+  This does not mutate the List_, it returns a new List_.
+
   If you want to insert at arbitrary indexes, use
   `List insert`_ instead.
 
   This function runs in amortized ``O(1)`` time.
-
-  This does not modify the List_, it returns a new List_.
 
   Examples:
 
@@ -1554,10 +1645,10 @@ Table of Contents
 
     var list = List([1, 2, 3]);
 
-    // returns [1, 2, 3, 4]
+    // Returns [1, 2, 3, 4]
     list.push(4);
 
-    // returns [1, 2, 3, 4, 5, 0]
+    // Returns [1, 2, 3, 4, 5, 0]
     list.push(4).push(5).push(0);
 
 ----
@@ -1570,36 +1661,36 @@ Table of Contents
 
   Returns a new List_ with the value at ``index`` removed.
 
+  This does not mutate the List_, it returns a new List_.
+
+  * If ``index`` is negative, it starts counting from
+    the end of the List_, so :js:`-1` removes the last value,
+    :js:`-2` removes the second-from-last value, etc.
+
+  * If ``index`` is not in the List_, an error is thrown.
+
   This function runs in ``O(log2(n / 125) + 125)``
   worst-case time.
-
-  This does not modify the List_, it returns a new List_.
-
-  If ``index`` is negative, it starts counting from
-  the end of the List_, so :js:`-1` removes the last value,
-  :js:`-2` removes the second-from-last value, etc.
-
-  If ``index`` is not in the List_, an error is thrown.
 
   Examples:
 
   .. code:: javascript
 
-    var list = List([50, 100, 150]);
+    var list = List([10, 20, 30]);
 
-    // returns [100, 150]
+    // Returns [20, 30]
     list.remove(0);
 
-    // returns [50, 100]
+    // Returns [10, 20]
     list.remove(2);
 
-    // throws an error
+    // Throws an error
     list.remove(3);
 
-    // returns [50, 100]
+    // Returns [10, 20]
     list.remove(-1);
 
-    // returns [50, 150]
+    // Returns [10, 30]
     list.remove(-2);
 
 ----
@@ -1612,9 +1703,9 @@ Table of Contents
 
   Returns a new List_ with no values.
 
-  This function runs in ``O(1)`` time.
+  This does not mutate the List_, it returns a new List_.
 
-  This does not modify the List_, it returns a new List_.
+  This function runs in ``O(1)`` time.
 
 ----
 
@@ -1626,35 +1717,35 @@ Table of Contents
 
   Returns a new List_ with the value at ``index`` set to ``value``.
 
+  This does not mutate the List_, it returns a new List_.
+
+  * If ``index`` is negative, it starts counting from
+    the end of the List_, so :js:`-1` sets the last value,
+    :js:`-2` sets the second-from-last value, etc.
+
+  * If ``index`` is not in the List_, an error is thrown.
+
   This function runs in ``O(log2(n / 125) + 125)`` worst-case time.
-
-  This does not modify the List_, it returns a new List_.
-
-  If ``index`` is negative, it starts counting from
-  the end of the List_, so :js:`-1` sets the last value,
-  :js:`-2` sets the second-from-last value, etc.
-
-  If ``index`` is not in the List_, an error is thrown.
 
   Examples:
 
   .. code:: javascript
 
-    var list = List([1, 2, 3]);
+    var list = List([10, 20, 30]);
 
-    // returns [50, 2, 3]
+    // Returns [50, 20, 30]
     list.set(0, 50);
 
-    // returns [1, 50, 3]
-    list.set(1, 50);
+    // Returns [10, 20, 50]
+    list.set(2, 50);
 
-    // throws an error
+    // Throws an error
     list.set(3, 50);
 
-    // returns [1, 2, 50]
+    // Returns [10, 20, 50]
     list.set(-1, 50);
 
-    // returns [1, 50, 3]
+    // Returns [10, 50, 30]
     list.set(-2, 50);
 
 ----
@@ -1673,11 +1764,11 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns 0
+    // Returns 0
     List().size();
 
-    // returns 3
-    List([50, 100, 150]).size();
+    // Returns 3
+    List([10, 20, 30]).size();
 
 ----
 
@@ -1690,38 +1781,38 @@ Table of Contents
   Returns a new List_ with all the values of this List_
   between ``from`` (included) and ``to`` (excluded).
 
-  If ``from`` is not provided, it defaults to the start of the List_.
+  This does not mutate the List_, it returns a new List_.
 
-  If ``to`` is not provided, it defaults to the end of the List_.
+  * If ``from`` is not provided, it defaults to the start of the List_.
 
-  If ``from`` or ``to`` is negative, it starts counting from
-  the end of the List_, so :js:`-1` means the last value of
-  the List_, :js:`-2` means the second-from-last value, etc.
+  * If ``to`` is not provided, it defaults to the end of the List_.
 
-  If ``from`` is not in the List_, an error is thrown.
+  * If ``from`` or ``to`` is negative, it starts counting from
+    the end of the List_, so :js:`-1` means the last value of
+    the List_, :js:`-2` means the second-from-last value, etc.
 
-  If ``from`` is greater than ``to``, an error is thrown.
+  * If ``from`` is not in the List_, an error is thrown.
+
+  * If ``from`` is greater than ``to``, an error is thrown.
 
   This function runs in ``O(log2(n / 125) + 249 + (2 * (m / 125)))``
   worst-case time.
-
-  This does not modify the List_, it returns a new List_.
 
   Examples:
 
   .. code:: javascript
 
-    var list = List([50, 100, 150, 200]);
+    var list = List([10, 20, 30, 40]);
 
-    list.slice()       // returns [50, 100, 150, 200]
-    list.slice(1)      // returns [100, 150, 200]
-    list.slice(1, 3)   // returns [100, 150]
-    list.slice(4)      // throws an error
-    list.slice(3, 4)   // returns [200]
-    list.slice(3, 5)   // throws an error
-    list.slice(-1)     // returns [200]
-    list.slice(-2)     // returns [150, 200]
-    list.slice(-2, -1) // returns [150]
+    list.slice();        // Returns [10, 20, 30, 40]
+    list.slice(1);       // Returns [20, 30, 40]
+    list.slice(1, 3);    // Returns [20, 30]
+    list.slice(4);       // Throws an error
+    list.slice(3, 4);    // Returns [40]
+    list.slice(3, 5);    // Throws an error
+    list.slice(-1);      // Returns [40]
+    list.slice(-2);      // Returns [30, 40]
+    list.slice(-2, -1);  // Returns [30]
 
 ----
 
@@ -1741,11 +1832,13 @@ Table of Contents
   it only generates the values as needed. If you want
   an array, use toArray_.
 
+  This function runs in ``O(1)`` time.
+
   Examples:
 
   .. code:: javascript
 
-    // returns [21, 22, 23]
+    // Returns [21, 22, 23]
     map([1, 2, 3], function (x) {
       return x + 20;
     });
@@ -1758,7 +1851,7 @@ Table of Contents
 
     partition(x: Iterable, fn: Function) -> Tuple
 
-  Returns a Tuple_ with two Iterable_: the first
+  Returns a Tuple_ with two Iterable_\ s: the first
   contains the values of ``x`` for which ``fn`` returns
   :js:`true`, and the second contains the values of ``x`` for
   which ``fn`` returns :js:`false`.
@@ -1767,9 +1860,11 @@ Table of Contents
   if the function returns :js:`true` then the value will be
   in the first iterable, otherwise it will be in the second.
 
-  This function returns a Tuple_ which contains Iterable_,
+  This function returns a Tuple_ which contains Iterable_\ s,
   which are lazy: they only generate the values as needed.
   If you want an array, use toArray_.
+
+  This function runs in ``O(1)`` time.
 
   Examples:
 
@@ -1779,10 +1874,10 @@ Table of Contents
       return x < 5;
     });
 
-    // returns [1, 2, 3, 4, 0]
+    // Returns [1, 2, 3, 4, 0]
     tuple.get(0);
 
-    // returns [5, 6, 7, 8, 9]
+    // Returns [5, 6, 7, 8, 9]
     tuple.get(1);
 
 ----
@@ -1794,7 +1889,8 @@ Table of Contents
     Queue([x: Iterable]) -> Queue
 
   A Queue_ is an immutable ordered sequence of values that
-  can efficiently add to the end and remove from the front.
+  can efficiently add values to the right and remove values
+  from the left.
 
   The values from ``x`` will be inserted into
   the Queue_, in the same order as ``x``.
@@ -1820,18 +1916,16 @@ Table of Contents
   Returns a new Queue_ with all the values of this Queue_
   followed by all the values of ``x``.
 
-  This function runs in ``O(n)`` time.
+  This does not mutate the Queue_, it returns a new Queue_.
 
-  This does not modify the Queue_, it returns a new Queue_.
+  This function runs in ``O(n)`` time.
 
   Examples:
 
   .. code:: javascript
 
-    var queue = Queue([1, 2, 3]);
-
-    // returns [1, 2, 3, 4, 5, 0]
-    queue.concat([4, 5, 0]);
+    // Returns [1, 2, 3, 4, 5, 0]
+    Queue([1, 2, 3]).concat([4, 5, 0]);
 
 ----
 
@@ -1841,11 +1935,19 @@ Table of Contents
 
     Queue isEmpty() -> Boolean
 
-  Returns :js:`true` if the Queue_ is empty.
-
-  A Queue_ is empty if it has no values in it.
+  Returns :js:`true` if the Queue_ has no values in it.
 
   This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // Returns true
+    Queue().isEmpty();
+
+    // Returns false
+    Queue([1, 2, 3]).isEmpty();
 
 ----
 
@@ -1855,13 +1957,14 @@ Table of Contents
 
     Queue peek([default: Any]) -> Any
 
-  Returns the value at the front of the Queue_, or
-  ``default`` if the Queue_ is empty.
+  * If the Queue_ is empty:
 
-  If the Queue_ is empty:
+    * If ``default`` is provided, it is returned.
+    * If ``default`` is not provided, an error is thrown.
 
-  * If ``default`` is provided, it is returned.
-  * If ``default`` is not provided, an error is thrown.
+  * If the Queue_ is not empty:
+
+    * It returns the left-most value of the Queue_.
 
   This function runs in ``O(1)`` time.
 
@@ -1869,13 +1972,13 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns 1
+    // Returns 1
     Queue([1, 2, 3]).peek();
 
-    // throws an error
+    // Throws an error
     Queue().peek();
 
-    // returns 5
+    // Returns 5
     Queue().peek(5);
 
 ----
@@ -1886,11 +1989,11 @@ Table of Contents
 
     Queue pop() -> Queue
 
-  Returns a new Queue_ with the value at the front removed.
+  Returns a new Queue_ with the left-most value removed.
 
-  If the Queue_ is empty, an error is thrown.
+  * If the Queue_ is empty, an error is thrown.
 
-  This does not modify the Queue_, it returns a new Queue_.
+  This does not mutate the Queue_, it returns a new Queue_.
 
   This function runs in amortized ``O(1)`` time.
 
@@ -1898,10 +2001,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [2, 3]
+    // Returns [2, 3]
     Queue([1, 2, 3]).pop();
 
-    // throws an error
+    // Throws an error
     Queue().pop();
 
 ----
@@ -1912,9 +2015,9 @@ Table of Contents
 
     Queue push(value: Any) -> Queue
 
-  Returns a new Queue_ with ``value`` inserted at the end.
+  Returns a new Queue_ with ``value`` inserted to the right.
 
-  This does not modify the Queue_, it returns a new Queue_.
+  This does not mutate the Queue_, it returns a new Queue_.
 
   This function runs in ``O(1)`` time.
 
@@ -1922,10 +2025,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [1, 2, 3, 4]
+    // Returns [1, 2, 3, 4]
     Queue([1, 2, 3]).push(4);
 
-    // returns [1, 2, 3, 4, 5, 0]
+    // Returns [1, 2, 3, 4, 5, 0]
     Queue([1, 2, 3]).push(4).push(5).push(0);
 
 ----
@@ -1938,7 +2041,7 @@ Table of Contents
 
   Returns a new Queue_ with no values.
 
-  This does not modify the Queue_, it returns a new Queue_.
+  This does not mutate the Queue_, it returns a new Queue_.
 
   This function runs in ``O(1)`` time.
 
@@ -1958,10 +2061,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns 0
+    // Returns 0
     Queue().size();
 
-    // returns 3
+    // Returns 3
     Queue([50, 100, 150]).size();
 
 ----
@@ -1972,87 +2075,33 @@ Table of Contents
 
     range([start: Number = 0], [end: Number = Infinity], [step: Number = 1]) -> Iterable
 
-  Returns an Iterable_ that contains numbers
-  starting at ``start``, ending just before ``end``,
-  and incremented by ``step``.
+  Returns an Iterable_ that contains numbers between
+  ``start`` (included) and ``end`` (excluded),
+  incremented by ``step``.
+
+  * If ``step`` is negative, an error is thrown.
 
   This function returns an Iterable_, which is lazy:
   it only generates the values as needed. If you want
   an array, use toArray_.
 
-  Without any arguments, this function generates an
-  infinite sequence of integers starting at :js:`0`:
+  This function runs in ``O(1)`` time.
+
+  Examples:
 
   .. code:: javascript
 
-    // returns [0, 1, 2, 3, 4, 5...]
-    range();
-
-  With a single argument, you control where the sequence
-  starts:
-
-  .. code:: javascript
-
-    // returns [5, 6, 7, 8, 9, 10...]
-    range(5);
-
-  With two arguments, you control where the sequence stops:
-
-  .. code:: javascript
-
-    // returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    range(0, 10);
-
-  ``start`` is always included in the sequence, but ``end`` is
-  never included in the sequence.
-
-  With three arguments, you can change how much to increment
-  each number:
-
-  .. code:: javascript
-
-    // returns [0, 2, 4, 6, 8]
-    range(0, 10, 2);
-
-  If ``start`` is greater than ``end``, it will count down rather
-  than up:
-
-  .. code:: javascript
-
-    // returns [10, 8, 6, 4, 2]
-    range(10, 0, 2);
-
-  You can use a ``step`` of :js:`0` to repeat ``start`` forever:
-
-  .. code:: javascript
-
-    // returns [0, 0, 0, 0, 0...]
-    range(0, 10, 0);
-
-  Although integers are most common, you can also use
-  floating-point numbers for any of the three arguments:
-
-  .. code:: javascript
-
-    // returns [2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
-    range(2.5, 6.2, 0.5);
-
-  Negative numbers are allowed for ``start`` or ``end``:
-
-  .. code:: javascript
-
-    // returns [-10, -9, -8, -7, -6, -5, -4, -3]
-    range(-10, -2);
-
-    // returns [-5, -4, -3, -2, -1, 0, 1, 2]
-    range(-5, 3);
-
-  The only restriction is that ``step`` cannot be negative:
-
-  .. code:: javascript
-
-    // throws an error
-    range(0, 10, -1);
+    range();               // Returns [0, 1, 2, 3, 4, 5...]
+    range(5);              // Returns [5, 6, 7, 8, 9, 10...]
+    range(0, 10);          // Returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    range(0, 10, -1);      // Throws an error
+    range(0, 10, 2);       // Returns [0, 2, 4, 6, 8]
+    range(10, 0, 2);       // Returns [10, 8, 6, 4, 2]
+    range(0, 10, 0);       // Returns [0, 0, 0, 0, 0...]
+    range(2.5, 6.2, 0.5);  // Returns [2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
+    range(-10, -2);        // Returns [-10, -9, -8, -7, -6, -5, -4, -3]
+    range(-5, 3);          // Returns [-5, -4, -3, -2, -1, 0, 1, 2]
+    range(5, -3);          // Returns [5, 4, 3, 2, 1, 0, -1, -2]
 
 ----
 
@@ -2063,13 +2112,13 @@ Table of Contents
     Record([x: Object | Iterable]) -> Record
 
   A Record_ is an immutable fixed-size dictionary mapping
-  strings/Tag_\ s to values.
+  strings / Tag_\ s to values.
 
   * If ``x`` is an Iterable_, the values must be arrays or Tuple_\ s
     of :js:`[key, value]`, which will be added to the Record_.
 
   * If ``x`` is a JavaScript object literal like :js:`{ foo: 1 }`,
-    then the keys/values will be added to the Record_.
+    then the keys / values will be added to the Record_.
 
   This takes ``O(n + (n * log2(n)) + n)`` time, unless ``x``
   is already a Record_, in which case it takes ``O(1)``
@@ -2093,20 +2142,20 @@ Table of Contents
 
     Record get(key: String | Tag) -> Any
 
-  Returns the value for ``key`` in the Record_.
+  * If ``key`` is in the Record_, the value for ``key`` is returned.
+
+  * If ``key`` is not in the Record_, an error is thrown.
 
   This function runs in ``O(1)`` time.
-
-  If ``key`` is not in the Record_, an error is thrown.
 
   Examples:
 
   .. code:: javascript
 
-    // throws an error
+    // Throws an error
     Record().get("foo");
 
-    // returns 10
+    // Returns 10
     Record({ "foo": 10 }).get("foo");
 
 ----
@@ -2119,15 +2168,15 @@ Table of Contents
 
   Returns a new Record_ with ``key`` modified by ``fn``.
 
-  This function runs in ``O(n)`` time.
-
-  This does not modify the Record_, it returns a new Record_.
-
-  If ``key`` is not in the Record_, it will throw an error.
+  This does not mutate the Record_, it returns a new Record_.
 
   This function calls ``fn`` with the value for ``key``, and
   whatever ``fn`` returns will be used as the new value for
   ``key``.
+
+  * If ``key`` is not in the Record_, it will throw an error.
+
+  This function runs in ``O(n)`` time.
 
   Examples:
 
@@ -2138,20 +2187,18 @@ Table of Contents
       "bar": 2
     });
 
-    // returns { "foo": 11, "bar": 2 }
-    record.modify("foo", function (x) {
+    function add10(x) {
       return x + 10;
-    });
+    }
 
-    // returns { "foo": 1, "bar": 12 }
-    record.modify("bar", function (x) {
-      return x + 10;
-    });
+    // Returns { "foo": 11, "bar": 2 }
+    record.modify("foo", add10);
 
-    // throws an error
-    record.modify("qux", function (x) {
-      return x + 10;
-    });
+    // Returns { "foo": 1, "bar": 12 }
+    record.modify("bar", add10);
+
+    // Throws an error
+    record.modify("qux", add10);
 
 ----
 
@@ -2163,20 +2210,20 @@ Table of Contents
 
   Returns a new Record_ with ``key`` set to ``value``.
 
+  This does not mutate the Record_, it returns a new Record_.
+
+  * If ``key`` does not exist, an error is thrown.
+
   This function runs in ``O(n)`` time.
-
-  This does not modify the Record_, it returns a new Record_.
-
-  If ``key`` does not exist, an error is thrown.
 
   Examples:
 
   .. code:: javascript
 
-    // returns { "foo": 10 }
+    // Returns { "foo": 10 }
     Record({ "foo": 5 }).set("foo", 10);
 
-    // throws an error
+    // Throws an error
     Record({ "foo": 5 }).set("bar", 10);
 
 ----
@@ -2187,20 +2234,20 @@ Table of Contents
 
     Record update(x: Object | Iterable) -> Record
 
-  Returns a new Record_ with all the keys/values of this Record_
+  Returns a new Record_ with the keys / values of this Record_
   updated with ``x``.
 
-  This function runs in ``O(n * m)`` time.
-
-  This does not modify the Record_, it returns a new Record_.
+  This does not mutate the Record_, it returns a new Record_.
 
   ``x`` must be either a JavaScript object literal, or an
   Iterable_ where each value is an array or Tuple_ of
   :js:`[key, value]`.
 
-  * If a key from ``x`` already exists in this Record_, it is overwritten.
+  * If a ``key`` from ``x`` already exists in this Record_, it is overwritten.
 
-  * If a key from ``x`` does not exist in this Record_, an error is thrown.
+  * If a ``key`` from ``x`` does not exist in this Record_, an error is thrown.
+
+  This function runs in ``O(n * m)`` time.
 
   You can use this to update a Record_ with another Record_:
 
@@ -2215,7 +2262,7 @@ Table of Contents
       "foo": 50
     });
 
-    // returns { "foo": 50, "bar": 2 }
+    // Returns { "foo": 50, "bar": 2 }
     defaults.update(other);
 
   You can also use this to update a Record_ with a JavaScript
@@ -2228,7 +2275,7 @@ Table of Contents
       "bar": 2
     });
 
-    // returns { "foo": 50, "bar": 2 }
+    // Returns { "foo": 50, "bar": 2 }
     defaults.update({
       "foo": 50
     });
@@ -2245,7 +2292,7 @@ Table of Contents
   this library. It holds a single value, which can be
   anything.
 
-  The Ref_ has the initial value of ``initial``.
+  The initial value of the Ref_ is``initial``.
 
   Whenever the Ref_ changes, the function ``onchange``
   is called with the old value and the new value.
@@ -2262,35 +2309,37 @@ Table of Contents
       // The `onchange` function is called
       ref.set(5);
 
-      // returns 60
+      // Returns 60
       ref.get();
 
       // The `onchange` function is called
       ref.set(10);
 
-      // returns 120
+      // Returns 120
       ref.get();
 
   This allows the ``onchange`` function to do validation,
-  returning the old value, or modifying the value.
+  return the old value, or modify the value. You can also
+  use this to notify something else about the change (e.g.
+  an event listener).
 
   Because Ref_\ s are mutable, they are only treated as
   equal_ if they are exactly the same Ref_:
 
-  ..code:: javascript
+  .. code:: javascript
 
     var x = Ref(0);
     var y = Ref(0);
 
-    // false
+    // Returns false
     equal(x, y);
 
-  Generally you will use immutable data as much as possible,
+  Generally you should use immutable data as much as possible,
   but occasionally it's useful to have a little bit of
   mutability.
 
-  You will typically have a Ref_ which contains immutable
-  data. The only way to "change" the data is to change the Ref_,
+  It's common to have a Ref_ which contains immutable data.
+  The only way to "change" the data is to change the Ref_,
   replacing the old immutable data with new immutable data.
 
   As an example:
@@ -2301,12 +2350,12 @@ Table of Contents
         "mph": 0
       }));
 
-  We have a :js:`car`, but now we want to change its
-  :js:`"mph"` property:
+  Let's now change the :js:`"mph"` property of the :js:`car`:
 
   .. code:: javascript
 
       car.modify(function (record) {
+        // Returns { "mph": 10 }
         return record.set("mph", 10);
       });
 
@@ -2331,9 +2380,10 @@ Table of Contents
   2) In JavaScript, your objects could change at any time,
      making your code difficult to understand.
 
-     But with immutability as the norm, Ref_\ s are very
-     rarely used, reducing the number of places in your code
-     where you have to worry about mutability.
+     But if you're using immutable objects, your code is
+     easier to understand, because now Ref_\ s are the only
+     places in your code where you have to worry about
+     mutability.
 
      In addition, although the Ref_ itself is mutable,
      the data it contains is immutable, so if you get the
@@ -2363,12 +2413,13 @@ Table of Contents
 
     var ref = Ref(10);
 
-    // returns 10
+    // Returns 10
     ref.get();
 
+    // Mutates the ref
     ref.set(20);
 
-    // returns 20
+    // Returns 20
     ref.get();
 
 ----
@@ -2383,13 +2434,13 @@ Table of Contents
 
   This mutates the Ref_, it does *not* return a new Ref_!
 
-  This will call the ``onchange`` function of the Ref_.
-
-  This function runs in ``O(1)`` time.
-
   This function calls ``fn`` with the current value of the
   Ref_, and whatever ``fn`` returns is used as the new value
   for the Ref_.
+
+  This will call the ``onchange`` function of the Ref_.
+
+  This function runs in ``O(1)`` time.
 
   Examples:
 
@@ -2397,21 +2448,23 @@ Table of Contents
 
     var ref = Ref(5);
 
-    // returns 5;
-    ref.get();
-
-    ref.modify(function (x) {
+    function add10(x) {
       return x + 10;
-    });
+    }
 
-    // returns 15
+    // Returns 5
     ref.get();
 
-    ref.modify(function (x) {
-      return x + 10
-    });
+    // Mutates the ref
+    ref.modify(add10);
 
-    // returns 25
+    // Returns 15
+    ref.get();
+
+    // Mutates the ref
+    ref.modify(add10);
+
+    // Returns 25
     ref.get();
 
 ----
@@ -2436,17 +2489,19 @@ Table of Contents
 
     var ref = Ref(5);
 
-    // returns 5
+    // Returns 5
     ref.get();
 
+    // Mutates the ref
     ref.set(10);
 
-    // returns 10
+    // Returns 10
     ref.get();
 
+    // Mutates the ref
     ref.set(50);
 
-    // returns 50
+    // Returns 50
     ref.get();
 
 ----
@@ -2458,20 +2513,26 @@ Table of Contents
     reverse(x: Iterable) -> Iterable
 
   Returns a new Iterable_ which contains all
-  the values of ``x``, but in reversed order.
+  the values of ``x``, but in reverse order.
 
-  This function is *not* lazy: it requires ``O(n)`` space,
+  This function is **not** lazy: it requires ``O(n)`` space,
   because it must reach the end of ``x`` before it can
   return anything.
 
+  That means it has to iterate over ``x`` twice. This is
+  inefficient, and so you should try to avoid using reverse_
+  unless you need to.
+
   This function returns an Iterable_. If you want an
   array, use toArray_.
+
+  This function runs in ``O(1)`` time.
 
   Examples:
 
   .. code:: javascript
 
-    // returns [3, 2, 1]
+    // Returns [3, 2, 1]
     reverse([1, 2, 3]);
 
 ----
@@ -2505,18 +2566,19 @@ Table of Contents
 
       var set = Set([obj1, obj2]);
 
-      // returns true
+      // Returns true
       set.has(obj1);
 
-      // returns true
+      // Returns true
       set.has(obj2);
 
+      // Removes obj1 from the set
       set = set.remove(obj1);
 
-      // returns false
+      // Returns false
       set.has(obj1);
 
-      // returns true
+      // Returns true
       set.has(obj2);
 
   You can also use immutable objects (like Dict_, Set_, List_,
@@ -2530,21 +2592,22 @@ Table of Contents
 
       var set = Set([obj1, obj2]);
 
-      // returns true
+      // Returns true
       set.has(obj1);
 
-      // returns true
+      // Returns true
       set.has(obj2);
 
+      // Removes obj1 from the set
       set = set.remove(obj1);
 
-      // returns false
+      // Returns false
       set.has(obj1);
 
       // Returns false
       set.has(obj2);
 
-  Because :js:`obj1` and :js:`obj2` have the same keys/values,
+  Because :js:`obj1` and :js:`obj2` have the same keys / values,
   they are equal_, and so they are treated as duplicates.
 
 ----
@@ -2557,9 +2620,9 @@ Table of Contents
 
   Returns a new Set_ with ``value`` added to it.
 
-  If ``value`` is already in the Set_, this function does nothing.
+  This does not mutate the Set_, it returns a new Set_.
 
-  This does not modify the Set_, it returns a new Set_.
+  * If ``value`` is already in the Set_, this function does nothing.
 
   This function runs in ``O(log2(n))`` worst-case time.
 
@@ -2569,10 +2632,10 @@ Table of Contents
 
     var set = Set([1, 2, 3]);
 
-    // returns [1, 2, 3, 4]
+    // Returns [1, 2, 3, 4]
     set.add(4);
 
-    // returns [0, 1, 2, 3, 4, 5]
+    // Returns [0, 1, 2, 3, 4, 5]
     set.add(4).add(5).add(0);
 
 ----
@@ -2589,7 +2652,7 @@ Table of Contents
 
   This is also called the `symmetric difference <http://en.wikipedia.org/wiki/Symmetric_difference>`__ of the two Set_\ s.
 
-  This does not modify the Set_, it returns a new Set_.
+  This does not mutate the Set_, it returns a new Set_.
 
   This function runs in ``O(2 * log2(n) * m)`` worst-case time.
 
@@ -2597,10 +2660,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [1, 4]
+    // Returns [1, 4]
     Set([1, 2, 3]).disjoint([2, 3, 4]);
 
-    // returns [1, 2, 3]
+    // Returns [1, 2, 3]
     Set([1, 2, 3]).disjoint([]);
 
 ----
@@ -2619,10 +2682,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns false
+    // Returns false
     Set().has(1);
 
-    // returns true
+    // Returns true
     Set([1, 2, 3]).has(1);
 
 ----
@@ -2638,7 +2701,7 @@ Table of Contents
 
   This is a standard `set intersection <http://en.wikipedia.org/wiki/Intersection_%28set_theory%29>`__.
 
-  This does not modify the Set_, it returns a new Set_.
+  This does not mutate the Set_, it returns a new Set_.
 
   This function runs in ``O(2 * log2(n) * m)`` worst-case time.
 
@@ -2646,10 +2709,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [2, 3]
+    // Returns [2, 3]
     Set([1, 2, 3]).intersect([2, 3, 4]);
 
-    // returns []
+    // Returns []
     Set([1, 2, 3]).intersect([]);
 
 ----
@@ -2660,9 +2723,7 @@ Table of Contents
 
     Set isEmpty() -> Boolean
 
-  Returns :js:`true` if the Set_ is empty.
-
-  A Set_ is empty if it has no values in it.
+  Returns :js:`true` if the Set_ has no values in it.
 
   This function runs in ``O(1)`` time.
 
@@ -2670,10 +2731,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns true
+    // Returns true
     Set().isEmpty();
 
-    // returns false
+    // Returns false
     Set([1, 2, 3]).isEmpty();
 
 ----
@@ -2686,9 +2747,9 @@ Table of Contents
 
   Returns a new Set_ with ``value`` removed.
 
-  If ``value`` is not in the Set_, this function does nothing.
+  This does not mutate the Set_, it returns a new Set_.
 
-  This does not modify the Set_, it returns a new Set_.
+  * If ``value`` is not in the Set_, this function does nothing.
 
   This function runs in ``O(log2(n))`` worst-case time.
 
@@ -2698,13 +2759,13 @@ Table of Contents
 
     var set = Set([1, 2, 3]);
 
-    // returns [2, 3]
+    // Returns [2, 3]
     set.remove(1);
 
-    // returns [1]
+    // Returns [1]
     set.remove(2).remove(3);
 
-    // returns [1, 2, 3]
+    // Returns [1, 2, 3]
     set.remove(4);
 
 ----
@@ -2717,7 +2778,7 @@ Table of Contents
 
   Returns a new Set_ with no values.
 
-  This does not modify the Set_, it returns a new Set_.
+  This does not mutate the Set_, it returns a new Set_.
 
   This function runs in ``O(1)`` time.
 
@@ -2744,7 +2805,7 @@ Table of Contents
 
   This is also called the `relative complement <http://en.wikipedia.org/wiki/Complement_%28set_theory%29>`__ of the two Set_\ s.
 
-  This does not modify the Set_, it returns a new Set_.
+  This does not mutate the Set_, it returns a new Set_.
 
   This function runs in ``O(log2(n) * m)`` worst-case time.
 
@@ -2752,10 +2813,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [1]
+    // Returns [1]
     Set([1, 2, 3]).subtract([2, 3, 4]);
 
-    // returns [1, 2, 3]
+    // Returns [1, 2, 3]
     Set([1, 2, 3]).subtract([]);
 
 ----
@@ -2771,7 +2832,7 @@ Table of Contents
 
   This is a standard `set union <http://en.wikipedia.org/wiki/Union_%28set_theory%29>`__.
 
-  This does not modify the Set_, it returns a new Set_.
+  This does not mutate the Set_, it returns a new Set_.
 
   This function runs in ``O(log2(n) * m)`` worst-case time.
 
@@ -2779,10 +2840,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [1, 2, 3, 4]
+    // Returns [1, 2, 3, 4]
     Set([1, 2, 3]).union([2, 3, 4]);
 
-    // returns [1, 2, 3]
+    // Returns [1, 2, 3]
     Set([1, 2, 3]).union([]);
 
 ----
@@ -2805,7 +2866,7 @@ Table of Contents
   Mixing two or more types together will not work correctly.
 
   *e.g.* You shouldn't use this function if you want to use both
-  numbers and strings as keys in the same Dict_/Set_.
+  numbers and strings as keys in the same Dict_ / Set_.
 
 ----
 
@@ -2892,7 +2953,7 @@ Table of Contents
     Stack([x: Iterable]) -> Stack
 
   A Stack_ is an immutable ordered sequence of values that
-  can efficiently add and remove from the end.
+  can efficiently add and remove values from the right.
 
   The values from ``x`` will be inserted into
   the Stack_, in the same order as ``x``.
@@ -2903,7 +2964,7 @@ Table of Contents
   Duplicate values are allowed, and duplicates don't
   have to be in the same order.
 
-  The values in the Stack_ can have whatever order you
+  The values in a Stack_ can have whatever order you
   want, but they are not sorted. If you want the values
   to be sorted, use a SortedSet_ instead.
 
@@ -2918,15 +2979,15 @@ Table of Contents
   Returns a new Stack_ with all the values of this Stack_
   followed by all the values of ``x``.
 
-  This function runs in ``O(n)`` time.
+  This does not mutate the Stack_, it returns a new Stack_.
 
-  This does not modify the Stack_, it returns a new Stack_.
+  This function runs in ``O(n)`` time.
 
   Examples:
 
   .. code:: javascript
 
-    // returns [1, 2, 3, 4, 5, 0]
+    // Returns [1, 2, 3, 4, 5, 0]
     Stack([1, 2, 3]).concat([4, 5, 0]);
 
 ----
@@ -2937,18 +2998,18 @@ Table of Contents
 
     Stack isEmpty() -> Boolean
 
-  Returns :js:`true` if the Stack_ is empty.
-
-  A Stack_ is empty if it has no values in it.
+  Returns :js:`true` if the Stack_ has no values in it.
 
   This function runs in ``O(1)`` time.
 
   Examples:
 
-    // returns true
+  .. code:: javascript
+
+    // Returns true
     Stack().isEmpty();
 
-    // returns false
+    // Returns false
     Stack([1, 2, 3]).isEmpty();
 
 
@@ -2960,13 +3021,12 @@ Table of Contents
 
     Stack peek([default: Any]) -> Any
 
-  Returns the value at the end of the Stack_, or
-  ``default`` if the Stack_ is empty.
+  * If the Stack_ is empty:
 
-  If the Stack_ is empty:
+    * If ``default`` is provided, it is returned.
+    * If ``default`` is not provided, an error is thrown.
 
-  * If ``default`` is provided, it is returned.
-  * If ``default`` is not provided, an error is thrown.
+  * If the Stack_ is not empty, the right-most value is returned.
 
   This function runs in ``O(1)`` time.
 
@@ -2974,13 +3034,13 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns 3
+    // Returns 3
     Stack([1, 2, 3]).peek();
 
-    // throws an error
+    // Throws an error
     Stack().peek();
 
-    // returns 5
+    // Returns 5
     Stack().peek(5);
 
 ----
@@ -2991,11 +3051,11 @@ Table of Contents
 
     Stack pop() -> Stack
 
-  Returns a new Stack_ with the value at the end removed.
+  Returns a new Stack_ with the right-most value removed.
 
-  If the Stack_ is empty, an error is thrown.
+  This does not mutate the Stack_, it returns a new Stack_.
 
-  This does not modify the Stack_, it returns a new Stack_.
+  * If the Stack_ is empty, an error is thrown.
 
   This function runs in ``O(1)`` time.
 
@@ -3003,10 +3063,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [1, 2]
+    // Returns [1, 2]
     Stack([1, 2, 3]).pop();
 
-    // throws an error
+    // Throws an error
     Stack().pop();
 
 ----
@@ -3017,9 +3077,9 @@ Table of Contents
 
     Stack push(value: Any) -> Stack
 
-  Returns a new Stack_ with ``value`` inserted at the end.
+  Returns a new Stack_ with ``value`` inserted at the right.
 
-  This does not modify the Stack_, it returns a new Stack_.
+  This does not mutate the Stack_, it returns a new Stack_.
 
   This function runs in ``O(1)`` time.
 
@@ -3027,10 +3087,10 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [1, 2, 3, 4]
+    // Returns [1, 2, 3, 4]
     Stack([1, 2, 3]).push(4);
 
-    // returns [1, 2, 3, 4, 5, 0]
+    // Returns [1, 2, 3, 4, 5, 0]
     Stack([1, 2, 3]).push(4).push(5).push(0);
 
 ----
@@ -3043,7 +3103,7 @@ Table of Contents
 
   Returns a new Stack_ with no values.
 
-  This does not modify the Stack_, it returns a new Stack_.
+  This does not mutate the Stack_, it returns a new Stack_.
 
   This function runs in ``O(1)`` time.
 
@@ -3063,11 +3123,11 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns 0
+    // Returns 0
     Stack().size();
 
-    // returns 3
-    Stack([50, 100, 150]).size();
+    // Returns 3
+    Stack([10, 20, 30]).size();
 
 ----
 
@@ -3104,7 +3164,6 @@ Table of Contents
   Tag_.
 
   A Tag_ can be used anywhere that a string can be used.
-
   Unlike strings, Tag_\ s are guaranteed (with very high
   probability) to not collide with anything else,
   including other Tag_\ s and strings.
@@ -3134,20 +3193,20 @@ Table of Contents
 
       obj[my_tag] = 50;
 
-      // returns 50
+      // Returns 50
       obj[my_tag];
 
   However, because of certain features of JavaScript,
   it's possible for a malicious person to access the
-  Tag_, so you should *not* store sensitive data like
+  Tag_, so you should **not** store sensitive data like
   passwords with a Tag_.
 
   But you can use this to attach data to an existing
-  object, in a way that doesn't interfere with the
-  object's existing properties.
+  object (e.g. from another library) so that it
+  doesn't interfere with the object's existing
+  properties.
 
   Another thing you can do is to create interfaces.
-
   An interface is the combination of a function and
   a Tag_. This allows you to change the behavior of the
   function based upon the type of its argument.
@@ -3207,7 +3266,7 @@ Table of Contents
       });
 
   The problem is, what if somebody else defines a new
-  `"click"` event with different behavior? Oops, now
+  :js:`"click"` event with different behavior? Oops, now
   there's a name collision. With Tag_\ s, there is no
   collision:
 
@@ -3224,7 +3283,7 @@ Table of Contents
   Yet another use case is to create a `nominal type
   system <http://en.wikipedia.org/wiki/Nominal_type_system>`__.
   Immutable objects are treated as equal_ if they have
-  the same keys/values:
+  the same keys / values:
 
   .. code:: javascript
 
@@ -3238,7 +3297,7 @@ Table of Contents
       "prop2": 2
     });
 
-    // true
+    // Returns true
     equal(foo, bar);
 
   This is known as `structural typing <http://en.wikipedia.org/wiki/Structural_type_system>`__.
@@ -3252,7 +3311,7 @@ Table of Contents
   determine whether something is a :js:`Human` or not.
   We can solve this problem by using a Tag_:
 
-  ..code:: javascript
+  .. code:: javascript
 
     var tag_Human = Tag();
 
@@ -3263,7 +3322,7 @@ Table of Contents
     });
 
   Because Tag_\ s are unique, now our :js:`human` will
-  only be equal_ to other :js:`Human`s, and not other
+  only be equal_ to other :js:`Human`\ s, and not other
   animals.
 
   We can go further and give each individual :js:`Human`
@@ -3285,7 +3344,11 @@ Table of Contents
       });
     }
 
-    var Bob = Human("Bob", 50, "male");
+    var Bob1 = Human("Bob", 50, "male");
+    var Bob2 = Human("Bob", 50, "male");
+
+    // Returns false
+    equal(Bob1, Bob2);
 
   Now each individual :js:`Human` has a unique :js:`"id"`,
   which can be used to reliably tell one :js:`Human` apart
@@ -3305,27 +3368,21 @@ Table of Contents
   Returns an Iterable_ that contains the first
   ``count`` number of values from ``x``.
 
+  * ``count`` must be an integer, and must not be negative.
+
   This function returns an Iterable_, which is lazy:
   it only generates the values as needed. If you want
   an array, use toArray_.
+
+  This function runs in ``O(1)`` time.
 
   This function is a simple way of dealing with
   infinite Iterable_:
 
   .. code:: javascript
 
-    // returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    // Returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     take(range(), 10);
-
-  ``count`` must be an integer, and may not be negative:
-
-  .. code:: javascript
-
-    // throws an error
-    take(range(), 0.5);
-
-    // throws an error
-    take(range(), -1);
 
 ----
 
@@ -3342,6 +3399,8 @@ Table of Contents
   * If ``x`` is an Iterable_, it is converted into a JavaScript Array
     and returned.
 
+    This conversion takes ``O(n)`` time.
+
   This is useful because most iteration functions return
   Iterable_\ s, not arrays.
 
@@ -3349,7 +3408,7 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [0, 1, 2, 3, 4]
+    // Returns [0, 1, 2, 3, 4]
     toArray(range(0, 5));
 
 ----
@@ -3365,7 +3424,9 @@ Table of Contents
   This is useful if you want to create your own iterator
   functions.
 
-  See also Iterable_ for creating Iterable_\ s.
+  See also Iterable_, for creating Iterable_\ s.
+
+  This function runs in ``O(1)`` time.
 
 ----
 
@@ -3375,13 +3436,13 @@ Table of Contents
 
     toJS(x: Any) -> Any
 
-  Converts a Dict_, Set_, List_, Queue_, Stack_, Tuple_, or
-  Record_ to its JavaScript equivalent.
+  Converts a Dict_, List_, Queue_, Record_, Set_, Stack_,
+  or Tuple_ to its JavaScript equivalent.
 
   This function has the following behavior:
 
   * JavaScript object literals are deeply copied, with
-    toJS_ called on all the keys/values.
+    toJS_ called on all the keys / values.
 
     This copying takes ``O(n)`` time.
 
@@ -3391,12 +3452,12 @@ Table of Contents
     This copying takes ``O(n)`` time.
 
   * Dict_ and Record_ are converted into a JavaScript
-    object, with toJS_ called on all the keys/values.
+    object, with toJS_ called on all the keys / values.
     The keys must be strings or Tag_.
 
     This conversion takes ``O(n)`` time.
 
-  * Set_, List_, Queue_, Stack_, and Tuple_ are
+  * List_, Queue_, Set_, Stack_, and Tuple_ are
     converted into a JavaScript array, with toJS_
     called on all the values.
 
@@ -3404,10 +3465,10 @@ Table of Contents
 
   * Everything else is returned as-is.
 
-  This is useful if you like using Dict_, Set_, List_,
-  Queue_, Stack_, Tuple_, or Record_ but you want to
+  This is useful if you like using Dict_, List_, Queue_, 
+  Record_, Set_, Stack_, or Tuple_ but you want to
   use a library that requires ordinary JavaScript
-  objects/arrays.
+  objects / arrays.
 
   If you want to losslessly store an immutable object on
   disk, or send it over the network, you can use toJSON_
@@ -3421,13 +3482,13 @@ Table of Contents
 
     toJSON(x: Any) -> Any
 
-  Converts a Dict_, Set_, List_, Queue_, Stack_, Tuple_,
-  or Record_ to JSON.
+  Converts a Dict_, List_, Queue_, Record_, Set_, Stack_,
+  or Tuple_ to JSON.
 
   This function has the following behavior:
 
   * JavaScript object literals are deeply copied, with
-    toJSON_ called on all the keys/values.
+    toJSON_ called on all the keys / values.
 
     This copying takes ``O(n)`` time.
 
@@ -3445,9 +3506,9 @@ Table of Contents
   * Numbers are returned as-is, except :js:`NaN`,
     :js:`Infinity`, and :js:`-Infinity` throw an error.
 
-  * Dict_, Set_, List_, Queue_, Stack_, Tuple_, and
-    Record_ are converted into specially marked JSON
-    objects, with toJSON_ called on all the keys/values.
+  * Dict_, List_, Queue_, Record_, Set_, Stack_, and Tuple_
+    are converted into specially marked JSON objects, with
+    toJSON_ called on all the keys / values.
 
     This conversion takes ``O(n)`` time.
 
@@ -3462,9 +3523,9 @@ Table of Contents
 
   .. code:: javascript
 
-      var x = Record({ foo: 1 });
+      var x = Record({ "foo": 1 });
 
-      // returns true
+      // Returns true
       equal(x, fromJSON(toJSON(x)));
 
   This makes it possible to store immutable objects on disk,
@@ -3509,9 +3570,9 @@ Table of Contents
 
     Tuple get(index: Integer) -> Any
 
-  Returns the value in the Tuple_ at index ``index``.
+  Returns the value in the Tuple_ at ``index``.
 
-  If ``index`` is not in the Tuple_, an error is thrown.
+  * If ``index`` is not in the Tuple_, an error is thrown.
 
   This function runs in ``O(1)`` time.
 
@@ -3519,14 +3580,17 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns 50
-    Tuple([50, 100, 150]).get(0);
+    // Returns 10
+    Tuple([10, 20, 30]).get(0);
 
-    // returns 150
-    Tuple([50, 100, 150]).get(2);
+    // Returns 20
+    Tuple([10, 20, 30]).get(1);
 
-    // throws an error
-    Tuple([50, 100, 150]).get(3);
+    // Returns 30
+    Tuple([10, 20, 30]).get(2);
+
+    // Throws an error
+    Tuple([10, 20, 30]).get(3);
 
 ----
 
@@ -3538,15 +3602,15 @@ Table of Contents
 
   Returns a new Tuple_ with the value at ``index`` modified by ``fn``.
 
-  If ``index`` is not in the Tuple_, an error is thrown.
-
-  This function runs in ``O(n)`` time.
-
-  This does not modify the Tuple_, it returns a new Tuple_.
-
   This function calls ``fn`` with the value at ``index``, and
   whatever ``fn`` returns is used as the new value at
   ``index``.
+
+  * If ``index`` is not in the Tuple_, an error is thrown.
+
+  This does not mutate the Tuple_, it returns a new Tuple_.
+
+  This function runs in ``O(n)`` time.
 
   Examples:
 
@@ -3554,20 +3618,18 @@ Table of Contents
 
       var tuple = Tuple([1, 2, 3]);
 
-      // returns [11, 2, 3]
-      tuple.modify(0, function (x) {
+      function add10(x) {
         return x + 10;
-      });
+      }
 
-      // returns [1, 12, 3]
-      tuple.modify(1, function (x) {
-        return x + 10;
-      });
+      // Returns [11, 2, 3]
+      tuple.modify(0, add10);
 
-      // throws an error
-      tuple.modify(3, function (x) {
-        return x + 10;
-      });
+      // Returns [1, 12, 3]
+      tuple.modify(1, add10);
+
+      // Throws an error
+      tuple.modify(3, add10);
 
 ----
 
@@ -3579,11 +3641,11 @@ Table of Contents
 
   Returns a new Tuple_ with the value at ``index`` set to ``value``.
 
+  * If ``index`` is not in the Tuple_, an error is thrown.
+
+  This does not mutate the Tuple_, it returns a new Tuple_.
+
   This function runs in ``O(n)`` time.
-
-  This does not modify the Tuple_, it returns a new Tuple_.
-
-  If ``index`` is not in the Tuple_, an error is thrown.
 
   Examples:
 
@@ -3591,10 +3653,10 @@ Table of Contents
 
     var tuple = Tuple([1, 2, 3]);
 
-    // returns [50, 2, 3]
+    // Returns [50, 2, 3]
     tuple.set(0, 50);
 
-    // returns [1, 50, 3]
+    // Returns [1, 50, 3]
     tuple.set(1, 50);
 
 ----
@@ -3613,11 +3675,11 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns 0
+    // Returns 0
     Tuple().size();
 
-    // returns 3
-    Tuple([1, 2, 3]).size();
+    // Returns 3
+    Tuple([10, 20, 30]).size();
 
 ----
 
@@ -3627,8 +3689,10 @@ Table of Contents
 
     UUIDTag(uuid: String) -> Tag
 
-  Returns a Tag_ which uses ``uuid`` for equality. ``uuid``
-  must be a lower-case `UUID <http://en.wikipedia.org/wiki/Universally_unique_identifier>`__.
+  Returns a Tag_ which uses ``uuid`` for equality.
+
+  * If ``uuid`` is not a lower-case `UUID <http://en.wikipedia.org/wiki/Universally_unique_identifier>`__,
+    an error is thrown.
 
   Using Tag_ is very easy and convenient, but it
   has a major limitation: you can't use a Tag_ with toJSON_
@@ -3668,7 +3732,7 @@ Table of Contents
 
   If two Tag_\ s use the same UUID, they are treated as the same
   Tag_, and so now the server can correctly send the data to
-  the client, and the Tag_\ s will match with the database.
+  the client. And the Tag_\ s will match with the database.
 
   But you have to be careful that different Tag_\ s have different
   UUIDs, or you will have a collision. You can't reuse the same
@@ -3686,29 +3750,34 @@ Table of Contents
 
     zip(x: Iterable, [default: Any]) -> Iterable
 
+  ``x`` must be an Iterable_ which contains multiple
+  Iterable_\ s.
+
   This function returns an Iterable_, which is lazy:
   it only generates the values as needed. If you want
   an array, use toArray_.
 
-  ``x`` must be an Iterable_ which contains multiple
-  Iterable_.
+  This function is **not** lazy for ``x``, but it
+  *is* lazy for each Iterable_ in ``x``.
+
+  This function runs in ``O(1)`` time.
 
   This function returns an Iterable_ which contains
-  multiple Tuple_ which contain alternating values
+  multiple Tuple_\ s which contain alternating values
   from each Iterable_ in ``x``:
 
   .. code:: javascript
 
-    // returns [[1, 4], [2, 5], [3, 6]]
+    // Returns [[1, 4], [2, 5], [3, 6]]
     zip([[1, 2, 3], [4, 5, 6]]);
 
   You can think of it as being similar to a `real-world zipper <http://en.wikipedia.org/wiki/Zipper>`__.
 
-  It stops when it reaches the end of the smallest iterable:
+  It stops when it reaches the end of the smallest Iterable_:
 
   .. code:: javascript
 
-    // returns [[1, 4, 7]]
+    // Returns [[1, 4, 7]]
     zip([[1, 2, 3], [4, 5, 6], [7]]);
 
   But if you provide a second argument, it will be used to fill
@@ -3716,28 +3785,28 @@ Table of Contents
 
   .. code:: javascript
 
-    // returns [[1, 4, 7], [2, 5, 0], [3, 6, 0]]
+    // Returns [[1, 4, 7], [2, 5, 0], [3, 6, 0]]
     zip([[1, 2, 3], [4, 5, 6], [7]], 0);
 
   You can undo a zip by simply using zip_ a second time:
 
   .. code:: javascript
 
-    // returns [[1, 4], [2, 5], [3, 6]]
+    // Returns [[1, 4], [2, 5], [3, 6]]
     var x = zip([[1, 2, 3], [4, 5, 6]]);
 
-    // returns [[1, 2, 3], [4, 5, 6]]
+    // Returns [[1, 2, 3], [4, 5, 6]]
     zip(x);
 
-  Using zip_, it's easy to collect all the keys/values
+  Using zip_, it's easy to collect all the keys / values
   of a Dict_ or Record_:
 
   .. code:: javascript
 
     var x = Record({
-      foo: 1,
-      bar: 2
+      "foo": 1,
+      "bar": 2
     });
 
-    // returns [["bar", "foo"], [2, 1]]
+    // Returns [["bar", "foo"], [2, 1]]
     zip(x);
