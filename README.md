@@ -62,6 +62,45 @@ You can also losslessly convert to/from JSON, allowing for sending Immutable obj
 
 ----
 
+For most operations, if the new value is the same as the old value, then it just returns the old value:
+
+    var dict1 = Dict({
+      "foo": 1,
+      "bar": 2
+    });
+
+    var dict2 = dict1.set("foo", 1);
+
+    // true
+    dict2 === dict1;
+
+This means you can use this library with [React](https://facebook.github.io/react/), [Mercury](https://github.com/Raynos/mercury), etc. and it will be **very** fast.
+
+This is also useful anytime you want to efficiently check if something has changed or not:
+
+    var old_value = null;
+
+    // Saving to the database is expensive, so we want to avoid doing it as much as possible
+    function save_to_database(value) {
+      // Do nothing, the data has not changed
+      if (value === old_value) {
+        return;
+      }
+
+      old_value = value;
+
+      // Save to the database
+      ...
+    }
+
+In the above function, if the immutable data has not changed, then it will be `===` to the old data, so we can avoid doing the expensive save operation.
+
+This should **only** be used as an optimization to speed things up: you should use `equal` to test whether two immutable objects are equal or not. How do you determine whether to use `===` or `equal`? If using `===` changes the behavior of the program, then you should use `equal`.
+
+In this case, if the data is `===`, we can safely choose to not save to the database. And if it's not `===`, that's fine too: it just means we have to do the expensive save operation. So either way, the behavior is identical. But in a different situation, using `===` would change the behavior of the program, and so in that case you should use `equal` instead.
+
+----
+
 All data types accept an [ECMAScript 6 Iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/The_Iterator_protocol) and can be used as an ECMAScript 6 Iterable:
 
     var tuple = Tuple([1, 2, 3]);
