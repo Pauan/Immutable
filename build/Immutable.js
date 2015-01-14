@@ -1,6 +1,8 @@
 /**
  * @license
  *
+ * Version 5.0.0
+ *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
  * This file is licensed under the terms of the MIT License:
