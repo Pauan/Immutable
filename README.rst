@@ -11,7 +11,7 @@ You can find benchmarks in the ``benchmarks`` folder.
 Quick overview
 ==============
 
-See the documentation for a list of types / functions provided by this library.
+See the documentation for an alphabetical list of the types / functions provided by this library.
 
 ----
 
@@ -30,8 +30,8 @@ These two mutable objects are different, and so they are not equal:
 .. code:: javascript
 
     // false
-    equal({ foo: 1 },
-          { foo: 1 });
+    equal({ "foo": 1 },
+          { "foo": 1 });
 
 These two immutable objects are different, but they have the same keys / values, and so they are equal:
 
@@ -49,7 +49,7 @@ You can easily convert to / from JavaScript:
 
 .. code:: javascript
 
-    var obj  = { foo: 1 };
+    var obj  = { "foo": 1 };
     var dict = fromJS(obj);
     var obj  = toJS(dict);
 
@@ -64,7 +64,7 @@ You can also easily convert from one data type to another:
 
 You can also losslessly convert to / from JSON, allowing for sending immutable objects over the network:
 
-... code:: javascript
+.. code:: javascript
 
     var record1 = Record({ "foo": 1 });
     var json    = toJSON(record);
@@ -89,7 +89,7 @@ For most operations, if the new value is the same as the old value, then it just
     // true
     dict2 === dict1;
 
-This means you can use this library with `React <https://facebook.github.io/react/>`__, `Mercury <https://github.com/Raynos/mercury>`__, etc. and it will be **very** fast.
+This means that you can use this library with `React <https://facebook.github.io/react/>`__, `Mercury <https://github.com/Raynos/mercury>`__, etc. and it will be **very** fast.
 
 This is also useful anytime you want to efficiently check if something has changed or not:
 
@@ -97,7 +97,7 @@ This is also useful anytime you want to efficiently check if something has chang
 
     var old_value = null;
 
-    // Saving to the database is expensive, so we want to avoid doing it as much as possible
+    // Saving to the database is expensive, so we want to avoid doing it
     function save_to_database(value) {
       // Do nothing, the data has not changed
       if (value === old_value) {
@@ -112,9 +112,13 @@ This is also useful anytime you want to efficiently check if something has chang
 
 In the above function, if the immutable data has not changed, then it will be ``===`` to the old data, so we can avoid doing the expensive save operation.
 
-This should **only** be used as an optimization to speed things up: you should use ``equal`` to test whether two immutable objects are equal or not. How do you determine whether to use ``===`` or ``equal``? If using ``===`` changes the behavior of the program, then you should use ``equal``.
+This should **only** be used as an optimization to speed things up: you should use ``equal`` to test whether two immutable objects are equal or not.
 
-In this case, if the data is ``===``, we can safely choose to not save to the database. And if it's not ``===``, that's fine too: it just means we have to do the expensive save operation. So either way, the behavior is identical. But in a different situation, using ``===`` would change the behavior of the program, and so in that case you should use ``equal`` instead.
+How do you determine whether to use ``===`` or ``equal``? If using ``===`` changes the behavior of the program, then you should use ``equal``.
+
+In this case, if the data is ``===``, we can safely choose to not save to the database. And if it's **not** ``===``, that's fine too: it just means we have to do the expensive save operation. So either way, the behavior is identical.
+
+But in a different situation, using ``===`` would change the behavior of the program, and so in that case you should use ``equal`` instead.
 
 ----
 
