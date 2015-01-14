@@ -2,6 +2,7 @@ import * as benchmark from "./Benchmark";
 import * as list from "./List";
 import * as record from "./Record";
 import * as queue from "./Queue";
+import * as tuple from "./Tuple";
 
 var package = require("../package.json");
 
@@ -49,11 +50,17 @@ record.run(100);
 record.run(1000);
 record.run(10000);*/
 
-header();
+/*header();
 queue.run(1);
 queue.run(10);
 queue.run(100);
 queue.run(1000);
-queue.run(10000);
+queue.run(10000);*/
+
+header();
+tuple.run(10);
+tuple.run(100);
+tuple.run(1000);
+tuple.run(10000);
 
 benchmark.run();

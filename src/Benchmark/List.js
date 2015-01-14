@@ -734,9 +734,7 @@ export function run(counter) {
         }
 
         benchmark.time("Immutable List (insert)", function () {
-          a.modify(-1, function () {
-            return -50;
-          });
+          a.set(-1, -50);
         });
       })();*/
 
@@ -748,9 +746,7 @@ export function run(counter) {
         }
 
         benchmark.time("Immutable List", function () {
-          a.modify(-1, function () {
-            return -50;
-          });
+          a.set(-1, -50);
         });
       })();
 
@@ -807,9 +803,7 @@ export function run(counter) {
         }
 
         benchmark.time("Immutable List (insert)", function () {
-          a.modify(0, function () {
-            return -50;
-          });
+          a.set(0, -50);
         });
       })();*/
 
@@ -821,9 +815,7 @@ export function run(counter) {
         }
 
         benchmark.time("Immutable List", function () {
-          a.modify(0, function () {
-            return -50;
-          });
+          a.set(0, -50);
         });
       })();
 
@@ -884,9 +876,7 @@ export function run(counter) {
 
         benchmark.time("Immutable List (insert)", function () {
           var pivot = Math.floor(Math.random() * a.size());
-          a.modify(pivot, function () {
-            return -50;
-          });
+          a.set(pivot, -50);
         });
       })();*/
 
@@ -899,9 +889,7 @@ export function run(counter) {
 
         benchmark.time("Immutable List", function () {
           var pivot = Math.floor(Math.random() * a.size());
-          a.modify(pivot, function () {
-            return -50;
-          });
+          a.set(pivot, -50);
         });
       })();
 

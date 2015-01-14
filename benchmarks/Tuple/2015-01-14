@@ -1,0 +1,266 @@
+----------------------------------------------------------------------
+Information:
+  --------------------------------------------------------------------
+  Node.js:
+    URL: http://nodejs.org/
+    Version: v0.10.22
+  --------------------------------------------------------------------
+  Benchmark.js:
+    URL: https://github.com/bestiejs/benchmark.js
+    Version: 1.0.0
+  --------------------------------------------------------------------
+  Immutable-js:
+    URL: https://github.com/facebook/immutable-js
+    Version: 3.4.1
+  --------------------------------------------------------------------
+  Mori:
+    URL: https://github.com/swannodette/mori
+    Version: 0.2.9
+  --------------------------------------------------------------------
+  Immutable:
+    URL: https://github.com/Pauan/Immutable
+    Version: 6.0.0
+----------------------------------------------------------------------
+Tuple with 10 values:
+  --------------------------------------------------------------------
+  Creating:
+    JavaScript Array                                11,923,988 ops/sec
+    JavaScript Array Copying                        23,246,905 ops/sec
+    Immutable-js List                                  634,796 ops/sec
+    Mori Vector                                        754,540 ops/sec
+    Immutable List                                     827,310 ops/sec
+    Immutable Tuple                                  1,264,203 ops/sec
+    Immutable Stack                                    776,505 ops/sec
+    Cons                                            12,001,785 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at the end:
+    JavaScript Array                                83,662,254 ops/sec
+    JavaScript Array (error checking)               43,335,913 ops/sec
+    Immutable-js List                               40,189,285 ops/sec
+    Mori Vector (nth)                               21,211,389 ops/sec
+    Mori Vector (peek)                              27,235,059 ops/sec
+    Immutable List                                  42,848,519 ops/sec
+    Immutable Tuple                                 53,832,218 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at the start:
+    JavaScript Array                                99,107,514 ops/sec
+    JavaScript Array (error checking)               46,254,632 ops/sec
+    Immutable-js List                               39,612,322 ops/sec
+    Mori Vector                                     22,265,703 ops/sec
+    Immutable List                                  26,275,340 ops/sec
+    Immutable Tuple                                 56,461,004 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at random:
+    JavaScript Array                                40,983,885 ops/sec
+    JavaScript Array (error checking)               30,430,069 ops/sec
+    Immutable-js List                               25,957,775 ops/sec
+    Mori Vector                                     17,264,821 ops/sec
+    Immutable List                                  19,715,645 ops/sec
+    Immutable Tuple                                 32,795,770 ops/sec
+  --------------------------------------------------------------------
+  Setting at the end:
+    JavaScript Array
+    JavaScript Array Copying                        15,434,546 ops/sec
+    Immutable-js List                                1,903,676 ops/sec
+    Mori Vector                                      6,977,621 ops/sec
+    Immutable List                                  16,620,376 ops/sec
+    Immutable Tuple                                  7,535,859 ops/sec
+  --------------------------------------------------------------------
+  Setting at the start:
+    JavaScript Array
+    JavaScript Array Copying                        15,178,953 ops/sec
+    Immutable-js List                                2,273,963 ops/sec
+    Mori Vector                                      7,060,302 ops/sec
+    Immutable List                                   4,745,053 ops/sec
+    Immutable Tuple                                  7,392,696 ops/sec
+  --------------------------------------------------------------------
+  Setting at random:
+    JavaScript Array
+    JavaScript Array Copying                        12,991,756 ops/sec
+    Immutable-js List                                2,181,483 ops/sec
+    Mori Vector                                      6,695,584 ops/sec
+    Immutable List                                   4,658,805 ops/sec
+    Immutable Tuple                                  6,767,594 ops/sec
+----------------------------------------------------------------------
+Tuple with 100 values:
+  --------------------------------------------------------------------
+  Creating:
+    JavaScript Array                                 2,099,855 ops/sec
+    JavaScript Array Copying                         4,180,913 ops/sec
+    Immutable-js List                                   80,851 ops/sec
+    Mori Vector                                        157,276 ops/sec
+    Immutable List                                     141,701 ops/sec
+    Immutable Tuple                                    354,664 ops/sec
+    Immutable Stack                                    122,885 ops/sec
+    Cons                                             1,348,299 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at the end:
+    JavaScript Array                                82,217,316 ops/sec
+    JavaScript Array (error checking)               45,572,799 ops/sec
+    Immutable-js List                               37,515,390 ops/sec
+    Mori Vector (nth)                               20,309,876 ops/sec
+    Mori Vector (peek)                              25,332,360 ops/sec
+    Immutable List                                  41,852,370 ops/sec
+    Immutable Tuple                                 54,257,068 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at the start:
+    JavaScript Array                                89,612,899 ops/sec
+    JavaScript Array (error checking)               44,721,894 ops/sec
+    Immutable-js List                               28,848,257 ops/sec
+    Mori Vector                                     17,735,589 ops/sec
+    Immutable List                                   4,767,200 ops/sec
+    Immutable Tuple                                 47,284,464 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at random:
+    JavaScript Array                                41,843,651 ops/sec
+    JavaScript Array (error checking)               30,024,191 ops/sec
+    Immutable-js List                               22,144,128 ops/sec
+    Mori Vector                                     15,266,185 ops/sec
+    Immutable List                                   7,219,987 ops/sec
+    Immutable Tuple                                 32,488,461 ops/sec
+  --------------------------------------------------------------------
+  Setting at the end:
+    JavaScript Array
+    JavaScript Array Copying                         3,789,259 ops/sec
+    Immutable-js List                                2,017,495 ops/sec
+    Mori Vector                                      8,018,353 ops/sec
+    Immutable List                                  16,231,367 ops/sec
+    Immutable Tuple                                  1,789,198 ops/sec
+  --------------------------------------------------------------------
+  Setting at the start:
+    JavaScript Array
+    JavaScript Array Copying                         3,718,519 ops/sec
+    Immutable-js List                                1,604,899 ops/sec
+    Mori Vector                                      2,737,627 ops/sec
+    Immutable List                                   1,036,485 ops/sec
+    Immutable Tuple                                  1,807,611 ops/sec
+  --------------------------------------------------------------------
+  Setting at random:
+    JavaScript Array
+    JavaScript Array Copying                         3,622,572 ops/sec
+    Immutable-js List                                1,513,732 ops/sec
+    Mori Vector                                      2,788,741 ops/sec
+    Immutable List                                   1,068,170 ops/sec
+    Immutable Tuple                                  1,755,862 ops/sec
+----------------------------------------------------------------------
+Tuple with 1000 values:
+  --------------------------------------------------------------------
+  Creating:
+    JavaScript Array                                   229,179 ops/sec
+    JavaScript Array Copying                           402,028 ops/sec
+    Immutable-js List                                    9,056 ops/sec
+    Mori Vector                                         20,712 ops/sec
+    Immutable List                                      13,483 ops/sec
+    Immutable Tuple                                     43,832 ops/sec
+    Immutable Stack                                     12,370 ops/sec
+    Cons                                               132,016 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at the end:
+    JavaScript Array                                84,684,217 ops/sec
+    JavaScript Array (error checking)               44,372,835 ops/sec
+    Immutable-js List                               38,031,796 ops/sec
+    Mori Vector (nth)                               21,565,175 ops/sec
+    Mori Vector (peek)                              25,288,883 ops/sec
+    Immutable List                                  40,312,734 ops/sec
+    Immutable Tuple                                 55,940,070 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at the start:
+    JavaScript Array                                88,945,922 ops/sec
+    JavaScript Array (error checking)               44,467,711 ops/sec
+    Immutable-js List                               30,474,577 ops/sec
+    Mori Vector                                     18,566,150 ops/sec
+    Immutable List                                  27,703,596 ops/sec
+    Immutable Tuple                                 55,629,665 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at random:
+    JavaScript Array                                42,858,773 ops/sec
+    JavaScript Array (error checking)               30,290,505 ops/sec
+    Immutable-js List                               21,560,080 ops/sec
+    Mori Vector                                     15,540,314 ops/sec
+    Immutable List                                  14,204,182 ops/sec
+    Immutable Tuple                                 33,000,995 ops/sec
+  --------------------------------------------------------------------
+  Setting at the end:
+    JavaScript Array
+    JavaScript Array Copying                           394,329 ops/sec
+    Immutable-js List                                1,745,249 ops/sec
+    Mori Vector                                      7,281,440 ops/sec
+    Immutable List                                  16,105,519 ops/sec
+    Immutable Tuple                                    192,186 ops/sec
+  --------------------------------------------------------------------
+  Setting at the start:
+    JavaScript Array
+    JavaScript Array Copying                           395,383 ops/sec
+    Immutable-js List                                1,371,126 ops/sec
+    Mori Vector                                      2,748,900 ops/sec
+    Immutable List                                   1,888,356 ops/sec
+    Immutable Tuple                                    189,284 ops/sec
+  --------------------------------------------------------------------
+  Setting at random:
+    JavaScript Array
+    JavaScript Array Copying                           394,857 ops/sec
+    Immutable-js List                                1,232,780 ops/sec
+    Mori Vector                                      2,701,136 ops/sec
+    Immutable List                                   1,542,233 ops/sec
+    Immutable Tuple                                    193,410 ops/sec
+----------------------------------------------------------------------
+Tuple with 10000 values:
+  --------------------------------------------------------------------
+  Creating:
+    JavaScript Array                                    22,926 ops/sec
+    JavaScript Array Copying                            38,163 ops/sec
+    Immutable-js List                                      789 ops/sec
+    Mori Vector                                          2,163 ops/sec
+    Immutable List                                       1,357 ops/sec
+    Immutable Tuple                                      4,514 ops/sec
+    Immutable Stack                                      1,279 ops/sec
+    Cons                                                12,886 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at the end:
+    JavaScript Array                                87,516,620 ops/sec
+    JavaScript Array (error checking)               44,122,857 ops/sec
+    Immutable-js List                               34,829,519 ops/sec
+    Mori Vector (nth)                               20,558,895 ops/sec
+    Mori Vector (peek)                              24,743,095 ops/sec
+    Immutable List                                  38,622,889 ops/sec
+    Immutable Tuple                                 53,813,244 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at the start:
+    JavaScript Array                                88,149,850 ops/sec
+    JavaScript Array (error checking)               44,826,111 ops/sec
+    Immutable-js List                               27,483,251 ops/sec
+    Mori Vector                                     18,236,411 ops/sec
+    Immutable List                                  23,812,511 ops/sec
+    Immutable Tuple                                 55,463,587 ops/sec
+  --------------------------------------------------------------------
+  Retrieving at random:
+    JavaScript Array                                42,339,887 ops/sec
+    JavaScript Array (error checking)               30,244,429 ops/sec
+    Immutable-js List                               20,035,945 ops/sec
+    Mori Vector                                     14,563,491 ops/sec
+    Immutable List                                  12,665,392 ops/sec
+    Immutable Tuple                                 33,081,959 ops/sec
+  --------------------------------------------------------------------
+  Setting at the end:
+    JavaScript Array
+    JavaScript Array Copying                            37,575 ops/sec
+    Immutable-js List                                1,666,080 ops/sec
+    Mori Vector                                      6,074,684 ops/sec
+    Immutable List                                  16,280,719 ops/sec
+    Immutable Tuple                                     19,213 ops/sec
+  --------------------------------------------------------------------
+  Setting at the start:
+    JavaScript Array
+    JavaScript Array Copying                            38,250 ops/sec
+    Immutable-js List                                1,165,975 ops/sec
+    Mori Vector                                      1,963,119 ops/sec
+    Immutable List                                   1,522,055 ops/sec
+    Immutable Tuple                                     18,971 ops/sec
+  --------------------------------------------------------------------
+  Setting at random:
+    JavaScript Array
+    JavaScript Array Copying                            38,838 ops/sec
+    Immutable-js List                                1,111,641 ops/sec
+    Mori Vector                                      1,902,523 ops/sec
+    Immutable List                                   1,351,790 ops/sec
+    Immutable Tuple                                     19,201 ops/sec
