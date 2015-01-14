@@ -76,6 +76,9 @@ export function group(name, f) {
 }
 
 export function message(x) {
+  if (arguments.length !== 1) {
+    throw new Error("Expected 1 argument but got " + arguments.length);
+  }
   messages.push(repeat(indent, " ") + x);
 }
 

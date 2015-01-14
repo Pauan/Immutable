@@ -1,6 +1,7 @@
 import * as benchmark from "./Benchmark";
 import * as list from "./List";
 import * as record from "./Record";
+import * as queue from "./Queue";
 
 var package = require("../package.json");
 
@@ -41,11 +42,18 @@ list.run(10);
 list.run(100);
 list.run(1000);*/
 
-header();
+/*header();
 record.run(1);
 record.run(10);
 record.run(100);
 record.run(1000);
-record.run(10000);
+record.run(10000);*/
+
+header();
+queue.run(1);
+queue.run(10);
+queue.run(100);
+queue.run(1000);
+queue.run(10000);
 
 benchmark.run();

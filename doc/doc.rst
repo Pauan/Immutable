@@ -3,22 +3,21 @@
 
 This documentation uses the following format for functions::
 
-  foo(x: Array, [y: String | Boolean], [z: Number = 5]) -> String | Boolean
+  foo(x: Array | Object, [y: String], [z: Number = 5]) -> String | Boolean
 
 * ``foo`` is the name of the function.
 
   * ``x`` is the name of the first argument.
 
-    * ``Array`` is the required type for ``x``.
+    * ``Array | Object`` is the required type for ``x``.
+
+      * The ``|`` means that ``x`` must be either an ``Array`` or ``Object``.
 
   * ``y`` is the name of the second argument.
 
     * The ``[...]`` means that ``y`` is *optional* and doesn't need to be provided.
 
-    * ``String | Boolean`` is the required type for ``y``, if it is provided.
-
-      * The ``|`` means that ``y`` must be either a ``String`` or ``Boolean``,
-        if it is provided.
+    * ``String`` is the required type for ``y``, if it is provided.
 
   * ``z`` is the name of the third argument.
 
@@ -30,15 +29,19 @@ This documentation uses the following format for functions::
 
   * ``String | Boolean`` is the return type for the function ``foo``.
 
-    * The ``|`` means that it will return either a ``String`` or a ``Boolean``.
+    * The ``|`` means that ``foo`` will return either a ``String`` or a ``Boolean``.
 
 Here are some examples of how you might call the function ``foo``:
 
 .. code:: javascript
 
   foo([1]);
-  foo([1], true);
-  foo([1], true, 2);
+  foo([1], "qux");
+  foo([1], "qux", 2);
+
+  foo({ bar: 1 });
+  foo({ bar: 1 }, "qux");
+  foo({ bar: 1 }, "qux", 2);
 
 In addition, this is the format used for methods::
 

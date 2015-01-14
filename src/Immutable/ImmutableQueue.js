@@ -42,44 +42,58 @@ ImmutableQueue.prototype[tag_iter] = function () {
 };
 
 ImmutableQueue.prototype.peek = function (def) {
-  if (this.isEmpty()) {
-    if (arguments.length === 1) {
-      return def;
+  var left  = this.left;
+  var right = this.right;
+  if (left === nil) {
+    if (right === nil) {
+      if (arguments.length === 1) {
+        return def;
+      } else {
+        throw new Error("Cannot peek from an empty queue");
+      }
     } else {
-      throw new Error("Cannot peek from an empty queue");
+      // TODO unit test for this
+      return right.car;
     }
   } else {
-    return this.left.car;
+    return left.car;
   }
 };
 
 ImmutableQueue.prototype.push = function (value) {
-  if (this.isEmpty()) {
-    return new ImmutableQueue(new Cons(value, this.left), this.right, this.len + 1);
+  var left  = this.left;
+  var right = this.right;
+
+  // Pushing into a queue with 0 values in it
+  if (left === nil && right === nil) {
+    return new ImmutableQueue(new Cons(value, left), right, this.len + 1);
+
+  // Pushing into a queue with 1+ values in it
   } else {
-    return new ImmutableQueue(this.left, new Cons(value, this.right), this.len + 1);
+    return new ImmutableQueue(left, new Cons(value, right), this.len + 1);
   }
 };
 
 ImmutableQueue.prototype.pop = function () {
-  if (this.isEmpty()) {
-    throw new Error("Cannot pop from an empty queue");
-  } else {
-    var left = this.left.cdr;
-    if (left === nil) {
-      var right = nil;
+  var left  = this.left;
+  var right = this.right;
 
+  if (left === nil) {
+    if (right === nil) {
+      throw new Error("Cannot pop from an empty queue");
+
+    } else {
       // TODO a little gross
       // TODO replace with foldl ?
-      each_cons(this.right, function (x) {
-        right = new Cons(x, right);
+      each_cons(right, function (x) {
+        left = new Cons(x, left);
       });
 
-      return new ImmutableQueue(right, nil, this.len - 1);
-    } else {
-      return new ImmutableQueue(left, this.right, this.len - 1);
+      right = nil;
     }
   }
+
+  return new ImmutableQueue(left.cdr, right, this.len - 1);
 };
 
 

@@ -2519,44 +2519,58 @@
     };
 
     $$Immutable$ImmutableQueue$$ImmutableQueue.prototype.peek = function (def) {
-      if (this.isEmpty()) {
-        if (arguments.length === 1) {
-          return def;
+      var left  = this.left;
+      var right = this.right;
+      if (left === $$$Immutable$static$$nil) {
+        if (right === $$$Immutable$static$$nil) {
+          if (arguments.length === 1) {
+            return def;
+          } else {
+            throw new Error("Cannot peek from an empty queue");
+          }
         } else {
-          throw new Error("Cannot peek from an empty queue");
+          // TODO unit test for this
+          return right.car;
         }
       } else {
-        return this.left.car;
+        return left.car;
       }
     };
 
     $$Immutable$ImmutableQueue$$ImmutableQueue.prototype.push = function (value) {
-      if (this.isEmpty()) {
-        return new $$Immutable$ImmutableQueue$$ImmutableQueue(new $$Cons$$Cons(value, this.left), this.right, this.len + 1);
+      var left  = this.left;
+      var right = this.right;
+
+      // Pushing into a queue with 0 values in it
+      if (left === $$$Immutable$static$$nil && right === $$$Immutable$static$$nil) {
+        return new $$Immutable$ImmutableQueue$$ImmutableQueue(new $$Cons$$Cons(value, left), right, this.len + 1);
+
+      // Pushing into a queue with 1+ values in it
       } else {
-        return new $$Immutable$ImmutableQueue$$ImmutableQueue(this.left, new $$Cons$$Cons(value, this.right), this.len + 1);
+        return new $$Immutable$ImmutableQueue$$ImmutableQueue(left, new $$Cons$$Cons(value, right), this.len + 1);
       }
     };
 
     $$Immutable$ImmutableQueue$$ImmutableQueue.prototype.pop = function () {
-      if (this.isEmpty()) {
-        throw new Error("Cannot pop from an empty queue");
-      } else {
-        var left = this.left.cdr;
-        if (left === $$$Immutable$static$$nil) {
-          var right = $$$Immutable$static$$nil;
+      var left  = this.left;
+      var right = this.right;
 
+      if (left === $$$Immutable$static$$nil) {
+        if (right === $$$Immutable$static$$nil) {
+          throw new Error("Cannot pop from an empty queue");
+
+        } else {
           // TODO a little gross
           // TODO replace with foldl ?
-          $$Cons$$each_cons(this.right, function (x) {
-            right = new $$Cons$$Cons(x, right);
+          $$Cons$$each_cons(right, function (x) {
+            left = new $$Cons$$Cons(x, left);
           });
 
-          return new $$Immutable$ImmutableQueue$$ImmutableQueue(right, $$$Immutable$static$$nil, this.len - 1);
-        } else {
-          return new $$Immutable$ImmutableQueue$$ImmutableQueue(left, this.right, this.len - 1);
+          right = $$$Immutable$static$$nil;
         }
       }
+
+      return new $$Immutable$ImmutableQueue$$ImmutableQueue(left.cdr, right, this.len - 1);
     };
 
 
@@ -3169,8 +3183,12 @@
     function $$src$Test$Test$$verify_queue(queue, array) {
       $$assert$$assert($$Immutable$ImmutableQueue$$isQueue(queue));
 
-      if (!queue.isEmpty()) {
-        $$assert$$assert(queue.left !== $$$Immutable$static$$nil);
+      var size = queue.size();
+      if (size === 0) {
+        $$assert$$assert(queue.left === $$$Immutable$static$$nil);
+        $$assert$$assert(queue.right === $$$Immutable$static$$nil);
+      } else {
+        $$assert$$assert(queue.left !== $$$Immutable$static$$nil || queue.right !== $$$Immutable$static$$nil);
       }
 
       $$assert$$assert($$src$Test$Test$$deepEqual($$Immutable$toJS$$toJS(queue), array));
@@ -4667,12 +4685,16 @@
         $$assert$$assert(x.size() === 1);
         $$assert$$assert(x.peek() === 10);
 
+        $$assert$$assert($$Immutable$ImmutableQueue$$Queue().push(1).peek() === 1);
+
         $$src$Test$Test$$verify_queue(five_queue.push(10), [1, 2, 3, 4, 5, 10]);
         $$src$Test$Test$$verify_queue(five_queue.push(10).push(20), [1, 2, 3, 4, 5, 10, 20]);
         $$src$Test$Test$$verify_queue(five_queue, [1, 2, 3, 4, 5]);
 
         $$src$Test$Test$$verify_queue($$Immutable$ImmutableQueue$$Queue().push(5).push(4).push(3).push(2).push(1),
                      [5, 4, 3, 2, 1]);
+
+        $$src$Test$Test$$verify_queue($$Immutable$ImmutableQueue$$Queue().push(5).push(10).pop().push(15), [10, 15]);
       });
 
       $$src$Test$Test$$test("removeAll", function () {
@@ -4684,6 +4706,10 @@
         $$src$Test$Test$$assert_raises(function () {
           empty_queue.pop();
         }, "Cannot pop from an empty queue");
+
+        $$src$Test$Test$$verify_queue($$Immutable$ImmutableQueue$$Queue().push(5).pop(), []);
+        $$src$Test$Test$$verify_queue($$Immutable$ImmutableQueue$$Queue().push(5).push(10).pop(), [10]);
+        $$src$Test$Test$$verify_queue($$Immutable$ImmutableQueue$$Queue().push(5).push(10).push(15).pop(), [10, 15]);
 
         $$src$Test$Test$$verify_queue(five_queue.pop(), [2, 3, 4, 5]);
         $$src$Test$Test$$verify_queue(five_queue.pop().pop(), [3, 4, 5]);

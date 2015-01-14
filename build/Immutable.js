@@ -2488,44 +2488,58 @@
     };
 
     $$Immutable$ImmutableQueue$$ImmutableQueue.prototype.peek = function (def) {
-      if (this.isEmpty()) {
-        if (arguments.length === 1) {
-          return def;
+      var left  = this.left;
+      var right = this.right;
+      if (left === $$static$$nil) {
+        if (right === $$static$$nil) {
+          if (arguments.length === 1) {
+            return def;
+          } else {
+            throw new Error("Cannot peek from an empty queue");
+          }
         } else {
-          throw new Error("Cannot peek from an empty queue");
+          // TODO unit test for this
+          return right.car;
         }
       } else {
-        return this.left.car;
+        return left.car;
       }
     };
 
     $$Immutable$ImmutableQueue$$ImmutableQueue.prototype.push = function (value) {
-      if (this.isEmpty()) {
-        return new $$Immutable$ImmutableQueue$$ImmutableQueue(new $$Cons$$Cons(value, this.left), this.right, this.len + 1);
+      var left  = this.left;
+      var right = this.right;
+
+      // Pushing into a queue with 0 values in it
+      if (left === $$static$$nil && right === $$static$$nil) {
+        return new $$Immutable$ImmutableQueue$$ImmutableQueue(new $$Cons$$Cons(value, left), right, this.len + 1);
+
+      // Pushing into a queue with 1+ values in it
       } else {
-        return new $$Immutable$ImmutableQueue$$ImmutableQueue(this.left, new $$Cons$$Cons(value, this.right), this.len + 1);
+        return new $$Immutable$ImmutableQueue$$ImmutableQueue(left, new $$Cons$$Cons(value, right), this.len + 1);
       }
     };
 
     $$Immutable$ImmutableQueue$$ImmutableQueue.prototype.pop = function () {
-      if (this.isEmpty()) {
-        throw new Error("Cannot pop from an empty queue");
-      } else {
-        var left = this.left.cdr;
-        if (left === $$static$$nil) {
-          var right = $$static$$nil;
+      var left  = this.left;
+      var right = this.right;
 
+      if (left === $$static$$nil) {
+        if (right === $$static$$nil) {
+          throw new Error("Cannot pop from an empty queue");
+
+        } else {
           // TODO a little gross
           // TODO replace with foldl ?
-          $$Cons$$each_cons(this.right, function (x) {
-            right = new $$Cons$$Cons(x, right);
+          $$Cons$$each_cons(right, function (x) {
+            left = new $$Cons$$Cons(x, left);
           });
 
-          return new $$Immutable$ImmutableQueue$$ImmutableQueue(right, $$static$$nil, this.len - 1);
-        } else {
-          return new $$Immutable$ImmutableQueue$$ImmutableQueue(left, this.right, this.len - 1);
+          right = $$static$$nil;
         }
       }
+
+      return new $$Immutable$ImmutableQueue$$ImmutableQueue(left.cdr, right, this.len - 1);
     };
 
 

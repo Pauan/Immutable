@@ -322,8 +322,12 @@ function verify_tuple(tuple, array) {
 function verify_queue(queue, array) {
   assert(isQueue(queue));
 
-  if (!queue.isEmpty()) {
-    assert(queue.left !== nil);
+  var size = queue.size();
+  if (size === 0) {
+    assert(queue.left === nil);
+    assert(queue.right === nil);
+  } else {
+    assert(queue.left !== nil || queue.right !== nil);
   }
 
   assert(deepEqual(toJS(queue), array));
@@ -1820,12 +1824,16 @@ context("Queue", function () {
     assert(x.size() === 1);
     assert(x.peek() === 10);
 
+    assert(Queue().push(1).peek() === 1);
+
     verify_queue(five_queue.push(10), [1, 2, 3, 4, 5, 10]);
     verify_queue(five_queue.push(10).push(20), [1, 2, 3, 4, 5, 10, 20]);
     verify_queue(five_queue, [1, 2, 3, 4, 5]);
 
     verify_queue(Queue().push(5).push(4).push(3).push(2).push(1),
                  [5, 4, 3, 2, 1]);
+
+    verify_queue(Queue().push(5).push(10).pop().push(15), [10, 15]);
   });
 
   test("removeAll", function () {
@@ -1837,6 +1845,10 @@ context("Queue", function () {
     assert_raises(function () {
       empty_queue.pop();
     }, "Cannot pop from an empty queue");
+
+    verify_queue(Queue().push(5).pop(), []);
+    verify_queue(Queue().push(5).push(10).pop(), [10]);
+    verify_queue(Queue().push(5).push(10).push(15).pop(), [10, 15]);
 
     verify_queue(five_queue.pop(), [2, 3, 4, 5]);
     verify_queue(five_queue.pop().pop(), [3, 4, 5]);
