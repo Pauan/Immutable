@@ -2587,7 +2587,7 @@ Table of Contents
   Set_, and all the values in ``x``, but *not* the values
   which are in both this Set_ and ``x``.
 
-  This is also called the `symmetric difference <http://en.wikipedia.org/wiki/Symmetric_difference>`_ of the two Set_\ s.
+  This is also called the `symmetric difference <http://en.wikipedia.org/wiki/Symmetric_difference>`__ of the two Set_\ s.
 
   This does not modify the Set_, it returns a new Set_.
 
@@ -2636,7 +2636,7 @@ Table of Contents
   Returns a new Set_ which contains all the values that
   are in both this Set_ *and* ``x``.
 
-  This is a standard `set intersection <http://en.wikipedia.org/wiki/Intersection_%28set_theory%29>`_.
+  This is a standard `set intersection <http://en.wikipedia.org/wiki/Intersection_%28set_theory%29>`__.
 
   This does not modify the Set_, it returns a new Set_.
 
@@ -2742,7 +2742,7 @@ Table of Contents
   Returns a new Set_ which contains all the values in
   this Set_, but without the values in ``x``.
 
-  This is also called the `relative complement <http://en.wikipedia.org/wiki/Complement_%28set_theory%29>`_ of the two Set_\ s.
+  This is also called the `relative complement <http://en.wikipedia.org/wiki/Complement_%28set_theory%29>`__ of the two Set_\ s.
 
   This does not modify the Set_, it returns a new Set_.
 
@@ -2769,7 +2769,7 @@ Table of Contents
   Returns a new Set_ which contains all the values in
   this Set_, and also all the values in ``x``.
 
-  This is a standard `set union <http://en.wikipedia.org/wiki/Union_%28set_theory%29>`_.
+  This is a standard `set union <http://en.wikipedia.org/wiki/Union_%28set_theory%29>`__.
 
   This does not modify the Set_, it returns a new Set_.
 
@@ -3222,7 +3222,7 @@ Table of Contents
       });
 
   Yet another use case is to create a `nominal type
-  system <http://en.wikipedia.org/wiki/Nominal_type_system>`_.
+  system <http://en.wikipedia.org/wiki/Nominal_type_system>`__.
   Immutable objects are treated as equal_ if they have
   the same keys/values:
 
@@ -3241,7 +3241,7 @@ Table of Contents
     // true
     equal(foo, bar);
 
-  This is known as `structural typing <http://en.wikipedia.org/wiki/Structural_type_system>`_.
+  This is known as `structural typing <http://en.wikipedia.org/wiki/Structural_type_system>`__.
   Sometimes that's exactly what you want, but sometimes
   you want a little more precision.
 
@@ -3628,7 +3628,7 @@ Table of Contents
     UUIDTag(uuid: String) -> Tag
 
   Returns a Tag_ which uses ``uuid`` for equality. ``uuid``
-  must be a lower-case `UUID <http://en.wikipedia.org/wiki/Universally_unique_identifier>`_.
+  must be a lower-case `UUID <http://en.wikipedia.org/wiki/Universally_unique_identifier>`__.
 
   Using Tag_ is very easy and convenient, but it
   has a major limitation: you can't use a Tag_ with toJSON_
@@ -3648,7 +3648,7 @@ Table of Contents
   up, but they don't.
 
   There's not that many good ways to solve this problem.
-  `UUIDs <http://en.wikipedia.org/wiki/Universally_unique_identifier>`_
+  `UUIDs <http://en.wikipedia.org/wiki/Universally_unique_identifier>`__
   are one solution, so that's what UUIDTag_ uses.
 
   Rather than doing this:
@@ -3676,7 +3676,7 @@ Table of Contents
   time.
 
   You can search Google for "uuid generator". I personally
-  use `this site <https://www.uuidgenerator.net/version4>`_.
+  use `this site <https://www.uuidgenerator.net/version4>`__.
 
 ----
 
@@ -3702,7 +3702,7 @@ Table of Contents
     // returns [[1, 4], [2, 5], [3, 6]]
     zip([[1, 2, 3], [4, 5, 6]]);
 
-  You can think of it as being similar to a `real-world zipper <http://en.wikipedia.org/wiki/Zipper>`_.
+  You can think of it as being similar to a `real-world zipper <http://en.wikipedia.org/wiki/Zipper>`__.
 
   It stops when it reaches the end of the smallest iterable:
 
