@@ -216,11 +216,11 @@ Table of Contents
   Returns :js:`true` if ``fn`` returns :js:`true` for all
   of the values in ``x``.
 
-  This function calls ``fn`` for each value in ``x``, and
-  if ``fn`` returns :js:`false`, it will return :js:`false`.
+  * This function calls ``fn`` for each value in ``x``, and
+    if ``fn`` returns :js:`false`, it will return :js:`false`.
 
-  If ``fn`` never returns :js:`false`, then this function returns
-  :js:`true`.
+  * If ``fn`` never returns :js:`false`, then this function returns
+    :js:`true`.
 
   This function runs in ``O(n)`` worst-case time.
 
@@ -249,11 +249,11 @@ Table of Contents
   Returns :js:`true` if ``fn`` returns :js:`true` for any
   of the values in ``x``.
 
-  This function calls ``fn`` for each value in ``x``, and
-  if ``fn`` returns :js:`true`, it will return :js:`true`.
+  * This function calls ``fn`` for each value in ``x``, and
+    if ``fn`` returns :js:`true`, it will return :js:`true`.
 
-  If ``fn`` never returns :js:`true`, then this function returns
-  :js:`false`.
+  * If ``fn`` never returns :js:`true`, then this function returns
+    :js:`false`.
 
   This function runs in ``O(n)`` worst-case time.
 
@@ -279,9 +279,9 @@ Table of Contents
 
     deref(x: Any) -> Any
 
-  * If ``x`` is a Ref_, it will return the Ref_'s current value.
+  * If ``x`` is a Ref_, it returns the Ref_'s current value.
 
-  * Otherwise it returns ``x`` as-is.
+  * If ``x`` is not a Ref_, it returns ``x`` as-is.
 
   This is useful if you're not sure whether something is a Ref_
   or not, but you want a value.
@@ -309,11 +309,11 @@ Table of Contents
   A Dict_ is an immutable unordered dictionary mapping keys
   to values.
 
-  You *should not* rely upon the order of the keys in
+  You should **not** rely upon the order of the keys in
   a Dict_. If you need a specific key order, use a
   SortedDict_ instead.
 
-  * If ``x`` is an Iterable_, the values must be arrays or Tuple_\ s
+  * If ``x`` is an Iterable_, the values must be arrays / Tuple_\ s
     of :js:`[key, value]`, which will be added to the Dict_.
 
   * If ``x`` is a JavaScript object literal like :js:`{ foo: 1 }`,
@@ -359,6 +359,16 @@ Table of Contents
 
   Because :js:`obj1` and :js:`obj2` have the same keys / values,
   they are equal_.
+
+  Examples:
+
+  .. code:: javascript
+
+    // Returns { "foo": 1, "bar": 2 }
+    Dict({ "foo": 1, "bar": 2 });
+
+    // Returns { "foo": 1, "bar": 2 }
+    Dict([["foo", 1], ["bar", 2]]);
 
 ----
 
@@ -448,7 +458,7 @@ Table of Contents
   This does not mutate the Dict_, it returns a new Dict_.
 
   ``x`` must be either a JavaScript object literal, or an
-  Iterable_ where each value is an array or Tuple_ of
+  Iterable_ where each value is an array / Tuple_ of
   :js:`[key, value]`.
 
   * If a ``key`` from ``x`` is not in this Dict_, it is added.
@@ -574,7 +584,7 @@ Table of Contents
 
     var x = SortedDict(...);
 
-    // No keys / values, but same sort as `x`
+    // No keys / values, but has the same sort as `x`
     x.removeAll();
 
 ----
@@ -589,8 +599,8 @@ Table of Contents
 
   This does not mutate the Dict_, it returns a new Dict_.
 
-  * If ``key`` does not exist, it is created.
-  * If ``key`` already exists, it is overwritten.
+  * If ``key`` is in the Dict_, it is overwritten.
+  * If ``key`` is not in the Dict_, it is created.
 
   This function runs in ``O(log2(n))`` worst-case time.
 
@@ -934,8 +944,8 @@ Table of Contents
     fromJSON(x: Any) -> Any
 
   Converts specially marked JSON to a Dict_,
-  Set_, List_, Queue_, Stack_, Tuple_,
-  or Record_.
+  List_, Queue_, Record_, Set_, Stack_, or
+  Tuple_.
 
   This function has the following behavior:
 
@@ -956,8 +966,8 @@ Table of Contents
     :js:`Infinity`, and :js:`-Infinity` throw an error.
 
   * Specially marked JSON objects are converted into a
-    Dict_, Set_, List_, Queue_, Stack_, Tuple_, or
-    Record_, with fromJSON_ called on all the
+    Dict_, List_, Queue_, Record_, Set_, Stack_, or
+    Tuple_, with fromJSON_ called on all the
     keys / values.
 
     This conversion takes ``O(n)`` time.
@@ -1012,13 +1022,13 @@ Table of Contents
   .. code:: javascript
 
     // Returns 1
-    indexOf([1, 2, 3], 2);
+    indexOf([10, 20, 30], 20);
 
     // Throws an error
-    indexOf([1, 2, 3], 4);
+    indexOf([10, 20, 30], 40);
 
     // Returns -1
-    indexOf([1, 2, 3], 4, -1);
+    indexOf([10, 20, 30], 40, -1);
 
 ----
 
@@ -1191,6 +1201,8 @@ Table of Contents
   wrap the Iterator_ so that it is recognized as being
   Iterable_.
 
+  This function runs in ``O(1)`` time.
+
   All Iterable_ things can be converted into an Iterator_ by
   using toIterator_.
 
@@ -1239,8 +1251,6 @@ Table of Contents
 
   * Dict_, List_, Queue_, Record_, Set_, Stack_, and Tuple_
 
-  This function runs in ``O(1)`` time.
-
   Examples:
 
   .. code:: javascript
@@ -1267,7 +1277,11 @@ Table of Contents
 
 .. _Iterator:
 
-* All Iterable_ things can be converted into an Iterator_
+* ::
+
+    Iterator
+
+  All Iterable_ things can be converted into an Iterator_
   by using toIterator_.
 
   An Iterator_ isn't really a type or a function. Instead,
@@ -1281,27 +1295,27 @@ Table of Contents
   * If the Iterator_ is not finished, :js:`value` will be the
     next value in the Iterator_.
 
-    .. code:: javascript
+  .. code:: javascript
 
-      var iterator = toIterator([1, 2, 3]);
+    var iterator = toIterator([1, 2, 3]);
 
-      // returns { value: 1 }
-      iterator.next();
+    // returns { value: 1 }
+    iterator.next();
 
-      // returns { value: 2 }
-      iterator.next();
+    // returns { value: 2 }
+    iterator.next();
 
-      // returns { value: 3 }
-      iterator.next();
+    // returns { value: 3 }
+    iterator.next();
 
-      // returns { done: true }
-      iterator.next();
+    // returns { done: true }
+    iterator.next();
 
   As you can see above, Iterator_\ s are *mutable*: every time
   you call the :js:`next` method it will return the next value,
   or :js:`done` if it's finished.
 
-  It is recommended to not use Iterator_ directly, instead
+  It is recommended to not use Iterator_\ s directly, instead
   you should use the higher-level functions like each_, map_,
   foldl_, etc.
 
@@ -1329,16 +1343,16 @@ Table of Contents
   .. code:: javascript
 
     // Returns "123"
-    join([1, 2, 3])
+    join([1, 2, 3]);
 
     // Returns "1 2 3"
-    join([1, 2, 3], " ")
+    join([1, 2, 3], " ");
 
     // Returns "1 2 3"
-    join(Tuple([1, 2, 3]), " ")
+    join(Tuple([1, 2, 3]), " ");
 
     // Returns "1 2 3"
-    join("123", " ")
+    join("123", " ");
 
 ----
 
@@ -1418,8 +1432,8 @@ Table of Contents
 
   If ``x`` is a List_, this function runs in
   ``O(125 + log2(n / 125) + log2(min(n / 125, m / 125)))``
-  worst-case time. Otherwise this function runs in ``O(m)``
-  time.
+  worst-case time. Otherwise this function runs in amortized
+  ``O(m)`` time.
 
   Examples:
 
@@ -1469,8 +1483,8 @@ Table of Contents
     // Throws an error
     list.get(3);
 
-    // Returns -1
-    list.get(3, -1);
+    // Returns 50
+    list.get(3, 50);
 
     // Returns 30
     list.get(-1);
@@ -1522,7 +1536,7 @@ Table of Contents
 
   Returns a new List_ with ``value`` inserted at ``index``.
 
-  If you just want to insert at the *end* of a List_,
+  If you just want to insert at the end of a List_,
   it's much faster to use `List push`_ instead.
 
   This does not mutate the List_, it returns a new List_.
@@ -1591,8 +1605,7 @@ Table of Contents
   This does not mutate the List_, it returns a new List_.
 
   This function calls ``fn`` with the value at ``index``, and
-  whatever ``fn`` returns will be used as the new value at
-  ``index``.
+  whatever ``fn`` returns is used as the new value at ``index``.
 
   * If ``index`` is negative, it starts counting from
     the end of the List_, so :js:`-1` modifies the last value,
@@ -1630,7 +1643,7 @@ Table of Contents
     List push(value: Any) -> List
 
   Returns a new List_ with ``value`` inserted at the end of
-  this List_.
+  the List_.
 
   This does not mutate the List_, it returns a new List_.
 
@@ -1779,7 +1792,7 @@ Table of Contents
     List slice([from: Integer], [to: Integer]) -> List
 
   Returns a new List_ with all the values of this List_
-  between ``from`` (included) and ``to`` (excluded).
+  between indexes ``from`` (included) and ``to`` (excluded).
 
   This does not mutate the List_, it returns a new List_.
 
@@ -1788,8 +1801,8 @@ Table of Contents
   * If ``to`` is not provided, it defaults to the end of the List_.
 
   * If ``from`` or ``to`` is negative, it starts counting from
-    the end of the List_, so :js:`-1` means the last value of
-    the List_, :js:`-2` means the second-from-last value, etc.
+    the end of the List_, so :js:`-1` means the last value,
+    :js:`-2` means the second-from-last value, etc.
 
   * If ``from`` is not in the List_, an error is thrown.
 
@@ -1851,14 +1864,15 @@ Table of Contents
 
     partition(x: Iterable, fn: Function) -> Tuple
 
-  Returns a Tuple_ with two Iterable_\ s: the first
+  Returns a Tuple_ with two Iterable_\ s: the first Iterable_
   contains the values of ``x`` for which ``fn`` returns
-  :js:`true`, and the second contains the values of ``x`` for
-  which ``fn`` returns :js:`false`.
+  :js:`true`, and the second Iterable_ contains the values of
+  ``x`` for which ``fn`` returns :js:`false`.
 
   This function calls ``fn`` for each value in ``x``, and
   if the function returns :js:`true` then the value will be
-  in the first iterable, otherwise it will be in the second.
+  in the first Iterable_, otherwise it will be in the second
+  Iterable_.
 
   This function returns a Tuple_ which contains Iterable_\ s,
   which are lazy: they only generate the values as needed.
@@ -2065,7 +2079,7 @@ Table of Contents
     Queue().size();
 
     // Returns 3
-    Queue([50, 100, 150]).size();
+    Queue([10, 20, 30]).size();
 
 ----
 
@@ -2114,23 +2128,23 @@ Table of Contents
   A Record_ is an immutable fixed-size dictionary mapping
   strings / Tag_\ s to values.
 
-  * If ``x`` is an Iterable_, the values must be arrays or Tuple_\ s
+  * If ``x`` is an Iterable_, the values must be arrays / Tuple_\ s
     of :js:`[key, value]`, which will be added to the Record_.
 
   * If ``x`` is a JavaScript object literal like :js:`{ foo: 1 }`,
     then the keys / values will be added to the Record_.
 
+  In either case, the keys must be strings or Tag_\ s.
+
   This takes ``O(n + (n * log2(n)) + n)`` time, unless ``x``
   is already a Record_, in which case it takes ``O(1)``
   time.
 
-  In either case, the keys must be strings or Tag_\ s.
-
-  You *should not* rely upon the order of the keys in
+  You should **not** rely upon the order of the keys in
   a Record_. If you need a specific key order, use a
   SortedDict_ instead.
 
-  A Record_ is *much* faster and lighter-weight than a Dict_,
+  A Record_ is **much** faster and lighter-weight than a Dict_,
   but in exchange for that they can only have strings or Tag_\ s
   for keys, and you cannot add or remove keys from a Record_.
 
@@ -2240,7 +2254,7 @@ Table of Contents
   This does not mutate the Record_, it returns a new Record_.
 
   ``x`` must be either a JavaScript object literal, or an
-  Iterable_ where each value is an array or Tuple_ of
+  Iterable_ where each value is an array / Tuple_ of
   :js:`[key, value]`.
 
   * If a ``key`` from ``x`` already exists in this Record_, it is overwritten.
@@ -2292,7 +2306,7 @@ Table of Contents
   this library. It holds a single value, which can be
   anything.
 
-  The initial value of the Ref_ is``initial``.
+  The initial value of the Ref_ is ``initial``.
 
   Whenever the Ref_ changes, the function ``onchange``
   is called with the old value and the new value.
@@ -2432,7 +2446,7 @@ Table of Contents
 
   This function modifies the current value of the Ref_.
 
-  This mutates the Ref_, it does *not* return a new Ref_!
+  This mutates the Ref_, it does **not** return a new Ref_!
 
   This function calls ``fn`` with the current value of the
   Ref_, and whatever ``fn`` returns is used as the new value
@@ -2477,7 +2491,7 @@ Table of Contents
 
   This function sets the current value of the Ref_ to ``value``.
 
-  This mutates the Ref_, it does *not* return a new Ref_!
+  This mutates the Ref_, it does **not** return a new Ref_!
 
   This will call the ``onchange`` function of the Ref_.
 
@@ -2552,7 +2566,7 @@ Table of Contents
   This takes ``O(log2(n) * m)`` time, unless ``x`` is already
   a Set_, in which case it takes ``O(1)`` time.
 
-  You *should not* rely upon the order of the values in
+  You should **not** rely upon the order of the values in
   a Set_. If you need a specific order, use a SortedSet_ or
   List_ instead.
 
@@ -2583,7 +2597,7 @@ Table of Contents
 
   You can also use immutable objects (like Dict_, Set_, List_,
   etc.) as values, and they are treated as equal_ if their
-  keys/values are equal_:
+  keys / values are equal_:
 
   .. code:: javascript
 
@@ -2647,7 +2661,7 @@ Table of Contents
     Set disjoint(x: Iterable) -> Set
 
   Returns a new Set_ which contains all the values in this
-  Set_, and all the values in ``x``, but *not* the values
+  Set_, and all the values in ``x``, but **not** the values
   which are in both this Set_ and ``x``.
 
   This is also called the `symmetric difference <http://en.wikipedia.org/wiki/Symmetric_difference>`__ of the two Set_\ s.
@@ -2697,7 +2711,7 @@ Table of Contents
     Set intersect(x: Iterable) -> Set
 
   Returns a new Set_ which contains all the values that
-  are in both this Set_ *and* ``x``.
+  are in both this Set_ **and** ``x``.
 
   This is a standard `set intersection <http://en.wikipedia.org/wiki/Intersection_%28set_theory%29>`__.
 
@@ -2789,7 +2803,7 @@ Table of Contents
 
     var x = SortedSet(...);
 
-    // No values, but same sort as `x`
+    // No values, but has the same sort as `x`
     x.removeAll();
 
 ----
@@ -3137,7 +3151,7 @@ Table of Contents
 
     Tag() -> Tag
 
-  A Tag_ is an immutable *unique* value. If you call Tag_
+  A Tag_ is an immutable **unique** value. If you call Tag_
   twice, you get two different Tag_\ s:
 
   .. code:: javascript
@@ -3160,7 +3174,7 @@ Table of Contents
       x === x;
 
   The *only* purpose of a Tag_ is to be unique. You should
-  *not* rely upon anything other than the uniqueness of a
+  **not** rely upon anything other than the uniqueness of a
   Tag_.
 
   A Tag_ can be used anywhere that a string can be used.
@@ -3173,11 +3187,12 @@ Table of Contents
 
   The reason for this is that it's essentially
   impossible to guarantee uniqueness when using
-  multiple processes.
+  multiple processes. See UUIDTag_ for a more
+  detailed explanation.
 
   If you want to use toJSON_ and fromJSON_, you should
   use UUIDTag_ instead. For this reason, it's strongly
-  recommended that libraries use UUIDTag_.
+  recommended that libraries use UUIDTag_, when they can.
 
   So, if a Tag_ is just a unique value, what can it be
   used for?
@@ -3377,7 +3392,7 @@ Table of Contents
   This function runs in ``O(1)`` time.
 
   This function is a simple way of dealing with
-  infinite Iterable_:
+  infinite Iterable_\ s:
 
   .. code:: javascript
 
@@ -3397,9 +3412,7 @@ Table of Contents
   * If ``x`` is already a JavaScript Array, it is returned as-is.
 
   * If ``x`` is an Iterable_, it is converted into a JavaScript Array
-    and returned.
-
-    This conversion takes ``O(n)`` time.
+    and returned. This conversion takes ``O(n)`` time.
 
   This is useful because most iteration functions return
   Iterable_\ s, not arrays.
@@ -3551,7 +3564,7 @@ Table of Contents
   This takes ``O(n)`` time, unless ``x`` is already a
   Tuple_, in which case it takes ``O(1)`` time.
 
-  A Tuple_ is *much* faster and lighter-weight than a List_,
+  A Tuple_ is **much** faster and lighter-weight than a List_,
   but in exchange for that they are fixed size: you cannot insert
   or remove values from a Tuple_.
 
@@ -3628,6 +3641,9 @@ Table of Contents
       // Returns [1, 12, 3]
       tuple.modify(1, add10);
 
+      // Returns [1, 2, 13]
+      tuple.modify(2, add10);
+
       // Throws an error
       tuple.modify(3, add10);
 
@@ -3658,6 +3674,12 @@ Table of Contents
 
     // Returns [1, 50, 3]
     tuple.set(1, 50);
+
+    // Returns [1, 2, 50]
+    tuple.set(2, 50);
+
+    // Throws an error
+    tuple.set(4, 50);
 
 ----
 
@@ -3741,6 +3763,22 @@ Table of Contents
 
   You can search Google for "uuid generator". I personally
   use `this site <https://www.uuidgenerator.net/version4>`__.
+
+  So, why does this library provide both Tag_ and UUIDTag_?
+
+  * Tag_ works just fine as long as everything is in a single
+    process. And it's much more convenient, so it's useful
+    when prototyping.
+
+  * Not every use of Tag_ can be replaced with UUIDTag_.
+    If you're generating lots of tags dynamically, then you
+    have to use Tag_. UUIDTag_ is for tags which are *stable*
+    and don't change.
+
+  So the recommendation is that *libraries* that have
+  *stable* tags (e.g. interfaces) should use UUIDTag_.
+  But not every usage of Tag_ is bad. You will have to
+  make that judgement yourself.
 
 ----
 
