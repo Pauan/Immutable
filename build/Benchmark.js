@@ -1702,29 +1702,35 @@
 
     function $$Record$$run(counter) {
       var only_keys = [];
-      var keys = [];
-      var record_keys = {};
+      var object_keys = {};
+      var record_keys = [];
       var mori_keys = [];
 
       for (var i = 0; i < counter; ++i) {
         only_keys.push("foo" + i);
-        record_keys["foo" + i] = i;
-        keys.push(["foo" + i, i]);
+        object_keys["foo" + i] = i;
+        record_keys.push(["foo" + i, i]);
         mori_keys.push("foo" + i, i);
       }
 
-      var ImmutableJSRecord = $$Record$$immutablejs.Record(record_keys);
+      var ImmutableJSRecord = $$Record$$immutablejs.Record(object_keys);
 
       $$Benchmark$$.group("Record with " + counter + " keys", function () {
         $$Benchmark$$.group("Creating", function () {
-          $$Benchmark$$.message("JavaScript Object");
+          $$Benchmark$$.time("JavaScript Object", function () {
+            var o = {};
+
+            for (var i = 0; i < counter; ++i) {
+              o["foo" + i] = i;
+            }
+          });
 
           $$Benchmark$$.time("JavaScript Object Copying", function () {
-            $$Record$$copy(record_keys);
+            $$Record$$copy(object_keys);
           });
 
           $$Benchmark$$.time("Immutable-js Map", function () {
-            $$Record$$immutablejs.Map(keys);
+            $$Record$$immutablejs.Map(record_keys);
           });
 
           $$Benchmark$$.time("Immutable-js Record", function () {
@@ -1740,15 +1746,15 @@
           });
 
           $$Benchmark$$.time("Immutable Dict", function () {
-            $$Record$$immutable.Dict(keys);
+            $$Record$$immutable.Dict(record_keys);
           });
 
           $$Benchmark$$.time("Immutable SortedDict", function () {
-            $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, keys);
+            $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, record_keys);
           });
 
           $$Benchmark$$.time("Immutable Record", function () {
-            $$Record$$immutable.Record(keys);
+            $$Record$$immutable.Record(record_keys);
           });
         });
 
@@ -1757,19 +1763,19 @@
           $$Benchmark$$.message("JavaScript Object");
 
           ;(function () {
-            var o = record_keys;
+            var o = object_keys;
 
             $$Benchmark$$.time("JavaScript Object Copying", function () {
               o["foo0"];
             });
 
-            $$Benchmark$$.time("JavaScript Object Copying (prop)", function () {
+            $$Benchmark$$.time("JavaScript Object Copying (property)", function () {
               o.foo0;
             });
           })();
 
           ;(function () {
-            var o = $$Record$$immutablejs.Map(keys);
+            var o = $$Record$$immutablejs.Map(record_keys);
 
             $$Benchmark$$.time("Immutable-js Map", function () {
               o.get("foo0");
@@ -1783,7 +1789,7 @@
               o.get("foo0");
             });
 
-            $$Benchmark$$.time("Immutable-js Record (prop)", function () {
+            $$Benchmark$$.time("Immutable-js Record (property)", function () {
               o.foo0;
             });
           })();
@@ -1805,7 +1811,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.Dict(keys);
+            var o = $$Record$$immutable.Dict(record_keys);
 
             $$Benchmark$$.time("Immutable Dict", function () {
               o.get("foo0");
@@ -1813,7 +1819,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, keys);
+            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, record_keys);
 
             $$Benchmark$$.time("Immutable SortedDict", function () {
               o.get("foo0");
@@ -1821,7 +1827,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.Record(keys);
+            var o = $$Record$$immutable.Record(record_keys);
 
             $$Benchmark$$.time("Immutable Record", function () {
               o.get("foo0");
@@ -1834,7 +1840,7 @@
           $$Benchmark$$.message("JavaScript Object");
 
           ;(function () {
-            var o = record_keys;
+            var o = object_keys;
 
             $$Benchmark$$.time("JavaScript Object Copying", function () {
               o[$$Record$$random(only_keys)];
@@ -1842,7 +1848,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutablejs.Map(keys);
+            var o = $$Record$$immutablejs.Map(record_keys);
 
             $$Benchmark$$.time("Immutable-js Map", function () {
               o.get($$Record$$random(only_keys));
@@ -1874,7 +1880,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.Dict(keys);
+            var o = $$Record$$immutable.Dict(record_keys);
 
             $$Benchmark$$.time("Immutable Dict", function () {
               o.get($$Record$$random(only_keys));
@@ -1882,7 +1888,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, keys);
+            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, record_keys);
 
             $$Benchmark$$.time("Immutable SortedDict", function () {
               o.get($$Record$$random(only_keys));
@@ -1890,7 +1896,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.Record(keys);
+            var o = $$Record$$immutable.Record(record_keys);
 
             $$Benchmark$$.time("Immutable Record", function () {
               o.get($$Record$$random(only_keys));
@@ -1901,33 +1907,33 @@
 
         $$Benchmark$$.group("set first", function () {
           ;(function () {
-            var o = $$Record$$copy(record_keys);
+            var o = $$Record$$copy(object_keys);
 
             $$Benchmark$$.time("JavaScript Object", function () {
               o["foo0"] = -1;
             });
 
-            $$Benchmark$$.time("JavaScript Object (prop)", function () {
+            $$Benchmark$$.time("JavaScript Object (property)", function () {
               o.foo0 = -1;
             });
           })();
 
           ;(function () {
-            var o = record_keys;
+            var o = object_keys;
 
             $$Benchmark$$.time("JavaScript Object Copying", function () {
               var x = $$Record$$copy(o);
               x["foo0"] = -1;
             });
 
-            $$Benchmark$$.time("JavaScript Object Copying (prop)", function () {
+            $$Benchmark$$.time("JavaScript Object Copying (property)", function () {
               var x = $$Record$$copy(o);
               x.foo0 = -1;
             });
           })();
 
           ;(function () {
-            var o = $$Record$$immutablejs.Map(keys);
+            var o = $$Record$$immutablejs.Map(record_keys);
 
             $$Benchmark$$.time("Immutable-js Map", function () {
               o.set("foo0", -1);
@@ -1959,7 +1965,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.Dict(keys);
+            var o = $$Record$$immutable.Dict(record_keys);
 
             $$Benchmark$$.time("Immutable Dict", function () {
               o.set("foo0", -1);
@@ -1967,7 +1973,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, keys);
+            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, record_keys);
 
             $$Benchmark$$.time("Immutable SortedDict", function () {
               o.set("foo0", -1);
@@ -1975,7 +1981,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.Record(keys);
+            var o = $$Record$$immutable.Record(record_keys);
 
             $$Benchmark$$.time("Immutable Record", function () {
               o.set("foo0", -1);
@@ -1986,7 +1992,7 @@
 
         $$Benchmark$$.group("set random", function () {
           ;(function () {
-            var o = $$Record$$copy(record_keys);
+            var o = $$Record$$copy(object_keys);
 
             $$Benchmark$$.time("JavaScript Object", function () {
               o[$$Record$$random(only_keys)] = -1;
@@ -1994,7 +2000,7 @@
           })();
 
           ;(function () {
-            var o = record_keys;
+            var o = object_keys;
 
             $$Benchmark$$.time("JavaScript Object Copying", function () {
               var x = $$Record$$copy(o);
@@ -2003,7 +2009,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutablejs.Map(keys);
+            var o = $$Record$$immutablejs.Map(record_keys);
 
             $$Benchmark$$.time("Immutable-js Map", function () {
               o.set($$Record$$random(only_keys), -1);
@@ -2035,7 +2041,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.Dict(keys);
+            var o = $$Record$$immutable.Dict(record_keys);
 
             $$Benchmark$$.time("Immutable Dict", function () {
               o.set($$Record$$random(only_keys), -1);
@@ -2043,7 +2049,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, keys);
+            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, record_keys);
 
             $$Benchmark$$.time("Immutable SortedDict", function () {
               o.set($$Record$$random(only_keys), -1);
@@ -2051,7 +2057,7 @@
           })();
 
           ;(function () {
-            var o = $$Record$$immutable.Record(keys);
+            var o = $$Record$$immutable.Record(record_keys);
 
             $$Benchmark$$.time("Immutable Record", function () {
               o.set($$Record$$random(only_keys), -1);
@@ -2876,20 +2882,19 @@
     }
 
 
+    /*header();
+    list.run(10);
+    list.run(100);
+    list.run(1000);*/
+
     $$src$Benchmark$run$$header();
-    $$List$$.run(10);
-    $$List$$.run(100);
-    $$List$$.run(1000);
+    $$Record$$.run(5);
+    $$Record$$.run(10);
+    $$Record$$.run(100);
+    $$Record$$.run(1000);
+    $$Record$$.run(10000);
 
     /*header();
-    record.run(1);
-    record.run(10);
-    record.run(100);
-    record.run(1000);
-    record.run(10000);*/
-
-    /*header();
-    queue.run(1);
     queue.run(10);
     queue.run(100);
     queue.run(1000);

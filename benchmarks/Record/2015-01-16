@@ -1,0 +1,327 @@
+----------------------------------------------------------------------
+Information:
+  --------------------------------------------------------------------
+  Node.js:
+    URL: http://nodejs.org/
+    Version: v0.10.22
+  --------------------------------------------------------------------
+  Benchmark.js:
+    URL: https://github.com/bestiejs/benchmark.js
+    Version: 1.0.0
+  --------------------------------------------------------------------
+  Immutable-js:
+    URL: https://github.com/facebook/immutable-js
+    Version: 3.6.2
+  --------------------------------------------------------------------
+  Mori:
+    URL: https://github.com/swannodette/mori
+    Version: 0.3.2
+  --------------------------------------------------------------------
+  Immutable:
+    URL: https://github.com/Pauan/Immutable
+    Version: 6.0.0
+----------------------------------------------------------------------
+Record with 5 keys:
+  --------------------------------------------------------------------
+  Creating:
+    JavaScript Object                                1,143,940 ops/sec
+    JavaScript Object Copying                        1,422,612 ops/sec
+    Immutable-js Map                                   166,339 ops/sec
+    Immutable-js Record                                163,687 ops/sec
+    Mori Hash Map                                      714,438 ops/sec
+    Mori Sorted Map                                    216,157 ops/sec
+    Immutable Dict                                     150,298 ops/sec
+    Immutable SortedDict                               286,607 ops/sec
+    Immutable Record                                   172,087 ops/sec
+  --------------------------------------------------------------------
+  get first:
+    JavaScript Object
+    JavaScript Object Copying                       90,041,817 ops/sec
+    JavaScript Object Copying (property)            83,773,464 ops/sec
+    Immutable-js Map                                24,837,007 ops/sec
+    Immutable-js Record                             13,148,728 ops/sec
+    Immutable-js Record (property)                  12,398,866 ops/sec
+    Mori Hash Map                                   14,746,227 ops/sec
+    Mori Sorted Map                                  2,087,181 ops/sec
+    Immutable Dict                                   2,827,794 ops/sec
+    Immutable SortedDict                            17,064,219 ops/sec
+    Immutable Record                                50,358,427 ops/sec
+  --------------------------------------------------------------------
+  get random:
+    JavaScript Object
+    JavaScript Object Copying                       18,508,536 ops/sec
+    Immutable-js Map                                 1,507,868 ops/sec
+    Immutable-js Record                              1,228,290 ops/sec
+    Mori Hash Map                                    8,169,922 ops/sec
+    Mori Sorted Map                                  1,562,063 ops/sec
+    Immutable Dict                                   2,544,189 ops/sec
+    Immutable SortedDict                            11,968,282 ops/sec
+    Immutable Record                                14,593,631 ops/sec
+  --------------------------------------------------------------------
+  set first:
+    JavaScript Object                               77,738,416 ops/sec
+    JavaScript Object (property)                    77,750,243 ops/sec
+    JavaScript Object Copying                        1,472,283 ops/sec
+    JavaScript Object Copying (property)             1,492,046 ops/sec
+    Immutable-js Map                                 1,750,200 ops/sec
+    Immutable-js Record                                668,195 ops/sec
+    Mori Hash Map                                    7,869,433 ops/sec
+    Mori Sorted Map                                    743,593 ops/sec
+    Immutable Dict                                   1,179,702 ops/sec
+    Immutable SortedDict                             2,610,819 ops/sec
+    Immutable Record                                11,062,080 ops/sec
+  --------------------------------------------------------------------
+  set random:
+    JavaScript Object                                8,477,269 ops/sec
+    JavaScript Object Copying                        1,253,641 ops/sec
+    Immutable-js Map                                   734,324 ops/sec
+    Immutable-js Record                                398,391 ops/sec
+    Mori Hash Map                                    5,825,534 ops/sec
+    Mori Sorted Map                                    639,422 ops/sec
+    Immutable Dict                                   1,026,038 ops/sec
+    Immutable SortedDict                             2,315,592 ops/sec
+    Immutable Record                                 7,677,610 ops/sec
+----------------------------------------------------------------------
+Record with 10 keys:
+  --------------------------------------------------------------------
+  Creating:
+    JavaScript Object                                  565,881 ops/sec
+    JavaScript Object Copying                          736,238 ops/sec
+    Immutable-js Map                                    54,630 ops/sec
+    Immutable-js Record                                 53,398 ops/sec
+    Mori Hash Map                                       90,594 ops/sec
+    Mori Sorted Map                                     75,061 ops/sec
+    Immutable Dict                                      80,688 ops/sec
+    Immutable SortedDict                               155,398 ops/sec
+    Immutable Record                                   115,226 ops/sec
+  --------------------------------------------------------------------
+  get first:
+    JavaScript Object
+    JavaScript Object Copying                       68,800,256 ops/sec
+    JavaScript Object Copying (property)            68,106,596 ops/sec
+    Immutable-js Map                                 4,949,696 ops/sec
+    Immutable-js Record                              3,956,026 ops/sec
+    Immutable-js Record (property)                   3,769,545 ops/sec
+    Mori Hash Map                                    2,296,731 ops/sec
+    Mori Sorted Map                                  1,096,780 ops/sec
+    Immutable Dict                                   2,761,147 ops/sec
+    Immutable SortedDict                            12,665,052 ops/sec
+    Immutable Record                                47,458,508 ops/sec
+  --------------------------------------------------------------------
+  get random:
+    JavaScript Object
+    JavaScript Object Copying                       16,112,076 ops/sec
+    Immutable-js Map                                 4,512,644 ops/sec
+    Immutable-js Record                              3,026,780 ops/sec
+    Mori Hash Map                                    1,945,437 ops/sec
+    Mori Sorted Map                                  1,061,857 ops/sec
+    Immutable Dict                                   2,681,459 ops/sec
+    Immutable SortedDict                            10,013,240 ops/sec
+    Immutable Record                                14,648,000 ops/sec
+  --------------------------------------------------------------------
+  set first:
+    JavaScript Object                               65,937,054 ops/sec
+    JavaScript Object (property)                    67,194,791 ops/sec
+    JavaScript Object Copying                          711,920 ops/sec
+    JavaScript Object Copying (property)               733,720 ops/sec
+    Immutable-js Map                                 1,138,645 ops/sec
+    Immutable-js Record                                512,176 ops/sec
+    Mori Hash Map                                    1,036,830 ops/sec
+    Mori Sorted Map                                    458,655 ops/sec
+    Immutable Dict                                   1,052,984 ops/sec
+    Immutable SortedDict                             2,213,928 ops/sec
+    Immutable Record                                10,486,482 ops/sec
+  --------------------------------------------------------------------
+  set random:
+    JavaScript Object                                8,527,231 ops/sec
+    JavaScript Object Copying                          679,751 ops/sec
+    Immutable-js Map                                 1,035,074 ops/sec
+    Immutable-js Record                                473,372 ops/sec
+    Mori Hash Map                                      965,630 ops/sec
+    Mori Sorted Map                                    455,801 ops/sec
+    Immutable Dict                                     937,949 ops/sec
+    Immutable SortedDict                             2,098,376 ops/sec
+    Immutable Record                                 6,553,429 ops/sec
+----------------------------------------------------------------------
+Record with 100 keys:
+  --------------------------------------------------------------------
+  Creating:
+    JavaScript Object                                   54,344 ops/sec
+    JavaScript Object Copying                           36,015 ops/sec
+    Immutable-js Map                                    15,276 ops/sec
+    Immutable-js Record                                 15,139 ops/sec
+    Mori Hash Map                                       11,111 ops/sec
+    Mori Sorted Map                                      3,108 ops/sec
+    Immutable Dict                                       6,734 ops/sec
+    Immutable SortedDict                                11,437 ops/sec
+    Immutable Record                                    13,000 ops/sec
+  --------------------------------------------------------------------
+  get first:
+    JavaScript Object
+    JavaScript Object Copying                       65,809,585 ops/sec
+    JavaScript Object Copying (property)            65,875,249 ops/sec
+    Immutable-js Map                                 4,633,805 ops/sec
+    Immutable-js Record                              1,406,117 ops/sec
+    Immutable-js Record (property)                   1,770,736 ops/sec
+    Mori Hash Map                                    2,197,071 ops/sec
+    Mori Sorted Map                                    467,836 ops/sec
+    Immutable Dict                                   2,420,522 ops/sec
+    Immutable SortedDict                             6,792,600 ops/sec
+    Immutable Record                                43,036,051 ops/sec
+  --------------------------------------------------------------------
+  get random:
+    JavaScript Object
+    JavaScript Object Copying                       16,488,969 ops/sec
+    Immutable-js Map                                 4,221,469 ops/sec
+    Immutable-js Record                              1,419,858 ops/sec
+    Mori Hash Map                                    1,822,315 ops/sec
+    Mori Sorted Map                                    445,784 ops/sec
+    Immutable Dict                                   2,175,288 ops/sec
+    Immutable SortedDict                             6,118,785 ops/sec
+    Immutable Record                                15,685,855 ops/sec
+  --------------------------------------------------------------------
+  set first:
+    JavaScript Object                               63,604,769 ops/sec
+    JavaScript Object (property)                    64,857,281 ops/sec
+    JavaScript Object Copying                           34,077 ops/sec
+    JavaScript Object Copying (property)                35,193 ops/sec
+    Immutable-js Map                                   513,005 ops/sec
+    Immutable-js Record                                230,112 ops/sec
+    Mori Hash Map                                    1,076,371 ops/sec
+    Mori Sorted Map                                    214,606 ops/sec
+    Immutable Dict                                     853,741 ops/sec
+    Immutable SortedDict                             1,531,123 ops/sec
+    Immutable Record                                 2,888,926 ops/sec
+  --------------------------------------------------------------------
+  set random:
+    JavaScript Object                                9,478,699 ops/sec
+    JavaScript Object Copying                           34,798 ops/sec
+    Immutable-js Map                                   515,055 ops/sec
+    Immutable-js Record                                266,038 ops/sec
+    Mori Hash Map                                      905,421 ops/sec
+    Mori Sorted Map                                    185,527 ops/sec
+    Immutable Dict                                     759,948 ops/sec
+    Immutable SortedDict                             1,376,403 ops/sec
+    Immutable Record                                 2,479,543 ops/sec
+----------------------------------------------------------------------
+Record with 1000 keys:
+  --------------------------------------------------------------------
+  Creating:
+    JavaScript Object                                    4,869 ops/sec
+    JavaScript Object Copying                            3,217 ops/sec
+    Immutable-js Map                                     1,610 ops/sec
+    Immutable-js Record                                  1,451 ops/sec
+    Mori Hash Map                                          471 ops/sec
+    Mori Sorted Map                                        181 ops/sec
+    Immutable Dict                                         575 ops/sec
+    Immutable SortedDict                                   902 ops/sec
+    Immutable Record                                     1,159 ops/sec
+  --------------------------------------------------------------------
+  get first:
+    JavaScript Object
+    JavaScript Object Copying                       65,175,383 ops/sec
+    JavaScript Object Copying (property)            64,658,941 ops/sec
+    Immutable-js Map                                 4,360,537 ops/sec
+    Immutable-js Record                              3,228,851 ops/sec
+    Immutable-js Record (property)                   3,055,845 ops/sec
+    Mori Hash Map                                    2,117,328 ops/sec
+    Mori Sorted Map                                    295,591 ops/sec
+    Immutable Dict                                   2,037,306 ops/sec
+    Immutable SortedDict                             4,778,948 ops/sec
+    Immutable Record                                37,711,721 ops/sec
+  --------------------------------------------------------------------
+  get random:
+    JavaScript Object
+    JavaScript Object Copying                       15,521,044 ops/sec
+    Immutable-js Map                                 3,412,118 ops/sec
+    Immutable-js Record                              2,342,253 ops/sec
+    Mori Hash Map                                      808,468 ops/sec
+    Mori Sorted Map                                    274,669 ops/sec
+    Immutable Dict                                   1,684,243 ops/sec
+    Immutable SortedDict                             4,063,903 ops/sec
+    Immutable Record                                12,860,063 ops/sec
+  --------------------------------------------------------------------
+  set first:
+    JavaScript Object                               63,667,421 ops/sec
+    JavaScript Object (property)                    63,311,584 ops/sec
+    JavaScript Object Copying                            3,242 ops/sec
+    JavaScript Object Copying (property)                 3,256 ops/sec
+    Immutable-js Map                                   597,711 ops/sec
+    Immutable-js Record                                329,753 ops/sec
+    Mori Hash Map                                      743,250 ops/sec
+    Mori Sorted Map                                    136,023 ops/sec
+    Immutable Dict                                     704,396 ops/sec
+    Immutable SortedDict                             1,109,026 ops/sec
+    Immutable Record                                   361,202 ops/sec
+  --------------------------------------------------------------------
+  set random:
+    JavaScript Object                                9,273,952 ops/sec
+    JavaScript Object Copying                            3,249 ops/sec
+    Immutable-js Map                                   524,639 ops/sec
+    Immutable-js Record                                302,378 ops/sec
+    Mori Hash Map                                      503,509 ops/sec
+    Mori Sorted Map                                    127,700 ops/sec
+    Immutable Dict                                     644,457 ops/sec
+    Immutable SortedDict                             1,050,524 ops/sec
+    Immutable Record                                   337,927 ops/sec
+----------------------------------------------------------------------
+Record with 10000 keys:
+  --------------------------------------------------------------------
+  Creating:
+    JavaScript Object                                      523 ops/sec
+    JavaScript Object Copying                              321 ops/sec
+    Immutable-js Map                                       147 ops/sec
+    Immutable-js Record                                    140 ops/sec
+    Mori Hash Map                                           60 ops/sec
+    Mori Sorted Map                                         13 ops/sec
+    Immutable Dict                                          49 ops/sec
+    Immutable SortedDict                                    72 ops/sec
+    Immutable Record                                        94 ops/sec
+  --------------------------------------------------------------------
+  get first:
+    JavaScript Object
+    JavaScript Object Copying                       68,435,025 ops/sec
+    JavaScript Object Copying (property)            65,877,830 ops/sec
+    Immutable-js Map                                 4,589,506 ops/sec
+    Immutable-js Record                              3,439,069 ops/sec
+    Immutable-js Record (property)                   3,219,343 ops/sec
+    Mori Hash Map                                    2,211,914 ops/sec
+    Mori Sorted Map                                    214,571 ops/sec
+    Immutable Dict                                   1,934,055 ops/sec
+    Immutable SortedDict                             4,166,493 ops/sec
+    Immutable Record                                42,683,977 ops/sec
+  --------------------------------------------------------------------
+  get random:
+    JavaScript Object
+    JavaScript Object Copying                       10,671,416 ops/sec
+    Immutable-js Map                                 2,764,449 ops/sec
+    Immutable-js Record                              1,793,587 ops/sec
+    Mori Hash Map                                      748,463 ops/sec
+    Mori Sorted Map                                    189,950 ops/sec
+    Immutable Dict                                   1,304,385 ops/sec
+    Immutable SortedDict                             2,366,532 ops/sec
+    Immutable Record                                 9,564,536 ops/sec
+  --------------------------------------------------------------------
+  set first:
+    JavaScript Object                               63,203,259 ops/sec
+    JavaScript Object (property)                    64,033,819 ops/sec
+    JavaScript Object Copying                              324 ops/sec
+    JavaScript Object Copying (property)                   327 ops/sec
+    Immutable-js Map                                   566,099 ops/sec
+    Immutable-js Record                                330,175 ops/sec
+    Mori Hash Map                                      708,773 ops/sec
+    Mori Sorted Map                                    102,067 ops/sec
+    Immutable Dict                                     668,082 ops/sec
+    Immutable SortedDict                               982,986 ops/sec
+    Immutable Record                                    32,391 ops/sec
+  --------------------------------------------------------------------
+  set random:
+    JavaScript Object                                6,605,537 ops/sec
+    JavaScript Object Copying                              317 ops/sec
+    Immutable-js Map                                   416,879 ops/sec
+    Immutable-js Record                                245,692 ops/sec
+    Mori Hash Map                                      416,630 ops/sec
+    Mori Sorted Map                                     89,827 ops/sec
+    Immutable Dict                                     474,565 ops/sec
+    Immutable SortedDict                               708,253 ops/sec
+    Immutable Record                                    34,776 ops/sec

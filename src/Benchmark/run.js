@@ -38,20 +38,19 @@ function header() {
 }
 
 
-header();
+/*header();
 list.run(10);
 list.run(100);
-list.run(1000);
+list.run(1000);*/
 
-/*header();
-record.run(1);
+header();
+record.run(5);
 record.run(10);
 record.run(100);
 record.run(1000);
-record.run(10000);*/
+record.run(10000);
 
 /*header();
-queue.run(1);
 queue.run(10);
 queue.run(100);
 queue.run(1000);
