@@ -58,6 +58,16 @@ export function run(counter) {
         }
       });
 
+      benchmark.time("Immutable-js List Transient", function () {
+        var a = immutablejs.List();
+
+        a.withMutations(function (a) {
+          for (var i = 0; i < counter; ++i) {
+            a.push(i);
+          }
+        });
+      });
+
       benchmark.time("Mori Vector", function () {
         var a = mori.vector();
 
@@ -66,15 +76,25 @@ export function run(counter) {
         }
       });
 
-      benchmark.time("Immutable List (insert)", function () {
+      benchmark.time("Mori Vector Transient", function () {
+        var a = mori.mutable.thaw(mori.vector());
+
+        for (var i = 0; i < counter; ++i) {
+          a = mori.mutable.conj.f2(a, i);
+        }
+
+        mori.mutable.freeze(a);
+      });
+
+      /*benchmark.time("Immutable List (insert)", function () {
         var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
           a = a.insert(-1, i);
         }
-      });
+      });*/
 
-      benchmark.time("Immutable List (push)", function () {
+      benchmark.time("Immutable List", function () {
         var a = immutable.List();
 
         for (var i = 0; i < counter; ++i) {
@@ -141,7 +161,18 @@ export function run(counter) {
         }
       });
 
+      benchmark.time("Immutable-js List Transient", function () {
+        var a = immutablejs.List();
+
+        a.withMutations(function (a) {
+          for (var i = 0; i < counter; ++i) {
+            a.unshift(i);
+          }
+        });
+      });
+
       benchmark.message("Mori Vector");
+      benchmark.message("Mori Vector Transient");
 
       /*benchmark.time("Mori List", function () {
         var a = mori.list();
@@ -191,7 +222,12 @@ export function run(counter) {
         }
       });
 
+      // splice can't be used inside withMutations
+      // https://github.com/facebook/immutable-js/issues/196
+      benchmark.message("Immutable-js List Transient");
+
       benchmark.message("Mori Vector");
+      benchmark.message("Mori Vector Transient");
 
       benchmark.time("Immutable List", function () {
         var a = immutable.List();
@@ -239,7 +275,7 @@ export function run(counter) {
         }
 
         benchmark.time("Immutable-js List", function () {
-          a.last();
+          a.get(-1);
         });
       })();
 
@@ -319,7 +355,7 @@ export function run(counter) {
         }
 
         benchmark.time("Immutable-js List", function () {
-          a.first();
+          a.get(0);
         });
       })();
 
@@ -477,6 +513,14 @@ export function run(counter) {
             b = b.pop();
           }
         });
+
+        benchmark.time("Immutable-js List Transient", function () {
+          a.withMutations(function (b) {
+            for (var i = 0; i < counter; ++i) {
+              b.pop();
+            }
+          });
+        });
       })();
 
       ;(function () {
@@ -491,6 +535,14 @@ export function run(counter) {
           for (var i = 0; i < counter; ++i) {
             b = mori.pop(b);
           }
+        });
+
+        benchmark.time("Mori Vector Transient", function () {
+          var b = mori.mutable.thaw(a);
+          for (var i = 0; i < counter; ++i) {
+            b = mori.mutable.pop(b);
+          }
+          mori.mutable.freeze(b);
         });
       })();
 
@@ -559,9 +611,18 @@ export function run(counter) {
             b = b.shift();
           }
         });
+
+        benchmark.time("Immutable-js List Transient", function () {
+          a.withMutations(function (b) {
+            for (var i = 0; i < counter; ++i) {
+              b.shift();
+            }
+          });
+        });
       })();
 
       benchmark.message("Mori Vector");
+      benchmark.message("Mori Vector Transient");
 
       /*;(function () {
         var a = mori.list();
@@ -645,9 +706,14 @@ export function run(counter) {
             b = b.splice(pivot, 1);
           }
         });
+
+        // splice can't be used inside withMutations
+        // https://github.com/facebook/immutable-js/issues/196
+        benchmark.message("Immutable-js List Transient");
       })();
 
       benchmark.message("Mori Vector");
+      benchmark.message("Mori Vector Transient");
 
       /*;(function () {
         var a = immutable.List();
@@ -942,7 +1008,7 @@ export function run(counter) {
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.concat(a, a);
+          mori.vector.f(mori.concat.f2(a, a));
         });
       })();
 
@@ -1019,7 +1085,7 @@ export function run(counter) {
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.subvec(a, 1, 2);
+          mori.vector.f(mori.subvec.f3(a, 1, 2));
         });
       })();
 
@@ -1096,7 +1162,7 @@ export function run(counter) {
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.subvec(a, 1, Math.floor(mori.count(a) / 2));
+          mori.vector.f(mori.subvec.f3(a, 1, Math.floor(mori.count(a) / 2)));
         });
       })();
 
@@ -1173,7 +1239,7 @@ export function run(counter) {
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.subvec(a, 1);
+          mori.vector.f(mori.subvec.f2(a, 1));
         });
       })();
 

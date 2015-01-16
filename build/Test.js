@@ -4675,6 +4675,9 @@
 
         $$assert$$assert(five_queue.peek() === 1);
         $$assert$$assert(five_queue.peek(50) === 1);
+
+        $$assert$$assert($$Immutable$ImmutableQueue$$Queue().push(5).push(10).pop().peek() === 10);
+        $$assert$$assert($$Immutable$ImmutableQueue$$Queue().push(5).push(10).push(15).pop().peek() === 10);
       });
 
       $$src$Test$Test$$test("push", function () {

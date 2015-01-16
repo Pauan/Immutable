@@ -1812,6 +1812,9 @@ context("Queue", function () {
 
     assert(five_queue.peek() === 1);
     assert(five_queue.peek(50) === 1);
+
+    assert(Queue().push(5).push(10).pop().peek() === 10);
+    assert(Queue().push(5).push(10).push(15).pop().peek() === 10);
   });
 
   test("push", function () {

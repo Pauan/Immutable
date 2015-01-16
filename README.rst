@@ -114,7 +114,7 @@ In the above function, if the immutable data has not changed, then it will be ``
 
 This should **only** be used as an optimization to speed things up: you should use ``equal`` to test whether two immutable objects are equal or not.
 
-How do you determine whether to use ``===`` or ``equal``? If using ``===`` changes the behavior of the program, then you should use ``equal``.
+How do you determine whether to use ``===`` or ``equal``? If using ``===`` changes the behavior of the program, then you should use ``equal`` instead.
 
 In this case, if the data is ``===``, we can safely choose to not save to the database. And if it's **not** ``===``, that's fine too: it just means we have to do the expensive save operation. So either way, the behavior is identical.
 

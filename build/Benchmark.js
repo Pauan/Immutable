@@ -469,23 +469,43 @@
             }
           });
 
+          $$Benchmark$$.time("Immutable-js List Transient", function () {
+            var a = $$List$$immutablejs.List();
+
+            a.withMutations(function (a) {
+              for (var i = 0; i < counter; ++i) {
+                a.push(i);
+              }
+            });
+          });
+
           $$Benchmark$$.time("Mori Vector", function () {
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
           });
 
-          $$Benchmark$$.time("Immutable List (insert)", function () {
-            var a = $$List$$immutable.List();
+          $$Benchmark$$.time("Mori Vector Transient", function () {
+            var a = $$List$$mori.mutable.thaw($$List$$mori.vector());
+
+            for (var i = 0; i < counter; ++i) {
+              a = $$List$$mori.mutable.conj.f2(a, i);
+            }
+
+            $$List$$mori.mutable.freeze(a);
+          });
+
+          /*benchmark.time("Immutable List (insert)", function () {
+            var a = immutable.List();
 
             for (var i = 0; i < counter; ++i) {
               a = a.insert(-1, i);
             }
-          });
+          });*/
 
-          $$Benchmark$$.time("Immutable List (push)", function () {
+          $$Benchmark$$.time("Immutable List", function () {
             var a = $$List$$immutable.List();
 
             for (var i = 0; i < counter; ++i) {
@@ -552,7 +572,18 @@
             }
           });
 
+          $$Benchmark$$.time("Immutable-js List Transient", function () {
+            var a = $$List$$immutablejs.List();
+
+            a.withMutations(function (a) {
+              for (var i = 0; i < counter; ++i) {
+                a.unshift(i);
+              }
+            });
+          });
+
           $$Benchmark$$.message("Mori Vector");
+          $$Benchmark$$.message("Mori Vector Transient");
 
           /*benchmark.time("Mori List", function () {
             var a = mori.list();
@@ -602,7 +633,12 @@
             }
           });
 
+          // splice can't be used inside withMutations
+          // https://github.com/facebook/immutable-js/issues/196
+          $$Benchmark$$.message("Immutable-js List Transient");
+
           $$Benchmark$$.message("Mori Vector");
+          $$Benchmark$$.message("Mori Vector Transient");
 
           $$Benchmark$$.time("Immutable List", function () {
             var a = $$List$$immutable.List();
@@ -650,7 +686,7 @@
             }
 
             $$Benchmark$$.time("Immutable-js List", function () {
-              a.last();
+              a.get(-1);
             });
           })();
 
@@ -658,12 +694,12 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
               // `mori.last` is O(n)
-              $$List$$mori.get(a, $$List$$mori.count(a) - 1);
+              $$List$$mori.nth.f2(a, $$List$$mori.count(a) - 1);
             });
           })();
 
@@ -730,7 +766,7 @@
             }
 
             $$Benchmark$$.time("Immutable-js List", function () {
-              a.first();
+              a.get(0);
             });
           })();
 
@@ -738,11 +774,11 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.get(a, 0);
+              $$List$$mori.nth.f2(a, 0);
             });
           })();
 
@@ -818,12 +854,12 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
               var pivot = Math.floor(Math.random() * $$List$$mori.count(a));
-              $$List$$mori.get(a, pivot);
+              $$List$$mori.nth.f2(a, pivot);
             });
           })();
 
@@ -888,13 +924,21 @@
                 b = b.pop();
               }
             });
+
+            $$Benchmark$$.time("Immutable-js List Transient", function () {
+              a.withMutations(function (b) {
+                for (var i = 0; i < counter; ++i) {
+                  b.pop();
+                }
+              });
+            });
           })();
 
           ;(function () {
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
@@ -902,6 +946,14 @@
               for (var i = 0; i < counter; ++i) {
                 b = $$List$$mori.pop(b);
               }
+            });
+
+            $$Benchmark$$.time("Mori Vector Transient", function () {
+              var b = $$List$$mori.mutable.thaw(a);
+              for (var i = 0; i < counter; ++i) {
+                b = $$List$$mori.mutable.pop(b);
+              }
+              $$List$$mori.mutable.freeze(b);
             });
           })();
 
@@ -970,9 +1022,18 @@
                 b = b.shift();
               }
             });
+
+            $$Benchmark$$.time("Immutable-js List Transient", function () {
+              a.withMutations(function (b) {
+                for (var i = 0; i < counter; ++i) {
+                  b.shift();
+                }
+              });
+            });
           })();
 
           $$Benchmark$$.message("Mori Vector");
+          $$Benchmark$$.message("Mori Vector Transient");
 
           /*;(function () {
             var a = mori.list();
@@ -1056,9 +1117,14 @@
                 b = b.splice(pivot, 1);
               }
             });
+
+            // splice can't be used inside withMutations
+            // https://github.com/facebook/immutable-js/issues/196
+            $$Benchmark$$.message("Immutable-js List Transient");
           })();
 
           $$Benchmark$$.message("Mori Vector");
+          $$Benchmark$$.message("Mori Vector Transient");
 
           /*;(function () {
             var a = immutable.List();
@@ -1129,11 +1195,11 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.assoc(a, $$List$$mori.count(a) - 1, -50);
+              $$List$$mori.assoc.f3(a, $$List$$mori.count(a) - 1, -50);
             });
           })();
 
@@ -1198,11 +1264,11 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.assoc(a, 0, -50);
+              $$List$$mori.assoc.f3(a, 0, -50);
             });
           })();
 
@@ -1269,12 +1335,12 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
               var pivot = Math.floor(Math.random() * $$List$$mori.count(a));
-              $$List$$mori.assoc(a, pivot, -50);
+              $$List$$mori.assoc.f3(a, pivot, -50);
             });
           })();
 
@@ -1349,11 +1415,11 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.concat(a, a);
+              $$List$$mori.vector.f($$List$$mori.concat.f2(a, a));
             });
           })();
 
@@ -1426,11 +1492,11 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.subvec(a, 1, 2);
+              $$List$$mori.vector.f($$List$$mori.subvec.f3(a, 1, 2));
             });
           })();
 
@@ -1503,11 +1569,11 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.subvec(a, 1, Math.floor($$List$$mori.count(a) / 2));
+              $$List$$mori.vector.f($$List$$mori.subvec.f3(a, 1, Math.floor($$List$$mori.count(a) / 2)));
             });
           })();
 
@@ -1580,11 +1646,11 @@
             var a = $$List$$mori.vector();
 
             for (var i = 0; i < counter; ++i) {
-              a = $$List$$mori.conj(a, i);
+              a = $$List$$mori.conj.f2(a, i);
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.subvec(a, 1);
+              $$List$$mori.vector.f($$List$$mori.subvec.f2(a, 1));
             });
           })();
 
@@ -1666,11 +1732,11 @@
           });
 
           $$Benchmark$$.time("Mori Hash Map", function () {
-            $$Record$$mori.hash_map.apply(null, mori_keys);
+            $$Record$$mori.hashMap.apply(null, mori_keys);
           });
 
           $$Benchmark$$.time("Mori Sorted Map", function () {
-            $$Record$$mori.sorted_map.apply(null, mori_keys);
+            $$Record$$mori.sortedMap.apply(null, mori_keys);
           });
 
           $$Benchmark$$.time("Immutable Dict", function () {
@@ -1723,18 +1789,18 @@
           })();
 
           ;(function () {
-            var o = $$Record$$mori.hash_map.apply(null, mori_keys);
+            var o = $$Record$$mori.hashMap.apply(null, mori_keys);
 
             $$Benchmark$$.time("Mori Hash Map", function () {
-              $$Record$$mori.get(o, "foo0");
+              $$Record$$mori.get.f2(o, "foo0");
             });
           })();
 
           ;(function () {
-            var o = $$Record$$mori.sorted_map.apply(null, mori_keys);
+            var o = $$Record$$mori.sortedMap.apply(null, mori_keys);
 
             $$Benchmark$$.time("Mori Sorted Map", function () {
-              $$Record$$mori.get(o, "foo0");
+              $$Record$$mori.get.f2(o, "foo0");
             });
           })();
 
@@ -1792,18 +1858,18 @@
           })();
 
           ;(function () {
-            var o = $$Record$$mori.hash_map.apply(null, mori_keys);
+            var o = $$Record$$mori.hashMap.apply(null, mori_keys);
 
             $$Benchmark$$.time("Mori Hash Map", function () {
-              $$Record$$mori.get(o, $$Record$$random(only_keys));
+              $$Record$$mori.get.f2(o, $$Record$$random(only_keys));
             });
           })();
 
           ;(function () {
-            var o = $$Record$$mori.sorted_map.apply(null, mori_keys);
+            var o = $$Record$$mori.sortedMap.apply(null, mori_keys);
 
             $$Benchmark$$.time("Mori Sorted Map", function () {
-              $$Record$$mori.get(o, $$Record$$random(only_keys));
+              $$Record$$mori.get.f2(o, $$Record$$random(only_keys));
             });
           })();
 
@@ -1877,18 +1943,18 @@
           })();
 
           ;(function () {
-            var o = $$Record$$mori.hash_map.apply(null, mori_keys);
+            var o = $$Record$$mori.hashMap.apply(null, mori_keys);
 
             $$Benchmark$$.time("Mori Hash Map", function () {
-              $$Record$$mori.assoc(o, "foo0", -1);
+              $$Record$$mori.assoc.f3(o, "foo0", -1);
             });
           })();
 
           ;(function () {
-            var o = $$Record$$mori.sorted_map.apply(null, mori_keys);
+            var o = $$Record$$mori.sortedMap.apply(null, mori_keys);
 
             $$Benchmark$$.time("Mori Sorted Map", function () {
-              $$Record$$mori.assoc(o, "foo0", -1);
+              $$Record$$mori.assoc.f3(o, "foo0", -1);
             });
           })();
 
@@ -1953,18 +2019,18 @@
           })();
 
           ;(function () {
-            var o = $$Record$$mori.hash_map.apply(null, mori_keys);
+            var o = $$Record$$mori.hashMap.apply(null, mori_keys);
 
             $$Benchmark$$.time("Mori Hash Map", function () {
-              $$Record$$mori.assoc(o, $$Record$$random(only_keys), -1);
+              $$Record$$mori.assoc.f3(o, $$Record$$random(only_keys), -1);
             });
           })();
 
           ;(function () {
-            var o = $$Record$$mori.sorted_map.apply(null, mori_keys);
+            var o = $$Record$$mori.sortedMap.apply(null, mori_keys);
 
             $$Benchmark$$.time("Mori Sorted Map", function () {
-              $$Record$$mori.assoc(o, $$Record$$random(only_keys), -1);
+              $$Record$$mori.assoc.f3(o, $$Record$$random(only_keys), -1);
             });
           })();
 
@@ -2384,7 +2450,11 @@
           });
 
           $$Benchmark$$.time("Mori Vector", function () {
-            $$Tuple$$mori.vector.apply(null, values);
+            $$Tuple$$mori.vector.f(values);
+          });
+
+          $$Benchmark$$.time("Mori Vector (into)", function () {
+            $$Tuple$$mori.into.f2($$Tuple$$mori.vector(), values);
           });
 
           /*benchmark.time("Mori List", function () {
@@ -2449,12 +2519,12 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
+            var a = $$Tuple$$mori.vector.f(values);
 
             var last = $$Tuple$$mori.count(a) - 1;
 
             $$Benchmark$$.time("Mori Vector (nth)", function () {
-              $$Tuple$$mori.nth(a, last);
+              $$Tuple$$mori.nth.f2(a, last);
             });
 
             /*benchmark.time("Mori Vector (last)", function () {
@@ -2538,10 +2608,10 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
+            var a = $$Tuple$$mori.vector.f(values);
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$Tuple$$mori.nth(a, 0);
+              $$Tuple$$mori.nth.f2(a, 0);
             });
           })();
 
@@ -2587,12 +2657,12 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
+            var a = $$Tuple$$mori.vector.f(values);
 
             var size = $$Tuple$$mori.count(a);
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$Tuple$$mori.nth(a, $$Tuple$$random(size));
+              $$Tuple$$mori.nth.f2(a, $$Tuple$$random(size));
             });
           })();
 
@@ -2642,12 +2712,12 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
+            var a = $$Tuple$$mori.vector.f(values);
 
             var last = $$Tuple$$mori.count(a) - 1;
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$Tuple$$mori.assoc(a, last, -50);
+              $$Tuple$$mori.assoc.f3(a, last, -50);
             });
           })();
 
@@ -2691,10 +2761,10 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
+            var a = $$Tuple$$mori.vector.f(values);
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$Tuple$$mori.assoc(a, 0, -50);
+              $$Tuple$$mori.assoc.f3(a, 0, -50);
             });
           })();
 
@@ -2740,12 +2810,12 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
+            var a = $$Tuple$$mori.vector.f(values);
 
             var size = $$Tuple$$mori.count(a);
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$Tuple$$mori.assoc(a, $$Tuple$$random(size), -50);
+              $$Tuple$$mori.assoc.f3(a, $$Tuple$$random(size), -50);
             });
           })();
 
@@ -2772,7 +2842,13 @@
       });
     }
 
+    var $$src$Benchmark$run$$mori = require("mori");
     var $$src$Benchmark$run$$package = require("../package.json");
+
+    // TODO probably move into another module
+    if ("" + $$src$Benchmark$run$$mori.vector.f([1, 2, 3]) !== "[1 2 3]") {
+      throw new Error("FAIL");
+    }
 
     var $$src$Benchmark$run$$dependencies = $$src$Benchmark$run$$package.devDependencies;
 
@@ -2806,10 +2882,10 @@
     }
 
 
-    /*header();
-    list.run(10);
-    list.run(100);
-    list.run(1000);*/
+    $$src$Benchmark$run$$header();
+    $$List$$.run(10);
+    $$List$$.run(100);
+    $$List$$.run(1000);
 
     /*header();
     record.run(1);
@@ -2825,11 +2901,11 @@
     queue.run(1000);
     queue.run(10000);*/
 
-    $$src$Benchmark$run$$header();
-    $$Tuple$$.run(10);
-    $$Tuple$$.run(100);
-    $$Tuple$$.run(1000);
-    $$Tuple$$.run(10000);
+    /*header();
+    tuple.run(10);
+    tuple.run(100);
+    tuple.run(1000);
+    tuple.run(10000);*/
 
     $$Benchmark$$.run();
 }).call(this);

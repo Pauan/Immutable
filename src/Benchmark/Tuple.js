@@ -41,7 +41,11 @@ export function run(counter) {
       });
 
       benchmark.time("Mori Vector", function () {
-        mori.vector.apply(null, values);
+        mori.vector.f(values);
+      });
+
+      benchmark.time("Mori Vector (into)", function () {
+        mori.into.f2(mori.vector(), values);
       });
 
       /*benchmark.time("Mori List", function () {
@@ -106,7 +110,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = mori.vector.apply(null, values);
+        var a = mori.vector.f(values);
 
         var last = mori.count(a) - 1;
 
@@ -195,7 +199,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = mori.vector.apply(null, values);
+        var a = mori.vector.f(values);
 
         benchmark.time("Mori Vector", function () {
           mori.nth.f2(a, 0);
@@ -244,7 +248,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = mori.vector.apply(null, values);
+        var a = mori.vector.f(values);
 
         var size = mori.count(a);
 
@@ -299,7 +303,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = mori.vector.apply(null, values);
+        var a = mori.vector.f(values);
 
         var last = mori.count(a) - 1;
 
@@ -348,7 +352,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = mori.vector.apply(null, values);
+        var a = mori.vector.f(values);
 
         benchmark.time("Mori Vector", function () {
           mori.assoc.f3(a, 0, -50);
@@ -397,7 +401,7 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var a = mori.vector.apply(null, values);
+        var a = mori.vector.f(values);
 
         var size = mori.count(a);
 

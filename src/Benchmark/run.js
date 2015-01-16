@@ -4,7 +4,13 @@ import * as record from "./Record";
 import * as queue from "./Queue";
 import * as tuple from "./Tuple";
 
+var mori = require("mori");
 var package = require("../package.json");
+
+// TODO probably move into another module
+if ("" + mori.vector.f([1, 2, 3]) !== "[1 2 3]") {
+  throw new Error("FAIL");
+}
 
 var dependencies = package.devDependencies;
 
@@ -38,10 +44,10 @@ function header() {
 }
 
 
-/*header();
+header();
 list.run(10);
 list.run(100);
-list.run(1000);*/
+list.run(1000);
 
 /*header();
 record.run(1);
@@ -57,10 +63,10 @@ queue.run(100);
 queue.run(1000);
 queue.run(10000);*/
 
-header();
+/*header();
 tuple.run(10);
 tuple.run(100);
 tuple.run(1000);
-tuple.run(10000);
+tuple.run(10000);*/
 
 benchmark.run();
