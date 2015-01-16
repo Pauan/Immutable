@@ -342,16 +342,16 @@ export function toArray(x) {
   }
 }
 
-export function join(x, separator) {
-  if (arguments.length === 1) {
-    separator = "";
-  }
+export function join(x, separator1) {
+  var separator2 = (arguments.length === 1
+                     ? ""
+                     : separator1);
 
-  if (typeof x === "string" && separator === "") {
+  if (typeof x === "string" && separator2 === "") {
     return x;
   } else {
     // TODO this requires O(n) space, perhaps we can use an iterator to make it O(1) space ?
-    return toArray(x).join(separator);
+    return toArray(x).join(separator2);
   }
 }
 
@@ -478,27 +478,29 @@ export function take(x, count) {
   });
 }
 
-export function range(start, end, step) {
-  if (arguments.length < 1) {
-    start = 0;
-  }
-  if (arguments.length < 2) {
-    end = Infinity;
-  }
-  if (arguments.length < 3) {
-    step = 1;
-  }
+export function range(start1, end1, step1) {
+  var start2 = (arguments.length < 1
+                 ? 0
+                 : start1);
 
-  if (step < 0) {
-    throw new Error("Step cannot be negative");
+  var end2 = (arguments.length < 2
+               ? Infinity
+               : end1);
+
+  var step2 = (arguments.length < 3
+                ? 1
+                : step1);
+
+  if (step2 < 0) {
+    throw new Error("Step cannot be negative: " + step2);
   }
 
   return Iterable(function () {
-    if (start < end) {
+    if (start2 < end2) {
       var next = function () {
-        if (start < end) {
-          var current = start;
-          start += step;
+        if (start2 < end2) {
+          var current = start2;
+          start2 += step2;
           return { value: current };
 
         } else {
@@ -507,9 +509,9 @@ export function range(start, end, step) {
       };
     } else {
       var next = function () {
-        if (start > end) {
-          var current = start;
-          start -= step;
+        if (start2 > end2) {
+          var current = start2;
+          start2 -= step2;
           return { value: current };
 
         } else {

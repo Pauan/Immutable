@@ -327,42 +327,42 @@ ImmutableList.prototype.size = function () {
   return this.root.size + this.tail_size;
 };
 
-ImmutableList.prototype.get = function (index, def) {
+ImmutableList.prototype.get = function (index1, def) {
   var len = this.size();
 
-  if (index < 0) {
-    index += len;
-  }
+  var index2 = (index1 < 0
+                 ? index1 + len
+                 : index1);
 
-  if (nth_has(index, len)) {
+  if (nth_has(index2, len)) {
     var root = this.root;
     var size = root.size;
-    if (index < size) {
-      return nth_get(root, index);
+    if (index2 < size) {
+      return nth_get(root, index2);
     } else {
-      return stack_nth(this.tail, this.tail_size, index - size);
+      return stack_nth(this.tail, this.tail_size, index2 - size);
     }
 
   } else if (arguments.length === 2) {
     return def;
 
   } else {
-    throw new Error("Index " + index + " is not valid");
+    throw new Error("Index " + index2 + " is not valid");
   }
 };
 
-ImmutableList.prototype.insert = function (index, value) {
+ImmutableList.prototype.insert = function (index1, value) {
   if (arguments.length !== 2) {
     throw new Error("Expected 2 arguments but got " + arguments.length);
   }
 
   var len = this.size();
 
-  if (index < 0) {
-    index += (len + 1);
-  }
+  var index2 = (index1 < 0
+                 ? index1 + (len + 1)
+                 : index1);
 
-  if (index === len) {
+  if (index2 === len) {
     return this.push(value);
 
   } else {
@@ -370,18 +370,18 @@ ImmutableList.prototype.insert = function (index, value) {
     var tail      = this.tail;
     var tail_size = this.tail_size;
 
-    if (nth_has(index, len)) {
+    if (nth_has(index2, len)) {
       var size = root.size;
-      if (index <= size) {
-        return new ImmutableList(nth_insert(root, index, value), tail, tail_size);
+      if (index2 <= size) {
+        return new ImmutableList(nth_insert(root, index2, value), tail, tail_size);
 
       } else {
-        var array = array_insert(stack_to_array(tail, tail_size), index - size, value);
+        var array = array_insert(stack_to_array(tail, tail_size), index2 - size, value);
         return new ImmutableList(insert_array_max(root, array), nil, 0);
       }
 
     } else {
-      throw new Error("Index " + index + " is not valid");
+      throw new Error("Index " + index2 + " is not valid");
     }
   }
 };
@@ -399,53 +399,53 @@ ImmutableList.prototype.push = function (value) {
   }
 };
 
-ImmutableList.prototype.remove = function (index) {
+ImmutableList.prototype.remove = function (index1) {
   if (arguments.length !== 1) {
     throw new Error("Expected 1 argument but got " + arguments.length);
   }
 
   var len = this.size();
 
-  if (index < 0) {
-    index += len;
-  }
+  var index2 = (index1 < 0
+                 ? index1 + len
+                 : index1);
 
   var root      = this.root;
   var tail      = this.tail;
   var tail_size = this.tail_size;
 
-  if (tail !== nil && index === len - 1) {
+  if (tail !== nil && index2 === len - 1) {
     return new ImmutableList(root, tail.cdr, tail_size - 1);
 
-  } else if (nth_has(index, len)) {
+  } else if (nth_has(index2, len)) {
     var size = root.size;
-    if (index < size) {
-      return new ImmutableList(nth_remove(root, index), tail, tail_size);
+    if (index2 < size) {
+      return new ImmutableList(nth_remove(root, index2), tail, tail_size);
 
     } else {
-      var array = array_remove(stack_to_array(tail, tail_size), index - size);
+      var array = array_remove(stack_to_array(tail, tail_size), index2 - size);
       return new ImmutableList(insert_array_max(root, array), nil, 0);
     }
 
   } else {
-    throw new Error("Index " + index + " is not valid");
+    throw new Error("Index " + index2 + " is not valid");
   }
 };
 
-ImmutableList.prototype.modify = function (index, f) {
+ImmutableList.prototype.modify = function (index1, f) {
   var len = this.size();
 
-  if (index < 0) {
-    index += len;
-  }
+  var index2 = (index1 < 0
+                 ? index1 + len
+                 : index1);
 
-  if (nth_has(index, len)) {
+  if (nth_has(index2, len)) {
     var root = this.root;
     var tail = this.tail;
     var tail_size = this.tail_size;
     var size = root.size;
 
-    if (tail !== nil && index === len - 1) {
+    if (tail !== nil && index2 === len - 1) {
       var value = f(tail.car);
       if (value === tail.car) {
         return this;
@@ -453,8 +453,8 @@ ImmutableList.prototype.modify = function (index, f) {
         return new ImmutableList(root, new Cons(value, tail.cdr), tail_size);
       }
 
-    } else if (index < size) {
-      var node = nth_modify(root, index, f);
+    } else if (index2 < size) {
+      var node = nth_modify(root, index2, f);
       if (node === root) {
         return this;
       } else {
@@ -463,7 +463,7 @@ ImmutableList.prototype.modify = function (index, f) {
 
     } else {
       var stack = stack_to_array(tail, tail_size);
-      var array = array_modify(stack, index - size, f);
+      var array = array_modify(stack, index2 - size, f);
       if (array === stack) {
         return this;
       } else {
@@ -472,7 +472,7 @@ ImmutableList.prototype.modify = function (index, f) {
     }
 
   } else {
-    throw new Error("Index " + index + " is not valid");
+    throw new Error("Index " + index2 + " is not valid");
   }
 };
 
@@ -483,64 +483,67 @@ ImmutableList.prototype.set = function (index, value) {
   });
 };
 
-ImmutableList.prototype.slice = function (from, to) {
+ImmutableList.prototype.slice = function (from1, to1) {
   var len = this.size();
 
-  if (arguments.length < 1) {
-    from = 0;
-  }
-  if (arguments.length < 2) {
-    to = len;
+  var from2 = (arguments.length < 1
+                ? 0
+                : from1);
+
+  var to2 = (arguments.length < 2
+              ? len
+              : to1);
+
+  if (typeof from2 !== "number") {
+    throw new Error("Expected a number but got " + from2);
   }
 
-  if (typeof from !== "number") {
-    throw new Error("Expected a number but got " + from);
-  }
-  if (typeof to !== "number") {
-    throw new Error("Expected a number but got " + to);
+  if (typeof to2 !== "number") {
+    throw new Error("Expected a number but got " + to2);
   }
 
-  if (from < 0) {
-    from += len;
-  }
-  if (to < 0) {
-    to += len;
-  }
+  var from3 = (from2 < 0
+                ? from2 + len
+                : from2);
 
-  if (from === 0 && to === len) {
+  var to3 = (to2 < 0
+              ? to2 + len
+              : to2);
+
+  if (from3 === 0 && to3 === len) {
     return this;
 
-  } else if (from > to) {
-    throw new Error("Index " + from + " is greater than index " + to);
+  } else if (from3 > to3) {
+    throw new Error("Index " + from3 + " is greater than index " + to3);
 
-  } else if (nth_has(from, len)) {
-    if (from === to) {
+  } else if (nth_has(from3, len)) {
+    if (from3 === to3) {
       return new ImmutableList(nil, nil, 0);
 
     // TODO code duplication with nth_has ?
-    } else if (to > 0 && to <= len) {
+    } else if (to3 > 0 && to3 <= len) {
       var root = this.root;
       var size = root.size;
 
       var slices = [];
 
-      if (from <= size) {
-        nth_slice(slices, root, from, to);
+      if (from3 <= size) {
+        nth_slice(slices, root, from3, to3);
       }
 
-      if (to > size) {
+      if (to3 > size) {
         var stack = stack_to_array(this.tail, this.tail_size);
-        add_slice(slices, array_slice(stack, from - size, to - size));
+        add_slice(slices, array_slice(stack, from3 - size, to3 - size));
       }
 
       return new ImmutableList(slices_to_tree(slices), nil, 0);
 
     } else {
-      throw new Error("Index " + to + " is not valid");
+      throw new Error("Index " + to3 + " is not valid");
     }
 
   } else {
-    throw new Error("Index " + from + " is not valid");
+    throw new Error("Index " + from3 + " is not valid");
   }
 };
 
