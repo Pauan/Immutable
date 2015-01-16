@@ -10,7 +10,7 @@
 
     "benchmark": "1.0.0",
     "immutable": "3.4.1",
-    "mori": "0.2.9",
+    "mori": "0.3.2",
     "microtime": "^1.1.0"
   },
   "scripts": {

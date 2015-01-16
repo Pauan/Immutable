@@ -62,7 +62,7 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
       });
 
@@ -247,12 +247,12 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
           // `mori.last` is O(n)
-          mori.get(a, mori.count(a) - 1);
+          mori.nth.f2(a, mori.count(a) - 1);
         });
       })();
 
@@ -327,11 +327,11 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.get(a, 0);
+          mori.nth.f2(a, 0);
         });
       })();
 
@@ -407,12 +407,12 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
           var pivot = Math.floor(Math.random() * mori.count(a));
-          mori.get(a, pivot);
+          mori.nth.f2(a, pivot);
         });
       })();
 
@@ -483,7 +483,7 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
@@ -718,11 +718,11 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.assoc(a, mori.count(a) - 1, -50);
+          mori.assoc.f3(a, mori.count(a) - 1, -50);
         });
       })();
 
@@ -787,11 +787,11 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.assoc(a, 0, -50);
+          mori.assoc.f3(a, 0, -50);
         });
       })();
 
@@ -858,12 +858,12 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
           var pivot = Math.floor(Math.random() * mori.count(a));
-          mori.assoc(a, pivot, -50);
+          mori.assoc.f3(a, pivot, -50);
         });
       })();
 
@@ -938,7 +938,7 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
@@ -1015,7 +1015,7 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
@@ -1092,7 +1092,7 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
@@ -1169,7 +1169,7 @@ export function run(counter) {
         var a = mori.vector();
 
         for (var i = 0; i < counter; ++i) {
-          a = mori.conj(a, i);
+          a = mori.conj.f2(a, i);
         }
 
         benchmark.time("Mori Vector", function () {
