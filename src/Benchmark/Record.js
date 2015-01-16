@@ -50,11 +50,11 @@ export function run(counter) {
       });
 
       benchmark.time("Mori Hash Map", function () {
-        mori.hash_map.apply(null, mori_keys);
+        mori.hashMap.apply(null, mori_keys);
       });
 
       benchmark.time("Mori Sorted Map", function () {
-        mori.sorted_map.apply(null, mori_keys);
+        mori.sortedMap.apply(null, mori_keys);
       });
 
       benchmark.time("Immutable Dict", function () {
@@ -107,18 +107,18 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var o = mori.hash_map.apply(null, mori_keys);
+        var o = mori.hashMap.apply(null, mori_keys);
 
         benchmark.time("Mori Hash Map", function () {
-          mori.get(o, "foo0");
+          mori.get.f2(o, "foo0");
         });
       })();
 
       ;(function () {
-        var o = mori.sorted_map.apply(null, mori_keys);
+        var o = mori.sortedMap.apply(null, mori_keys);
 
         benchmark.time("Mori Sorted Map", function () {
-          mori.get(o, "foo0");
+          mori.get.f2(o, "foo0");
         });
       })();
 
@@ -176,18 +176,18 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var o = mori.hash_map.apply(null, mori_keys);
+        var o = mori.hashMap.apply(null, mori_keys);
 
         benchmark.time("Mori Hash Map", function () {
-          mori.get(o, random(only_keys));
+          mori.get.f2(o, random(only_keys));
         });
       })();
 
       ;(function () {
-        var o = mori.sorted_map.apply(null, mori_keys);
+        var o = mori.sortedMap.apply(null, mori_keys);
 
         benchmark.time("Mori Sorted Map", function () {
-          mori.get(o, random(only_keys));
+          mori.get.f2(o, random(only_keys));
         });
       })();
 
@@ -261,18 +261,18 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var o = mori.hash_map.apply(null, mori_keys);
+        var o = mori.hashMap.apply(null, mori_keys);
 
         benchmark.time("Mori Hash Map", function () {
-          mori.assoc(o, "foo0", -1);
+          mori.assoc.f3(o, "foo0", -1);
         });
       })();
 
       ;(function () {
-        var o = mori.sorted_map.apply(null, mori_keys);
+        var o = mori.sortedMap.apply(null, mori_keys);
 
         benchmark.time("Mori Sorted Map", function () {
-          mori.assoc(o, "foo0", -1);
+          mori.assoc.f3(o, "foo0", -1);
         });
       })();
 
@@ -337,18 +337,18 @@ export function run(counter) {
       })();
 
       ;(function () {
-        var o = mori.hash_map.apply(null, mori_keys);
+        var o = mori.hashMap.apply(null, mori_keys);
 
         benchmark.time("Mori Hash Map", function () {
-          mori.assoc(o, random(only_keys), -1);
+          mori.assoc.f3(o, random(only_keys), -1);
         });
       })();
 
       ;(function () {
-        var o = mori.sorted_map.apply(null, mori_keys);
+        var o = mori.sortedMap.apply(null, mori_keys);
 
         benchmark.time("Mori Sorted Map", function () {
-          mori.assoc(o, random(only_keys), -1);
+          mori.assoc.f3(o, random(only_keys), -1);
         });
       })();
 
