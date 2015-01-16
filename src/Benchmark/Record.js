@@ -7,8 +7,10 @@ import * as benchmark from "./Benchmark";
 function copy(input) {
   var output = {};
 
-  for (var s in input) {
-    output[s] = input[s];
+  var a = Object.keys(input);
+  for (var i = 0, l = a.length; i < l; ++i) {
+    var key = a[i];
+    output[key] = input[key];
   }
 
   return output;

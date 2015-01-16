@@ -42,18 +42,12 @@ ImmutableQueue.prototype[tag_iter] = function () {
 };
 
 ImmutableQueue.prototype.peek = function (def) {
-  var left  = this.left;
-  var right = this.right;
+  var left = this.left;
   if (left === nil) {
-    if (right === nil) {
-      if (arguments.length === 1) {
-        return def;
-      } else {
-        throw new Error("Cannot peek from an empty queue");
-      }
+    if (arguments.length === 1) {
+      return def;
     } else {
-      // TODO unit test for this
-      return right.car;
+      throw new Error("Cannot peek from an empty queue");
     }
   } else {
     return left.car;
@@ -79,10 +73,12 @@ ImmutableQueue.prototype.pop = function () {
   var right = this.right;
 
   if (left === nil) {
-    if (right === nil) {
-      throw new Error("Cannot pop from an empty queue");
+    throw new Error("Cannot pop from an empty queue");
 
-    } else {
+  } else {
+    left = left.cdr;
+
+    if (left === nil && right !== nil) {
       // TODO a little gross
       // TODO replace with foldl ?
       each_cons(right, function (x) {
@@ -93,7 +89,7 @@ ImmutableQueue.prototype.pop = function () {
     }
   }
 
-  return new ImmutableQueue(left.cdr, right, this.len - 1);
+  return new ImmutableQueue(left, right, this.len - 1);
 };
 
 

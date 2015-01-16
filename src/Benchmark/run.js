@@ -43,12 +43,12 @@ list.run(10);
 list.run(100);
 list.run(1000);*/
 
-header();
+/*header();
 record.run(5);
 record.run(10);
 record.run(100);
 record.run(1000);
-record.run(10000);
+record.run(10000);*/
 
 /*header();
 queue.run(10);

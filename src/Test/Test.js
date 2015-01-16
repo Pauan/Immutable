@@ -326,8 +326,12 @@ function verify_queue(queue, array) {
   if (size === 0) {
     assert(queue.left === nil);
     assert(queue.right === nil);
+  } else if (size === 1) {
+    assert(queue.left !== nil);
+    assert(queue.right === nil);
   } else {
-    assert(queue.left !== nil || queue.right !== nil);
+    assert(queue.left !== nil);
+    //assert(queue.right !== nil);
   }
 
   assert(deepEqual(toJS(queue), array));
@@ -3416,7 +3420,7 @@ test("range", function () {
 
   assert_raises(function () {
     range(5, 4, -1);
-  }, "Step cannot be negative");
+  }, "Step cannot be negative: -1");
 });
 
 test("equal", function () {
