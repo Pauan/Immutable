@@ -4,13 +4,7 @@ import * as record from "./Record";
 import * as queue from "./Queue";
 import * as tuple from "./Tuple";
 
-var mori = require("mori");
 var package = require("../package.json");
-
-// TODO probably move into another module
-if ("" + mori.vector.f([1, 2, 3]) !== "[1 2 3]") {
-  throw new Error("FAIL");
-}
 
 var dependencies = package.devDependencies;
 

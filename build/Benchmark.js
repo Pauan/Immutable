@@ -1419,7 +1419,7 @@
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.vector.f($$List$$mori.concat.f2(a, a));
+              $$List$$mori.vector.apply(null, $$List$$mori.concat.f2(a, a));
             });
           })();
 
@@ -1496,7 +1496,7 @@
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.vector.f($$List$$mori.subvec.f3(a, 1, 2));
+              $$List$$mori.vector.apply(null, $$List$$mori.subvec.f3(a, 1, 2));
             });
           })();
 
@@ -1573,7 +1573,7 @@
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.vector.f($$List$$mori.subvec.f3(a, 1, Math.floor($$List$$mori.count(a) / 2)));
+              $$List$$mori.vector.apply(null, $$List$$mori.subvec.f3(a, 1, Math.floor($$List$$mori.count(a) / 2)));
             });
           })();
 
@@ -1650,7 +1650,7 @@
             }
 
             $$Benchmark$$.time("Mori Vector", function () {
-              $$List$$mori.vector.f($$List$$mori.subvec.f2(a, 1));
+              $$List$$mori.vector.apply(null, $$List$$mori.subvec.f2(a, 1));
             });
           })();
 
@@ -2450,7 +2450,7 @@
           });
 
           $$Benchmark$$.time("Mori Vector", function () {
-            $$Tuple$$mori.vector.f(values);
+            $$Tuple$$mori.vector.apply(null, values);
           });
 
           $$Benchmark$$.time("Mori Vector (into)", function () {
@@ -2519,7 +2519,7 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.f(values);
+            var a = $$Tuple$$mori.vector.apply(null, values);
 
             var last = $$Tuple$$mori.count(a) - 1;
 
@@ -2608,7 +2608,7 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.f(values);
+            var a = $$Tuple$$mori.vector.apply(null, values);
 
             $$Benchmark$$.time("Mori Vector", function () {
               $$Tuple$$mori.nth.f2(a, 0);
@@ -2657,7 +2657,7 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.f(values);
+            var a = $$Tuple$$mori.vector.apply(null, values);
 
             var size = $$Tuple$$mori.count(a);
 
@@ -2712,7 +2712,7 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.f(values);
+            var a = $$Tuple$$mori.vector.apply(null, values);
 
             var last = $$Tuple$$mori.count(a) - 1;
 
@@ -2761,7 +2761,7 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.f(values);
+            var a = $$Tuple$$mori.vector.apply(null, values);
 
             $$Benchmark$$.time("Mori Vector", function () {
               $$Tuple$$mori.assoc.f3(a, 0, -50);
@@ -2810,7 +2810,7 @@
           })();
 
           ;(function () {
-            var a = $$Tuple$$mori.vector.f(values);
+            var a = $$Tuple$$mori.vector.apply(null, values);
 
             var size = $$Tuple$$mori.count(a);
 
@@ -2842,13 +2842,7 @@
       });
     }
 
-    var $$src$Benchmark$run$$mori = require("mori");
     var $$src$Benchmark$run$$package = require("../package.json");
-
-    // TODO probably move into another module
-    if ("" + $$src$Benchmark$run$$mori.vector.f([1, 2, 3]) !== "[1 2 3]") {
-      throw new Error("FAIL");
-    }
 
     var $$src$Benchmark$run$$dependencies = $$src$Benchmark$run$$package.devDependencies;
 

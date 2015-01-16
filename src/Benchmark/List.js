@@ -1008,7 +1008,7 @@ export function run(counter) {
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.vector.f(mori.concat.f2(a, a));
+          mori.vector.apply(null, mori.concat.f2(a, a));
         });
       })();
 
@@ -1085,7 +1085,7 @@ export function run(counter) {
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.vector.f(mori.subvec.f3(a, 1, 2));
+          mori.vector.apply(null, mori.subvec.f3(a, 1, 2));
         });
       })();
 
@@ -1162,7 +1162,7 @@ export function run(counter) {
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.vector.f(mori.subvec.f3(a, 1, Math.floor(mori.count(a) / 2)));
+          mori.vector.apply(null, mori.subvec.f3(a, 1, Math.floor(mori.count(a) / 2)));
         });
       })();
 
@@ -1239,7 +1239,7 @@ export function run(counter) {
         }
 
         benchmark.time("Mori Vector", function () {
-          mori.vector.f(mori.subvec.f2(a, 1));
+          mori.vector.apply(null, mori.subvec.f2(a, 1));
         });
       })();
 
