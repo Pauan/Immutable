@@ -3,6 +3,8 @@
 var fs = require("fs");
 var child_process = require("child_process");
 
+var package = require("./package.json");
+
 // TODO is this correct ?
 // TODO handle stderr differently ?
 function exec(s, args, cb) {
@@ -52,7 +54,25 @@ function write(file, value, cb) {
   fs.writeFile(file, value, { encoding: "utf8" }, cb);
 }
 
-function compile(from, to, cb) {
+function add_license(to, license, cb) {
+  license = "@license\n\nVersion " + package.version + "\n\n" + license.trim();
+
+  license = "/**\n" + license.split(/\n/g).map(function (x) {
+    if (x === "") {
+      return " *";
+    } else {
+      return " * " + x;
+    }
+  }).join("\n") + "\n */\n";
+
+  read(to + ".js", function (err, data) {
+    if (err) return cb(err);
+
+    write(to + ".js", license + data, cb);
+  });
+}
+
+function compile(license, from, to, cb) {
   exec("compile-modules", ["convert", "--output", to + ".js", "--format",
                            "bundle", from], function (err) {
     if (err) return cb(err);
@@ -60,16 +80,7 @@ function compile(from, to, cb) {
     rm(to + ".js.map", function (err) {
       if (err) return cb(err);
 
-      // TODO store the LICENSE somewhere, rather than re-opening it over and over again ?
-      read("./LICENSE", function (err, license) {
-        if (err) return cb(err);
-
-        read(to + ".js", function (err, data) {
-          if (err) return cb(err);
-
-          write(to + ".js", license + data, cb);
-        });
-      });
+      add_license(to, license, cb);
     });
   });
 }
@@ -81,25 +92,29 @@ function minify(file, cb) {
 }
 
 function run(cb) {
-  compile("./src/Immutable/UMD.js", "./build/Immutable", function (err) {
+  read("./LICENSE", function (err, license) {
     if (err) return cb(err);
 
-    minify("./build/Immutable", function (err) {
+    compile(license, "./src/Immutable/UMD.js", "./build/Immutable", function (err) {
       if (err) return cb(err);
 
-      compile("./src/Benchmark/run.js", "./build/Benchmark", function (err) {
+      minify("./build/Immutable", function (err) {
         if (err) return cb(err);
 
-        compile("./src/Test/Test.js", "./build/Test", function (err) {
+        compile(license, "./src/Benchmark/run.js", "./build/Benchmark", function (err) {
           if (err) return cb(err);
 
-          rm("./build/Benchmark.min.js", function (err) {
+          compile(license, "./src/Test/Test.js", "./build/Test", function (err) {
             if (err) return cb(err);
 
-            rm("./build/Test.min.js", function (err) {
+            rm("./build/Benchmark.min.js", function (err) {
               if (err) return cb(err);
 
-              exec("node", ["./build/Test.js"], cb);
+              rm("./build/Test.min.js", function (err) {
+                if (err) return cb(err);
+
+                exec("node", ["./build/Test.js"], cb);
+              });
             });
           });
         });
