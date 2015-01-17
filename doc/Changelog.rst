@@ -1,3 +1,11 @@
+Version 6.0.1
+=============
+
+* **Bug fixes**
+
+  * Fixing the incorrect behavior of ``Queue peek``.
+
+
 Version 6.0.0
 =============
 

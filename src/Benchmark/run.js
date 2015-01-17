@@ -39,16 +39,17 @@ function header() {
 
 
 /*header();
+list(5);
 list(10);
 list(100);
 list(1000);*/
 
-header();
+/*header();
 record(5);
 record(10);
 record(100);
 record(1000);
-record(10000);
+record(10000);*/
 
 /*header();
 queue(1);
@@ -57,10 +58,11 @@ queue(100);
 queue(1000);
 queue(10000);*/
 
-/*header();
+header();
+tuple(5);
 tuple(10);
 tuple(100);
 tuple(1000);
-tuple(10000);*/
+tuple(10000);
 
 run();

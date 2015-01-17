@@ -1730,84 +1730,7 @@
         });
 
 
-        $$Benchmark$$group("get first", function () {
-          $$Benchmark$$message("JavaScript Object");
-
-          ;(function () {
-            var o = object_keys;
-
-            $$Benchmark$$time("JavaScript Object Copying", function () {
-              o["foo0"];
-            });
-
-            $$Benchmark$$time("JavaScript Object Copying (property)", function () {
-              o.foo0;
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$immutablejs.Map(record_keys);
-
-            $$Benchmark$$time("Immutable-js Map", function () {
-              o.get("foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = new ImmutableJSRecord(record_keys);
-
-            $$Benchmark$$time("Immutable-js Record", function () {
-              o.get("foo0");
-            });
-
-            $$Benchmark$$time("Immutable-js Record (property)", function () {
-              o.foo0;
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$mori.hashMap.apply(null, mori_keys);
-
-            $$Benchmark$$time("Mori Hash Map", function () {
-              $$Record$$mori.get.f2(o, "foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$mori.sortedMap.apply(null, mori_keys);
-
-            $$Benchmark$$time("Mori Sorted Map", function () {
-              $$Record$$mori.get.f2(o, "foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$immutable.Dict(record_keys);
-
-            $$Benchmark$$time("Immutable Dict", function () {
-              o.get("foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, record_keys);
-
-            $$Benchmark$$time("Immutable SortedDict", function () {
-              o.get("foo0");
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$immutable.Record(record_keys);
-
-            $$Benchmark$$time("Immutable Record", function () {
-              o.get("foo0");
-            });
-          })();
-        });
-
-
-        $$Benchmark$$group("get random", function () {
+        $$Benchmark$$group("Retrieving at random", function () {
           $$Benchmark$$message("JavaScript Object");
 
           ;(function () {
@@ -1876,92 +1799,7 @@
         });
 
 
-        $$Benchmark$$group("set first", function () {
-          ;(function () {
-            var o = $$Record$$copy(object_keys);
-
-            $$Benchmark$$time("JavaScript Object", function () {
-              o["foo0"] = -1;
-            });
-
-            $$Benchmark$$time("JavaScript Object (property)", function () {
-              o.foo0 = -1;
-            });
-          })();
-
-          ;(function () {
-            var o = object_keys;
-
-            $$Benchmark$$time("JavaScript Object Copying", function () {
-              var x = $$Record$$copy(o);
-              x["foo0"] = -1;
-            });
-
-            $$Benchmark$$time("JavaScript Object Copying (property)", function () {
-              var x = $$Record$$copy(o);
-              x.foo0 = -1;
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$immutablejs.Map(record_keys);
-
-            $$Benchmark$$time("Immutable-js Map", function () {
-              o.set("foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = new ImmutableJSRecord(record_keys);
-
-            $$Benchmark$$time("Immutable-js Record", function () {
-              o.set("foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$mori.hashMap.apply(null, mori_keys);
-
-            $$Benchmark$$time("Mori Hash Map", function () {
-              $$Record$$mori.assoc.f3(o, "foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$mori.sortedMap.apply(null, mori_keys);
-
-            $$Benchmark$$time("Mori Sorted Map", function () {
-              $$Record$$mori.assoc.f3(o, "foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$immutable.Dict(record_keys);
-
-            $$Benchmark$$time("Immutable Dict", function () {
-              o.set("foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$immutable.SortedDict($$Record$$immutable.simpleSort, record_keys);
-
-            $$Benchmark$$time("Immutable SortedDict", function () {
-              o.set("foo0", -1);
-            });
-          })();
-
-          ;(function () {
-            var o = $$Record$$immutable.Record(record_keys);
-
-            $$Benchmark$$time("Immutable Record", function () {
-              o.set("foo0", -1);
-            });
-          })();
-        });
-
-
-        $$Benchmark$$group("set random", function () {
+        $$Benchmark$$group("Setting at random", function () {
           ;(function () {
             var o = $$Record$$copy(object_keys);
 
@@ -2529,148 +2367,6 @@
         });
 
 
-        $$Benchmark$$group("Retrieving at the end", function () {
-          $$Benchmark$$time("JavaScript Array", function () {
-            values[values.length - 1];
-          });
-
-          ;(function () {
-            var last = values.length - 1;
-
-            $$Benchmark$$time("JavaScript Array (error checking)", function () {
-              $$Array$$array_get(values, last);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$immutablejs.List(values);
-
-            var last = a.size - 1;
-
-            /*time("Immutable-js List (last)", function () {
-              a.last();
-            });*/
-
-            $$Benchmark$$time("Immutable-js List", function () {
-              a.get(last);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
-
-            var last = $$Tuple$$mori.count(a) - 1;
-
-            $$Benchmark$$time("Mori Vector (nth)", function () {
-              $$Tuple$$mori.nth.f2(a, last);
-            });
-
-            /*time("Mori Vector (last)", function () {
-              mori.last(a);
-            });*/
-
-            $$Benchmark$$time("Mori Vector (peek)", function () {
-              $$Tuple$$mori.peek(a);
-            });
-          })();
-
-          /*;(function () {
-            var a = mori.list.apply(null, values);
-
-            var last = mori.count(a) - 1;
-
-            time("Mori List (nth)", function () {
-              mori.nth(a, last);
-            });
-
-            time("Mori List (last)", function () {
-              mori.last(a);
-            });
-          })();
-
-          ;(function () {
-            var a = mori.queue.apply(null, values);
-
-            var last = mori.count(a) - 1;
-
-            time("Mori Queue (nth)", function () {
-              mori.nth(a, last);
-            });
-
-            time("Mori Queue (last)", function () {
-              mori.last(a);
-            });
-          })();*/
-
-          ;(function () {
-            var a = $$Tuple$$immutable.List(values);
-
-            var last = a.size() - 1;
-
-            $$Benchmark$$time("Immutable List", function () {
-              a.get(last);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$immutable.Tuple(values);
-
-            var last = a.size() - 1;
-
-            $$Benchmark$$time("Immutable Tuple", function () {
-              a.get(last);
-            });
-          })();
-        });
-
-
-        $$Benchmark$$group("Retrieving at the start", function () {
-          $$Benchmark$$time("JavaScript Array", function () {
-            values[0];
-          });
-
-          $$Benchmark$$time("JavaScript Array (error checking)", function () {
-            $$Array$$array_get(values, 0);
-          });
-
-          ;(function () {
-            var a = $$Tuple$$immutablejs.List(values);
-
-            /*time("Immutable-js List (first)", function () {
-              a.first();
-            });*/
-
-            $$Benchmark$$time("Immutable-js List", function () {
-              a.get(0);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
-
-            $$Benchmark$$time("Mori Vector", function () {
-              $$Tuple$$mori.nth.f2(a, 0);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$immutable.List(values);
-
-            $$Benchmark$$time("Immutable List", function () {
-              a.get(0);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$immutable.Tuple(values);
-
-            $$Benchmark$$time("Immutable Tuple", function () {
-              a.get(0);
-            });
-          })();
-        });
-
-
         $$Benchmark$$group("Retrieving at random", function () {
           ;(function () {
             var size = values.length;
@@ -2721,104 +2417,6 @@
 
             $$Benchmark$$time("Immutable Tuple", function () {
               a.get($$Tuple$$random(size));
-            });
-          })();
-        });
-
-
-        $$Benchmark$$group("Setting at the end", function () {
-          $$Benchmark$$message("JavaScript Array");
-
-          ;(function () {
-            var last = values.length - 1;
-
-            $$Benchmark$$time("JavaScript Array Copying", function () {
-              $$Array$$array_modify(values, last, function () {
-                return -50;
-              });
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$immutablejs.List(values);
-
-            var last = a.size - 1;
-
-            $$Benchmark$$time("Immutable-js List", function () {
-              a.set(last, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
-
-            var last = $$Tuple$$mori.count(a) - 1;
-
-            $$Benchmark$$time("Mori Vector", function () {
-              $$Tuple$$mori.assoc.f3(a, last, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$immutable.List(values);
-
-            var last = a.size() - 1;
-
-            $$Benchmark$$time("Immutable List", function () {
-              a.set(last, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$immutable.Tuple(values);
-
-            var last = a.size() - 1;
-
-            $$Benchmark$$time("Immutable Tuple", function () {
-              a.set(last, -50);
-            });
-          })();
-        });
-
-
-        $$Benchmark$$group("Setting at the start", function () {
-          $$Benchmark$$message("JavaScript Array");
-
-          $$Benchmark$$time("JavaScript Array Copying", function () {
-            $$Array$$array_modify(values, 0, function () {
-              return -50;
-            });
-          });
-
-          ;(function () {
-            var a = $$Tuple$$immutablejs.List(values);
-
-            $$Benchmark$$time("Immutable-js List", function () {
-              a.set(0, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$mori.vector.apply(null, values);
-
-            $$Benchmark$$time("Mori Vector", function () {
-              $$Tuple$$mori.assoc.f3(a, 0, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$immutable.List(values);
-
-            $$Benchmark$$time("Immutable List", function () {
-              a.set(0, -50);
-            });
-          })();
-
-          ;(function () {
-            var a = $$Tuple$$immutable.Tuple(values);
-
-            $$Benchmark$$time("Immutable Tuple", function () {
-              a.set(0, -50);
             });
           })();
         });
@@ -2915,16 +2513,17 @@
 
 
     /*header();
+    list(5);
     list(10);
     list(100);
     list(1000);*/
 
-    $$src$Benchmark$run$$header();
-    $$Record$$record(5);
-    $$Record$$record(10);
-    $$Record$$record(100);
-    $$Record$$record(1000);
-    $$Record$$record(10000);
+    /*header();
+    record(5);
+    record(10);
+    record(100);
+    record(1000);
+    record(10000);*/
 
     /*header();
     queue(1);
@@ -2933,11 +2532,12 @@
     queue(1000);
     queue(10000);*/
 
-    /*header();
-    tuple(10);
-    tuple(100);
-    tuple(1000);
-    tuple(10000);*/
+    $$src$Benchmark$run$$header();
+    $$Tuple$$tuple(5);
+    $$Tuple$$tuple(10);
+    $$Tuple$$tuple(100);
+    $$Tuple$$tuple(1000);
+    $$Tuple$$tuple(10000);
 
     $$Benchmark$$run();
 }).call(this);
