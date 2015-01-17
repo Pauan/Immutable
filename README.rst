@@ -67,7 +67,7 @@ You can also losslessly convert to / from JSON, allowing for sending immutable o
 .. code:: javascript
 
     var record1 = Record({ "foo": 1 });
-    var json    = toJSON(record);
+    var json    = toJSON(record1);
     var record2 = fromJSON(json);
 
     // true

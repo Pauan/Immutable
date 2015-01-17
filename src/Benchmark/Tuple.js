@@ -2,7 +2,7 @@ var immutablejs = require("immutable");
 var mori        = require("mori");
 var immutable   = require("./Immutable.min.js");
 
-import * as benchmark from "./Benchmark";
+import { group, message, time } from "./Benchmark";
 import { nil } from "../Immutable/static";
 import { Cons } from "../Immutable/Cons";
 import { array_has, array_get, array_insert, array_modify, array_remove, array_slice, array_concat, array_copy } from "./Array";
@@ -15,16 +15,16 @@ function random(max) {
   return Math.floor(Math.random() * max);
 }
 
-export function run(counter) {
+export function tuple(counter) {
   var values = [];
 
   for (var i = 0; i < counter; ++i) {
     values.push(i);
   }
 
-  benchmark.group("Tuple with " + counter + " values", function () {
-    benchmark.group("Creating", function () {
-      benchmark.time("JavaScript Array", function () {
+  group("Tuple with " + counter + " values", function () {
+    group("Creating", function () {
+      time("JavaScript Array", function () {
         var a = [];
 
         for (var i = 0; i < counter; ++i) {
@@ -32,47 +32,47 @@ export function run(counter) {
         }
       });
 
-      benchmark.time("JavaScript Array Copying", function () {
+      time("JavaScript Array Copying", function () {
         array_copy(values);
       });
 
-      benchmark.time("Immutable-js List", function () {
+      time("Immutable-js List", function () {
         immutablejs.List(values);
       });
 
-      benchmark.time("Mori Vector", function () {
+      time("Mori Vector", function () {
         mori.vector.apply(null, values);
       });
 
-      benchmark.time("Mori Vector (into)", function () {
+      time("Mori Vector (into)", function () {
         mori.into.f2(mori.vector(), values);
       });
 
-      /*benchmark.time("Mori List", function () {
+      /*time("Mori List", function () {
         mori.list.apply(null, values);
       });
 
-      benchmark.time("Mori Queue", function () {
+      time("Mori Queue", function () {
         mori.queue.apply(null, values);
       });*/
 
-      benchmark.time("Immutable List", function () {
+      time("Immutable List", function () {
         immutable.List(values);
       });
 
-      benchmark.time("Immutable Tuple", function () {
+      time("Immutable Tuple", function () {
         immutable.Tuple(values);
       });
 
-      /*benchmark.time("Immutable Queue", function () {
+      /*time("Immutable Queue", function () {
         immutable.Queue(values);
       });*/
 
-      benchmark.time("Immutable Stack", function () {
+      time("Immutable Stack", function () {
         immutable.Stack(values);
       });
 
-      benchmark.time("Cons", function () {
+      time("Cons", function () {
         var a = nil;
 
         for (var i = 0; i < counter; ++i) {
@@ -82,15 +82,15 @@ export function run(counter) {
     });
 
 
-    benchmark.group("Retrieving at the end", function () {
-      benchmark.time("JavaScript Array", function () {
+    group("Retrieving at the end", function () {
+      time("JavaScript Array", function () {
         values[values.length - 1];
       });
 
       ;(function () {
         var last = values.length - 1;
 
-        benchmark.time("JavaScript Array (error checking)", function () {
+        time("JavaScript Array (error checking)", function () {
           array_get(values, last);
         });
       })();
@@ -100,11 +100,11 @@ export function run(counter) {
 
         var last = a.size - 1;
 
-        /*benchmark.time("Immutable-js List (last)", function () {
+        /*time("Immutable-js List (last)", function () {
           a.last();
         });*/
 
-        benchmark.time("Immutable-js List", function () {
+        time("Immutable-js List", function () {
           a.get(last);
         });
       })();
@@ -114,15 +114,15 @@ export function run(counter) {
 
         var last = mori.count(a) - 1;
 
-        benchmark.time("Mori Vector (nth)", function () {
+        time("Mori Vector (nth)", function () {
           mori.nth.f2(a, last);
         });
 
-        /*benchmark.time("Mori Vector (last)", function () {
+        /*time("Mori Vector (last)", function () {
           mori.last(a);
         });*/
 
-        benchmark.time("Mori Vector (peek)", function () {
+        time("Mori Vector (peek)", function () {
           mori.peek(a);
         });
       })();
@@ -132,11 +132,11 @@ export function run(counter) {
 
         var last = mori.count(a) - 1;
 
-        benchmark.time("Mori List (nth)", function () {
+        time("Mori List (nth)", function () {
           mori.nth(a, last);
         });
 
-        benchmark.time("Mori List (last)", function () {
+        time("Mori List (last)", function () {
           mori.last(a);
         });
       })();
@@ -146,11 +146,11 @@ export function run(counter) {
 
         var last = mori.count(a) - 1;
 
-        benchmark.time("Mori Queue (nth)", function () {
+        time("Mori Queue (nth)", function () {
           mori.nth(a, last);
         });
 
-        benchmark.time("Mori Queue (last)", function () {
+        time("Mori Queue (last)", function () {
           mori.last(a);
         });
       })();*/
@@ -160,7 +160,7 @@ export function run(counter) {
 
         var last = a.size() - 1;
 
-        benchmark.time("Immutable List", function () {
+        time("Immutable List", function () {
           a.get(last);
         });
       })();
@@ -170,30 +170,30 @@ export function run(counter) {
 
         var last = a.size() - 1;
 
-        benchmark.time("Immutable Tuple", function () {
+        time("Immutable Tuple", function () {
           a.get(last);
         });
       })();
     });
 
 
-    benchmark.group("Retrieving at the start", function () {
-      benchmark.time("JavaScript Array", function () {
+    group("Retrieving at the start", function () {
+      time("JavaScript Array", function () {
         values[0];
       });
 
-      benchmark.time("JavaScript Array (error checking)", function () {
+      time("JavaScript Array (error checking)", function () {
         array_get(values, 0);
       });
 
       ;(function () {
         var a = immutablejs.List(values);
 
-        /*benchmark.time("Immutable-js List (first)", function () {
+        /*time("Immutable-js List (first)", function () {
           a.first();
         });*/
 
-        benchmark.time("Immutable-js List", function () {
+        time("Immutable-js List", function () {
           a.get(0);
         });
       })();
@@ -201,7 +201,7 @@ export function run(counter) {
       ;(function () {
         var a = mori.vector.apply(null, values);
 
-        benchmark.time("Mori Vector", function () {
+        time("Mori Vector", function () {
           mori.nth.f2(a, 0);
         });
       })();
@@ -209,7 +209,7 @@ export function run(counter) {
       ;(function () {
         var a = immutable.List(values);
 
-        benchmark.time("Immutable List", function () {
+        time("Immutable List", function () {
           a.get(0);
         });
       })();
@@ -217,22 +217,22 @@ export function run(counter) {
       ;(function () {
         var a = immutable.Tuple(values);
 
-        benchmark.time("Immutable Tuple", function () {
+        time("Immutable Tuple", function () {
           a.get(0);
         });
       })();
     });
 
 
-    benchmark.group("Retrieving at random", function () {
+    group("Retrieving at random", function () {
       ;(function () {
         var size = values.length;
 
-        benchmark.time("JavaScript Array", function () {
+        time("JavaScript Array", function () {
           values[random(size)];
         });
 
-        benchmark.time("JavaScript Array (error checking)", function () {
+        time("JavaScript Array (error checking)", function () {
           array_get(values, random(size));
         });
       })();
@@ -242,7 +242,7 @@ export function run(counter) {
 
         var size = a.size;
 
-        benchmark.time("Immutable-js List", function () {
+        time("Immutable-js List", function () {
           a.get(random(size));
         });
       })();
@@ -252,7 +252,7 @@ export function run(counter) {
 
         var size = mori.count(a);
 
-        benchmark.time("Mori Vector", function () {
+        time("Mori Vector", function () {
           mori.nth.f2(a, random(size));
         });
       })();
@@ -262,7 +262,7 @@ export function run(counter) {
 
         var size = a.size();
 
-        benchmark.time("Immutable List", function () {
+        time("Immutable List", function () {
           a.get(random(size));
         });
       })();
@@ -272,20 +272,20 @@ export function run(counter) {
 
         var size = a.size();
 
-        benchmark.time("Immutable Tuple", function () {
+        time("Immutable Tuple", function () {
           a.get(random(size));
         });
       })();
     });
 
 
-    benchmark.group("Setting at the end", function () {
-      benchmark.message("JavaScript Array");
+    group("Setting at the end", function () {
+      message("JavaScript Array");
 
       ;(function () {
         var last = values.length - 1;
 
-        benchmark.time("JavaScript Array Copying", function () {
+        time("JavaScript Array Copying", function () {
           array_modify(values, last, function () {
             return -50;
           });
@@ -297,7 +297,7 @@ export function run(counter) {
 
         var last = a.size - 1;
 
-        benchmark.time("Immutable-js List", function () {
+        time("Immutable-js List", function () {
           a.set(last, -50);
         });
       })();
@@ -307,7 +307,7 @@ export function run(counter) {
 
         var last = mori.count(a) - 1;
 
-        benchmark.time("Mori Vector", function () {
+        time("Mori Vector", function () {
           mori.assoc.f3(a, last, -50);
         });
       })();
@@ -317,7 +317,7 @@ export function run(counter) {
 
         var last = a.size() - 1;
 
-        benchmark.time("Immutable List", function () {
+        time("Immutable List", function () {
           a.set(last, -50);
         });
       })();
@@ -327,17 +327,17 @@ export function run(counter) {
 
         var last = a.size() - 1;
 
-        benchmark.time("Immutable Tuple", function () {
+        time("Immutable Tuple", function () {
           a.set(last, -50);
         });
       })();
     });
 
 
-    benchmark.group("Setting at the start", function () {
-      benchmark.message("JavaScript Array");
+    group("Setting at the start", function () {
+      message("JavaScript Array");
 
-      benchmark.time("JavaScript Array Copying", function () {
+      time("JavaScript Array Copying", function () {
         array_modify(values, 0, function () {
           return -50;
         });
@@ -346,7 +346,7 @@ export function run(counter) {
       ;(function () {
         var a = immutablejs.List(values);
 
-        benchmark.time("Immutable-js List", function () {
+        time("Immutable-js List", function () {
           a.set(0, -50);
         });
       })();
@@ -354,7 +354,7 @@ export function run(counter) {
       ;(function () {
         var a = mori.vector.apply(null, values);
 
-        benchmark.time("Mori Vector", function () {
+        time("Mori Vector", function () {
           mori.assoc.f3(a, 0, -50);
         });
       })();
@@ -362,7 +362,7 @@ export function run(counter) {
       ;(function () {
         var a = immutable.List(values);
 
-        benchmark.time("Immutable List", function () {
+        time("Immutable List", function () {
           a.set(0, -50);
         });
       })();
@@ -370,20 +370,20 @@ export function run(counter) {
       ;(function () {
         var a = immutable.Tuple(values);
 
-        benchmark.time("Immutable Tuple", function () {
+        time("Immutable Tuple", function () {
           a.set(0, -50);
         });
       })();
     });
 
 
-    benchmark.group("Setting at random", function () {
-      benchmark.message("JavaScript Array");
+    group("Setting at random", function () {
+      message("JavaScript Array");
 
       ;(function () {
         var size = values.length;
 
-        benchmark.time("JavaScript Array Copying", function () {
+        time("JavaScript Array Copying", function () {
           array_modify(values, random(size), function () {
             return -50;
           });
@@ -395,7 +395,7 @@ export function run(counter) {
 
         var size = a.size;
 
-        benchmark.time("Immutable-js List", function () {
+        time("Immutable-js List", function () {
           a.set(random(size), -50);
         });
       })();
@@ -405,7 +405,7 @@ export function run(counter) {
 
         var size = mori.count(a);
 
-        benchmark.time("Mori Vector", function () {
+        time("Mori Vector", function () {
           mori.assoc.f3(a, random(size), -50);
         });
       })();
@@ -415,7 +415,7 @@ export function run(counter) {
 
         var size = a.size();
 
-        benchmark.time("Immutable List", function () {
+        time("Immutable List", function () {
           a.set(random(size), -50);
         });
       })();
@@ -425,7 +425,7 @@ export function run(counter) {
 
         var size = a.size();
 
-        benchmark.time("Immutable Tuple", function () {
+        time("Immutable Tuple", function () {
           a.set(random(size), -50);
         });
       })();

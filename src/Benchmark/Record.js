@@ -2,7 +2,7 @@ var immutablejs = require("immutable");
 var mori        = require("mori");
 var immutable   = require("./Immutable.min.js");
 
-import * as benchmark from "./Benchmark";
+import { group, message, time } from "./Benchmark";
 
 function copy(input) {
   var output = {};
@@ -20,7 +20,7 @@ function random(input) {
   return input[Math.floor(Math.random() * input.length)];
 }
 
-export function run(counter) {
+export function record(counter) {
   var only_keys = [];
   var object_keys = {};
   var record_keys = [];
@@ -35,9 +35,9 @@ export function run(counter) {
 
   var ImmutableJSRecord = immutablejs.Record(object_keys);
 
-  benchmark.group("Record with " + counter + " keys", function () {
-    benchmark.group("Creating", function () {
-      benchmark.time("JavaScript Object", function () {
+  group("Record with " + counter + " keys", function () {
+    group("Creating", function () {
+      time("JavaScript Object", function () {
         var o = {};
 
         for (var i = 0; i < counter; ++i) {
@@ -45,51 +45,51 @@ export function run(counter) {
         }
       });
 
-      benchmark.time("JavaScript Object Copying", function () {
+      time("JavaScript Object Copying", function () {
         copy(object_keys);
       });
 
-      benchmark.time("Immutable-js Map", function () {
+      time("Immutable-js Map", function () {
         immutablejs.Map(record_keys);
       });
 
-      benchmark.time("Immutable-js Record", function () {
+      time("Immutable-js Record", function () {
         new ImmutableJSRecord(record_keys);
       });
 
-      benchmark.time("Mori Hash Map", function () {
+      time("Mori Hash Map", function () {
         mori.hashMap.apply(null, mori_keys);
       });
 
-      benchmark.time("Mori Sorted Map", function () {
+      time("Mori Sorted Map", function () {
         mori.sortedMap.apply(null, mori_keys);
       });
 
-      benchmark.time("Immutable Dict", function () {
+      time("Immutable Dict", function () {
         immutable.Dict(record_keys);
       });
 
-      benchmark.time("Immutable SortedDict", function () {
+      time("Immutable SortedDict", function () {
         immutable.SortedDict(immutable.simpleSort, record_keys);
       });
 
-      benchmark.time("Immutable Record", function () {
+      time("Immutable Record", function () {
         immutable.Record(record_keys);
       });
     });
 
 
-    benchmark.group("get first", function () {
-      benchmark.message("JavaScript Object");
+    group("get first", function () {
+      message("JavaScript Object");
 
       ;(function () {
         var o = object_keys;
 
-        benchmark.time("JavaScript Object Copying", function () {
+        time("JavaScript Object Copying", function () {
           o["foo0"];
         });
 
-        benchmark.time("JavaScript Object Copying (property)", function () {
+        time("JavaScript Object Copying (property)", function () {
           o.foo0;
         });
       })();
@@ -97,7 +97,7 @@ export function run(counter) {
       ;(function () {
         var o = immutablejs.Map(record_keys);
 
-        benchmark.time("Immutable-js Map", function () {
+        time("Immutable-js Map", function () {
           o.get("foo0");
         });
       })();
@@ -105,11 +105,11 @@ export function run(counter) {
       ;(function () {
         var o = new ImmutableJSRecord(record_keys);
 
-        benchmark.time("Immutable-js Record", function () {
+        time("Immutable-js Record", function () {
           o.get("foo0");
         });
 
-        benchmark.time("Immutable-js Record (property)", function () {
+        time("Immutable-js Record (property)", function () {
           o.foo0;
         });
       })();
@@ -117,7 +117,7 @@ export function run(counter) {
       ;(function () {
         var o = mori.hashMap.apply(null, mori_keys);
 
-        benchmark.time("Mori Hash Map", function () {
+        time("Mori Hash Map", function () {
           mori.get.f2(o, "foo0");
         });
       })();
@@ -125,7 +125,7 @@ export function run(counter) {
       ;(function () {
         var o = mori.sortedMap.apply(null, mori_keys);
 
-        benchmark.time("Mori Sorted Map", function () {
+        time("Mori Sorted Map", function () {
           mori.get.f2(o, "foo0");
         });
       })();
@@ -133,7 +133,7 @@ export function run(counter) {
       ;(function () {
         var o = immutable.Dict(record_keys);
 
-        benchmark.time("Immutable Dict", function () {
+        time("Immutable Dict", function () {
           o.get("foo0");
         });
       })();
@@ -141,7 +141,7 @@ export function run(counter) {
       ;(function () {
         var o = immutable.SortedDict(immutable.simpleSort, record_keys);
 
-        benchmark.time("Immutable SortedDict", function () {
+        time("Immutable SortedDict", function () {
           o.get("foo0");
         });
       })();
@@ -149,20 +149,20 @@ export function run(counter) {
       ;(function () {
         var o = immutable.Record(record_keys);
 
-        benchmark.time("Immutable Record", function () {
+        time("Immutable Record", function () {
           o.get("foo0");
         });
       })();
     });
 
 
-    benchmark.group("get random", function () {
-      benchmark.message("JavaScript Object");
+    group("get random", function () {
+      message("JavaScript Object");
 
       ;(function () {
         var o = object_keys;
 
-        benchmark.time("JavaScript Object Copying", function () {
+        time("JavaScript Object Copying", function () {
           o[random(only_keys)];
         });
       })();
@@ -170,7 +170,7 @@ export function run(counter) {
       ;(function () {
         var o = immutablejs.Map(record_keys);
 
-        benchmark.time("Immutable-js Map", function () {
+        time("Immutable-js Map", function () {
           o.get(random(only_keys));
         });
       })();
@@ -178,7 +178,7 @@ export function run(counter) {
       ;(function () {
         var o = new ImmutableJSRecord(record_keys);
 
-        benchmark.time("Immutable-js Record", function () {
+        time("Immutable-js Record", function () {
           o.get(random(only_keys));
         });
       })();
@@ -186,7 +186,7 @@ export function run(counter) {
       ;(function () {
         var o = mori.hashMap.apply(null, mori_keys);
 
-        benchmark.time("Mori Hash Map", function () {
+        time("Mori Hash Map", function () {
           mori.get.f2(o, random(only_keys));
         });
       })();
@@ -194,7 +194,7 @@ export function run(counter) {
       ;(function () {
         var o = mori.sortedMap.apply(null, mori_keys);
 
-        benchmark.time("Mori Sorted Map", function () {
+        time("Mori Sorted Map", function () {
           mori.get.f2(o, random(only_keys));
         });
       })();
@@ -202,7 +202,7 @@ export function run(counter) {
       ;(function () {
         var o = immutable.Dict(record_keys);
 
-        benchmark.time("Immutable Dict", function () {
+        time("Immutable Dict", function () {
           o.get(random(only_keys));
         });
       })();
@@ -210,7 +210,7 @@ export function run(counter) {
       ;(function () {
         var o = immutable.SortedDict(immutable.simpleSort, record_keys);
 
-        benchmark.time("Immutable SortedDict", function () {
+        time("Immutable SortedDict", function () {
           o.get(random(only_keys));
         });
       })();
@@ -218,22 +218,22 @@ export function run(counter) {
       ;(function () {
         var o = immutable.Record(record_keys);
 
-        benchmark.time("Immutable Record", function () {
+        time("Immutable Record", function () {
           o.get(random(only_keys));
         });
       })();
     });
 
 
-    benchmark.group("set first", function () {
+    group("set first", function () {
       ;(function () {
         var o = copy(object_keys);
 
-        benchmark.time("JavaScript Object", function () {
+        time("JavaScript Object", function () {
           o["foo0"] = -1;
         });
 
-        benchmark.time("JavaScript Object (property)", function () {
+        time("JavaScript Object (property)", function () {
           o.foo0 = -1;
         });
       })();
@@ -241,12 +241,12 @@ export function run(counter) {
       ;(function () {
         var o = object_keys;
 
-        benchmark.time("JavaScript Object Copying", function () {
+        time("JavaScript Object Copying", function () {
           var x = copy(o);
           x["foo0"] = -1;
         });
 
-        benchmark.time("JavaScript Object Copying (property)", function () {
+        time("JavaScript Object Copying (property)", function () {
           var x = copy(o);
           x.foo0 = -1;
         });
@@ -255,7 +255,7 @@ export function run(counter) {
       ;(function () {
         var o = immutablejs.Map(record_keys);
 
-        benchmark.time("Immutable-js Map", function () {
+        time("Immutable-js Map", function () {
           o.set("foo0", -1);
         });
       })();
@@ -263,7 +263,7 @@ export function run(counter) {
       ;(function () {
         var o = new ImmutableJSRecord(record_keys);
 
-        benchmark.time("Immutable-js Record", function () {
+        time("Immutable-js Record", function () {
           o.set("foo0", -1);
         });
       })();
@@ -271,7 +271,7 @@ export function run(counter) {
       ;(function () {
         var o = mori.hashMap.apply(null, mori_keys);
 
-        benchmark.time("Mori Hash Map", function () {
+        time("Mori Hash Map", function () {
           mori.assoc.f3(o, "foo0", -1);
         });
       })();
@@ -279,7 +279,7 @@ export function run(counter) {
       ;(function () {
         var o = mori.sortedMap.apply(null, mori_keys);
 
-        benchmark.time("Mori Sorted Map", function () {
+        time("Mori Sorted Map", function () {
           mori.assoc.f3(o, "foo0", -1);
         });
       })();
@@ -287,7 +287,7 @@ export function run(counter) {
       ;(function () {
         var o = immutable.Dict(record_keys);
 
-        benchmark.time("Immutable Dict", function () {
+        time("Immutable Dict", function () {
           o.set("foo0", -1);
         });
       })();
@@ -295,7 +295,7 @@ export function run(counter) {
       ;(function () {
         var o = immutable.SortedDict(immutable.simpleSort, record_keys);
 
-        benchmark.time("Immutable SortedDict", function () {
+        time("Immutable SortedDict", function () {
           o.set("foo0", -1);
         });
       })();
@@ -303,18 +303,18 @@ export function run(counter) {
       ;(function () {
         var o = immutable.Record(record_keys);
 
-        benchmark.time("Immutable Record", function () {
+        time("Immutable Record", function () {
           o.set("foo0", -1);
         });
       })();
     });
 
 
-    benchmark.group("set random", function () {
+    group("set random", function () {
       ;(function () {
         var o = copy(object_keys);
 
-        benchmark.time("JavaScript Object", function () {
+        time("JavaScript Object", function () {
           o[random(only_keys)] = -1;
         });
       })();
@@ -322,7 +322,7 @@ export function run(counter) {
       ;(function () {
         var o = object_keys;
 
-        benchmark.time("JavaScript Object Copying", function () {
+        time("JavaScript Object Copying", function () {
           var x = copy(o);
           x[random(only_keys)] = -1;
         });
@@ -331,7 +331,7 @@ export function run(counter) {
       ;(function () {
         var o = immutablejs.Map(record_keys);
 
-        benchmark.time("Immutable-js Map", function () {
+        time("Immutable-js Map", function () {
           o.set(random(only_keys), -1);
         });
       })();
@@ -339,7 +339,7 @@ export function run(counter) {
       ;(function () {
         var o = new ImmutableJSRecord(record_keys);
 
-        benchmark.time("Immutable-js Record", function () {
+        time("Immutable-js Record", function () {
           o.set(random(only_keys), -1);
         });
       })();
@@ -347,7 +347,7 @@ export function run(counter) {
       ;(function () {
         var o = mori.hashMap.apply(null, mori_keys);
 
-        benchmark.time("Mori Hash Map", function () {
+        time("Mori Hash Map", function () {
           mori.assoc.f3(o, random(only_keys), -1);
         });
       })();
@@ -355,7 +355,7 @@ export function run(counter) {
       ;(function () {
         var o = mori.sortedMap.apply(null, mori_keys);
 
-        benchmark.time("Mori Sorted Map", function () {
+        time("Mori Sorted Map", function () {
           mori.assoc.f3(o, random(only_keys), -1);
         });
       })();
@@ -363,7 +363,7 @@ export function run(counter) {
       ;(function () {
         var o = immutable.Dict(record_keys);
 
-        benchmark.time("Immutable Dict", function () {
+        time("Immutable Dict", function () {
           o.set(random(only_keys), -1);
         });
       })();
@@ -371,7 +371,7 @@ export function run(counter) {
       ;(function () {
         var o = immutable.SortedDict(immutable.simpleSort, record_keys);
 
-        benchmark.time("Immutable SortedDict", function () {
+        time("Immutable SortedDict", function () {
           o.set(random(only_keys), -1);
         });
       })();
@@ -379,7 +379,7 @@ export function run(counter) {
       ;(function () {
         var o = immutable.Record(record_keys);
 
-        benchmark.time("Immutable Record", function () {
+        time("Immutable Record", function () {
           o.set(random(only_keys), -1);
         });
       })();
