@@ -60,15 +60,17 @@
     }
 
     function $$$Immutable$Tag$$Tag() {
-      if (arguments.length === 0) {
+      var arg_len = arguments.length;
+      if (arg_len === 0) {
         return "(Tag " + $$$Immutable$Tag$$tag_uuid + " " + (++$$$Immutable$Tag$$tag_id) + ")";
       } else {
-        throw new Error("Expected 0 arguments but got " + arguments.length);
+        throw new Error("Expected 0 arguments but got " + arg_len);
       }
     }
 
     function $$$Immutable$Tag$$UUIDTag(id) {
-      if (arguments.length === 1) {
+      var arg_len = arguments.length;
+      if (arg_len === 1) {
         if ($$$Immutable$Tag$$isUUID(id)) {
           return "(UUIDTag " + id + ")";
         } else {
@@ -76,7 +78,7 @@
         }
 
       } else {
-        throw new Error("Expected 1 argument but got " + arguments.length);
+        throw new Error("Expected 1 argument but got " + arg_len);
       }
     }
 
@@ -662,15 +664,17 @@
     }
 
     function $$Immutable$iter$$range(start1, end1, step1) {
-      var start2 = (arguments.length < 1
+      var arg_len = arguments.length;
+
+      var start2 = (arg_len < 1
                      ? 0
                      : start1);
 
-      var end2 = (arguments.length < 2
+      var end2 = (arg_len < 2
                    ? Infinity
                    : end1);
 
-      var step2 = (arguments.length < 3
+      var step2 = (arg_len < 3
                     ? 1
                     : step1);
 
@@ -1534,8 +1538,10 @@
     };
 
     $$$Immutable$ImmutableList$$ImmutableList.prototype.insert = function (index1, value) {
-      if (arguments.length !== 2) {
-        throw new Error("Expected 2 arguments but got " + arguments.length);
+      var arg_len = arguments.length;
+
+      if (arg_len !== 2) {
+        throw new Error("Expected 2 arguments but got " + arg_len);
       }
 
       var len = this.size();
@@ -1582,8 +1588,10 @@
     };
 
     $$$Immutable$ImmutableList$$ImmutableList.prototype.remove = function (index1) {
-      if (arguments.length !== 1) {
-        throw new Error("Expected 1 argument but got " + arguments.length);
+      var arg_len = arguments.length;
+
+      if (arg_len !== 1) {
+        throw new Error("Expected 1 argument but got " + arg_len);
       }
 
       var len = this.size();
@@ -1668,11 +1676,13 @@
     $$$Immutable$ImmutableList$$ImmutableList.prototype.slice = function (from1, to1) {
       var len = this.size();
 
-      var from2 = (arguments.length < 1
+      var arg_len = arguments.length;
+
+      var from2 = (arg_len < 1
                     ? 0
                     : from1);
 
-      var to2 = (arguments.length < 2
+      var to2 = (arg_len < 2
                   ? len
                   : to1);
 
@@ -2840,8 +2850,10 @@
     }
 
     function $$Immutable$MutableRef$$Ref(value, onchange) {
-      if (arguments.length < 1 || arguments.length > 2) {
-        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
+      var arg_len = arguments.length;
+
+      if (arg_len < 1 || arg_len > 2) {
+        throw new Error("Expected 1 to 2 arguments but got " + arg_len);
       }
 
       return new $$Immutable$MutableRef$$MutableRef(value, onchange);

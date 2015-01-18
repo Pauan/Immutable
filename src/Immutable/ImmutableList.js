@@ -352,8 +352,10 @@ ImmutableList.prototype.get = function (index1, def) {
 };
 
 ImmutableList.prototype.insert = function (index1, value) {
-  if (arguments.length !== 2) {
-    throw new Error("Expected 2 arguments but got " + arguments.length);
+  var arg_len = arguments.length;
+
+  if (arg_len !== 2) {
+    throw new Error("Expected 2 arguments but got " + arg_len);
   }
 
   var len = this.size();
@@ -400,8 +402,10 @@ ImmutableList.prototype.push = function (value) {
 };
 
 ImmutableList.prototype.remove = function (index1) {
-  if (arguments.length !== 1) {
-    throw new Error("Expected 1 argument but got " + arguments.length);
+  var arg_len = arguments.length;
+
+  if (arg_len !== 1) {
+    throw new Error("Expected 1 argument but got " + arg_len);
   }
 
   var len = this.size();
@@ -486,11 +490,13 @@ ImmutableList.prototype.set = function (index, value) {
 ImmutableList.prototype.slice = function (from1, to1) {
   var len = this.size();
 
-  var from2 = (arguments.length < 1
+  var arg_len = arguments.length;
+
+  var from2 = (arg_len < 1
                 ? 0
                 : from1);
 
-  var to2 = (arguments.length < 2
+  var to2 = (arg_len < 2
               ? len
               : to1);
 

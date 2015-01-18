@@ -479,15 +479,17 @@ export function take(x, count) {
 }
 
 export function range(start1, end1, step1) {
-  var start2 = (arguments.length < 1
+  var arg_len = arguments.length;
+
+  var start2 = (arg_len < 1
                  ? 0
                  : start1);
 
-  var end2 = (arguments.length < 2
+  var end2 = (arg_len < 2
                ? Infinity
                : end1);
 
-  var step2 = (arguments.length < 3
+  var step2 = (arg_len < 3
                 ? 1
                 : step1);
 

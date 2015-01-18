@@ -88,7 +88,7 @@ function compile(license, from, to, cb) {
 function minify(file, cb) {
   // --in-source-map build/Immutable.js.map --source-map build/Immutable.js.map
   exec("uglifyjs", [file + ".js", "--comments", "--screw-ie8", "--mangle",
-                    "--compress", "unsafe", "--output", file + ".min.js"], cb);
+                    "--compress", "unsafe,pure_getters", "--output", file + ".min.js"], cb);
 }
 
 function run(cb) {

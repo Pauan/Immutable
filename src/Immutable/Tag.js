@@ -34,16 +34,18 @@ export function isUUIDTag(x) {
 
 // TODO Symbol support ?
 export function Tag() {
-  if (arguments.length === 0) {
+  var arg_len = arguments.length;
+  if (arg_len === 0) {
     return "(Tag " + tag_uuid + " " + (++tag_id) + ")";
   } else {
-    throw new Error("Expected 0 arguments but got " + arguments.length);
+    throw new Error("Expected 0 arguments but got " + arg_len);
   }
 }
 
 // TODO Symbol support ?
 export function UUIDTag(id) {
-  if (arguments.length === 1) {
+  var arg_len = arguments.length;
+  if (arg_len === 1) {
     if (isUUID(id)) {
       return "(UUIDTag " + id + ")";
     } else {
@@ -51,6 +53,6 @@ export function UUIDTag(id) {
     }
 
   } else {
-    throw new Error("Expected 1 argument but got " + arguments.length);
+    throw new Error("Expected 1 argument but got " + arg_len);
   }
 }

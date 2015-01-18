@@ -163,15 +163,17 @@
     }
 
     function $$Tag$$Tag() {
-      if (arguments.length === 0) {
+      var arg_len = arguments.length;
+      if (arg_len === 0) {
         return "(Tag " + $$Tag$$tag_uuid + " " + (++$$Tag$$tag_id) + ")";
       } else {
-        throw new Error("Expected 0 arguments but got " + arguments.length);
+        throw new Error("Expected 0 arguments but got " + arg_len);
       }
     }
 
     function $$Tag$$UUIDTag(id) {
-      if (arguments.length === 1) {
+      var arg_len = arguments.length;
+      if (arg_len === 1) {
         if ($$Tag$$isUUID(id)) {
           return "(UUIDTag " + id + ")";
         } else {
@@ -179,7 +181,7 @@
         }
 
       } else {
-        throw new Error("Expected 1 argument but got " + arguments.length);
+        throw new Error("Expected 1 argument but got " + arg_len);
       }
     }
     var $$$Immutable$static$$tag_hash        = $$Tag$$UUIDTag("e1c3818d-4c4f-4703-980a-00969e4ca900");

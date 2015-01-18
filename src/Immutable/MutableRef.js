@@ -48,8 +48,10 @@ export function isRef(x) {
 }
 
 export function Ref(value, onchange) {
-  if (arguments.length < 1 || arguments.length > 2) {
-    throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
+  var arg_len = arguments.length;
+
+  if (arg_len < 1 || arg_len > 2) {
+    throw new Error("Expected 1 to 2 arguments but got " + arg_len);
   }
 
   return new MutableRef(value, onchange);
