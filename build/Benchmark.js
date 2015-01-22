@@ -1690,6 +1690,10 @@
         return key + ":obj." + key;
       }).join(",") + "};");
 
+      var constructor = new Function("obj", only_keys.map(function (key) {
+        return "this." + key + "=obj." + key + ";";
+      }).join(""));
+
       var ImmutableJSRecord = $$Record$$immutablejs.Record(object_keys);
 
       $$Benchmark$$group("Record with " + counter + " keys", function () {
@@ -1708,6 +1712,10 @@
 
           $$Benchmark$$time("JavaScript Object Copying (eval)", function () {
             eval_copy(object_keys);
+          });
+
+          $$Benchmark$$time("JavaScript Object Copying (constructor)", function () {
+            new constructor(object_keys);
           });
 
           $$Benchmark$$time("Immutable-js Map", function () {
@@ -1746,8 +1754,20 @@
           ;(function () {
             var o = object_keys;
 
+            var o_eval = eval_copy(o);
+
+            var o_cons = new constructor(o);
+
             $$Benchmark$$time("JavaScript Object Copying", function () {
               o[$$Record$$random(only_keys)];
+            });
+
+            $$Benchmark$$time("JavaScript Object Copying (eval)", function () {
+              o_eval[$$Record$$random(only_keys)];
+            });
+
+            $$Benchmark$$time("JavaScript Object Copying (constructor)", function () {
+              o_cons[$$Record$$random(only_keys)];
             });
           })();
 
@@ -1821,13 +1841,22 @@
           ;(function () {
             var o = object_keys;
 
+            var o_eval = eval_copy(o);
+
+            var o_cons = new constructor(o);
+
             $$Benchmark$$time("JavaScript Object Copying", function () {
               var x = $$Record$$copy(o);
               x[$$Record$$random(only_keys)] = -1;
             });
 
             $$Benchmark$$time("JavaScript Object Copying (eval)", function () {
-              var x = eval_copy(o);
+              var x = eval_copy(o_eval);
+              x[$$Record$$random(only_keys)] = -1;
+            });
+
+            $$Benchmark$$time("JavaScript Object Copying (constructor)", function () {
+              var x = new constructor(o_cons);
               x[$$Record$$random(only_keys)] = -1;
             });
           })();

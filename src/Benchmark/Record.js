@@ -37,6 +37,10 @@ export function record(counter) {
     return key + ":obj." + key;
   }).join(",") + "};");
 
+  var constructor = new Function("obj", only_keys.map(function (key) {
+    return "this." + key + "=obj." + key + ";";
+  }).join(""));
+
   var ImmutableJSRecord = immutablejs.Record(object_keys);
 
   group("Record with " + counter + " keys", function () {
@@ -55,6 +59,10 @@ export function record(counter) {
 
       time("JavaScript Object Copying (eval)", function () {
         eval_copy(object_keys);
+      });
+
+      time("JavaScript Object Copying (constructor)", function () {
+        new constructor(object_keys);
       });
 
       time("Immutable-js Map", function () {
@@ -93,8 +101,20 @@ export function record(counter) {
       ;(function () {
         var o = object_keys;
 
+        var o_eval = eval_copy(o);
+
+        var o_cons = new constructor(o);
+
         time("JavaScript Object Copying", function () {
           o[random(only_keys)];
+        });
+
+        time("JavaScript Object Copying (eval)", function () {
+          o_eval[random(only_keys)];
+        });
+
+        time("JavaScript Object Copying (constructor)", function () {
+          o_cons[random(only_keys)];
         });
       })();
 
@@ -168,13 +188,22 @@ export function record(counter) {
       ;(function () {
         var o = object_keys;
 
+        var o_eval = eval_copy(o);
+
+        var o_cons = new constructor(o);
+
         time("JavaScript Object Copying", function () {
           var x = copy(o);
           x[random(only_keys)] = -1;
         });
 
         time("JavaScript Object Copying (eval)", function () {
-          var x = eval_copy(o);
+          var x = eval_copy(o_eval);
+          x[random(only_keys)] = -1;
+        });
+
+        time("JavaScript Object Copying (constructor)", function () {
+          var x = new constructor(o_cons);
           x[random(only_keys)] = -1;
         });
       })();
