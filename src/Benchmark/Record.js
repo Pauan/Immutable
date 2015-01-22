@@ -33,6 +33,10 @@ export function record(counter) {
     mori_keys.push("foo" + i, i);
   }
 
+  var eval_copy = new Function("obj", "return{" + only_keys.map(function (key) {
+    return key + ":obj." + key;
+  }).join(",") + "};");
+
   var ImmutableJSRecord = immutablejs.Record(object_keys);
 
   group("Record with " + counter + " keys", function () {
@@ -47,6 +51,10 @@ export function record(counter) {
 
       time("JavaScript Object Copying", function () {
         copy(object_keys);
+      });
+
+      time("JavaScript Object Copying (eval)", function () {
+        eval_copy(object_keys);
       });
 
       time("Immutable-js Map", function () {
@@ -162,6 +170,11 @@ export function record(counter) {
 
         time("JavaScript Object Copying", function () {
           var x = copy(o);
+          x[random(only_keys)] = -1;
+        });
+
+        time("JavaScript Object Copying (eval)", function () {
+          var x = eval_copy(o);
           x[random(only_keys)] = -1;
         });
       })();

@@ -1686,6 +1686,10 @@
         mori_keys.push("foo" + i, i);
       }
 
+      var eval_copy = new Function("obj", "return{" + only_keys.map(function (key) {
+        return key + ":obj." + key;
+      }).join(",") + "};");
+
       var ImmutableJSRecord = $$Record$$immutablejs.Record(object_keys);
 
       $$Benchmark$$group("Record with " + counter + " keys", function () {
@@ -1700,6 +1704,10 @@
 
           $$Benchmark$$time("JavaScript Object Copying", function () {
             $$Record$$copy(object_keys);
+          });
+
+          $$Benchmark$$time("JavaScript Object Copying (eval)", function () {
+            eval_copy(object_keys);
           });
 
           $$Benchmark$$time("Immutable-js Map", function () {
@@ -1815,6 +1823,11 @@
 
             $$Benchmark$$time("JavaScript Object Copying", function () {
               var x = $$Record$$copy(o);
+              x[$$Record$$random(only_keys)] = -1;
+            });
+
+            $$Benchmark$$time("JavaScript Object Copying (eval)", function () {
+              var x = eval_copy(o);
               x[$$Record$$random(only_keys)] = -1;
             });
           })();
@@ -2520,12 +2533,12 @@
     list(100);
     list(1000);*/
 
-    /*header();
-    record(5);
-    record(10);
-    record(100);
-    record(1000);
-    record(10000);*/
+    $$src$Benchmark$run$$header();
+    $$Record$$record(5);
+    $$Record$$record(10);
+    $$Record$$record(100);
+    $$Record$$record(1000);
+    $$Record$$record(10000);
 
     /*header();
     queue(1);
@@ -2534,12 +2547,12 @@
     queue(1000);
     queue(10000);*/
 
-    $$src$Benchmark$run$$header();
-    $$Tuple$$tuple(5);
-    $$Tuple$$tuple(10);
-    $$Tuple$$tuple(100);
-    $$Tuple$$tuple(1000);
-    $$Tuple$$tuple(10000);
+    /*header();
+    tuple(5);
+    tuple(10);
+    tuple(100);
+    tuple(1000);
+    tuple(10000);*/
 
     $$Benchmark$$run();
 }).call(this);
