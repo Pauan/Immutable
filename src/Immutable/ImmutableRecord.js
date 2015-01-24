@@ -56,12 +56,22 @@ ImmutableRecord.prototype[tag_iter] = function () {
   }));
 };
 
-ImmutableRecord.prototype.get = function (key) {
+ImmutableRecord.prototype.has = function (key) {
+  checkKey(key);
+
+  return this.keys[key] != null;
+};
+
+ImmutableRecord.prototype.get = function (key, def) {
   checkKey(key);
 
   var index = this.keys[key];
   if (index == null) {
-    throw new Error("Key " + key + " not found");
+    if (arguments.length === 2) {
+      return def;
+    } else {
+      throw new Error("Key " + key + " not found");
+    }
 
   } else {
     return this.values[index];

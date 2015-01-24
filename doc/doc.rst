@@ -112,6 +112,7 @@ Table of Contents
   * Record_
 
     * `Record get`_
+    * `Record has`_
     * `Record modify`_
     * `Record set`_
     * `Record update`_
@@ -2154,11 +2155,14 @@ Table of Contents
 
 * ::
 
-    Record get(key: String | Tag) -> Any
+    Record get(key: String | Tag, [default: Any]) -> Any
 
   * If ``key`` is in the Record_, the value for ``key`` is returned.
 
-  * If ``key`` is not in the Record_, an error is thrown.
+  * If ``key`` is not in the Record_:
+
+    * If ``default`` is provided, it is returned.
+    * If ``default`` is not provided, an error is thrown.
 
   This function runs in ``O(1)`` time.
 
@@ -2169,8 +2173,33 @@ Table of Contents
     // Throws an error
     Record().get("foo");
 
+    // Returns 5
+    Record().get("foo", 5);
+
     // Returns 10
     Record({ "foo": 10 }).get("foo");
+
+----
+
+.. _Record has:
+
+* ::
+
+    Record has(key: String | Tag) -> Boolean
+
+  Returns :js:`true` if ``key`` is in the Record_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // Returns false
+    Record().has("foo");
+
+    // Returns true
+    Record({ "foo": 1 }).has("foo");
 
 ----
 

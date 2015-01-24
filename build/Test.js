@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.0.1
+ * Version 6.1.0
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -2720,12 +2720,22 @@
       }));
     };
 
-    $$Immutable$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
+    $$Immutable$ImmutableRecord$$ImmutableRecord.prototype.has = function (key) {
+      $$Immutable$ImmutableRecord$$checkKey(key);
+
+      return this.keys[key] != null;
+    };
+
+    $$Immutable$ImmutableRecord$$ImmutableRecord.prototype.get = function (key, def) {
       $$Immutable$ImmutableRecord$$checkKey(key);
 
       var index = this.keys[key];
       if (index == null) {
-        throw new Error("Key " + key + " not found");
+        if (arguments.length === 2) {
+          return def;
+        } else {
+          throw new Error("Key " + key + " not found");
+        }
 
       } else {
         return this.values[index];
@@ -5041,12 +5051,23 @@
         }, "Expected Tuple with 2 elements but got 3 elements");
       });
 
+      $$src$Test$Test$$test("has", function () {
+        $$assert$$assert(!Empty.has("foo"));
+        $$assert$$assert(!Empty.has("bar"));
+
+        $$assert$$assert(Foo.has("foo"));
+        $$assert$$assert(!Foo.has("bar"));
+      });
+
       $$src$Test$Test$$test("get", function () {
         $$src$Test$Test$$assert_raises(function () {
           Empty.get("foo");
         }, "Key foo not found");
 
+        $$assert$$assert(Empty.get("foo", 50) === 50);
+
         $$assert$$assert(Foo.get("foo") === 1);
+        $$assert$$assert(Foo.get("foo", 50) === 1);
       });
 
       $$src$Test$Test$$test("set", function () {

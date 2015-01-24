@@ -2165,12 +2165,23 @@ context("Record", function () {
     }, "Expected Tuple with 2 elements but got 3 elements");
   });
 
+  test("has", function () {
+    assert(!Empty.has("foo"));
+    assert(!Empty.has("bar"));
+
+    assert(Foo.has("foo"));
+    assert(!Foo.has("bar"));
+  });
+
   test("get", function () {
     assert_raises(function () {
       Empty.get("foo");
     }, "Key foo not found");
 
+    assert(Empty.get("foo", 50) === 50);
+
     assert(Foo.get("foo") === 1);
+    assert(Foo.get("foo", 50) === 1);
   });
 
   test("set", function () {

@@ -1,3 +1,13 @@
+Version 6.1.0
+=============
+
+* **New features**
+
+  * Adding in ``Record has``.
+
+  * ``Record get`` now has an optional second argument, with the same behavior as ``Dict get``.
+
+
 Version 6.0.1
 =============
 

@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.0.1
+ * Version 6.1.0
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *

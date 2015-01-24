@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.0.1
+ * Version 6.1.0
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -2689,12 +2689,22 @@
       }));
     };
 
-    $$Immutable$ImmutableRecord$$ImmutableRecord.prototype.get = function (key) {
+    $$Immutable$ImmutableRecord$$ImmutableRecord.prototype.has = function (key) {
+      $$Immutable$ImmutableRecord$$checkKey(key);
+
+      return this.keys[key] != null;
+    };
+
+    $$Immutable$ImmutableRecord$$ImmutableRecord.prototype.get = function (key, def) {
       $$Immutable$ImmutableRecord$$checkKey(key);
 
       var index = this.keys[key];
       if (index == null) {
-        throw new Error("Key " + key + " not found");
+        if (arguments.length === 2) {
+          return def;
+        } else {
+          throw new Error("Key " + key + " not found");
+        }
 
       } else {
         return this.values[index];
