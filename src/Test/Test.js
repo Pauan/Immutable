@@ -8,7 +8,7 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, Tuple, isTuple,
          each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
          isIterable, any, all, find, partition, range, take, indexOf,
-         toIterator, Iterable } from "../Immutable";
+         toIterator, Iterable, repeat } from "../Immutable";
 import { array_limit } from "../Immutable/ImmutableList";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
@@ -3402,11 +3402,11 @@ test("take", function () {
 
   assert_raises(function () {
     take([1, 2, 3, 4, 5], -5);
-  }, "Count cannot be negative");
+  }, "Count cannot be negative: -5");
 
   assert_raises(function () {
     take([1, 2, 3, 4, 5], 5.1);
-  }, "Count must be an integer");
+  }, "Count must be an integer: 5.1");
 });
 
 test("range", function () {
@@ -3435,6 +3435,21 @@ test("range", function () {
   assert_raises(function () {
     range(5, 4, -1);
   }, "Step cannot be negative: -1");
+});
+
+test("repeat", function () {
+  assert(deepEqual(toArray(repeat(1, 5)), [1, 1, 1, 1, 1]));
+  assert(deepEqual(toArray(repeat(1, 0)), []));
+  assert(deepEqual(toArray(repeat(1, 2)), [1, 1]));
+  assert(deepEqual(toArray(take(repeat(1), 12)), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]));
+
+  assert_raises(function () {
+    repeat(1, 0.5);
+  }, "Count must be an integer: 0.5");
+
+  assert_raises(function () {
+    repeat(1, -5);
+  }, "Count cannot be negative: -5");
 });
 
 test("equal", function () {

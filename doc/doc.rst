@@ -184,6 +184,7 @@ Table of Contents
   * map_
   * partition_
   * range_
+  * repeat_
   * reverse_
   * take_
   * toArray_
@@ -2546,6 +2547,44 @@ Table of Contents
 
     // Returns 50
     ref.get();
+
+----
+
+.. _repeat:
+
+* ::
+
+    repeat(value: Any, [count: Integer = Infinity]) -> Iterable
+
+  Returns an Iterable_ that contains ``value``, repeated
+  ``count`` number of times.
+
+  * ``count`` must be an integer, and must not be negative.
+
+  * If ``count`` is not provided, the Iterable_ will return
+    ``value`` forever.
+
+  This function returns an Iterable_, which is lazy:
+  it only generates the values as needed. If you want
+  an array, use toArray_.
+
+  This function runs in ``O(1)`` time.
+
+  Combined with join_, you can easily create a string
+  with a character repeated.
+
+  Examples:
+
+  .. code:: javascript
+
+    // Returns "     "
+    join(repeat(" ", 5));
+
+    // Returns [0, 0, 0, 0, 0]
+    repeat(0, 5);
+
+    // Returns [0, 0, 0, 0, 0...]
+    repeat(0);
 
 ----
 

@@ -16,7 +16,7 @@ import { isTag, isUUIDTag, Tag, UUIDTag } from "./Immutable/Tag";
 import { each, map, keep, findIndex, reverse, foldl,
          foldr, join, zip, toArray, isIterable,
          any, all, find, partition, range, take, indexOf,
-         toIterator, Iterable } from "./Immutable/iter";
+         toIterator, Iterable, repeat } from "./Immutable/iter";
 
 export { equal, toJS, fromJS, simpleSort, toJSON, fromJSON,
          SortedDict, Dict, isDict, isSortedDict,
@@ -29,7 +29,7 @@ export { equal, toJS, fromJS, simpleSort, toJSON, fromJSON,
          each, map, keep, findIndex, reverse, foldl,
          foldr, join, zip, toArray, isIterable, any, all,
          find, partition, range, take, indexOf,
-         toIterator, Iterable };
+         toIterator, Iterable, repeat };
 
 // TODO use `x instanceof ImmutableBase` ? What about ImmutableRef ?
 export function isImmutable(x) {

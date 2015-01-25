@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.1.1
+ * Version 6.2.0
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -629,11 +629,11 @@
     function $$Immutable$iter$$take(x, count) {
       // TODO isInteger function
       if (Math.round(count) !== count) {
-        throw new Error("Count must be an integer");
+        throw new Error("Count must be an integer: " + count);
       }
 
       if (count < 0) {
-        throw new Error("Count cannot be negative");
+        throw new Error("Count cannot be negative: " + count);
       }
 
       return $$Immutable$iter$$Iterable(function () {
@@ -643,7 +643,7 @@
           next: function () {
             for (;;) {
               if (count < 0) {
-                throw new Error("Invalid count");
+                throw new Error("Invalid count: " + count);
 
               } else if (count === 0) {
                 return { done: true };
@@ -708,6 +708,38 @@
         }
         return {
           next: next
+        };
+      });
+    }
+
+    function $$Immutable$iter$$repeat(x, count1) {
+      var count2 = (arguments.length < 2
+                     ? Infinity
+                     : count1);
+
+      // TODO isInteger function
+      if (Math.round(count2) !== count2) {
+        throw new Error("Count must be an integer: " + count2);
+      }
+
+      if (count2 < 0) {
+        throw new Error("Count cannot be negative: " + count2);
+      }
+
+      return $$Immutable$iter$$Iterable(function () {
+        return {
+          next: function () {
+            if (count2 < 0) {
+              throw new Error("Invalid count: " + count2);
+
+            } else if (count2 === 0) {
+              return { done: true };
+
+            } else {
+              --count2;
+              return { value: x };
+            }
+          }
         };
       });
     }
@@ -6291,11 +6323,11 @@
 
       $$src$Test$Test$$assert_raises(function () {
         $$Immutable$iter$$take([1, 2, 3, 4, 5], -5);
-      }, "Count cannot be negative");
+      }, "Count cannot be negative: -5");
 
       $$src$Test$Test$$assert_raises(function () {
         $$Immutable$iter$$take([1, 2, 3, 4, 5], 5.1);
-      }, "Count must be an integer");
+      }, "Count must be an integer: 5.1");
     });
 
     $$src$Test$Test$$test("range", function () {
@@ -6324,6 +6356,21 @@
       $$src$Test$Test$$assert_raises(function () {
         $$Immutable$iter$$range(5, 4, -1);
       }, "Step cannot be negative: -1");
+    });
+
+    $$src$Test$Test$$test("repeat", function () {
+      $$assert$$assert($$src$Test$Test$$deepEqual($$Immutable$iter$$toArray($$Immutable$iter$$repeat(1, 5)), [1, 1, 1, 1, 1]));
+      $$assert$$assert($$src$Test$Test$$deepEqual($$Immutable$iter$$toArray($$Immutable$iter$$repeat(1, 0)), []));
+      $$assert$$assert($$src$Test$Test$$deepEqual($$Immutable$iter$$toArray($$Immutable$iter$$repeat(1, 2)), [1, 1]));
+      $$assert$$assert($$src$Test$Test$$deepEqual($$Immutable$iter$$toArray($$Immutable$iter$$take($$Immutable$iter$$repeat(1), 12)), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]));
+
+      $$src$Test$Test$$assert_raises(function () {
+        $$Immutable$iter$$repeat(1, 0.5);
+      }, "Count must be an integer: 0.5");
+
+      $$src$Test$Test$$assert_raises(function () {
+        $$Immutable$iter$$repeat(1, -5);
+      }, "Count cannot be negative: -5");
     });
 
     $$src$Test$Test$$test("equal", function () {

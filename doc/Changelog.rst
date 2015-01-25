@@ -1,3 +1,11 @@
+Version 6.2.0
+=============
+
+* **New features**
+
+  * Adding in ``repeat`` function, which repeats a value a certain number of times.
+
+
 Version 6.1.1
 =============
 

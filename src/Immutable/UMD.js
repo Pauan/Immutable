@@ -4,7 +4,8 @@ import { equal, fromJS, toJS, isDict, isSet, isSortedDict, isSortedSet,
          simpleSort, isRecord, Record, toJSON, fromJSON, deref, Ref,
          isRef, isTag, isUUIDTag, Tag, UUIDTag, each, map, keep,
          findIndex, reverse, foldl, foldr, join, zip, toArray, any,
-         all, find, partition, range, take, indexOf, toIterator, Iterable } from "../Immutable";
+         all, find, partition, range, take, indexOf, toIterator, Iterable,
+         repeat } from "../Immutable";
 
 // UMD https://github.com/umdjs/umd
 ;(function (root, fn) {
@@ -69,4 +70,5 @@ import { equal, fromJS, toJS, isDict, isSet, isSortedDict, isSortedSet,
   exports.indexOf = indexOf;
   exports.toIterator = toIterator;
   exports.Iterable = Iterable;
+  exports.repeat = repeat;
 });

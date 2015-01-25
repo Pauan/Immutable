@@ -444,11 +444,11 @@ export function indexOf(x, value, def) {
 export function take(x, count) {
   // TODO isInteger function
   if (Math.round(count) !== count) {
-    throw new Error("Count must be an integer");
+    throw new Error("Count must be an integer: " + count);
   }
 
   if (count < 0) {
-    throw new Error("Count cannot be negative");
+    throw new Error("Count cannot be negative: " + count);
   }
 
   return Iterable(function () {
@@ -458,7 +458,7 @@ export function take(x, count) {
       next: function () {
         for (;;) {
           if (count < 0) {
-            throw new Error("Invalid count");
+            throw new Error("Invalid count: " + count);
 
           } else if (count === 0) {
             return { done: true };
@@ -523,6 +523,38 @@ export function range(start1, end1, step1) {
     }
     return {
       next: next
+    };
+  });
+}
+
+export function repeat(x, count1) {
+  var count2 = (arguments.length < 2
+                 ? Infinity
+                 : count1);
+
+  // TODO isInteger function
+  if (Math.round(count2) !== count2) {
+    throw new Error("Count must be an integer: " + count2);
+  }
+
+  if (count2 < 0) {
+    throw new Error("Count cannot be negative: " + count2);
+  }
+
+  return Iterable(function () {
+    return {
+      next: function () {
+        if (count2 < 0) {
+          throw new Error("Invalid count: " + count2);
+
+        } else if (count2 === 0) {
+          return { done: true };
+
+        } else {
+          --count2;
+          return { value: x };
+        }
+      }
     };
   });
 }
