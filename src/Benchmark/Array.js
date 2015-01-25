@@ -1,10 +1,7 @@
 import { insert as insert_at, modify as modify_at, remove as remove_at, copy as array_copy } from "../Immutable/Array";
+import { nth_has, nth_has_end } from "../Immutable/Ordered";
 
-export { array_copy };
-
-export function array_has(i, len) {
-  return i >= 0 && i < len;
-}
+export { nth_has as array_has, array_copy };
 
 export function array_get(array, i, def) {
   var len = array.length;
@@ -13,7 +10,7 @@ export function array_get(array, i, def) {
     i += len;
   }
 
-  if (array_has(i, len)) {
+  if (nth_has(i, len)) {
     return array[i];
   } else if (arguments.length === 3) {
     return def;
@@ -29,7 +26,7 @@ export function array_insert(array, i, value) {
     i += (len + 1);
   }
 
-  if (i >= 0 && i <= len) {
+  if (nth_has_end(i, len)) {
     return insert_at(array, i, value);
   } else {
     throw new Error("Invalid index: " + i);
@@ -43,7 +40,7 @@ export function array_modify(array, i, f) {
     i += len;
   }
 
-  if (array_has(i, len)) {
+  if (nth_has(i, len)) {
     return modify_at(array, i, f);
   } else {
     throw new Error("Invalid index: " + i);
@@ -57,7 +54,7 @@ export function array_remove(array, i) {
     i += len;
   }
 
-  if (array_has(i, len)) {
+  if (nth_has(i, len)) {
     return remove_at(array, i);
   } else {
     throw new Error("Invalid index: " + i);
@@ -87,12 +84,11 @@ export function array_slice(array, from, to) {
   } else if (from > to) {
     throw new Error("Index " + from + " is greater than index " + to);
 
-  } else if (array_has(from, len)) {
+  } else if (nth_has_end(from, len)) {
     if (from === to) {
       return [];
 
-    // TODO code duplication with array_has ?
-    } else if (to > 0 && to <= len) {
+    } else if (nth_has_end(to, len)) {
       return array.slice(from, to);
 
     } else {

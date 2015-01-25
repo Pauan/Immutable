@@ -1331,6 +1331,9 @@ context("List", function () {
       five_list.slice(null, null);
     }, "Expected a number but got null");
 
+    verify_list(five_list.slice(4), [5]);
+    verify_list(five_list.slice(5), []);
+
     verify_list(five_list.slice(), [1, 2, 3, 4, 5]);
     verify_list(five_list.slice(0), [1, 2, 3, 4, 5]);
     verify_list(five_list.slice(-1), [5]);

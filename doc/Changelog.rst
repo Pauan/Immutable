@@ -1,3 +1,11 @@
+Version 6.1.1
+=============
+
+* **Bug fixes**
+
+  * Using ``List slice`` where the first index is at the end of the list was an error, now it returns an empty list.
+
+
 Version 6.1.0
 =============
 

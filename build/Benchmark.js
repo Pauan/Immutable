@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.1.0
+ * Version 6.1.1
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -285,10 +285,23 @@
 
       return out;
     }
-    function $$Array$$array_has(i, len) {
-      return i >= 0 && i < len;
+    function $$$Immutable$Ordered$$nth_has(index, len) {
+      return index >= 0 && index < len;
     }
 
+    function $$$Immutable$Ordered$$nth_has_end(index, len) {
+      return index >= 0 && index <= len;
+    }
+
+    function $$$Immutable$Ordered$$ordered_has(index) {
+      var len = this.size();
+
+      if (index < 0) {
+        index += len;
+      }
+
+      return $$$Immutable$Ordered$$nth_has(index, len);
+    }
     function $$Array$$array_get(array, i, def) {
       var len = array.length;
 
@@ -296,7 +309,7 @@
         i += len;
       }
 
-      if ($$Array$$array_has(i, len)) {
+      if ($$$Immutable$Ordered$$nth_has(i, len)) {
         return array[i];
       } else if (arguments.length === 3) {
         return def;
@@ -312,7 +325,7 @@
         i += (len + 1);
       }
 
-      if (i >= 0 && i <= len) {
+      if ($$$Immutable$Ordered$$nth_has_end(i, len)) {
         return $$$Immutable$Array$$insert(array, i, value);
       } else {
         throw new Error("Invalid index: " + i);
@@ -326,7 +339,7 @@
         i += len;
       }
 
-      if ($$Array$$array_has(i, len)) {
+      if ($$$Immutable$Ordered$$nth_has(i, len)) {
         return $$$Immutable$Array$$modify(array, i, f);
       } else {
         throw new Error("Invalid index: " + i);
@@ -340,7 +353,7 @@
         i += len;
       }
 
-      if ($$Array$$array_has(i, len)) {
+      if ($$$Immutable$Ordered$$nth_has(i, len)) {
         return $$$Immutable$Array$$remove(array, i);
       } else {
         throw new Error("Invalid index: " + i);
@@ -370,12 +383,11 @@
       } else if (from > to) {
         throw new Error("Index " + from + " is greater than index " + to);
 
-      } else if ($$Array$$array_has(from, len)) {
+      } else if ($$$Immutable$Ordered$$nth_has_end(from, len)) {
         if (from === to) {
           return [];
 
-        // TODO code duplication with array_has ?
-        } else if (to > 0 && to <= len) {
+        } else if ($$$Immutable$Ordered$$nth_has_end(to, len)) {
           return array.slice(from, to);
 
         } else {

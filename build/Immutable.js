@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.1.0
+ * Version 6.1.1
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -1134,6 +1134,10 @@
       return index >= 0 && index < len;
     }
 
+    function $$Ordered$$nth_has_end(index, len) {
+      return index >= 0 && index <= len;
+    }
+
     function $$Ordered$$ordered_has(index) {
       var len = this.size();
 
@@ -1677,12 +1681,11 @@
       } else if (from3 > to3) {
         throw new Error("Index " + from3 + " is greater than index " + to3);
 
-      } else if ($$Ordered$$nth_has(from3, len)) {
+      } else if ($$Ordered$$nth_has_end(from3, len)) {
         if (from3 === to3) {
           return new $$Immutable$ImmutableList$$ImmutableList($$static$$nil, $$static$$nil, 0);
 
-        // TODO code duplication with nth_has ?
-        } else if (to3 > 0 && to3 <= len) {
+        } else if ($$Ordered$$nth_has_end(to3, len)) {
           var root = this.root;
           var size = root.size;
 

@@ -6,7 +6,7 @@ import { toJS_array } from "./toJS";
 import { ImmutableBase } from "./Base";
 import { toIterator, mapcat_iter, concat_iter, reverse_iter, foldl } from "./iter";
 import { nil, tag_hash, tag_toJSON, fromJSON_registry, tag_toJS, tag_iter } from "./static";
-import { nth_has, ordered_has } from "./Ordered";
+import { nth_has, nth_has_end, ordered_has } from "./Ordered";
 
 // We use conses at the very end of the list for very fast O(1) push
 import { Cons, iter_cons } from "./Cons";
@@ -522,12 +522,11 @@ ImmutableList.prototype.slice = function (from1, to1) {
   } else if (from3 > to3) {
     throw new Error("Index " + from3 + " is greater than index " + to3);
 
-  } else if (nth_has(from3, len)) {
+  } else if (nth_has_end(from3, len)) {
     if (from3 === to3) {
       return new ImmutableList(nil, nil, 0);
 
-    // TODO code duplication with nth_has ?
-    } else if (to3 > 0 && to3 <= len) {
+    } else if (nth_has_end(to3, len)) {
       var root = this.root;
       var size = root.size;
 
