@@ -62,6 +62,10 @@ ImmutableRecord.prototype.has = function (key) {
   return this.keys[key] != null;
 };
 
+ImmutableRecord.prototype.isEmpty = function () {
+  return this.values.length === 0;
+};
+
 ImmutableRecord.prototype.get = function (key, def) {
   checkKey(key);
 

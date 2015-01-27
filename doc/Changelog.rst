@@ -1,3 +1,13 @@
+Version 6.4.0
+=============
+
+* **New features**
+
+  * Adding in ``Record isEmpty`` method, which returns ``true`` if the Record has no keys / values.
+
+  * Adding in ``Tuple isEmpty`` method, which returns ``true`` if the Tuple has no values.
+
+
 Version 6.3.0
 =============
 

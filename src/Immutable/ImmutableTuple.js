@@ -33,6 +33,10 @@ ImmutableTuple.prototype.size = function () {
   return this.values.length;
 };
 
+ImmutableTuple.prototype.isEmpty = function () {
+  return this.values.length === 0;
+};
+
 ImmutableTuple.prototype.get = function (index) {
   var len = this.size();
 

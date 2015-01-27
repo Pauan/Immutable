@@ -36,6 +36,11 @@ export function test_Tuple() {
       verify_tuple(Tuple(), []);
     });
 
+    test("isEmpty", function () {
+      assert(empty_tuple.isEmpty());
+      assert(!five_tuple.isEmpty());
+    });
+
     test("size", function () {
       assert(empty_tuple.size() === 0);
       assert(five_tuple.size() === 5);

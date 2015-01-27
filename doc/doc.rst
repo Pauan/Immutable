@@ -113,6 +113,7 @@ Table of Contents
 
     * `Record get`_
     * `Record has`_
+    * `Record isEmpty`_
     * `Record modify`_
     * `Record set`_
     * `Record update`_
@@ -153,6 +154,7 @@ Table of Contents
   * Tuple_
 
     * `Tuple get`_
+    * `Tuple isEmpty`_
     * `Tuple modify`_
     * `Tuple set`_
     * `Tuple size`_
@@ -2205,6 +2207,28 @@ Table of Contents
 
 ----
 
+.. _Record isEmpty:
+
+* ::
+
+    Record isEmpty() -> Boolean
+
+  Returns :js:`true` if the Record_ has no keys / values in it.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // Returns true
+    Record().isEmpty();
+
+    // Returns false
+    Record({ "foo": 1 }).isEmpty();
+
+----
+
 .. _Record modify:
 
 * ::
@@ -2976,23 +3000,14 @@ Table of Contents
 
   .. code:: javascript
 
-    // Returns [1, 2, 3, 4, 5]
-    skip([1, 2, 3, 4, 5], 0);
+    var a = [10, 20, 30, 40, 50];
 
-    // Returns [2, 3, 4, 5]
-    skip([1, 2, 3, 4, 5], 1);
-
-    // Returns [3, 4, 5]
-    skip([1, 2, 3, 4, 5], 2);
-
-    // Returns [4, 5]
-    skip([1, 2, 3, 4, 5], 3);
-
-    // Returns [5]
-    skip([1, 2, 3, 4, 5], 4);
-
-    // Returns []
-    skip([1, 2, 3, 4, 5], 5);
+    skip(a, 0);  // Returns [10, 20, 30, 40, 50]
+    skip(a, 1);  // Returns [20, 30, 40, 50]
+    skip(a, 2);  // Returns [30, 40, 50]
+    skip(a, 3);  // Returns [40, 50]
+    skip(a, 4);  // Returns [50]
+    skip(a, 5);  // Returns []
 
 ----
 
@@ -3512,23 +3527,17 @@ Table of Contents
 
   .. code:: javascript
 
-    // Returns []
-    take(range(), 0);
+    // Returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    take(range(), 10);
 
-    // Returns [0]
-    take(range(), 1);
+    var a = [10, 20, 30, 40, 50];
 
-    // Returns [0, 1]
-    take(range(), 2);
-
-    // Returns [0, 1, 2]
-    take(range(), 3);
-
-    // Returns [0, 1, 2, 3]
-    take(range(), 4);
-
-    // Returns [0, 1, 2, 3, 4]
-    take(range(), 5);
+    take(a, 0);  // Returns []
+    take(a, 1);  // Returns [10]
+    take(a, 2);  // Returns [10, 20]
+    take(a, 3);  // Returns [10, 20, 30]
+    take(a, 4);  // Returns [10, 20, 30, 40]
+    take(a, 5);  // Returns [10, 20, 30, 40, 50]
 
 ----
 
@@ -3735,6 +3744,28 @@ Table of Contents
 
     // Throws an error
     Tuple([10, 20, 30]).get(3);
+
+----
+
+.. _Tuple isEmpty:
+
+* ::
+
+    Tuple isEmpty() -> Boolean
+
+  Returns :js:`true` if the Tuple_ has no values in it.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // Returns true
+    Tuple().isEmpty();
+
+    // Returns false
+    Tuple([1, 2, 3]).isEmpty();
 
 ----
 

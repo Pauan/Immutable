@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.3.0
+ * Version 6.4.0
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -2347,6 +2347,10 @@
       return this.values.length;
     };
 
+    $$Immutable$ImmutableTuple$$ImmutableTuple.prototype.isEmpty = function () {
+      return this.values.length === 0;
+    };
+
     $$Immutable$ImmutableTuple$$ImmutableTuple.prototype.get = function (index) {
       var len = this.size();
 
@@ -2871,6 +2875,10 @@
       $$Immutable$ImmutableRecord$$checkKey(key);
 
       return this.keys[key] != null;
+    };
+
+    $$Immutable$ImmutableRecord$$ImmutableRecord.prototype.isEmpty = function () {
+      return this.values.length === 0;
     };
 
     $$Immutable$ImmutableRecord$$ImmutableRecord.prototype.get = function (key, def) {
@@ -4518,6 +4526,11 @@
           $$Test$Tuple$$verify_tuple($$Immutable$ImmutableTuple$$Tuple(), []);
         });
 
+        $$Test$assert$$test("isEmpty", function () {
+          $$Test$assert$$assert(empty_tuple.isEmpty());
+          $$Test$assert$$assert(!five_tuple.isEmpty());
+        });
+
         $$Test$assert$$test("size", function () {
           $$Test$assert$$assert(empty_tuple.size() === 0);
           $$Test$assert$$assert(five_tuple.size() === 5);
@@ -5132,6 +5145,11 @@
           $$Test$assert$$assert_raises(function () {
             $$Immutable$ImmutableRecord$$Record([$$Immutable$ImmutableTuple$$Tuple(["foo", 2, 3])]);
           }, "Expected Tuple with 2 elements but got 3 elements");
+        });
+
+        $$Test$assert$$test("isEmpty", function () {
+          $$Test$assert$$assert(Empty.isEmpty());
+          $$Test$assert$$assert(!Foo.isEmpty());
         });
 
         $$Test$assert$$test("has", function () {

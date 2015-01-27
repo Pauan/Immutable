@@ -116,6 +116,11 @@ export function test_Record() {
       }, "Expected Tuple with 2 elements but got 3 elements");
     });
 
+    test("isEmpty", function () {
+      assert(Empty.isEmpty());
+      assert(!Foo.isEmpty());
+    });
+
     test("has", function () {
       assert(!Empty.has("foo"));
       assert(!Empty.has("bar"));
