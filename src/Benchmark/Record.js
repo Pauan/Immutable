@@ -2,7 +2,7 @@ var immutablejs = require("immutable");
 var mori        = require("mori");
 var immutable   = require("./Immutable.min.js");
 
-import { group, message, time } from "./Benchmark";
+import { group, message, time } from "./util";
 
 function copy(input) {
   var output = {};

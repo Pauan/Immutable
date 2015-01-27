@@ -1,8 +1,8 @@
-import { group, message, run } from "./Benchmark";
-import { list } from "./List";
-import { record } from "./Record";
-import { queue } from "./Queue";
-import { tuple } from "./Tuple";
+import { group, message, run } from "./Benchmark/util";
+import { list } from "./Benchmark/List";
+import { record } from "./Benchmark/Record";
+import { queue } from "./Benchmark/Queue";
+import { tuple } from "./Benchmark/Tuple";
 
 var package = require("../package.json");
 

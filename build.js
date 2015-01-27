@@ -101,7 +101,7 @@ function run(cb) {
       minify("./build/Immutable", function (err) {
         if (err) return cb(err);
 
-        compile(license, "./src/Benchmark/run.js", "./build/Benchmark", function (err) {
+        compile(license, "./src/Benchmark.js", "./build/Benchmark", function (err) {
           if (err) return cb(err);
 
           compile(license, "./src/Test.js", "./build/Test", function (err) {

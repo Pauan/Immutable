@@ -2,7 +2,7 @@ var immutablejs = require("immutable");
 var mori        = require("mori");
 var immutable   = require("./Immutable.min.js");
 
-import { group, message, time } from "./Benchmark";
+import { group, message, time } from "./util";
 import { nil } from "../Immutable/static";
 import { Cons } from "../Immutable/Cons";
 import { array_has, array_get, array_insert, array_modify, array_remove, array_slice, array_concat, array_copy } from "./Array";
