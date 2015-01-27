@@ -104,7 +104,7 @@ function run(cb) {
         compile(license, "./src/Benchmark/run.js", "./build/Benchmark", function (err) {
           if (err) return cb(err);
 
-          compile(license, "./src/Test/Test.js", "./build/Test", function (err) {
+          compile(license, "./src/Test.js", "./build/Test", function (err) {
             if (err) return cb(err);
 
             rm("./build/Benchmark.min.js", function (err) {
