@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.2.0
+ * Version 6.3.0
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -596,8 +596,7 @@
     }
 
     function $$Immutable$iter$$take(x, count) {
-      // TODO isInteger function
-      if (Math.round(count) !== count) {
+      if (!$$Immutable$util$$isInteger(count)) {
         throw new Error("Count must be an integer: " + count);
       }
 
@@ -608,22 +607,69 @@
       return $$Immutable$iter$$Iterable(function () {
         var iterator = $$Immutable$iter$$toIterator(x);
 
+        var done = false;
+
         return {
           next: function () {
             for (;;) {
               if (count < 0) {
                 throw new Error("Invalid count: " + count);
 
-              } else if (count === 0) {
+              } else if (done) {
                 return { done: true };
 
               } else {
                 var info = iterator.next();
                 if (info.done) {
-                  count = 0;
+                  done = true;
+
+                } else if (count === 0) {
+                  done = true;
+
                 } else {
                   --count;
                   return { value: info.value };
+                }
+              }
+            }
+          }
+        };
+      });
+    }
+
+    function $$Immutable$iter$$skip(x, count) {
+      if (!$$Immutable$util$$isInteger(count)) {
+        throw new Error("Count must be an integer: " + count);
+      }
+
+      if (count < 0) {
+        throw new Error("Count cannot be negative: " + count);
+      }
+
+      return $$Immutable$iter$$Iterable(function () {
+        var iterator = $$Immutable$iter$$toIterator(x);
+
+        var done = false;
+
+        return {
+          next: function () {
+            for (;;) {
+              if (count < 0) {
+                throw new Error("Invalid count: " + count);
+
+              } else if (done) {
+                return { done: true };
+
+              } else {
+                var info = iterator.next();
+                if (info.done) {
+                  done = true;
+
+                } else if (count === 0) {
+                  return { value: info.value };
+
+                } else {
+                  --count;
                 }
               }
             }
@@ -686,8 +732,7 @@
                      ? Infinity
                      : count1);
 
-      // TODO isInteger function
-      if (Math.round(count2) !== count2) {
+      if (!$$Immutable$util$$isInteger(count2)) {
         throw new Error("Count must be an integer: " + count2);
       }
 
@@ -2274,6 +2319,10 @@
       return x !== x;
     }
 
+    function $$Immutable$util$$isInteger(x) {
+      return Math.round(x) === x;
+    }
+
     function $$Immutable$util$$isFinite(x) {
       return typeof x === "number" &&
              x !== Infinity &&
@@ -2956,6 +3005,7 @@
       exports.toIterator = $$Immutable$iter$$toIterator;
       exports.Iterable = $$Immutable$iter$$Iterable;
       exports.repeat = $$Immutable$iter$$repeat;
+      exports.skip = $$Immutable$iter$$skip;
     });
 }).call(this);
 

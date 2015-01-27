@@ -8,7 +8,7 @@ import { simpleSort, Dict, Set, List, Queue, Stack, equal, toJS,
          deref, Ref, isRef, isTag, isUUIDTag, Tag, UUIDTag, Tuple, isTuple,
          each, map, keep, findIndex, reverse, foldl, foldr, join, zip, toArray,
          isIterable, any, all, find, partition, range, take, indexOf,
-         toIterator, Iterable, repeat } from "../Immutable";
+         toIterator, Iterable, repeat, skip } from "../Immutable";
 import { array_limit } from "../Immutable/ImmutableList";
 import { nil } from "../Immutable/static";
 import { assert } from "./assert";
@@ -3406,6 +3406,20 @@ test("take", function () {
 
   assert_raises(function () {
     take([1, 2, 3, 4, 5], 5.1);
+  }, "Count must be an integer: 5.1");
+});
+
+test("skip", function () {
+  assert(deepEqual(toArray(skip([1, 2, 3, 4, 5], 0)), [1, 2, 3, 4, 5]));
+  assert(deepEqual(toArray(skip([1, 2, 3, 4, 5], 2)), [3, 4, 5]));
+  assert(deepEqual(toArray(skip([1, 2, 3, 4, 5], 200)), []));
+
+  assert_raises(function () {
+    skip([1, 2, 3, 4, 5], -5);
+  }, "Count cannot be negative: -5");
+
+  assert_raises(function () {
+    skip([1, 2, 3, 4, 5], 5.1);
   }, "Count must be an integer: 5.1");
 });
 

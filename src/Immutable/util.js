@@ -6,6 +6,11 @@ export function isNaN(x) {
   return x !== x;
 }
 
+// TODO is there a faster implementation of this?
+export function isInteger(x) {
+  return Math.round(x) === x;
+}
+
 // The built-in isFinite auto-coerces
 export function isFinite(x) {
   return typeof x === "number" &&

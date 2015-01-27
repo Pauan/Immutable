@@ -1,4 +1,4 @@
-import { isObject, isJSLiteral } from "./util";
+import { isObject, isJSLiteral, isInteger } from "./util";
 import { tag_iter } from "./static";
 import { Symbol_iterator, isTag } from "./Tag";
 import { equal } from "./equal";
@@ -442,8 +442,7 @@ export function indexOf(x, value, def) {
 }
 
 export function take(x, count) {
-  // TODO isInteger function
-  if (Math.round(count) !== count) {
+  if (!isInteger(count)) {
     throw new Error("Count must be an integer: " + count);
   }
 
@@ -454,22 +453,69 @@ export function take(x, count) {
   return Iterable(function () {
     var iterator = toIterator(x);
 
+    var done = false;
+
     return {
       next: function () {
         for (;;) {
           if (count < 0) {
             throw new Error("Invalid count: " + count);
 
-          } else if (count === 0) {
+          } else if (done) {
             return { done: true };
 
           } else {
             var info = iterator.next();
             if (info.done) {
-              count = 0;
+              done = true;
+
+            } else if (count === 0) {
+              done = true;
+
             } else {
               --count;
               return { value: info.value };
+            }
+          }
+        }
+      }
+    };
+  });
+}
+
+export function skip(x, count) {
+  if (!isInteger(count)) {
+    throw new Error("Count must be an integer: " + count);
+  }
+
+  if (count < 0) {
+    throw new Error("Count cannot be negative: " + count);
+  }
+
+  return Iterable(function () {
+    var iterator = toIterator(x);
+
+    var done = false;
+
+    return {
+      next: function () {
+        for (;;) {
+          if (count < 0) {
+            throw new Error("Invalid count: " + count);
+
+          } else if (done) {
+            return { done: true };
+
+          } else {
+            var info = iterator.next();
+            if (info.done) {
+              done = true;
+
+            } else if (count === 0) {
+              return { value: info.value };
+
+            } else {
+              --count;
             }
           }
         }
@@ -532,8 +578,7 @@ export function repeat(x, count1) {
                  ? Infinity
                  : count1);
 
-  // TODO isInteger function
-  if (Math.round(count2) !== count2) {
+  if (!isInteger(count2)) {
     throw new Error("Count must be an integer: " + count2);
   }
 

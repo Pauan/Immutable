@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.2.0
+ * Version 6.3.0
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -627,8 +627,7 @@
     }
 
     function $$Immutable$iter$$take(x, count) {
-      // TODO isInteger function
-      if (Math.round(count) !== count) {
+      if (!$$Immutable$util$$isInteger(count)) {
         throw new Error("Count must be an integer: " + count);
       }
 
@@ -639,22 +638,69 @@
       return $$Immutable$iter$$Iterable(function () {
         var iterator = $$Immutable$iter$$toIterator(x);
 
+        var done = false;
+
         return {
           next: function () {
             for (;;) {
               if (count < 0) {
                 throw new Error("Invalid count: " + count);
 
-              } else if (count === 0) {
+              } else if (done) {
                 return { done: true };
 
               } else {
                 var info = iterator.next();
                 if (info.done) {
-                  count = 0;
+                  done = true;
+
+                } else if (count === 0) {
+                  done = true;
+
                 } else {
                   --count;
                   return { value: info.value };
+                }
+              }
+            }
+          }
+        };
+      });
+    }
+
+    function $$Immutable$iter$$skip(x, count) {
+      if (!$$Immutable$util$$isInteger(count)) {
+        throw new Error("Count must be an integer: " + count);
+      }
+
+      if (count < 0) {
+        throw new Error("Count cannot be negative: " + count);
+      }
+
+      return $$Immutable$iter$$Iterable(function () {
+        var iterator = $$Immutable$iter$$toIterator(x);
+
+        var done = false;
+
+        return {
+          next: function () {
+            for (;;) {
+              if (count < 0) {
+                throw new Error("Invalid count: " + count);
+
+              } else if (done) {
+                return { done: true };
+
+              } else {
+                var info = iterator.next();
+                if (info.done) {
+                  done = true;
+
+                } else if (count === 0) {
+                  return { value: info.value };
+
+                } else {
+                  --count;
                 }
               }
             }
@@ -717,8 +763,7 @@
                      ? Infinity
                      : count1);
 
-      // TODO isInteger function
-      if (Math.round(count2) !== count2) {
+      if (!$$Immutable$util$$isInteger(count2)) {
         throw new Error("Count must be an integer: " + count2);
       }
 
@@ -2303,6 +2348,10 @@
     }
     function $$Immutable$util$$isNaN(x) {
       return x !== x;
+    }
+
+    function $$Immutable$util$$isInteger(x) {
+      return Math.round(x) === x;
     }
 
     function $$Immutable$util$$isFinite(x) {
@@ -6327,6 +6376,20 @@
 
       $$src$Test$Test$$assert_raises(function () {
         $$Immutable$iter$$take([1, 2, 3, 4, 5], 5.1);
+      }, "Count must be an integer: 5.1");
+    });
+
+    $$src$Test$Test$$test("skip", function () {
+      $$assert$$assert($$src$Test$Test$$deepEqual($$Immutable$iter$$toArray($$Immutable$iter$$skip([1, 2, 3, 4, 5], 0)), [1, 2, 3, 4, 5]));
+      $$assert$$assert($$src$Test$Test$$deepEqual($$Immutable$iter$$toArray($$Immutable$iter$$skip([1, 2, 3, 4, 5], 2)), [3, 4, 5]));
+      $$assert$$assert($$src$Test$Test$$deepEqual($$Immutable$iter$$toArray($$Immutable$iter$$skip([1, 2, 3, 4, 5], 200)), []));
+
+      $$src$Test$Test$$assert_raises(function () {
+        $$Immutable$iter$$skip([1, 2, 3, 4, 5], -5);
+      }, "Count cannot be negative: -5");
+
+      $$src$Test$Test$$assert_raises(function () {
+        $$Immutable$iter$$skip([1, 2, 3, 4, 5], 5.1);
       }, "Count must be an integer: 5.1");
     });
 

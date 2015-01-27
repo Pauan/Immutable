@@ -186,6 +186,7 @@ Table of Contents
   * range_
   * repeat_
   * reverse_
+  * skip_
   * take_
   * toArray_
   * toIterator_
@@ -2952,6 +2953,49 @@ Table of Contents
 
 ----
 
+.. _skip:
+
+* ::
+
+    skip(x: Iterable, count: Integer) -> Iterable
+
+  Returns an Iterable_ that contains everything **except**
+  the first ``count`` number of values from ``x``.
+
+  This is the opposite of take_.
+
+  * ``count`` must be an integer, and must not be negative.
+
+  This function returns an Iterable_, which is lazy:
+  it only generates the values as needed. If you want
+  an array, use toArray_.
+
+  This function runs in ``O(1)`` time.
+
+  Examples:
+
+  .. code:: javascript
+
+    // Returns [1, 2, 3, 4, 5]
+    skip([1, 2, 3, 4, 5], 0);
+
+    // Returns [2, 3, 4, 5]
+    skip([1, 2, 3, 4, 5], 1);
+
+    // Returns [3, 4, 5]
+    skip([1, 2, 3, 4, 5], 2);
+
+    // Returns [4, 5]
+    skip([1, 2, 3, 4, 5], 3);
+
+    // Returns [5]
+    skip([1, 2, 3, 4, 5], 4);
+
+    // Returns []
+    skip([1, 2, 3, 4, 5], 5);
+
+----
+
 .. _SortedDict:
 
 * ::
@@ -3451,6 +3495,8 @@ Table of Contents
   Returns an Iterable_ that contains the first
   ``count`` number of values from ``x``.
 
+  This is the opposite of skip_.
+
   * ``count`` must be an integer, and must not be negative.
 
   This function returns an Iterable_, which is lazy:
@@ -3460,12 +3506,29 @@ Table of Contents
   This function runs in ``O(1)`` time.
 
   This function is a simple way of dealing with
-  infinite Iterable_\ s:
+  infinite Iterable_\ s.
+
+  Examples:
 
   .. code:: javascript
 
-    // Returns [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    take(range(), 10);
+    // Returns []
+    take(range(), 0);
+
+    // Returns [0]
+    take(range(), 1);
+
+    // Returns [0, 1]
+    take(range(), 2);
+
+    // Returns [0, 1, 2]
+    take(range(), 3);
+
+    // Returns [0, 1, 2, 3]
+    take(range(), 4);
+
+    // Returns [0, 1, 2, 3, 4]
+    take(range(), 5);
 
 ----
 

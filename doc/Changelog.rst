@@ -1,3 +1,11 @@
+Version 6.3.0
+=============
+
+* **New features**
+
+  * Adding in ``skip`` function, which skips a certain number of values.
+
+
 Version 6.2.0
 =============
 
