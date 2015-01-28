@@ -45,6 +45,10 @@ export function test_Set() {
         SortedSet(simpleSort, null);
       }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
 
+      assert_raises(function () {
+        SortedSet();
+      }, "Expected 1 to 2 arguments but got 0");
+
       verify_set(Set(), []);
       verify_set(SortedSet(simpleSort), []);
     });
@@ -284,10 +288,10 @@ export function test_Set() {
     });
 
     test("each", function () {
-      test_each(Set, []);
+      test_each(Set(), []);
 
       var four = Set([4]);
-      test_each(Set, [four, 1, 2, 3]);
+      test_each(Set([four, 1, 2, 3]), [four, 1, 2, 3]);
     });
 
     test("toString", function () {

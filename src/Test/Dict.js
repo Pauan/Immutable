@@ -43,6 +43,10 @@ export function test_Dict() {
         SortedDict(simpleSort, null);
       }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
 
+      assert_raises(function () {
+        SortedDict();
+      }, "Expected 1 to 2 arguments but got 0");
+
       verify_dict(Dict(), {});
       verify_dict(SortedDict(simpleSort), {});
 

@@ -83,6 +83,7 @@ export function hash_dict(x, spaces) {
   var a = [];
 
   each(x, function (_array) {
+    // TODO is destructure_pair needed here ?
     destructure_pair(_array, function (key, value) {
       key   = hash(key);
       value = hash(value);

@@ -159,6 +159,15 @@ Table of Contents
     * `Tuple set`_
     * `Tuple size`_
 
+  * Type_
+
+    * `Type get`_
+    * `Type isEmpty`_
+    * `Type modify`_
+    * `Type set`_
+    * `Type size`_
+    * `Type type`_
+
   * UUIDTag_
 
 * **Utilities**
@@ -208,6 +217,8 @@ Table of Contents
   * isSortedSet_
   * isStack_
   * isTag_
+  * isTuple_
+  * isType_
   * isUUIDTag_
 
 ----
@@ -750,6 +761,14 @@ Table of Contents
     are cached so that afterwards it takes ``O(1)``
     time.
 
+  * Type_ are treated as equal if they have the same
+    type, and the same values in the same order:
+
+    .. code:: javascript
+
+      equal(Type("foo", [1]),
+            Type("foo", [1])); // true
+
   * Tag_ are treated as equal if they are
     exactly the same tag:
 
@@ -949,8 +968,8 @@ Table of Contents
     fromJSON(x: Any) -> Any
 
   Converts specially marked JSON to a Dict_,
-  List_, Queue_, Record_, Set_, Stack_, or
-  Tuple_.
+  List_, Queue_, Record_, Set_, Stack_, Tuple_,
+  or Type_.
 
   This function has the following behavior:
 
@@ -971,8 +990,8 @@ Table of Contents
     :js:`Infinity`, and :js:`-Infinity` throw an error.
 
   * Specially marked JSON objects are converted into a
-    Dict_, List_, Queue_, Record_, Set_, Stack_, or
-    Tuple_, with fromJSON_ called on all the
+    Dict_, List_, Queue_, Record_, Set_, Stack_, Tuple_,
+    or Type_, with fromJSON_ called on all the
     keys / values.
 
     This conversion takes ``O(n)`` time.
@@ -1057,7 +1076,8 @@ Table of Contents
 
   Returns :js:`true` if ``x`` is a string, number, boolean,
   :js:`null`, :js:`undefined`, symbol, frozen object, Dict_,
-  List_, Queue_, Record_, Set_, Stack_, Tuple_, or Tag_.
+  List_, Queue_, Record_, Set_, Stack_, Tag_, Tuple_, or
+  Type_.
 
   Returns :js:`false` for everything else.
 
@@ -1183,6 +1203,30 @@ Table of Contents
 
 ----
 
+.. _isTuple:
+
+* ::
+
+    isTuple(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a Tuple_ or Type_.
+
+  This function runs in ``O(1)`` time.
+
+----
+
+.. _isType:
+
+* ::
+
+    isType(x: Any) -> Boolean
+
+  Returns :js:`true` if ``x`` is a Type_.
+
+  This function runs in ``O(1)`` time.
+
+----
+
 .. _isUUIDTag:
 
 * ::
@@ -1254,7 +1298,7 @@ Table of Contents
 
   * The return value of the Iterable_ function
 
-  * Dict_, List_, Queue_, Record_, Set_, Stack_, and Tuple_
+  * Dict_, List_, Queue_, Record_, Set_, Stack_, Tuple_, and Type_
 
   Examples:
 
@@ -3590,7 +3634,7 @@ Table of Contents
     toJS(x: Any) -> Any
 
   Converts a Dict_, List_, Queue_, Record_, Set_, Stack_,
-  or Tuple_ to its JavaScript equivalent.
+  Tuple_, or Type_ to its JavaScript equivalent.
 
   This function has the following behavior:
 
@@ -3616,10 +3660,17 @@ Table of Contents
 
     This conversion takes ``O(n)`` time.
 
+  * Type_ are converted into a JavaScript object
+    with a :js:`type` property and a :js:`values`
+    property, with toJS_ called on the type and
+    all the values.
+
+    This conversion takes ``O(n)`` time.
+
   * Everything else is returned as-is.
 
   This is useful if you like using Dict_, List_, Queue_, 
-  Record_, Set_, Stack_, or Tuple_ but you want to
+  Record_, Set_, Stack_, Tuple_, or Type_ but you want to
   use a library that requires ordinary JavaScript
   objects / arrays.
 
@@ -3636,7 +3687,7 @@ Table of Contents
     toJSON(x: Any) -> Any
 
   Converts a Dict_, List_, Queue_, Record_, Set_, Stack_,
-  or Tuple_ to JSON.
+  Tuple_, or Type_ to JSON.
 
   This function has the following behavior:
 
@@ -3659,9 +3710,9 @@ Table of Contents
   * Numbers are returned as-is, except :js:`NaN`,
     :js:`Infinity`, and :js:`-Infinity` throw an error.
 
-  * Dict_, List_, Queue_, Record_, Set_, Stack_, and Tuple_
-    are converted into specially marked JSON objects, with
-    toJSON_ called on all the keys / values.
+  * Dict_, List_, Queue_, Record_, Set_, Stack_, Tuple_,
+    and Type_ are converted into specially marked JSON objects,
+    with toJSON_ called on all the keys / values.
 
     This conversion takes ``O(n)`` time.
 
@@ -3864,6 +3915,84 @@ Table of Contents
 
     // Returns 3
     Tuple([10, 20, 30]).size();
+
+----
+
+.. _Type:
+
+* ::
+
+    Type(type: Any, [x: Iterable]) -> Type
+
+  A Type_ is a special kind of Tuple_ that stores a ``type`` in
+  addition to storing values.
+
+  It has the same methods as Tuple_.
+
+  The ``type`` can be anything, but it's especially useful to use
+  a unique value (like Tag_).
+
+----
+
+.. _Type get:
+
+* ::
+
+    Type get(index: Integer) -> Any
+
+  This is the same as `Tuple get`_.
+
+----
+
+.. _Type isEmpty:
+
+* ::
+
+    Type isEmpty() -> Boolean
+
+  This is the same as `Tuple isEmpty`_.
+
+----
+
+.. _Type modify:
+
+* ::
+
+    Type modify(index: Integer, fn: Function) -> Type
+
+  This is the same as `Tuple modify`_, except it returns a
+  Type_ rather than a Tuple_.
+
+----
+
+.. _Type set:
+
+* ::
+
+    Type set(index: Integer, value: Any) -> Type
+
+  This is the same as `Tuple set`_, except it returns a
+  Type_ rather than a Tuple_.
+
+----
+
+.. _Type size:
+
+* ::
+
+    Type size() -> Integer
+
+  This is the same as `Tuple size`_.
+
+----
+
+.. _Type type:
+
+* ::
+
+    Type type() -> Any
+
+  This return the type of the Type_.
 
 ----
 

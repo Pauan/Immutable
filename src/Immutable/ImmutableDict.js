@@ -139,24 +139,32 @@ export function isSortedDict(x) {
 export function SortedDict(sort, obj) {
   if (arguments.length === 1) {
     return new ImmutableDict(nil, sort, identity);
-  } else {
+
+  } else if (arguments.length === 2) {
     // We don't use equal, for increased speed
     if (isSortedDict(obj) && obj.sort === sort) {
       return obj;
     } else {
       return new ImmutableDict(nil, sort, identity).merge(obj);
     }
+
+  } else {
+    throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
   }
 }
 
 export function Dict(obj) {
   if (arguments.length === 0) {
     return new ImmutableDict(nil, simpleSort, hash);
-  } else {
+
+  } else if (arguments.length === 1) {
     if (isDict(obj) && !isSortedDict(obj)) {
       return obj;
     } else {
       return new ImmutableDict(nil, simpleSort, hash).merge(obj);
     }
+
+  } else {
+    throw new Error("Expected 0 to 1 arguments but got " + arguments.length);
   }
 }

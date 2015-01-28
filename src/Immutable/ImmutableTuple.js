@@ -5,10 +5,10 @@ import { toJS_array } from "./toJS";
 import { ImmutableBase } from "./Base";
 import { toIterator, each } from "./iter";
 import { tag_hash, tag_toJSON, fromJSON_registry, tag_toJS, tag_iter } from "./static";
-import { ordered_has, nth_has } from "./Ordered";
+import { nth_has } from "./Ordered";
 
 export function ImmutableTuple(values) {
-  this.values = values;
+  this._values = values;
   this.hash   = null;
 }
 
@@ -26,22 +26,22 @@ ImmutableTuple.prototype[tag_toJSON] = function (x) {
 };
 
 ImmutableTuple.prototype[tag_iter] = function () {
-  return toIterator(this.values);
+  return toIterator(this._values);
 };
 
 ImmutableTuple.prototype.size = function () {
-  return this.values.length;
+  return this._values.length;
 };
 
 ImmutableTuple.prototype.isEmpty = function () {
-  return this.values.length === 0;
+  return this._values.length === 0;
 };
 
 ImmutableTuple.prototype.get = function (index) {
   var len = this.size();
 
   if (nth_has(index, len)) {
-    return this.values[index];
+    return this._values[index];
   } else {
     throw new Error("Index " + index + " is not valid");
   }
@@ -51,7 +51,7 @@ ImmutableTuple.prototype.modify = function (index, f) {
   var len = this.size();
 
   if (nth_has(index, len)) {
-    var values = this.values;
+    var values = this._values;
     var array  = array_modify(values, index, f);
     if (array === values) {
       return this;

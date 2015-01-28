@@ -502,13 +502,13 @@ export function test_List() {
     });
 
     test("each", function () {
-      test_each(List, []);
+      test_each(List(), []);
 
       var list = List([4]);
-      test_each(List, [1, 2, 3, list]);
+      test_each(List([1, 2, 3, list]), [1, 2, 3, list]);
 
       var expected = random_list(200);
-      test_each(List, expected);
+      test_each(List(expected), expected);
     });
 
     test("toString", function () {

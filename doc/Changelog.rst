@@ -1,3 +1,11 @@
+Version 6.5.0
+=============
+
+* **New features**
+
+  * Adding in ``Type`` type, which is a special ``Tuple`` that can be tagged with a particular type.
+
+
 Version 6.4.0
 =============
 

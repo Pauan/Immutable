@@ -150,19 +150,19 @@ export function verify_tree(tree) {
   loop(tree.root, [], []);
 }
 
-export function test_each(constructor, input) {
+export function test_each(input, expected) {
   var a = [];
-  each(constructor(input), function (x) {
+  each(input, function (x) {
     a.push(x);
   });
-  assert(deepEqual(a, input));
+  assert(deepEqual(a, expected));
 }
 
 export function test_each_dict(input, expected) {
   var a = [];
   each(input, function (x) {
     assert(isTuple(x));
-    a.push(x.values);
+    a.push(x._values);
   });
   assert(deepEqual(a, expected));
 }

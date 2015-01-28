@@ -8,6 +8,7 @@ import { SortedDict, Dict, isDict, isSortedDict } from "./Immutable/ImmutableDic
 import { SortedSet, Set, isSet, isSortedSet } from "./Immutable/ImmutableSet";
 import { isList, List } from "./Immutable/ImmutableList";
 import { isTuple, Tuple } from "./Immutable/ImmutableTuple";
+import { isType, Type } from "./Immutable/ImmutableType";
 import { isQueue, Queue } from "./Immutable/ImmutableQueue";
 import { isStack, Stack } from "./Immutable/ImmutableStack";
 import { isRecord, Record } from "./Immutable/ImmutableRecord";
@@ -29,7 +30,8 @@ export { equal, toJS, fromJS, simpleSort, toJSON, fromJSON,
          each, map, keep, findIndex, reverse, foldl,
          foldr, join, zip, toArray, isIterable, any, all,
          find, partition, range, take, indexOf,
-         toIterator, Iterable, repeat, skip };
+         toIterator, Iterable, repeat, skip,
+         isType, Type };
 
 // TODO use `x instanceof ImmutableBase` ? What about ImmutableRef ?
 export function isImmutable(x) {
@@ -41,7 +43,8 @@ export function isImmutable(x) {
            isTuple(x) ||
            isQueue(x) ||
            isStack(x) ||
-           isRecord(x);
+           isRecord(x) ||
+           isType(x);
   // TODO just return true? are there any mutable value types?
   } else {
     var type = typeof x;

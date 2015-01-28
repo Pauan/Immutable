@@ -1,11 +1,11 @@
-import { isTuple, toJS, Tuple, List, equal } from "../Immutable";
+import { isTuple, toJS, Tuple, List, equal, Type } from "../Immutable";
 import { assert, context, test, assert_raises } from "./assert";
 import { deepEqual, verify_json, test_each, random_list } from "./util";
 
 function verify_tuple(tuple, array) {
   assert(isTuple(tuple));
 
-  assert(deepEqual(tuple.values, array));
+  assert(deepEqual(tuple._values, array));
   assert(deepEqual(toJS(tuple), array));
 
   return tuple;
@@ -19,6 +19,7 @@ export function test_Tuple() {
     test("isTuple", function () {
       assert(!isTuple(List()));
       assert(isTuple(Tuple()));
+      assert(isTuple(Type(500)));
     });
 
     test("verify", function () {
@@ -188,13 +189,13 @@ export function test_Tuple() {
     });
 
     test("each", function () {
-      test_each(Tuple, []);
+      test_each(Tuple(), []);
 
       var x = Tuple([4]);
-      test_each(Tuple, [1, 2, 3, x]);
+      test_each(Tuple([1, 2, 3, x]), [1, 2, 3, x]);
 
       var expected = random_list(200);
-      test_each(Tuple, expected);
+      test_each(Tuple(expected), expected);
     });
 
     test("toString", function () {

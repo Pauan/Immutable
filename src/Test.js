@@ -11,6 +11,7 @@ import { test_Ref } from "./Test/Ref";
 import { test_Tag } from "./Test/Tag";
 import { test_misc } from "./Test/misc";
 import { test_iter } from "./Test/iter";
+import { test_Type } from "./Test/Type";
 
 test_run(function () {
   test_Dict();
@@ -24,4 +25,5 @@ test_run(function () {
   test_Tag();
   test_misc();
   test_iter();
+  test_Type();
 });

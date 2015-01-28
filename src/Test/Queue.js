@@ -159,10 +159,10 @@ export function test_Queue() {
     });
 
     test("each", function () {
-      test_each(Queue, []);
+      test_each(Queue(), []);
 
       var x = Queue([3]);
-      test_each(Queue, [1, 2, x, 4]);
+      test_each(Queue([1, 2, x, 4]), [1, 2, x, 4]);
     });
 
     test("toString", function () {

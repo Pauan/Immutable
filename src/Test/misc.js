@@ -1,7 +1,7 @@
 import { isImmutable, Ref, Dict, Set, List, Queue, Stack,
          SortedDict, simpleSort, SortedSet, Tag, Tuple,
          UUIDTag, Record, isIterable, toJS, fromJS, toJSON,
-         fromJSON, deref, equal } from "../Immutable";
+         fromJSON, deref, equal, Type } from "../Immutable";
 import { assert, context, test, assert_raises } from "./assert";
 import { deepEqual } from "./util";
 import { verify_dict } from "./Dict";
@@ -26,6 +26,7 @@ export function test_misc() {
     assert(isImmutable(SortedSet(simpleSort)));
     assert(isImmutable(Tag()));
     assert(isImmutable(Tuple()));
+    assert(isImmutable(Type(500)));
     assert(isImmutable(UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
 
     var Foo = Record({});
@@ -51,6 +52,7 @@ export function test_misc() {
     assert(isIterable(SortedDict(simpleSort)));
     assert(isIterable(SortedSet(simpleSort)));
     assert(isIterable(Tuple()));
+    assert(isIterable(Type(500)));
 
     var Foo = Record({});
     assert(isIterable(Foo));

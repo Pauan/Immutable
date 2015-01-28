@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.4.0
+ * Version 6.5.0
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -869,6 +869,7 @@
       var a = [];
 
       $$Immutable$iter$$each(x, function (_array) {
+        // TODO is destructure_pair needed here ?
         $$Immutable$util$$destructure_pair(_array, function (key, value) {
           key   = $$hash$$hash(key);
           value = $$hash$$hash(value);
@@ -2125,25 +2126,33 @@
     function $$Immutable$ImmutableDict$$SortedDict(sort, obj) {
       if (arguments.length === 1) {
         return new $$Immutable$ImmutableDict$$ImmutableDict($$static$$nil, sort, $$Immutable$util$$identity);
-      } else {
+
+      } else if (arguments.length === 2) {
         // We don't use equal, for increased speed
         if ($$Immutable$ImmutableDict$$isSortedDict(obj) && obj.sort === sort) {
           return obj;
         } else {
           return new $$Immutable$ImmutableDict$$ImmutableDict($$static$$nil, sort, $$Immutable$util$$identity).merge(obj);
         }
+
+      } else {
+        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
       }
     }
 
     function $$Immutable$ImmutableDict$$Dict(obj) {
       if (arguments.length === 0) {
         return new $$Immutable$ImmutableDict$$ImmutableDict($$static$$nil, $$Immutable$Sorted$$simpleSort, $$hash$$hash);
-      } else {
+
+      } else if (arguments.length === 1) {
         if ($$Immutable$ImmutableDict$$isDict(obj) && !$$Immutable$ImmutableDict$$isSortedDict(obj)) {
           return obj;
         } else {
           return new $$Immutable$ImmutableDict$$ImmutableDict($$static$$nil, $$Immutable$Sorted$$simpleSort, $$hash$$hash).merge(obj);
         }
+
+      } else {
+        throw new Error("Expected 0 to 1 arguments but got " + arguments.length);
       }
     }
     function $$Immutable$toJS$$fromJS(x) {
@@ -2228,7 +2237,7 @@
       return a;
     }
     function $$Immutable$ImmutableTuple$$ImmutableTuple(values) {
-      this.values = values;
+      this._values = values;
       this.hash   = null;
     }
 
@@ -2246,22 +2255,22 @@
     };
 
     $$Immutable$ImmutableTuple$$ImmutableTuple.prototype[$$static$$tag_iter] = function () {
-      return $$Immutable$iter$$toIterator(this.values);
+      return $$Immutable$iter$$toIterator(this._values);
     };
 
     $$Immutable$ImmutableTuple$$ImmutableTuple.prototype.size = function () {
-      return this.values.length;
+      return this._values.length;
     };
 
     $$Immutable$ImmutableTuple$$ImmutableTuple.prototype.isEmpty = function () {
-      return this.values.length === 0;
+      return this._values.length === 0;
     };
 
     $$Immutable$ImmutableTuple$$ImmutableTuple.prototype.get = function (index) {
       var len = this.size();
 
       if ($$Ordered$$nth_has(index, len)) {
-        return this.values[index];
+        return this._values[index];
       } else {
         throw new Error("Index " + index + " is not valid");
       }
@@ -2271,7 +2280,7 @@
       var len = this.size();
 
       if ($$Ordered$$nth_has(index, len)) {
-        var values = this.values;
+        var values = this._values;
         var array  = $$Array$$modify(values, index, f);
         if (array === values) {
           return this;
@@ -2537,25 +2546,125 @@
     function $$Immutable$ImmutableSet$$SortedSet(sort, array) {
       if (arguments.length === 1) {
         return new $$Immutable$ImmutableSet$$ImmutableSet($$static$$nil, sort, $$Immutable$util$$identity);
-      } else {
+
+      } else if (arguments.length === 2) {
         // We don't use equal, for increased speed
         if ($$Immutable$ImmutableSet$$isSortedSet(array) && array.sort === sort) {
           return array;
         } else {
           return new $$Immutable$ImmutableSet$$ImmutableSet($$static$$nil, sort, $$Immutable$util$$identity).union(array);
         }
+
+      } else {
+        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
       }
     }
 
     function $$Immutable$ImmutableSet$$Set(array) {
       if (arguments.length === 0) {
         return new $$Immutable$ImmutableSet$$ImmutableSet($$static$$nil, $$Immutable$Sorted$$simpleSort, $$hash$$hash);
-      } else {
+
+      } else if (arguments.length === 1) {
         if ($$Immutable$ImmutableSet$$isSet(array) && !$$Immutable$ImmutableSet$$isSortedSet(array)) {
           return array;
         } else {
           return new $$Immutable$ImmutableSet$$ImmutableSet($$static$$nil, $$Immutable$Sorted$$simpleSort, $$hash$$hash).union(array);
         }
+
+      } else {
+        throw new Error("Expected 0 to 1 arguments but got " + arguments.length);
+      }
+    }
+    function $$Immutable$ImmutableType$$ImmutableType(type, values) {
+      this._type   = type;
+      this._values = values;
+      this.hash    = null;
+    }
+
+    $$Immutable$ImmutableType$$ImmutableType.prototype = Object.create($$Immutable$ImmutableTuple$$ImmutableTuple.prototype);
+
+    // TODO hacky
+    // TODO code duplication
+    $$Immutable$ImmutableType$$ImmutableType.prototype[$$static$$tag_hash] = function (x) {
+      if (x.hash === null) {
+        var a = $$Immutable$iter$$map(x, function (x) {
+          return $$hash$$hash(x);
+        });
+
+        x.hash = "(Type " + $$hash$$hash(x._type) + $$hash$$join_lines(a, "  ") + ")";
+      }
+
+      return x.hash;
+    };
+
+    $$Immutable$ImmutableType$$ImmutableType.prototype[$$static$$tag_toJS] = function (x) {
+      return {
+        type: $$Immutable$toJS$$toJS(x._type),
+        values: $$Immutable$toJS$$toJS_array(x)
+      };
+    };
+
+    $$static$$fromJSON_registry["Type"] = function (x) {
+      // TODO hacky
+      return $$Immutable$ImmutableType$$Type($$Immutable$toJSON$$fromJSON(x.type), $$Immutable$toJSON$$fromJSON_array(x));
+    };
+
+    $$Immutable$ImmutableType$$ImmutableType.prototype[$$static$$tag_toJSON] = function (x) {
+      var x2 = $$Immutable$toJSON$$toJSON_array("Type", x);
+      // TODO hacky
+      x2.type = $$Immutable$toJSON$$toJSON(x._type);
+      return x2;
+    };
+
+    $$Immutable$ImmutableType$$ImmutableType.prototype.type = function () {
+      return this._type;
+    };
+
+    // TODO code duplication
+    $$Immutable$ImmutableType$$ImmutableType.prototype.modify = function (index, f) {
+      var len = this.size();
+
+      if ($$Ordered$$nth_has(index, len)) {
+        var values = this._values;
+        var array  = $$Array$$modify(values, index, f);
+        if (array === values) {
+          return this;
+        } else {
+          return new $$Immutable$ImmutableType$$ImmutableType(this._type, array);
+        }
+
+      } else {
+        throw new Error("Index " + index + " is not valid");
+      }
+    };
+
+
+    function $$Immutable$ImmutableType$$isType(x) {
+      return x instanceof $$Immutable$ImmutableType$$ImmutableType;
+    }
+
+    function $$Immutable$ImmutableType$$Type(type, array) {
+      if (arguments.length === 1) {
+        return new $$Immutable$ImmutableType$$ImmutableType(type, []);
+
+      } else if (arguments.length === 2) {
+        // We don't use equal, for increased speed
+        if ($$Immutable$ImmutableType$$isType(array) && array._type === type) {
+          return array;
+
+        } else {
+          var values = [];
+
+          // We can't use toArray, because `array` might be mutated
+          $$Immutable$iter$$each(array, function (x) {
+            values.push(x);
+          });
+
+          return new $$Immutable$ImmutableType$$ImmutableType(type, values);
+        }
+
+      } else {
+        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
       }
     }
     function $$Immutable$ImmutableQueue$$ImmutableQueue(left, right, len) {
@@ -2938,7 +3047,8 @@
                $$Immutable$ImmutableTuple$$isTuple(x) ||
                $$Immutable$ImmutableQueue$$isQueue(x) ||
                $$Immutable$ImmutableStack$$isStack(x) ||
-               $$Immutable$ImmutableRecord$$isRecord(x);
+               $$Immutable$ImmutableRecord$$isRecord(x) ||
+               $$Immutable$ImmutableType$$isType(x);
       // TODO just return true? are there any mutable value types?
       } else {
         var type = typeof x;
@@ -3014,6 +3124,8 @@
       exports.Iterable = $$Immutable$iter$$Iterable;
       exports.repeat = $$Immutable$iter$$repeat;
       exports.skip = $$Immutable$iter$$skip;
+      exports.isType = $$Immutable$ImmutableType$$isType;
+      exports.Type = $$Immutable$ImmutableType$$Type;
     });
 }).call(this);
 

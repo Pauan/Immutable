@@ -131,10 +131,10 @@ export function test_Stack() {
     });
 
     test("each", function () {
-      test_each(Stack, []);
+      test_each(Stack(), []);
 
       var x = Stack([3]);
-      test_each(Stack, [1, 2, x, 4]);
+      test_each(Stack([1, 2, x, 4]), [1, 2, x, 4]);
     });
 
     test("toString", function () {

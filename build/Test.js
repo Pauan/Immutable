@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Version 6.4.0
+ * Version 6.5.0
  *
  * (c) 2014, 2015 Oni Labs, http://onilabs.com
  *
@@ -963,6 +963,7 @@
       var a = [];
 
       $$Immutable$iter$$each(x, function (_array) {
+        // TODO is destructure_pair needed here ?
         $$Immutable$util$$destructure_pair(_array, function (key, value) {
           key   = $$hash$$hash(key);
           value = $$hash$$hash(value);
@@ -2219,25 +2220,33 @@
     function $$Immutable$ImmutableDict$$SortedDict(sort, obj) {
       if (arguments.length === 1) {
         return new $$Immutable$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, sort, $$Immutable$util$$identity);
-      } else {
+
+      } else if (arguments.length === 2) {
         // We don't use equal, for increased speed
         if ($$Immutable$ImmutableDict$$isSortedDict(obj) && obj.sort === sort) {
           return obj;
         } else {
           return new $$Immutable$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, sort, $$Immutable$util$$identity).merge(obj);
         }
+
+      } else {
+        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
       }
     }
 
     function $$Immutable$ImmutableDict$$Dict(obj) {
       if (arguments.length === 0) {
         return new $$Immutable$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, $$Immutable$Sorted$$simpleSort, $$hash$$hash);
-      } else {
+
+      } else if (arguments.length === 1) {
         if ($$Immutable$ImmutableDict$$isDict(obj) && !$$Immutable$ImmutableDict$$isSortedDict(obj)) {
           return obj;
         } else {
           return new $$Immutable$ImmutableDict$$ImmutableDict($$$Immutable$static$$nil, $$Immutable$Sorted$$simpleSort, $$hash$$hash).merge(obj);
         }
+
+      } else {
+        throw new Error("Expected 0 to 1 arguments but got " + arguments.length);
       }
     }
     function $$Immutable$toJS$$fromJS(x) {
@@ -2322,7 +2331,7 @@
       return a;
     }
     function $$Immutable$ImmutableTuple$$ImmutableTuple(values) {
-      this.values = values;
+      this._values = values;
       this.hash   = null;
     }
 
@@ -2340,22 +2349,22 @@
     };
 
     $$Immutable$ImmutableTuple$$ImmutableTuple.prototype[$$$Immutable$static$$tag_iter] = function () {
-      return $$Immutable$iter$$toIterator(this.values);
+      return $$Immutable$iter$$toIterator(this._values);
     };
 
     $$Immutable$ImmutableTuple$$ImmutableTuple.prototype.size = function () {
-      return this.values.length;
+      return this._values.length;
     };
 
     $$Immutable$ImmutableTuple$$ImmutableTuple.prototype.isEmpty = function () {
-      return this.values.length === 0;
+      return this._values.length === 0;
     };
 
     $$Immutable$ImmutableTuple$$ImmutableTuple.prototype.get = function (index) {
       var len = this.size();
 
       if ($$Ordered$$nth_has(index, len)) {
-        return this.values[index];
+        return this._values[index];
       } else {
         throw new Error("Index " + index + " is not valid");
       }
@@ -2365,7 +2374,7 @@
       var len = this.size();
 
       if ($$Ordered$$nth_has(index, len)) {
-        var values = this.values;
+        var values = this._values;
         var array  = $$Array$$modify(values, index, f);
         if (array === values) {
           return this;
@@ -2631,25 +2640,125 @@
     function $$Immutable$ImmutableSet$$SortedSet(sort, array) {
       if (arguments.length === 1) {
         return new $$Immutable$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, sort, $$Immutable$util$$identity);
-      } else {
+
+      } else if (arguments.length === 2) {
         // We don't use equal, for increased speed
         if ($$Immutable$ImmutableSet$$isSortedSet(array) && array.sort === sort) {
           return array;
         } else {
           return new $$Immutable$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, sort, $$Immutable$util$$identity).union(array);
         }
+
+      } else {
+        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
       }
     }
 
     function $$Immutable$ImmutableSet$$Set(array) {
       if (arguments.length === 0) {
         return new $$Immutable$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, $$Immutable$Sorted$$simpleSort, $$hash$$hash);
-      } else {
+
+      } else if (arguments.length === 1) {
         if ($$Immutable$ImmutableSet$$isSet(array) && !$$Immutable$ImmutableSet$$isSortedSet(array)) {
           return array;
         } else {
           return new $$Immutable$ImmutableSet$$ImmutableSet($$$Immutable$static$$nil, $$Immutable$Sorted$$simpleSort, $$hash$$hash).union(array);
         }
+
+      } else {
+        throw new Error("Expected 0 to 1 arguments but got " + arguments.length);
+      }
+    }
+    function $$Immutable$ImmutableType$$ImmutableType(type, values) {
+      this._type   = type;
+      this._values = values;
+      this.hash    = null;
+    }
+
+    $$Immutable$ImmutableType$$ImmutableType.prototype = Object.create($$Immutable$ImmutableTuple$$ImmutableTuple.prototype);
+
+    // TODO hacky
+    // TODO code duplication
+    $$Immutable$ImmutableType$$ImmutableType.prototype[$$$Immutable$static$$tag_hash] = function (x) {
+      if (x.hash === null) {
+        var a = $$Immutable$iter$$map(x, function (x) {
+          return $$hash$$hash(x);
+        });
+
+        x.hash = "(Type " + $$hash$$hash(x._type) + $$hash$$join_lines(a, "  ") + ")";
+      }
+
+      return x.hash;
+    };
+
+    $$Immutable$ImmutableType$$ImmutableType.prototype[$$$Immutable$static$$tag_toJS] = function (x) {
+      return {
+        type: $$Immutable$toJS$$toJS(x._type),
+        values: $$Immutable$toJS$$toJS_array(x)
+      };
+    };
+
+    $$$Immutable$static$$fromJSON_registry["Type"] = function (x) {
+      // TODO hacky
+      return $$Immutable$ImmutableType$$Type($$Immutable$toJSON$$fromJSON(x.type), $$Immutable$toJSON$$fromJSON_array(x));
+    };
+
+    $$Immutable$ImmutableType$$ImmutableType.prototype[$$$Immutable$static$$tag_toJSON] = function (x) {
+      var x2 = $$Immutable$toJSON$$toJSON_array("Type", x);
+      // TODO hacky
+      x2.type = $$Immutable$toJSON$$toJSON(x._type);
+      return x2;
+    };
+
+    $$Immutable$ImmutableType$$ImmutableType.prototype.type = function () {
+      return this._type;
+    };
+
+    // TODO code duplication
+    $$Immutable$ImmutableType$$ImmutableType.prototype.modify = function (index, f) {
+      var len = this.size();
+
+      if ($$Ordered$$nth_has(index, len)) {
+        var values = this._values;
+        var array  = $$Array$$modify(values, index, f);
+        if (array === values) {
+          return this;
+        } else {
+          return new $$Immutable$ImmutableType$$ImmutableType(this._type, array);
+        }
+
+      } else {
+        throw new Error("Index " + index + " is not valid");
+      }
+    };
+
+
+    function $$Immutable$ImmutableType$$isType(x) {
+      return x instanceof $$Immutable$ImmutableType$$ImmutableType;
+    }
+
+    function $$Immutable$ImmutableType$$Type(type, array) {
+      if (arguments.length === 1) {
+        return new $$Immutable$ImmutableType$$ImmutableType(type, []);
+
+      } else if (arguments.length === 2) {
+        // We don't use equal, for increased speed
+        if ($$Immutable$ImmutableType$$isType(array) && array._type === type) {
+          return array;
+
+        } else {
+          var values = [];
+
+          // We can't use toArray, because `array` might be mutated
+          $$Immutable$iter$$each(array, function (x) {
+            values.push(x);
+          });
+
+          return new $$Immutable$ImmutableType$$ImmutableType(type, values);
+        }
+
+      } else {
+        throw new Error("Expected 1 to 2 arguments but got " + arguments.length);
       }
     }
     function $$Immutable$ImmutableQueue$$ImmutableQueue(left, right, len) {
@@ -3032,7 +3141,8 @@
                $$Immutable$ImmutableTuple$$isTuple(x) ||
                $$Immutable$ImmutableQueue$$isQueue(x) ||
                $$Immutable$ImmutableStack$$isStack(x) ||
-               $$Immutable$ImmutableRecord$$isRecord(x);
+               $$Immutable$ImmutableRecord$$isRecord(x) ||
+               $$Immutable$ImmutableType$$isType(x);
       // TODO just return true? are there any mutable value types?
       } else {
         var type = typeof x;
@@ -3173,19 +3283,19 @@
       loop(tree.root, [], []);
     }
 
-    function $$util$$test_each(constructor, input) {
+    function $$util$$test_each(input, expected) {
       var a = [];
-      $$Immutable$iter$$each(constructor(input), function (x) {
+      $$Immutable$iter$$each(input, function (x) {
         a.push(x);
       });
-      $$Test$assert$$assert($$util$$deepEqual(a, input));
+      $$Test$assert$$assert($$util$$deepEqual(a, expected));
     }
 
     function $$util$$test_each_dict(input, expected) {
       var a = [];
       $$Immutable$iter$$each(input, function (x) {
         $$Test$assert$$assert($$Immutable$ImmutableTuple$$isTuple(x));
-        a.push(x.values);
+        a.push(x._values);
       });
       $$Test$assert$$assert($$util$$deepEqual(a, expected));
     }
@@ -3250,6 +3360,10 @@
           $$Test$assert$$assert_raises(function () {
             $$Immutable$ImmutableDict$$SortedDict($$Immutable$Sorted$$simpleSort, null);
           }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
+
+          $$Test$assert$$assert_raises(function () {
+            $$Immutable$ImmutableDict$$SortedDict();
+          }, "Expected 1 to 2 arguments but got 0");
 
           $$Test$Dict$$verify_dict($$Immutable$ImmutableDict$$Dict(), {});
           $$Test$Dict$$verify_dict($$Immutable$ImmutableDict$$SortedDict($$Immutable$Sorted$$simpleSort), {});
@@ -3700,6 +3814,10 @@
             $$Immutable$ImmutableSet$$SortedSet($$Immutable$Sorted$$simpleSort, null);
           }, "Cannot read property '(UUIDTag 6199065c-b518-4cb3-8b41-ab70a9769ec3)' of null");
 
+          $$Test$assert$$assert_raises(function () {
+            $$Immutable$ImmutableSet$$SortedSet();
+          }, "Expected 1 to 2 arguments but got 0");
+
           $$Test$Set$$verify_set($$Immutable$ImmutableSet$$Set(), []);
           $$Test$Set$$verify_set($$Immutable$ImmutableSet$$SortedSet($$Immutable$Sorted$$simpleSort), []);
         });
@@ -3939,10 +4057,10 @@
         });
 
         $$Test$assert$$test("each", function () {
-          $$util$$test_each($$Immutable$ImmutableSet$$Set, []);
+          $$util$$test_each($$Immutable$ImmutableSet$$Set(), []);
 
           var four = $$Immutable$ImmutableSet$$Set([4]);
-          $$util$$test_each($$Immutable$ImmutableSet$$Set, [four, 1, 2, 3]);
+          $$util$$test_each($$Immutable$ImmutableSet$$Set([four, 1, 2, 3]), [four, 1, 2, 3]);
         });
 
         $$Test$assert$$test("toString", function () {
@@ -4462,13 +4580,13 @@
         });
 
         $$Test$assert$$test("each", function () {
-          $$util$$test_each($$$Immutable$ImmutableList$$List, []);
+          $$util$$test_each($$$Immutable$ImmutableList$$List(), []);
 
           var list = $$$Immutable$ImmutableList$$List([4]);
-          $$util$$test_each($$$Immutable$ImmutableList$$List, [1, 2, 3, list]);
+          $$util$$test_each($$$Immutable$ImmutableList$$List([1, 2, 3, list]), [1, 2, 3, list]);
 
           var expected = $$util$$random_list(200);
-          $$util$$test_each($$$Immutable$ImmutableList$$List, expected);
+          $$util$$test_each($$$Immutable$ImmutableList$$List(expected), expected);
         });
 
         $$Test$assert$$test("toString", function () {
@@ -4495,7 +4613,7 @@
     function $$Test$Tuple$$verify_tuple(tuple, array) {
       $$Test$assert$$assert($$Immutable$ImmutableTuple$$isTuple(tuple));
 
-      $$Test$assert$$assert($$util$$deepEqual(tuple.values, array));
+      $$Test$assert$$assert($$util$$deepEqual(tuple._values, array));
       $$Test$assert$$assert($$util$$deepEqual($$Immutable$toJS$$toJS(tuple), array));
 
       return tuple;
@@ -4509,6 +4627,7 @@
         $$Test$assert$$test("isTuple", function () {
           $$Test$assert$$assert(!$$Immutable$ImmutableTuple$$isTuple($$$Immutable$ImmutableList$$List()));
           $$Test$assert$$assert($$Immutable$ImmutableTuple$$isTuple($$Immutable$ImmutableTuple$$Tuple()));
+          $$Test$assert$$assert($$Immutable$ImmutableTuple$$isTuple($$Immutable$ImmutableType$$Type(500)));
         });
 
         $$Test$assert$$test("verify", function () {
@@ -4678,13 +4797,13 @@
         });
 
         $$Test$assert$$test("each", function () {
-          $$util$$test_each($$Immutable$ImmutableTuple$$Tuple, []);
+          $$util$$test_each($$Immutable$ImmutableTuple$$Tuple(), []);
 
           var x = $$Immutable$ImmutableTuple$$Tuple([4]);
-          $$util$$test_each($$Immutable$ImmutableTuple$$Tuple, [1, 2, 3, x]);
+          $$util$$test_each($$Immutable$ImmutableTuple$$Tuple([1, 2, 3, x]), [1, 2, 3, x]);
 
           var expected = $$util$$random_list(200);
-          $$util$$test_each($$Immutable$ImmutableTuple$$Tuple, expected);
+          $$util$$test_each($$Immutable$ImmutableTuple$$Tuple(expected), expected);
         });
 
         $$Test$assert$$test("toString", function () {
@@ -4862,10 +4981,10 @@
         });
 
         $$Test$assert$$test("each", function () {
-          $$util$$test_each($$Immutable$ImmutableQueue$$Queue, []);
+          $$util$$test_each($$Immutable$ImmutableQueue$$Queue(), []);
 
           var x = $$Immutable$ImmutableQueue$$Queue([3]);
-          $$util$$test_each($$Immutable$ImmutableQueue$$Queue, [1, 2, x, 4]);
+          $$util$$test_each($$Immutable$ImmutableQueue$$Queue([1, 2, x, 4]), [1, 2, x, 4]);
         });
 
         $$Test$assert$$test("toString", function () {
@@ -5012,10 +5131,10 @@
         });
 
         $$Test$assert$$test("each", function () {
-          $$util$$test_each($$Immutable$ImmutableStack$$Stack, []);
+          $$util$$test_each($$Immutable$ImmutableStack$$Stack(), []);
 
           var x = $$Immutable$ImmutableStack$$Stack([3]);
-          $$util$$test_each($$Immutable$ImmutableStack$$Stack, [1, 2, x, 4]);
+          $$util$$test_each($$Immutable$ImmutableStack$$Stack([1, 2, x, 4]), [1, 2, x, 4]);
         });
 
         $$Test$assert$$test("toString", function () {
@@ -5716,6 +5835,7 @@
         $$Test$assert$$assert($$$Immutable$$isImmutable($$Immutable$ImmutableSet$$SortedSet($$Immutable$Sorted$$simpleSort)));
         $$Test$assert$$assert($$$Immutable$$isImmutable($$$Immutable$Tag$$Tag()));
         $$Test$assert$$assert($$$Immutable$$isImmutable($$Immutable$ImmutableTuple$$Tuple()));
+        $$Test$assert$$assert($$$Immutable$$isImmutable($$Immutable$ImmutableType$$Type(500)));
         $$Test$assert$$assert($$$Immutable$$isImmutable($$$Immutable$Tag$$UUIDTag("051eca86-038c-43c8-85cf-01e20f394501")));
 
         var Foo = $$Immutable$ImmutableRecord$$Record({});
@@ -5741,6 +5861,7 @@
         $$Test$assert$$assert($$Immutable$iter$$isIterable($$Immutable$ImmutableDict$$SortedDict($$Immutable$Sorted$$simpleSort)));
         $$Test$assert$$assert($$Immutable$iter$$isIterable($$Immutable$ImmutableSet$$SortedSet($$Immutable$Sorted$$simpleSort)));
         $$Test$assert$$assert($$Immutable$iter$$isIterable($$Immutable$ImmutableTuple$$Tuple()));
+        $$Test$assert$$assert($$Immutable$iter$$isIterable($$Immutable$ImmutableType$$Type(500)));
 
         var Foo = $$Immutable$ImmutableRecord$$Record({});
         $$Test$assert$$assert($$Immutable$iter$$isIterable(Foo));
@@ -6479,6 +6600,225 @@
       });
     }
 
+    function $$Test$Type$$verify(x, type, array) {
+      $$Test$assert$$assert($$Immutable$ImmutableType$$isType(x));
+
+      $$Test$assert$$assert(x.type() === type);
+      $$Test$assert$$assert($$util$$deepEqual(x._values, array));
+      $$Test$assert$$assert($$util$$deepEqual($$Immutable$toJS$$toJS(x), { type: type, values: array }));
+
+      return x;
+    }
+
+    function $$Test$Type$$test_Type() {
+      $$Test$assert$$context("Type", function () {
+        var type = 500;
+        var empty = $$Immutable$ImmutableType$$Type(type, []);
+        var five = $$Immutable$ImmutableType$$Type(type, [1, 2, 3, 4, 5]);
+
+        $$Test$assert$$test("isType", function () {
+          $$Test$assert$$assert(!$$Immutable$ImmutableType$$isType($$Immutable$ImmutableTuple$$Tuple()));
+          $$Test$assert$$assert($$Immutable$ImmutableType$$isType(empty));
+        });
+
+        $$Test$assert$$test("verify", function () {
+          $$Test$Type$$verify(empty, type, []);
+          $$Test$Type$$verify(five, type, [1, 2, 3, 4, 5]);
+        });
+
+        $$Test$assert$$test("init", function () {
+          $$Test$Type$$verify($$Immutable$ImmutableType$$Type(type), type, []);
+          $$Test$Type$$verify($$Immutable$ImmutableType$$Type(type, [1, 2, 3]), type, [1, 2, 3]);
+          $$Test$Type$$verify($$Immutable$ImmutableType$$Type(200, [1, 2, 3]), 200, [1, 2, 3]);
+
+          $$Test$assert$$assert_raises(function () {
+            $$Immutable$ImmutableType$$Type();
+          }, "Expected 1 to 2 arguments but got 0");
+        });
+
+        $$Test$assert$$test("isEmpty", function () {
+          $$Test$assert$$assert(empty.isEmpty());
+          $$Test$assert$$assert(!five.isEmpty());
+        });
+
+        $$Test$assert$$test("size", function () {
+          $$Test$assert$$assert(empty.size() === 0);
+          $$Test$assert$$assert(five.size() === 5);
+        });
+
+        $$Test$assert$$test("get", function () {
+          $$Test$assert$$assert_raises(function () {
+            empty.get(0);
+          }, "Index 0 is not valid");
+
+          $$Test$assert$$assert_raises(function () {
+            empty.get(-1);
+          }, "Index -1 is not valid");
+
+          $$Test$assert$$assert(five.get(0) === 1);
+          $$Test$assert$$assert(five.get(4) === 5);
+
+          $$Test$assert$$assert_raises(function () {
+            five.get(-1);
+          }, "Index -1 is not valid");
+
+          $$Test$assert$$assert_raises(function () {
+            five.get(-2);
+          }, "Index -2 is not valid");
+        });
+
+        $$Test$assert$$test("set", function () {
+          $$Test$Type$$verify(five.set(0, 50), type, [50, 2, 3, 4, 5]);
+          $$Test$Type$$verify(five.set(4, 50), type, [1, 2, 3, 4, 50]);
+
+          $$Test$assert$$assert_raises(function () {
+            empty.set(0, 50);
+          }, "Index 0 is not valid");
+
+          $$Test$assert$$assert_raises(function () {
+            empty.set(-1, 50);
+          }, "Index -1 is not valid");
+
+          $$Test$assert$$assert_raises(function () {
+            five.set(-1, 50);
+          }, "Index -1 is not valid");
+
+          $$Test$assert$$assert_raises(function () {
+            five.set(-2, 50);
+          }, "Index -2 is not valid");
+        });
+
+        $$Test$assert$$test("modify", function () {
+          var ran = false;
+
+          $$Test$assert$$assert_raises(function () {
+            empty.modify(0, function () { ran = true; });
+          }, "Index 0 is not valid");
+
+          $$Test$assert$$assert_raises(function () {
+            empty.modify(-1, function () { ran = true; });
+          }, "Index -1 is not valid");
+
+          $$Test$assert$$assert(ran === false);
+
+
+          var ran = false;
+
+          $$Test$Type$$verify(five.modify(0, function (x) {
+            ran = true;
+            $$Test$assert$$assert(x === 1);
+            return x + 100;
+          }), type, [101, 2, 3, 4, 5]);
+
+          $$Test$assert$$assert(ran === true);
+
+          $$Test$Type$$verify(five.modify(1, function (x) { return x + 100 }), type, [1, 102, 3, 4, 5]);
+
+          $$Test$assert$$assert_raises(function () {
+            five.modify(-1, function (x) { return x + 100 })
+          }, "Index -1 is not valid");
+
+          $$Test$assert$$assert_raises(function () {
+            five.modify(-2, function (x) { return x + 100 })
+          }, "Index -2 is not valid");
+        });
+
+        $$Test$assert$$test("=== when not modified", function () {
+          $$Test$assert$$assert($$Immutable$ImmutableType$$Type(type, five) === five);
+          $$Test$assert$$assert($$Immutable$ImmutableType$$Type(200, five) !== five);
+
+          $$Test$assert$$assert(five.set(0, 1) === five);
+          $$Test$assert$$assert(five.set(0, 2) !== five);
+
+          var type1 = $$Immutable$ImmutableType$$Type(type, [$$Immutable$ImmutableType$$Type(type)]);
+
+          $$Test$assert$$assert(type1.modify(0, function () {
+            return $$Immutable$ImmutableType$$Type(type);
+          }) !== type1);
+
+          $$Test$assert$$assert(five.modify(0, function () {
+            return 1;
+          }) === five);
+
+          $$Test$assert$$assert(five.modify(0, function () {
+            return 2;
+          }) !== five);
+
+          $$Test$assert$$assert(five.modify(1, function () {
+            return 2;
+          }) === five);
+
+          $$Test$assert$$assert(five.modify(1, function () {
+            return 3;
+          }) !== five);
+
+          $$Test$assert$$assert(five.modify(4, function () {
+            return 5;
+          }) === five);
+
+          $$Test$assert$$assert(five.modify(4, function () {
+            return 6;
+          }) !== five);
+        });
+
+        $$Test$assert$$test("equal", function () {
+          $$Test$assert$$assert($$Immutable$equal$$equal(empty, empty));
+          $$Test$assert$$assert($$Immutable$equal$$equal(five, five));
+
+          $$Test$assert$$assert($$Immutable$equal$$equal($$Immutable$ImmutableType$$Type(type, [1, 2, 3]), $$Immutable$ImmutableType$$Type(type, [1, 2, 3])));
+          $$Test$assert$$assert(!$$Immutable$equal$$equal($$Immutable$ImmutableType$$Type(type, [1, 2, 3]), $$Immutable$ImmutableType$$Type(200, [1, 2, 3])));
+          $$Test$assert$$assert(!$$Immutable$equal$$equal($$Immutable$ImmutableType$$Type(type, [1, 2, 3]), $$Immutable$ImmutableType$$Type(type, [1, 2, 3, 4])));
+          $$Test$assert$$assert(!$$Immutable$equal$$equal($$Immutable$ImmutableType$$Type(type, [1, 2, 3]), $$Immutable$ImmutableType$$Type(type, [1, 2, 4])));
+          $$Test$assert$$assert(!$$Immutable$equal$$equal($$Immutable$ImmutableType$$Type(type, [1, 2, 3]), $$Immutable$ImmutableType$$Type(type, [1, 3, 2])));
+
+          $$Test$assert$$assert($$Immutable$equal$$equal($$Immutable$ImmutableType$$Type(type, [1, 2, 3, 4, 5]), five));
+          $$Test$assert$$assert($$Immutable$equal$$equal(five, $$Immutable$ImmutableType$$Type(type, [1, 2, 3, 4, 5])));
+
+          $$Test$assert$$assert($$Immutable$equal$$equal($$Immutable$ImmutableType$$Type(type, [$$Immutable$ImmutableType$$Type(type, [1, 2, 3])]), $$Immutable$ImmutableType$$Type(type, [$$Immutable$ImmutableType$$Type(type, [1, 2, 3])])));
+        });
+
+        $$Test$assert$$test("toJS", function () {
+          $$Test$assert$$assert($$util$$deepEqual($$Immutable$toJS$$toJS(empty), { type: type, values: [] }));
+          $$Test$assert$$assert($$util$$deepEqual($$Immutable$toJS$$toJS(five), { type: type, values: [1, 2, 3, 4, 5] }));
+          $$Test$assert$$assert($$util$$deepEqual($$Immutable$toJS$$toJS($$Immutable$ImmutableType$$Type(type, [1, 2, $$Immutable$ImmutableType$$Type(type, [3])])), { type: type, values: [1, 2, { type: type, values: [3] }] }));
+        });
+
+        $$Test$assert$$test("toJSON", function () {
+          $$util$$verify_json(empty, { type: type, values: [] });
+          $$util$$verify_json(five, { type: type, values: [1, 2, 3, 4, 5] });
+          $$util$$verify_json($$Immutable$ImmutableType$$Type(type, [4, 5, $$Immutable$ImmutableType$$Type(type, [1, 2, 3])]), { type: type, values: [4, 5, { type: type, values: [1, 2, 3] }] });
+        });
+
+        $$Test$assert$$test("each", function () {
+          $$util$$test_each($$Immutable$ImmutableType$$Type(type), []);
+
+          var x = $$Immutable$ImmutableType$$Type(type, [4]);
+          $$util$$test_each($$Immutable$ImmutableType$$Type(type, [1, 2, 3, x]), [1, 2, 3, x]);
+
+          var expected = $$util$$random_list(200);
+          $$util$$test_each($$Immutable$ImmutableType$$Type(type, expected), expected);
+        });
+
+        $$Test$assert$$test("toString", function () {
+          $$Test$assert$$assert("" + empty === "(Type 500)");
+          $$Test$assert$$assert("" + $$Immutable$ImmutableType$$Type(type, [1, 2, 3]) === "(Type 500\n  1\n  2\n  3)");
+          $$Test$assert$$assert("" + $$Immutable$ImmutableType$$Type(200, [1, 2, 3]) === "(Type 200\n  1\n  2\n  3)");
+          $$Test$assert$$assert("" + $$Immutable$ImmutableType$$Type(type, [1, $$Immutable$ImmutableType$$Type(200, [2]), 3]) === "(Type 500\n  1\n  (Type 200\n    2)\n  3)");
+        });
+
+        /*
+        // TODO code duplication
+        test("zip", function () {
+          assert(deepEqual(toArray(zip(Tuple())), toArray(zip([]))));
+
+          assert(deepEqual(toArray(zip(Tuple([1, 2, 3, 4, 5]))), [[1], [2], [3], [4], [5]]));
+
+          var a = random_list(200);
+          assert(deepEqual(toArray(zip(Tuple(a))), toArray(zip(a))));
+        });*/
+      });
+    }
+
     $$Test$assert$$test_run(function () {
       $$Test$Dict$$test_Dict();
       $$Test$Set$$test_Set();
@@ -6491,6 +6831,7 @@
       $$Test$Tag$$test_Tag();
       $$Test$misc$$test_misc();
       $$Test$iter$$test_iter();
+      $$Test$Type$$test_Type();
     });
 }).call(this);
 
